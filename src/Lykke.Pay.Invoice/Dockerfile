@@ -1,4 +1,4 @@
-FROM microsoft/aspnetcore:2.0
+FROM microsoft/dotnet:latest
 ENTRYPOINT ["dotnet", "Lykke.Pay.Invoice.dll"]
 ARG source=.
 WORKDIR /app
