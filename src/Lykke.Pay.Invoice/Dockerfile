@@ -1,4 +1,4 @@
-FROM microsoft/aspnetcore:2.0
+FROM microsoft/aspnetcore:latest
 ENTRYPOINT ["dotnet", "Web.dll"]
 ARG source=.
 WORKDIR /app
