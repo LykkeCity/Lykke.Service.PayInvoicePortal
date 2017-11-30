@@ -1,0 +1,24 @@
+﻿@model Lykke.Pay.Invoice.Models.InvoiceResult
+@{
+    ViewData["Title"] = "Home Page";
+}
+
+<div>
+    @if (Model == null)
+    {
+        @:QRCode will be here 
+    }
+    else
+    {
+        if (string.IsNullOrEmpty(Model.QRCode))
+        {
+            @Model.Text
+        }
+        else
+        {
+            @:<img src="@Model.QRCode" style="border: 0; width: 225px; height: 225px" title="QR Code" />
+        }
+
+    }
+
+</div>
