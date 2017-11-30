@@ -3,6 +3,13 @@
   <PropertyGroup>
     <TargetFramework>netcoreapp2.0</TargetFramework>
     <PreserveCompilationContext>true</PreserveCompilationContext>
+    <AssemblyName>Web</AssemblyName>
+    <OutputType>exe</OutputType>
+    <PackageId>Web</PackageId>
+	<EnableDefaultContentItems>false</EnableDefaultContentItems>
+	<ApplicationIcon />
+	<OutputTypeEx>exe</OutputTypeEx>
+	<StartupObject />
     <Version>1.0.1</Version>
   </PropertyGroup>
 
