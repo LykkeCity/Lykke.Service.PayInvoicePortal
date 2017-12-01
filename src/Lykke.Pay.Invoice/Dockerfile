@@ -1,4 +1,4 @@
 FROM microsoft/aspnetcore:2.0
 WORKDIR /app
 COPY . .
-ENTRYPOINT ["dotnet", "Web.dll"]
+ENTRYPOINT ["dotnet", "Lykke.Pay.Invoice.dll"]
