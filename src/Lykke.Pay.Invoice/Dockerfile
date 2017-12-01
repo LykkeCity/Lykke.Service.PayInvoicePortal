@@ -1,5 +1,4 @@
-FROM microsoft/aspnetcore:latest
-ARG source=.
+FROM microsoft/aspnetcore:2.0
 WORKDIR /app
-COPY $source .
+COPY . .
 ENTRYPOINT ["dotnet", "Web.dll"]
