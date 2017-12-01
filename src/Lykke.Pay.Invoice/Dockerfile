@@ -4,6 +4,7 @@ RUN ls -la
 WORKDIR /app
 RUN pwd
 RUN ls -la
-COPY /app /app
+COPY . .
+RUN pwd
 RUN ls -la
 ENTRYPOINT ["dotnet", "Web.dll"]
