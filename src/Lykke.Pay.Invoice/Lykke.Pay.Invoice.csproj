@@ -2,15 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>netcoreapp2.0</TargetFramework>
-    <PreserveCompilationContext>true</PreserveCompilationContext>
-    <AssemblyName>Web</AssemblyName>
-    <OutputType>exe</OutputType>
-    <PackageId>Web</PackageId>
-	<EnableDefaultContentItems>false</EnableDefaultContentItems>
-	<ApplicationIcon />
-	<OutputTypeEx>exe</OutputTypeEx>
-	<StartupObject />
-    <Version>1.0.1</Version>
+    <Version>1.0.0</Version>
   </PropertyGroup>
 
   <ItemGroup>
@@ -123,12 +115,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Update=".bowerrc">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update=".dockerignore">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
     <None Update="Dockerfile">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
