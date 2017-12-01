@@ -2,4 +2,4 @@ FROM microsoft/aspnetcore:latest
 ARG source=.
 WORKDIR /app
 COPY $source .
-ENTRYPOINT ["dotnet", "Lykke.Pay.Invoice.dll"]
+ENTRYPOINT ["dotnet", "Web.dll"]
