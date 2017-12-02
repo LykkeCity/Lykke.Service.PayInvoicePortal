@@ -2,3 +2,4 @@
 obj
 bin
 _ReSharper.Caches
+/src/Lykke.Pay.Invoice/appsettings.Development.json
