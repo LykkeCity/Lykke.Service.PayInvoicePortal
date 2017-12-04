@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="71px" height="61px" viewBox="0 0 71 61" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 47.1 (45422) - http://www.bohemiancoding.com/sketch -->
+    <title>Group 12</title>
+    <desc>Created with Sketch.</desc>
+    <defs></defs>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Invoices/01a_welcome_page" transform="translate(-681.000000, -187.000000)">
+            <g id="Group-12" transform="translate(675.000000, 177.000000)">
+                <rect id="Rectangle-12" fill="#FFFFFF" opacity="0" x="0" y="0" width="82" height="82"></rect>
+                <g id="Group-5" transform="translate(7.000000, 11.000000)">
+                    <g id="wallet_icn">
+                        <g id="ic_ditect_ownership">
+                            <path d="M0,3.98608243 C0,1.78098691 1.79201132,-0.00364593348 4.00996437,5.59354093e-06 L51.7478481,0.0785988588 C53.9624903,0.082244935 55.7578125,1.8818773 55.7578125,4.07787931 L55.7578125,50.092522 C55.7578125,52.2976175 53.9658012,54.0822504 51.7478481,54.0785989 L4.00996437,54.0000056 C1.7953222,53.9963595 0,52.1967272 0,50.0007251 L0,3.98608243 Z" id="Rectangle-3-Copy-18" stroke="#333333" stroke-width="2" fill="#FFFFFF" stroke-linecap="round" stroke-linejoin="round"></path>
+                            <g id="market_making_icn" transform="translate(0.000000, 7.000000)">
+                                <g id="Group-3-Copy-5">
+                                    <path d="M6,0 L60.0087876,0 C62.2130733,0 64,1.79867889 64,3.99976742 L64,48.0002326 C64,50.2092431 62.2046235,52 59.9965134,52 L4.00348663,52 C1.79242202,52 0,50.2013211 0,48.0002326 L0,0" id="Rectangle-3-Copy-18" stroke="#333333" stroke-width="2" fill="#FFFFFF" stroke-linecap="round" stroke-linejoin="round"></path>
+                                    <rect id="Rectangle-3-Copy-19" fill="#0388EF" x="5" y="5" width="54" height="42" rx="1"></rect>
+                                </g>
+                            </g>
+                            <g id="Group-16" transform="translate(51.000000, 24.000000)" stroke="#333333" stroke-width="2" fill="#FFFFFF">
+                                <path d="M17.9999977,1.9941316 C18.0016436,0.892208273 17.103956,-0.000591145963 15.9985316,6.34809956e-06 L8.97119075,0.00380470321 C4.01653891,0.00380470321 0,4.03239024 0,9.00190235 C0,13.9714145 4.01653891,18 8.97119075,18 L15.9776113,18 C17.0813408,18 17.9774237,17.1073238 17.9790705,16.0047913 L17.9999977,1.9941316 Z" id="Oval-5-Copy-7"></path>
+                                <path d="M9,6 C7.34314575,6 6,7.34314575 6,9 C6,10.6568542 7.34314575,12 9,12 L9,12" id="Oval-4" stroke-linecap="round" stroke-linejoin="round"></path>
+                            </g>
+                        </g>
+                    </g>
+                    <polyline id="Path-5" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" points="40 25 29 38 23 32"></polyline>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

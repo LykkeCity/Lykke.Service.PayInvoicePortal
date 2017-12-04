@@ -1,24 +1,44 @@
 ﻿@model Lykke.Pay.Invoice.Models.InvoiceResult
 @{
-    ViewData["Title"] = "Home Page";
+    ViewData["Title"] = "Invoices";
 }
 
-<div>
-    @if (Model == null)
-    {
-        @:QRCode will be here 
-    }
-    else
-    {
-        if (string.IsNullOrEmpty(Model.QRCode))
-        {
-            @Model.Text
-        }
-        else
-        {
-            @:<img src="@Model.QRCode" style="border: 0; width: 225px; height: 225px" title="QR Code" />
-        }
-
-    }
-
+<div class="invoice">
+    <div class="invoice__top">
+        <div class="invoice__title">Invoice #@Model.InvoiceNumber</div>
+        <div class="invoice__subtitle">@Model.ClientName</div>
+    </div>
+    <div class="invoice__body">
+        <div class="row">
+            <div class="col-xs-12 col-sm-5 col-md-6 state--pr0-sm">
+                <div class="invoice__qr">
+                    <img src="@Model.QRCode" alt=""> </div>
+                <div class="invoice__row">
+                    <div class="invoice__remain">
+                        <div class="invoice__remain-load">
+                            <div class="invoice__remain-loading"> </div>
+                        </div>
+                        <span class="invoice__remain-text">10 min remaining…</span>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xs-12 col-sm-7 col-md-6">
+                <div class="invoice__payment">@Model.Amount BTC
+                    <div class="invoice__info"> for payment </div>
+                </div>
+                <div class="invoice__original">@Model.OrigAmount @Model.Currency
+                    <div class="invoice__info"> original </div>
+                </div>
+                <div class="invoice__description">
+                    <div class="invoice__label">Waiting for payment </div>
+                    <div class="invoice__value">The address will be invalid in 10 minutes
+                        <br>due to inactivity </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
+     
+
+
+   

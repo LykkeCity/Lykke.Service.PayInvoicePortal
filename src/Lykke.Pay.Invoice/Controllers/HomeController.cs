@@ -41,21 +41,24 @@ namespace Lykke.Pay.Invoice.Controllers
        
         public IActionResult Index()
         {
-            return View();
+            return NotFound();
         }
 
 
         [Route("{InvoiceId}")]
         public async Task<IActionResult> Index(string invoiceId)
         {
+            var model = new InvoiceResult();
             var inv = await _invoiceRequestRepo.GetInvoice(invoiceId);
             if (inv == null)
             {
-                return View(new InvoiceResult
-                {
-                    Text = "Invoice not found"
-                });
+                return NotFound();
             }
+
+
+            model.OrigAmount = inv.Amount;
+            model.Currency = inv.Currency;
+            model.InvoiceNumber = inv.InvoiceNumber;
 
             var order = new
             {
@@ -69,6 +72,8 @@ namespace Lykke.Pay.Invoice.Controllers
                     Pips = 10
                 }
             };
+
+
 
 
             var bodyRequest = JsonConvert.SerializeObject(order);
@@ -91,22 +96,15 @@ namespace Lykke.Pay.Invoice.Controllers
 
             if (result.StatusCode != HttpStatusCode.OK)
             {
-                return View(new InvoiceResult
-                {
-                    Text = resp
-                });
+                return BadRequest();
             }
 
             dynamic orderResp = JsonConvert.DeserializeObject(resp);
 
-            return View(new InvoiceResult
-            {
-                Text = JsonConvert.SerializeObject(resp),
-                QRCode = $@"https://chart.googleapis.com/chart?chs=225x225&chld=L|2&cht=qr&chl=bitcoin:{orderResp.address}?amount={orderResp.amount}%26label=LykkePay%26message={orderResp.orderId}"
-
-            });
-
-            
+            model.Amount = orderResp.amount;
+            model.QRCode =
+                $@"https://chart.googleapis.com/chart?chs=220x220&chld=L|2&cht=qr&chl=bitcoin:{orderResp.address}?amount={orderResp.amount}%26label=LykkePay%26message={orderResp.orderId}";
+            return View(model);
 
         }
 
