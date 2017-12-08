@@ -48,14 +48,14 @@ namespace Lykke.Pay.Invoice
             {
                 app.UseExceptionHandler("/Home/Error");
             }
-
+            app.UseStatusCodePagesWithReExecute("/Error/{0}");
             app.UseStaticFiles();
 
             app.UseMvc(routes =>
             {
                 routes.MapRoute(
                     name: "default",
-                    template: "{controller=Home}/{action=Index}/{id?}");
+                    template: "{controller=Invoice}/{action=Index}/{id?}");
             });
         }
     }

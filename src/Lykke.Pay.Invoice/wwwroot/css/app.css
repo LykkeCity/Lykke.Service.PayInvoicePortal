@@ -20,1052 +20,1239 @@
 /*@import "guide";*/
 
 .container-full {
-  width: 1200px;
-  padding: 0 15px;
-  margin: 0 auto;
+	width: 1200px;
+	padding: 0 15px;
+	margin: 0 auto;
 }
 
 .container-full:before, .container-full:after {
-  content: " ";
-  display: table;
+	content: " ";
+	display: table;
 }
 
 .container-full:after {
-  clear: both;
+	clear: both;
 }
 
 .invoice {
-  padding-top: 59px;
-  padding-bottom: 87px;
-  max-width: 600px;
-  margin: 0 auto;
+	padding-bottom: 87px;
+	max-width: 600px;
+	margin: 0 auto;
+	padding-top: 60px;
 }
 
 .invoice__top {
-    text-align: center;
-    margin-bottom: 114px;
-    position: relative
-  }
-
-.invoice__top:after {
-  position: absolute;
-  content: '';
-  top: 163px;
-  left: 0;
-  right: 0;
-  height: 1px;
-  background: #EAEDEF;
+	text-align: center;
+	margin-bottom: 56px;
+	position: relative;
 }
 
 .invoice__title {
-    font-family: "Akrobat";
-    font-weight: 600;
-    font-size: 60px;
-    line-height: 60px;
-    letter-spacing: -0.86px;
-    color: #111111;
-    margin-bottom: 15px;
-  }
+	font-family: "Akrobat";
+	font-weight: 600;
+	font-size: 60px;
+	line-height: 60px;
+	letter-spacing: -0.86px;
+	color: #111111;
+	margin-bottom: 15px;
+}
 
 .invoice__subtitle {
-    font-family: "Proxima Nova";
-    font-weight: 300;
-    font-size: 28px;
-    line-height: 34px;
-    letter-spacing: 0px;
-    color: #8C94A0;
-  }
+	font-family: "Proxima Nova";
+	font-weight: 300;
+	font-size: 28px;
+	line-height: 34px;
+	letter-spacing: 0px;
+	color: #8C94A0;
+}
 
 .invoice__qr {
-    text-align: right;
-    padding-right: 30px;
-    padding-top: 2px;
-    margin-bottom: 25px;
-
-  }
+	text-align: right;
+	padding-right: 30px;
+	padding-top: 2px;
+	margin-bottom: 25px;
+}
 
 .invoice__qr img {
-      max-width: 220px;
-    }
+	max-width: 220px;
+}
 
 .invoice__row:before, .invoice__row:after {
-  content: " ";
-  display: table;
+	content: " ";
+	display: table;
 }
 
 .invoice__row:after {
-  clear: both;
+	clear: both;
 }
 
 .invoice__row {
-  padding-right: 30px;
+	padding-right: 30px;
 }
 
 .invoice__remain {
-    float: right;
-    border: 1px solid #E6E8EA;
-    width: 220px;
-    height: 55px;
-    border-radius: 4px;
-    display: table;
-  }
+	float: right;
+	border: 1px solid #E6E8EA;
+	width: 220px;
+	height: 55px;
+	border-radius: 4px;
+	display: table;
+}
 
 .invoice__remain-text {
-      font-family: "Proxima Nova";
-      font-weight: 600;
-      font-size: 16px;
-      line-height: 20px;
-      letter-spacing: 0px;
-      color: #333333;
-      display: table-cell;
-      vertical-align: middle;
-    }
+	font-family: "Proxima Nova";
+	font-weight: 600;
+	font-size: 16px;
+	line-height: 20px;
+	letter-spacing: 0px;
+	color: #333333;
+	display: table-cell;
+	vertical-align: middle;
+}
 
 .invoice__remain-load {
-      display: table-cell;
-      vertical-align: middle;
-      padding-left: 15px;
-      padding-right: 8px;
-    }
+	display: table-cell;
+	vertical-align: middle;
+	padding-left: 15px;
+	padding-right: 8px;
+}
 
 .invoice__remain-loading {
-      width: 35px;
-      height: 35px;
-      background: #F3F4F5;
-      border-radius: 35px;
-      background-image: url("../img/loading.png");
-      background-size: 35px;
-      background-position: center;
-
-    }
+	width: 35px;
+	height: 35px;
+	background: #F3F4F5;
+	border-radius: 35px;
+	background-image: url("../img/loading.png");
+	background-size: 35px;
+	background-position: center;
+}
 
 .invoice__payment {
-    font-family: "Proxima Nova";
-    font-weight: 300;
-    font-size: 36px;
-    line-height: 44px;
-    letter-spacing: 0.3px;
-    color: #333333;
-    margin-bottom: 21px;
-    position: relative;
-
-  }
+	font-family: "Proxima Nova";
+	font-weight: 300;
+	font-size: 36px;
+	line-height: 44px;
+	letter-spacing: 0.3px;
+	color: #333333;
+	margin-bottom: 21px;
+	position: relative;
+}
 
 .invoice__info {
-    font-family: "Proxima Nova";
-    font-weight: 400;
-    font-size: 13px;
-    line-height: 16px;
-    letter-spacing: 2.3px;
-    color: #657180;
-    text-transform: uppercase;
-    margin-top: 6px;
-  }
+	font-family: "Proxima Nova";
+	font-weight: 400;
+	font-size: 13px;
+	line-height: 16px;
+	letter-spacing: 2.3px;
+	color: #657180;
+	text-transform: uppercase;
+	margin-top: 6px;
+}
 
 .invoice__original {
-    font-family: "Proxima Nova";
-    font-weight: 300;
-    font-size: 36px;
-    line-height: 44px;
-    letter-spacing: 0px;
-    color: #A9AFB8;
-    margin-bottom: 74px;
-    position: relative
-  }
+	font-family: "Proxima Nova";
+	font-weight: 300;
+	font-size: 36px;
+	line-height: 44px;
+	letter-spacing: 0px;
+	color: #A9AFB8;
+	margin-bottom: 74px;
+	position: relative
+}
 
 .invoice__original:after {
-  position: absolute;
-  content: '';
-  bottom: -39px;
-  left: 0px;
-  right: 0;
-  height: 1px;
-  background: #EAEDEF;
+	position: absolute;
+	content: '';
+	bottom: -39px;
+	left: 0px;
+	right: 0;
+	height: 1px;
+	background: #EAEDEF;
 }
 
 .invoice__label {
-    font-family: "Proxima Nova";
-    font-weight: 600;
-    font-size: 18px;
-    line-height: 30px;
-    letter-spacing: 0px;
-    color: #333333;
-  }
+	font-family: "Proxima Nova";
+	font-weight: 600;
+	font-size: 18px;
+	line-height: 30px;
+	letter-spacing: 0px;
+	color: #333333;
+}
 
 .invoice__value {
-    font-family: "Proxima Nova";
-    font-weight: 400;
-    font-size: 16px;
-    line-height: 25px;
-    letter-spacing: 0px;
-    color: #3F4D60;
-    margin-top: -3px;
-  }
+	font-family: "Proxima Nova";
+	font-weight: 400;
+	font-size: 16px;
+	line-height: 25px;
+	letter-spacing: 0px;
+	color: #3F4D60;
+	margin-top: -3px;
+}
 
 .invoice_paid {
-  padding-top: 60px;
-  padding-bottom: 72px;
+	padding-top: 60px;
+	padding-bottom: 72px;
 }
 
 .invoice_paid__back {
-    width: 32px;
-    height: 32px;
-    padding: 0;
-    margin-top: 19px;
-    border: none;
-    background: transparent;
-    background: url("../img/icon_back.svg") no-repeat;
-    background-position: center;
-    background-size: 32px 12px;
-  }
+	width: 32px;
+	height: 32px;
+	padding: 0;
+	margin-top: 19px;
+	border: none;
+	background: transparent;
+	background: url("../img/icon_back.svg") no-repeat;
+	background-position: center;
+	background-size: 32px 12px;
+}
 
 .invoice_paid__top {
-    margin-bottom: 127px;
-  }
+	margin-bottom: 127px;
+}
 
 .invoice_paid__title {
-    font-family: "Akrobat";
-    font-weight: 600;
-    font-size: 60px;
-    line-height: 60px;
-    letter-spacing: -0.86px;
-    margin-bottom: 22px;
-  }
+	font-family: "Akrobat";
+	font-weight: 600;
+	font-size: 60px;
+	line-height: 60px;
+	letter-spacing: -0.86px;
+	margin-bottom: 22px;
+}
 
 .invoice_paid__link {
-    font-family: "Proxima Nova";
-    font-weight: 600;
-    font-size: 24px;
-    line-height: 29px;
-    letter-spacing: 0px;
-    color: #0388EF;
-    padding-right: 37px;
-    background: url("../img/icon_copy_large.svg") no-repeat;
-    background-position: right center;
-  }
+	font-family: "Proxima Nova";
+	font-weight: 600;
+	font-size: 24px;
+	line-height: 29px;
+	letter-spacing: 0px;
+	color: #0388EF;
+	padding-right: 37px;
+	background: url("../img/icon_copy_large.svg") no-repeat;
+	background-position: right center;
+}
 
 .invoice_paid__qr {
-    max-width: 100px;
-    margin-left: 70px;
-    margin-top: 3px;
-  }
+	max-width: 100px;
+	margin-left: 70px;
+	margin-top: 3px;
+}
 
 .invoice_paid__qr img {
-      width: 100%;
-    }
+	width: 100%;
+}
 
 .invoice_paid__table {
-    display: table;
-    width: 800px;
-    margin-bottom: 35px;
-  }
+	display: table;
+	width: 800px;
+	margin-bottom: 35px;
+}
 
 .invoice_paid__row {
-    display: table-row;
+	display: table-row;
 
-  }
+}
 
 .invoice_paid__cell {
-    display: table-cell;
-    width: 50%;
-    padding-bottom: 29px;
-    position: relative
-  }
+	display: table-cell;
+	width: 50%;
+	padding-bottom: 29px;
+	position: relative
+}
 
 .invoice_paid__cell:after {
-  position: absolute;
-  content: '';
-  left: 0;
-  bottom: 20px;
-  right: 30px;
-  height: 1px;
-  background: #EBEDEF;
+	position: absolute;
+	content: '';
+	left: 0;
+	bottom: 20px;
+	right: 30px;
+	height: 1px;
+	background: #EBEDEF;
 }
 
 .invoice_paid__name {
-    font-family: "Proxima Nova";
-    font-weight: 600;
-    font-size: 18px;
-    line-height: 22px;
-    letter-spacing: 0px;
-    color: #333333;
-    margin-bottom: 4px;
-  }
+	font-family: "Proxima Nova";
+	font-weight: 600;
+	font-size: 18px;
+	line-height: 22px;
+	letter-spacing: 0px;
+	color: #333333;
+	margin-bottom: 4px;
+}
 
 .invoice_paid__desc {
-    font-family: "Proxima Nova";
-    font-weight: 400;
-    font-size: 16px;
-    line-height: 24px;
-    letter-spacing: 0px;
-    color: #333333;
-    opacity: 0.6;
-  }
+	font-family: "Proxima Nova";
+	font-weight: 400;
+	font-size: 16px;
+	line-height: 24px;
+	letter-spacing: 0px;
+	color: #333333;
+	opacity: 0.6;
+}
 
 .invoice_paid__bottom {
-    font-family: "Proxima Nova";
-    font-weight: 600;
-    font-size: 18px;
-    line-height: 40px;
-    height: 40px;
-    letter-spacing: 0px;
-    color: #0388EF;
-    padding-left: 60px;
-    background: url("../img/bl_explorer_logo.svg") no-repeat;
-    background-position: left center;
-    background-size: 40px;
-    display: block;
+	font-family: "Proxima Nova";
+	font-weight: 600;
+	font-size: 18px;
+	line-height: 40px;
+	height: 40px;
+	letter-spacing: 0px;
+	color: #0388EF;
+	padding-left: 60px;
+	background: url("../img/bl_explorer_logo.svg") no-repeat;
+	background-position: left center;
+	background-size: 40px;
+	display: block;
 
-  }
+}
 
 .invoice_paid__button {
-    min-width: 200px;
+	min-width: 200px;
 
-  }
+}
 
 .balance {
-  padding-top: 65px;
-  margin-bottom: 54px;
+	padding-top: 65px;
+	margin-bottom: 54px;
 }
 
 .balance__title {
-    font-family: "Proxima Nova";
-    font-weight: 400;
-    font-size: 22px;
-    line-height: 30px;
-    letter-spacing: 0px;
-    color: #3F4D60;
-    opacity: 0.8;
-    margin-bottom: 2px;
-  }
+	font-family: "Proxima Nova";
+	font-weight: 400;
+	font-size: 22px;
+	line-height: 30px;
+	letter-spacing: 0px;
+	color: #3F4D60;
+	opacity: 0.8;
+	margin-bottom: 2px;
+}
 
 .balance__row:before, .balance__row:after {
-  content: " ";
-  display: table;
+	content: " ";
+	display: table;
 }
 
 .balance__row:after {
-  clear: both;
+	clear: both;
 }
 
 .balance__left {
-    float: left;
-  }
+	float: left;
+}
 
 .balance__export {
-    float: right;
-    width: 192px;
-    padding-left: 64px;
-    padding-top: 8px;
-    margin-left: 31px;
-    font-family: "Proxima Nova";
-    font-weight: 400;
-    font-size: 18px;
-    line-height: 30px;
-    letter-spacing: 0px;
-    color: #333333;
-    background: url("../img/terms_icon.svg");
-    background-repeat: no-repeat;
-    background-position: left center;
-  }
+	float: right;
+	width: 192px;
+	padding-left: 64px;
+	padding-top: 8px;
+	margin-left: 31px;
+	font-family: "Proxima Nova";
+	font-weight: 400;
+	font-size: 18px;
+	line-height: 30px;
+	letter-spacing: 0px;
+	color: #333333;
+	background: url("../img/terms_icon.svg");
+	background-repeat: no-repeat;
+	background-position: left center;
+}
 
 .balance__download {
-    top: -4px;
-    position: relative;
-    font-family: "Proxima Nova";
-    font-weight: 400;
-    font-size: 16px;
-    line-height: 25px;
-    letter-spacing: 0px;
-    color: #0388EF;
+	top: -4px;
+	position: relative;
+	font-family: "Proxima Nova";
+	font-weight: 400;
+	font-size: 16px;
+	line-height: 25px;
+	letter-spacing: 0px;
+	color: #0388EF;
 
-  }
+}
 
 .balance__quantity {
-    font-family: "Akrobat";
-    font-weight: 600;
-    font-size: 60px;
-    line-height: 60px;
-    letter-spacing: -0.86px;
-    color: #111111;
-    margin-right: 43px;
-  }
+	font-family: "Akrobat";
+	font-weight: 600;
+	font-size: 60px;
+	line-height: 60px;
+	letter-spacing: -0.86px;
+	color: #111111;
+	margin-right: 43px;
+}
 
 .balance__button {
-    font-family: "Proxima Nova";
-    font-weight: 600;
-    font-size: 14px;
-    line-height: 17px;
-    letter-spacing: 0px;
-    color: #ffffff;
-    background: #0388EF;
-    margin-top: -19px;
-    padding: 13px 40px 12px;
-  }
+	font-family: "Proxima Nova";
+	font-weight: 600;
+	font-size: 14px;
+	line-height: 17px;
+	letter-spacing: 0px;
+	color: #ffffff;
+	background: #0388EF;
+	margin-top: -19px;
+	padding: 13px 40px 12px;
+}
 
 .invoices_item {
-  display: table-row;
+	display: table-row;
 }
 
 .invoices_item__cell {
-    display: table-cell;
-    vertical-align: middle;
-    padding-bottom: 15px;
-    padding-top: 13px;
-    border-bottom: 1px solid #EBEDEF;
-  }
+	display: table-cell;
+	vertical-align: middle;
+	padding-bottom: 15px;
+	padding-top: 13px;
+	border-bottom: 1px solid #EBEDEF;
+}
 
 .invoices_item__cell--number {
-      width: 222px;
-    }
+	width: 222px;
+}
 
 .invoices_item__cell--client {
-      width: 319px;
-    }
+	width: 319px;
+}
 
 .invoices_item__cell--amount {
-      width: 135px;
-    }
+	width: 135px;
+}
 
 .invoices_item__cell--currency {
-      width: 145px;
-    }
+	width: 145px;
+}
 
 .invoices_item__cell--status {
-      width: 147px;
-    }
+	width: 147px;
+}
 
 .invoices_item__cell--delete {
-      text-align: right;
-    }
+	text-align: right;
+}
 
 .invoices_item__cell--delete .btn--icon {
-        color: rgba(140, 148, 160, 1);
-      }
+	color: rgba(140, 148, 160, 1);
+}
 
 .invoices_item__cell--delete .btn--disabled {
-        background: transparent !important;
-        color: rgba(140, 148, 160, 0.2) !important;
-      }
+	background: transparent !important;
+	color: rgba(140, 148, 160, 0.2) !important;
+}
 
 .invoices_item__text {
-    font-family: "Proxima Nova";
-    font-weight: 400;
-    font-size: 18px;
-    line-height: 22px;
-    letter-spacing: 0px;
-    color: #333333;
-  }
+	font-family: "Proxima Nova";
+	font-weight: 400;
+	font-size: 18px;
+	line-height: 22px;
+	letter-spacing: 0px;
+	color: #333333;
+}
 
 .invoices_item__text--small {
-      font-size: 16px;
-      line-height: 20px;
-    }
+	font-size: 16px;
+	line-height: 20px;
+}
 
 .invoices_item__text--light {
-      font-size: 16px;
-      line-height: 20px;
-      color: #8C94A0;
-      margin-top: 5px;
-    }
+	font-size: 16px;
+	line-height: 20px;
+	color: #8C94A0;
+	margin-top: 5px;
+}
 
 .invoices_item__status {
-    font-family: "Proxima Nova";
-    font-weight: 600;
-    font-size: 13px;
-    line-height: 13px;
-    letter-spacing: 0.9px;
-    color: #ffffff;
-    padding: 6px 10px 4px;
-    border-radius: 3px;
-    background: #ffffff;
-    display: inline-block;
-    text-transform: uppercase;
-  }
+	font-family: "Proxima Nova";
+	font-weight: 600;
+	font-size: 13px;
+	line-height: 13px;
+	letter-spacing: 0.9px;
+	color: #ffffff;
+	padding: 6px 10px 4px;
+	border-radius: 3px;
+	background: #ffffff;
+	display: inline-block;
+	text-transform: uppercase;
+}
 
 .invoices_item__status--paid {
-      background: #13B72A;
-    }
+	background: #13B72A;
+}
 
 .invoices_item__status--unpaid {
-      background: #FFAE2C;
-    }
+	background: #FFAE2C;
+}
 
 .invoices_item__status--draft {
-      background: #A9AFB8;
-    }
+	background: #A9AFB8;
+}
 
 .invoices .tab-content {
-    padding-bottom: 44px;
-  }
+	padding-bottom: 44px;
+}
 
 .invoices__title {
-    font-family: "Akrobat";
-    font-weight: 700;
-    font-size: 26px;
-    line-height: 35px;
-    letter-spacing: 0px;
-    color: #111111;
-    margin-bottom: 26px;
-  }
+	font-family: "Akrobat";
+	font-weight: 700;
+	font-size: 26px;
+	line-height: 35px;
+	letter-spacing: 0px;
+	color: #111111;
+	margin-bottom: 26px;
+}
 
 .invoices__head .nav-tabs {
-      margin-bottom: 34px !important;
-    }
+	margin-bottom: 34px !important;
+}
 
 .invoices__head .nav-tabs>li>a {
-      font-family: "Proxima Nova";
-      font-weight: 400;
-      font-size: 18px;
-      line-height: 22px;
-      letter-spacing: -0px;
-      color: #3F4D60;
-      padding: 16px 15px;
-    }
+	font-family: "Proxima Nova";
+	font-weight: 400;
+	font-size: 18px;
+	line-height: 22px;
+	letter-spacing: -0px;
+	color: #3F4D60;
+	padding: 16px 15px;
+}
 
 .invoices__head .nav-tabs>li.active>a, .invoices__head .nav-tabs>li.active>a:hover, .invoices__head .nav-tabs>li.active>a:focus {
-      border-bottom: 2px solid #0388EF;
-      font-weight: 600;
-      color: #333333;
-      letter-spacing: -0.5px;
-    }
+	border-bottom: 2px solid #0388EF;
+      
+	color: #333333;
+
+}
 
 .invoices__search {
-    background: transparent;
-    color: #B2B8BF ;
-    border: 0;
-    font-weight: 600;
-    font-size: 18px;
-    padding: 14px 0;
-    padding-right: 4px;
-    line-height: 1.42857143;
-    display: block;
-  }
+	background: transparent;
+	color: #B2B8BF ;
+	border: 0;
+	font-weight: 600;
+	font-size: 18px;
+	padding: 14px 0;
+	padding-right: 4px;
+	line-height: 1.42857143;
+	display: block;
+}
 
 .invoices__table {
-    display: table;
-    width: 100%;
-  }
+	display: table;
+	width: 100%;
+}
 
 .invoices__table .invoices_item:last-child .invoices_item__cell {
-        border-bottom: none;
-      }
+	border-bottom: none;
+}
 
 .invoices__row {
-    display: table-row;
-  }
+	display: table-row;
+}
 
 .invoices__cell {
-    display: table-cell;
-    vertical-align: middle;
-    padding-bottom: 5px;
-    font-family: "Proxima Nova";
-    font-weight: 600;
-    font-size: 18px;
-    line-height: 30px;
-    letter-spacing: 0.2px;
-    color: #333333;
-  }
+	display: table-cell;
+	vertical-align: middle;
+	padding-bottom: 5px;
+	font-family: "Proxima Nova";
+	font-weight: 600;
+	font-size: 18px;
+	line-height: 30px;
+	letter-spacing: 0.2px;
+	color: #333333;
+}
 
 .invoices__cell--number {
-      width: 222px;
-    }
+	width: 222px;
+}
 
 .invoices__cell--client {
-      width: 319px;
-    }
+	width: 319px;
+}
 
 .invoices__cell--amount {
-      width: 135px;
-    }
+	width: 135px;
+}
 
 .invoices__cell--currency {
-      width: 145px;
-    }
+	width: 145px;
+}
 
 .invoices__cell--status {
-      width: 147px;
-    }
+	width: 147px;
+}
 
 .create {
-  position: fixed;
-  z-index: 115;
-  background: #fff;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  max-width: 100%;
-  -webkit-transition: -webkit-transform 0.3s ease;
-  -o-transition: -o-transform 0.3s ease;
-  transition: -webkit-transform 0.3s ease;
-  -o-transition: transform 0.3s ease;
-  transition: transform 0.3s ease;
-  transition: transform 0.3s ease, -webkit-transform 0.3s ease;
-  -webkit-transform: translate(100%, 0);
-  -ms-transform: translate(100%, 0);
-  transform: translate(100%, 0);
-  width: 550px;
+	position: fixed;
+	z-index: 115;
+	background: #fff;
+	top: 0;
+	right: 0;
+	bottom: 0;
+	max-width: 100%;
+	-webkit-transition: -webkit-transform 0.3s ease;
+	-o-transition: -o-transform 0.3s ease;
+	transition: -webkit-transform 0.3s ease;
+	-o-transition: transform 0.3s ease;
+	transition: transform 0.3s ease;
+	transition: transform 0.3s ease, -webkit-transform 0.3s ease;
+	-webkit-transform: translate(100%, 0);
+	-ms-transform: translate(100%, 0);
+	transform: translate(100%, 0);
+	width: 550px;
 }
 
 .create--open {
-    -webkit-transform: translate(0, 0);
-    -ms-transform: translate(0, 0);
-    transform: translate(0, 0);
-  }
+	-webkit-transform: translate(0, 0);
+	-ms-transform: translate(0, 0);
+	transform: translate(0, 0);
+}
 
 .create__body {
-    overflow: hidden;
-    overflow-y: visible;
-    height: 100%;
-    -webkit-overflow-scrolling: touch;
-    padding: 45px 38px;
-  }
+	overflow: hidden;
+	overflow-y: visible;
+	height: 100%;
+	-webkit-overflow-scrolling: touch;
+	padding: 45px 38px;
+}
 
 .create__top {
-    font-family: "Proxima Nova";
-    font-weight: 400;
-    font-size: 16px;
-    line-height: 24px;
-    letter-spacing: 0.5px;
-    color: rgba(63, 77, 96, 0.6);
-    background: #F5F6F7;
-    padding: 17px 38px;
-  }
+	font-family: "Proxima Nova";
+	font-weight: 400;
+	font-size: 16px;
+	line-height: 24px;
+	letter-spacing: 0.5px;
+	color: rgba(63, 77, 96, 0.6);
+	background: #F5F6F7;
+	padding: 17px 38px;
+}
 
 .create__top-link {
-      color: rgba(63, 77, 96, 1);
-      letter-spacing: 0px;
-      font-size: 16px;
-    }
+	color: rgba(63, 77, 96, 1);
+	letter-spacing: 0px;
+	font-size: 16px;
+}
 
 .create__top-item {
-      display: inline;
-    }
+	display: inline;
+}
 
 .create__top-arrow {
-      display: inline;
-      padding-left: 8px;
+	display: inline;
+	padding-left: 8px;
 
-    }
+}
 
 .create__top-arrow i {
-        font-size: 11px;
-      }
+	font-size: 11px;
+}
 
 .create__title {
-    font-family: "Akrobat";
-    font-weight: 600;
-    font-size: 60px;
-    line-height: 60px;
-    letter-spacing: -0.86px;
-    color: #111111;
-    margin-bottom: 37px;
-  }
+	font-family: "Akrobat";
+	font-weight: 600;
+	font-size: 60px;
+	line-height: 60px;
+	letter-spacing: -0.86px;
+	color: #111111;
+	margin-bottom: 37px;
+}
 
 .create__form {
-    margin-bottom: 40px;
-  }
+	margin-bottom: 40px;
+}
 
 .create__input-group {
-    margin-bottom: 22px;
-  }
+	margin-bottom: 22px;
+}
 
 .create__input-group:before, .create__input-group:after {
-  content: " ";
-  display: table;
+	content: " ";
+	display: table;
 }
 
 .create__input-group:after {
-  clear: both;
+	clear: both;
 }
 
 .create__input-amount {
-    float: left;
-    width: 265px;
-  }
+	float: left;
+	width: 265px;
+}
 
 .create__input-date {
-    float: right;
-    width: 175px;
-  }
+	float: right;
+	width: 175px;
+}
 
 .create__input-label {
-    font-family: "Proxima Nova";
-    font-weight: 400;
-    font-size: 16px;
-    line-height: 24px;
-    letter-spacing: 0px;
-    color: #3F4D60;
-    margin-bottom: 14px;
-  }
+	font-family: "Proxima Nova";
+	font-weight: 400;
+	font-size: 16px;
+	line-height: 24px;
+	letter-spacing: 0px;
+	color: #3F4D60;
+	margin-bottom: 14px;
+}
 
 .create__input-amount .input-group {
-      position: relative;
-    }
+	position: relative;
+}
 
 .create__input-amount input {
-      padding-right: 60px;
-    }
+	padding-right: 60px;
+}
 
 .create__input-amount span {
-      position: absolute;
-      top:50%;
-      right: 20px;
-      -webkit-transform: translateY(-50%);
-      -ms-transform: translateY(-50%);
-      transform: translateY(-50%);
-      font-family: "Proxima Nova";
-      font-weight: 400;
-      font-size: 16px;
-      line-height: 24px;
-      letter-spacing: 0px;
-      color: rgba(63, 77, 96, 0.6);
-    }
+	position: absolute;
+	top:50%;
+	right: 20px;
+	-webkit-transform: translateY(-50%);
+	-ms-transform: translateY(-50%);
+	transform: translateY(-50%);
+	font-family: "Proxima Nova";
+	font-weight: 400;
+	font-size: 16px;
+	line-height: 24px;
+	letter-spacing: 0px;
+	color: rgba(63, 77, 96, 0.6);
+}
 
 .create__input-date .input-group {
-      position: relative;
-    }
+	position: relative;
+}
 
 .create__input-date input {
-      padding-right: 40px;
-    }
+	padding-right: 40px;
+}
 
 .create__input-date i {
-      position: absolute;
-      top:50%;
-      right: 10px;
-      -webkit-transform: translateY(-50%);
-      -ms-transform: translateY(-50%);
-      transform: translateY(-50%);
-      color: #B2B8BF;
-    }
+	position: absolute;
+	top:50%;
+	right: 10px;
+	-webkit-transform: translateY(-50%);
+	-ms-transform: translateY(-50%);
+	transform: translateY(-50%);
+	color: #B2B8BF;
+}
 
 .create .btn--stroke {
-    -webkit-box-shadow: inset 0 0 0 2px transparent !important;
-    box-shadow: inset 0 0 0 2px transparent !important;
-    margin-bottom: 5px;
-  }
+	-webkit-box-shadow: inset 0 0 0 2px transparent !important;
+	box-shadow: inset 0 0 0 2px transparent !important;
+	margin-bottom: 5px;
+}
 
 .create__button {
-    display: block;
-    width: 100%;
-    margin-bottom: 25px;
-    background: #0388EF;
-  }
+	display: block;
+	width: 100%;
+	margin-bottom: 25px;
+	background: #0388EF;
+}
 
 .create__link {
-    display: block;
-    width: 100%;
-    margin-bottom: 25px;
-  }
+	display: block;
+	width: 100%;
+	margin-bottom: 25px;
+}
 
 .create__item {
-    border-top: 1px solid #EBEDEF;
-    padding-top: 14px;
-    padding-bottom: 10px;
-    position: relative;
-  }
+	border-top: 1px solid #EBEDEF;
+	padding-top: 14px;
+	padding-bottom: 10px;
+	position: relative;
+}
 
 .create__item-name {
-      font-family: "Proxima Nova";
-      font-weight: 600;
-      font-size: 18px;
-      line-height: 30px;
-      //letter-spacing: 0.5px;
-      color: #333333;
-    }
+	font-family: "Proxima Nova";
+	font-weight: 600;
+	font-size: 18px;
+	line-height: 30px;
+	//letter-spacing: 0.5px;
+	color: #333333;
+}
 
 .create__item-description {
-      font-family: "Proxima Nova";
-      font-weight: 400;
-      font-size: 16px;
-      line-height: 24px;
-      //letter-spacing: 0.5px;
-      color: rgba(63,77,96,0.6);
-    }
+	font-family: "Proxima Nova";
+	font-weight: 400;
+	font-size: 16px;
+	line-height: 24px;
+	//letter-spacing: 0.5px;
+	color: rgba(63,77,96,0.6);
+}
 
 .create__item-copy {
-      position: absolute;
-      top: 50%;
-      right: 5px;
-      -webkit-transform: translateY(-50%);
-      -ms-transform: translateY(-50%);
-      transform: translateY(-50%);
-      padding: 0;
-      border: none;
-      background: transparent;
-      color: #B2B8BF;
-    }
+	position: absolute;
+	top: 50%;
+	right: 5px;
+	-webkit-transform: translateY(-50%);
+	-ms-transform: translateY(-50%);
+	transform: translateY(-50%);
+	padding: 0;
+	border: none;
+	background: transparent;
+	color: #B2B8BF;
+}
 
 .create__item-group:before, .create__item-group:after {
-  content: " ";
-  display: table;
+	content: " ";
+	display: table;
 }
 
 .create__item-group:after {
-  clear: both;
+	clear: both;
 }
 
 .create__item-group {
-  margin-top: 14px;
+	margin-top: 14px;
 }
 
 .create__item-group button {
-        float: right;
-        background: #0388EF;
+	float: right;
+	background: #0388EF;
 }
 
 .create__item-input {
-      position: relative;
-      width: 400px;
-      float: left;
-    }
+	position: relative;
+	width: 400px;
+	float: left;
+}
 
 .create__item-input i {
-        position: absolute;
-        top: 50%;
-        left: 10px;
-        -webkit-transform: translateY(-50%);
-        -ms-transform: translateY(-50%);
-        transform: translateY(-50%);
-      }
+	position: absolute;
+	top: 50%;
+	left: 10px;
+	-webkit-transform: translateY(-50%);
+	-ms-transform: translateY(-50%);
+	transform: translateY(-50%);
+}
 
 .create__item-input input {
-        padding-left: 40px;
-      }
+	padding-left: 40px;
+}
 
 .create__actions {
-    padding-top: 50px;
-    padding-bottom: 50px;
-  }
+	padding-top: 50px;
+	padding-bottom: 50px;
+}
 
 .welcome {
-  padding-top: 59px;
-  padding-bottom: 72px;
+	padding-top: 59px;
+	padding-bottom: 72px;
 
 
 
 }
 
 .welcome__left {
-    padding-left: 114px;
-  }
+	padding-left: 114px;
+}
 
 .welcome__title {
-    font-family: "Akrobat";
-    font-weight: 600;
-    font-size: 60px;
-    line-height: 60px;
-    letter-spacing: -0.86px;
-    color: #111111;
-    margin-bottom: 31px;
-  }
+	font-family: "Akrobat";
+	font-weight: 600;
+	font-size: 60px;
+	line-height: 60px;
+	letter-spacing: -0.86px;
+	color: #111111;
+	margin-bottom: 31px;
+}
 
 .welcome__subtitle {
-    font-family: "Proxima Nova";
-    font-weight: 400;
-    font-size: 18px;
-    line-height: 30px;
-    letter-spacing: 0px;
-    color: #3F4D60;
-    margin-bottom:59px;
-  }
+	font-family: "Proxima Nova";
+	font-weight: 400;
+	font-size: 18px;
+	line-height: 30px;
+	letter-spacing: 0px;
+	color: #3F4D60;
+	margin-bottom:59px;
+}
 
 .welcome__form-title {
-      font-family: "Proxima Nova";
-      font-weight: 600;
-      font-size: 22px;
-      line-height: 27px;
-      letter-spacing: 0px;
-      color: #333333;
-      margin-bottom: 22px;
-    }
+	font-family: "Proxima Nova";
+	font-weight: 600;
+	font-size: 22px;
+	line-height: 27px;
+	letter-spacing: 0px;
+	color: #333333;
+	margin-bottom: 22px;
+}
 
 .welcome__input {
-    position: relative;
-    width: 370px;
-    margin-bottom: 20px;
-  }
+	position: relative;
+	width: 370px;
+	margin-bottom: 20px;
+}
 
 .welcome__input i {
-      position: absolute;
-      top: 50%;
-      left:14px;
-      -webkit-transform: translateY(-50%);
-      -ms-transform: translateY(-50%);
-      transform: translateY(-50%);
-    }
+	position: absolute;
+	top: 50%;
+	left:14px;
+	-webkit-transform: translateY(-50%);
+	-ms-transform: translateY(-50%);
+	transform: translateY(-50%);
+}
 
 .welcome__input input {
-      padding-left: 50px;
-    }
+	padding-left: 50px;
+}
 
 .welcome__button {
-    margin-top:10px;
-    width: 370px;
-  }
+	margin-top:10px;
+	width: 370px;
+}
 
 .welcome__right {
-    padding-top: 34px;
-  }
+	padding-top: 34px;
+}
 
 .welcome__item {
-    padding-left: 98px;
-    padding-right: 170px;
-    margin-bottom: 62px;
-  }
+	padding-left: 98px;
+	padding-right: 170px;
+	margin-bottom: 62px;
+}
 
 .welcome__item--balance {
-      background: url("../img/balance.svg") no-repeat;
-      background-position: 4px 5px;
-    }
+	background: url("../img/balance.svg") no-repeat;
+	background-position: 4px 5px;
+}
 
 .welcome__item--refund {
-      background: url("../img/refund.svg") no-repeat;
-      background-position: 3px 0px;
-    }
+	background: url("../img/refund.svg") no-repeat;
+	background-position: 3px 0px;
+}
 
 .welcome__item--multiple {
-      background: url("../img/multiple.svg") no-repeat;
-      background-position: 4px 0px;
-    }
+	background: url("../img/multiple.svg") no-repeat;
+	background-position: 4px 0px;
+}
 
 .welcome__item-title {
-      font-family: "Proxima Nova";
-      font-weight: 600;
-      font-size: 21px;
-      line-height: 25px;
-      letter-spacing: 0px;
-      color: #111111;
-      margin-bottom: 8px;
-    }
+	font-family: "Proxima Nova";
+	font-weight: 600;
+	font-size: 21px;
+	line-height: 25px;
+	letter-spacing: 0px;
+	color: #111111;
+	margin-bottom: 8px;
+}
 
 .welcome__item-text {
-      font-family: "Proxima Nova";
-      font-weight: 400;
-      font-size: 18px;
-      line-height: 30px;
-      letter-spacing: 0px;
-      color: #657180;
-    }
+	font-family: "Proxima Nova";
+	font-weight: 400;
+	font-size: 18px;
+	line-height: 30px;
+	letter-spacing: 0px;
+	color: #657180;
+}
+
+.invoice_address {
+	width: 100%;
+	padding-bottom: 10px;
+	margin-bottom: 58px;
+	position: relative;
+	padding-top: 19px
+}
+
+.invoice_address:after {
+	position: absolute;
+	content: '';
+	bottom: 0px;
+	left: 0px;
+	right: 0px;
+	height: 1px;
+	background: #EAEDEF;
+}
+
+.invoice_address:before {
+	position: absolute;
+	content: '';
+	top: 0px;
+	left: 0px;
+	right: 0px;
+	height: 1px;
+	background: #EAEDEF;
+}
+
+.invoice_address .icon--copy {
+	color: #B2B8BF;
+}
+
+.invoice_address__text {
+	font-family: "Proxima Nova";
+	font-weight: 600;
+	font-size: 18px;
+	line-height: 30px;
+	letter-spacing: 0px;
+	color: #333333;
+	padding-right: 60px;
+}
+
+.invoice_address__link {
+	font-family: "Proxima Nova";
+	font-weight: 400;
+	font-size: 16px;
+	line-height: 24px;
+	letter-spacing: 0px;
+	color: #3F4D60;
+	top: -5px;
+	position: relative;
+	height: 20px;
+	overflow: hidden;
+}
+
+.invoice_address__button {
+	text-align: right;
+	position: absolute;
+	top: 25px;
+	right: 15px;
+}
+
+.invoice_address__button a {
+	padding: 0;
+	border: none;
+	background: transparent;
+	width: 20px;
+	height: 20px;
+	position: relative;
+}
+
+.invoice_address__button i {
+	font-size: 20px;
+}
+
+.error {
+	text-align: center;
+	padding-top: 164px;
+	padding-bottom: 145px;
+
+
+}
+
+.error__image {
+	margin-bottom: 42px;
+}
+
+.error__title {
+	font-family: "Akrobat";
+	font-weight: 700;
+	font-size: 26px;
+	line-height: 35px;
+	letter-spacing: 0px;
+	color: #111111;
+	margin-bottom: 41px;
+}
+
+.error__subtitle {
+	font-family: "Proxima Nova";
+	font-weight: 400;
+	font-size: 18px;
+	line-height: 30px;
+	letter-spacing: 0px;
+	color: #3F4D60;
+	margin: 0 auto;
+	max-width: 590px;
+	margin-bottom: 35px;
+}
+
+.error__button {
+	padding: 12px 64px;
+}
+
+.profile_search:before, .profile_search:after {
+	content: " ";
+	display: table;
+}
+
+.profile_search:after {
+	clear: both;
+}
+
+.profile_search {
+	padding-top: 0px;
+	padding-bottom: 0px;
+	display: none;
+}
+
+.profile_search.vis {
+	padding-top: 5px;
+	padding-bottom: 35px;
+	display: block;
+}
+
+.profile_search__select {
+	width: 200px;
+	float: left;
+	margin-right: 30px;
+}
+
+.profile_search__input_group {
+	position: relative;
+	width: 870px;
+	float: left;
+}
+
+.profile_search__button_search {
+	position: absolute;
+	padding: 0;
+	border: none;
+	background: transparent;
+	left: 10px;
+	top: 0;
+	bottom: 0;
+	width: 40px;
+}
+
+.profile_search__button_search i {
+	color: rgba(63, 77, 96, 0.35);
+}
+
+.profile_search__button_close {
+	padding: 0;
+	position: absolute;
+	border: none;
+	right: 20px;
+	top: 50%;
+	-webkit-transform: translateY(-50%);
+	-ms-transform: translateY(-50%);
+	transform: translateY(-50%);
+	width: 20px;
+	height: 20px;
+	border-radius: 20px;
+	background: #CFD2D7 url("../img/icon-close.svg") no-repeat;
+	background-size: 10px;
+	background-position: center;
+}
+
+.profile_search__input {
+	padding-left: 45px;
+}
+
+.profile_search__button {
+	border: none;
+	background: transparent;
+	padding: 0;
+	display: block;
+	height: 50px;
+	float: right;
+	text-align: right;
+	font-family: "Proxima Nova";
+	font-weight: 400;
+	font-size: 16px;
+	line-height: 20px;
+	color: rgba(63, 77, 96, 0.6);
+}
 
 @media (max-width: 991px) {
-  .state--pr0-sm {
-    padding-right: 0;
-  }
-  .invoice {
-    padding-bottom: 67px;
-    max-width: 580px;
-  }
-    .invoice__top:after {}
-    .invoice__qr {
-      padding-right: 5px;
+	.state--pr0-sm {
+		padding-right: 0;
+	}
+	.invoice {
+		padding-bottom: 67px;
+		max-width: 580px;
+		padding-top: 58px;
+	}
 
-    }
-    .invoice__payment {
-      padding-left: 40px;
-
-    }
-    .invoice__original {
-      padding-left: 40px
-    }
-    .invoice__original:after {
-    left: 40px;
-  }
-    .invoice__description {
-      padding-left: 40px;
-    }
-    .invoice__row {
-      padding-right: 5px;
-    }
+	.invoice__qr {
+		padding-right: 5px;
+	}
+	.invoice__payment {
+		padding-left: 40px;
+	}
+	.invoice__original {
+		padding-left: 40px
+	}
+	.invoice__original:after {
+		left: 40px;
+	}
+	.invoice__description {
+		padding-left: 40px;
+	}
+	.invoice__row {
+		padding-right: 5px;
+	}
+	.invoice_address {}
 }
 
 @media (max-width: 767px) {
-  .state--pr0-sm {
-    padding-right: 15px;
-  }
-  .invoice {
-    padding-top: 34px;
-    padding-bottom: 0;
-    max-width: 320px;
-  }
-    .invoice__top {
-      text-align: left;
-      margin-bottom: 44px
-    }
-    .invoice__top:after {
-    top: 85px;
-    width: 100%;
-  }
-    .invoice__title {
-      font-size: 26px;
-      line-height: 31px;
-      letter-spacing: -0.37px;
-      margin-bottom: 12px;
-    }
-    .invoice__subtitle {
-      font-size: 16px;
-      line-height: 20px;
-    }
-    .invoice__qr {
-      text-align: center;
-      margin-bottom: 20px;
-    }
-      .invoice__qr img {
-        max-width: 152px;
-      }
-    .invoice__remain {
-      float: none;
-      margin: 0 auto;
-      border: 1px solid #E6E8EA;
-      width: 220px;
-      height: 55px;
-      margin-bottom: 50px;
-    }
-    .invoice__payment {
-      padding-left: 0;
-      font-size: 24px;
-      line-height: 29px;
-      margin-bottom: 11px
-    }
-    .invoice__payment:after {
-    position: absolute;
-    content: '';
-    top: -20px;
-    left: 0;
-    right: 0;
-    height: 1px;
-    background: #EAEDEF;
-  }
-    .invoice__info {
-      font-size: 10px;
-      line-height: 12px;
-      letter-spacing: 1.77px;
-      margin-top: -2px;
-    }
-    .invoice__original {
-      padding-left: 0px;
-      font-size: 24px;
-      line-height: 29px;
-      margin-bottom: 40px
-    }
-    .invoice__original:after {
-    bottom: -23px;
-    left: 0;
-    width: 100%;
-  }
-    .invoice__description {
-      padding-left: 0px;
-    }
-    .invoice__label {
-      font-size: 13px;
-      line-height: 16px;
-    }
-    .invoice__value {
-      font-size: 13px;
-      line-height: 16px;
-      margin-top: 3px;
-    }
+	.state--pr0-sm {
+		padding-right: 15px;
+	}
+	.invoice {
+		padding-top: 34px;
+		padding-bottom: 0;
+		max-width: 320px;
+	}
+	.invoice__top {
+		text-align: left;
+		margin-bottom: 25px
+	}
+	.invoice__top:after {
+		top: 85px;
+		width: 100%;
+	}
+	.invoice__title {
+		font-size: 26px;
+		line-height: 31px;
+		letter-spacing: -0.37px;
+		margin-bottom: 12px;
+	}
+	.invoice__subtitle {
+		font-size: 16px;
+		line-height: 20px;
+	}
+	.invoice__qr {
+		text-align: center;
+		margin-bottom: 20px;
+	}
+	.invoice__qr img {
+		max-width: 152px;
+	}
+	.invoice__remain {
+		float: none;
+		margin: 0 auto;
+		border: 1px solid #E6E8EA;
+		width: 220px;
+		height: 55px;
+		margin-bottom: 50px;
+	}
+	.invoice__payment {
+		padding-left: 0;
+		font-size: 24px;
+		line-height: 29px;
+		margin-bottom: 11px
+	}
+	.invoice__payment:after {
+		position: absolute;
+		content: '';
+		top: -20px;
+		left: 0;
+		right: 0;
+		height: 1px;
+		background: #EAEDEF;
+	}
+	.invoice__info {
+		font-size: 10px;
+		line-height: 12px;
+		letter-spacing: 1.77px;
+		margin-top: -2px;
+	}
+	.invoice__original {
+		padding-left: 0px;
+		font-size: 24px;
+		line-height: 29px;
+		margin-bottom: 40px
+	}
+	.invoice__original:after {
+		bottom: -23px;
+		left: 0;
+		width: 100%;
+	}
+	.invoice__description {
+		padding-left: 0px;
+	}
+	.invoice__label {
+		font-size: 13px;
+		line-height: 16px;
+	}
+	.invoice__value {
+		font-size: 13px;
+		line-height: 16px;
+		margin-top: 3px;
+	}
+	.invoice_address {
+		width: 100%;
+	}
 }
 
 @media (max-width: 543px) {}

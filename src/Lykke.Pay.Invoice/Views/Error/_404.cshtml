@@ -1,0 +1,16 @@
+﻿@{
+    ViewData["Title"] = "Error";
+}
+
+<article class="">
+    <div class="container-full">
+        <div class="error">
+            <img src="img/404.svg" alt="" class="error__image">
+            <div class="error__title">Account successfully created</div>
+            <div class="error__subtitle">This content has been moved or is no longer available. If you have any other problem contact ous support:
+                <a href="mailto:support@lykke.com">support@lykke.com</a>
+            </div>
+            <button type="button" name="button" class="btn error__button" onclick="location.href='@Url.Action("Welcome", "Home")'">Go home</button>
+        </div>
+    </div>
+</article>

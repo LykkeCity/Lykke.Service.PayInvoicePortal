@@ -8,8 +8,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="theme-color" content="#ffffff">
     <meta name="format-detection" content="telephone=no">
-    <link rel="icon" type="image/png" href="favicon-32x32.png" sizes="32x32">
-    <link rel="icon" type="image/png" href="favicon-16x16.png" sizes="16x16">
+    <link rel="icon" type="image/png" href="/img/favicon-32x32.png" sizes="32x32">
+    <link rel="icon" type="image/png" href="/img/favicon-16x16.png" sizes="16x16">
     <link rel="stylesheet" href="~/css/bootstrap-custom.min.css">
     <link rel="stylesheet" href="~/css/shared.css">
     <link rel="stylesheet" media="all" href="~/css/app.css">
@@ -25,7 +25,7 @@
             </button>
             <div class="header_logo">
                 <a href="/">
-                    <img class="header_logo__img" src="img/lykke_new.svg" height="40" alt="lykke_logo"> </a>
+                    <img class="header_logo__img" src="/img/lykke_new.svg" height="40" alt="lykke_logo"> </a>
             </div>
         </div>
         <div class="sidebar_menu__body">
@@ -33,7 +33,7 @@
                 <li class="main_projects_list__item">
                     <a href="https://www.lykke.com/" target="_blank" class="main_projects_list__link">
                         <div class="main_projects_list__img">
-                            <img src="img/lykke_wallet_logo.svg" alt="lykke_wallet_logo" width="50"> </div>
+                            <img src="/img/lykke_wallet_logo.svg" alt="lykke_wallet_logo" width="50"> </div>
                         <div class="main_projects_list__content">
                             <div class="main_projects_list__title">Lykke
                                 <span>Wallet</span>
@@ -45,7 +45,7 @@
                 <li class="main_projects_list__item">
                     <a href="https://streams.lykke.com/" target="_blank" class="main_projects_list__link">
                         <div class="main_projects_list__img">
-                            <img src="img/streams_logo.svg" alt="streams_logo" width="50"> </div>
+                            <img src="/img/streams_logo.svg" alt="streams_logo" width="50"> </div>
                         <div class="main_projects_list__content">
                             <div class="main_projects_list__title">Lykke
                                 <span>Streams</span>
@@ -57,7 +57,7 @@
                 <li class="main_projects_list__item">
                     <a href="https://blockchainexplorer.lykke.com/" target="_blank" class="main_projects_list__link">
                         <div class="main_projects_list__img">
-                            <img src="img/bl_explorer_logo.svg" alt="bl_explorer_logo" width="50"> </div>
+                            <img src="/img/bl_explorer_logo.svg" alt="bl_explorer_logo" width="50"> </div>
                         <div class="main_projects_list__content">
                             <div class="main_projects_list__title">Blockchain
                                 <span>Explorer</span>
@@ -69,7 +69,7 @@
                 <li class="main_projects_list__item">
                     <a href="" target="_blank" class="main_projects_list__link">
                         <div class="main_projects_list__img">
-                            <img src="img/issuer_portal_logo.svg" alt="issuer_portal_logo" width="50"> </div>
+                            <img src="/img/issuer_portal_logo.svg" alt="issuer_portal_logo" width="50"> </div>
                         <div class="main_projects_list__content">
                             <div class="main_projects_list__title">Issuer
                                 <span>Portal</span>
@@ -144,7 +144,7 @@
             </div>
             <div class="header__logo header_logo">
                 <a href="/">
-                    <img class="header_logo__img" src="img/lykke_new.svg" height="36" alt="lykke_logo"> </a>
+                    <img class="header_logo__img" src="/img/lykke_new.svg" height="36" alt="lykke_logo"> </a>
             </div>
             @*<div class="header__actions header_actions pull-right">
                 <!--div class="header_actions__logout visible-xs pull-right">
@@ -157,7 +157,7 @@
                         <a href="/Home/SignIn">
                             <!--<div class="header_login__title">Sign in</div>-->
                             <div class="header_user__img">
-                                <img src="img/user_default.svg" width="40" alt="user_image"> </div>
+                                <img src="/img/user_default.svg" width="40" alt="user_image"> </div>
                             <div class="header_login__title">Leroy</div>
                         </a>
                     </div>
@@ -204,11 +204,9 @@
         </div>
     </header>
 </div>
-<article class="content">
-<div class="container">
+
     @RenderBody()
-</div>
-</article>
+
 <footer class="footer">
     <div class="footer__top">
         <div class="container">
@@ -218,11 +216,11 @@
                     <div class="apps apps--left">
                         <div class="apps_apple">
                             <a href="https://appsto.re/ru/Dwjvcb.i" class="app_link app_link--appstore" title="App Store" target="_blank" rel="noopener noreferrer">
-                                <img src="img/appstore-badge.svg" width="170" alt="apps_apple"> </a>
+                                <img src="/img/appstore-badge.svg" width="170" alt="apps_apple"> </a>
                         </div>
                         <div class="apps_google">
                             <a href="https://play.google.com/store/apps/details?id=com.lykkex.LykkeWallet" class="app_link app_link--googleplay" title="Google Play" target="_blank" rel="noopener noreferrer">
-                                <img src="img/google-play.svg" width="170" alt="apps_google"> </a>
+                                <img src="/img/google-play.svg" width="170" alt="apps_google"> </a>
                         </div>
                     </div>
                     <div class="block_subscribe">
@@ -386,15 +384,10 @@
         </div>
     </div>
 </footer>
-<!--<script src="node_modules/LykkeFramework/public/js/vendor/jquery.min.js"></script>
-<script src="node_modules/LykkeFramework/public/js/vendor/bootstrap.min.js"></script>
-<script src="node_modules/LykkeFramework/public/js/vendor/moment.min.js"></script>
-<script src="node_modules/LykkeFramework/public/js/vendor/bootstrap-datetimepicker.min.js"></script>
-<script type="text/javascript" src="node_modules/LykkeFramework/public/js/app.js"></script>-->
-<script src="js/vendor/jquery.min.js"></script>
-<script src="js/vendor/bootstrap.min.js"></script>
-<script src="js/functions.js"></script>
-<script type="text/javascript" src="js/app.js"></script>
+<script src="/js/vendor/jquery.min.js"></script>
+<script src="/js/vendor/bootstrap.min.js"></script>
+<script src="/js/functions.js"></script>
+<script type="text/javascript" src="/js/app.js"></script>
 @RenderSection("Scripts", required: false)
 </body>
 </html>
