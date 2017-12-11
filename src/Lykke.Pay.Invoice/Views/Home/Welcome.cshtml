@@ -1,8 +1,8 @@
-﻿@model Lykke.Pay.Invoice.Models.InvoiceResult
+﻿@model Lykke.Pay.Invoice.Models.MerchantStaffSignInRequest
 @{
     ViewData["Title"] = "Invoices for live";
 }
-
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 <article class="">
     <div class="container-full">
         <div class="welcome">
@@ -12,16 +12,23 @@
                     <div class="welcome__subtitle">Lorem ipsum dolor sit amet, consectetur
                         <br> adipiscing elit, sed do eiusmod tempor incididunt
                         <br> ut labore et dolore magna aliqua.</div>
+                    @using (Html.BeginForm())
+                    {
+                    <input type="hidden" id="returnUrl" value="@ViewData["returnUrl"]">
                     <div class="welcome__form">
                         <div class="welcome__form-title">Sign in</div>
                         <div class="welcome__input">
                             <i class="icon icon--email"></i>
-                            <input type="text" placeholder="E-mail" class="form-control"> </div>
+                            <input type="text" asp-for="Login" placeholder="E-mail" class="form-control">
+                        </div>
                         <div class="welcome__input">
                             <i class="icon icon--lock"></i>
-                            <input type="text" placeholder="Password" class="form-control"> </div>
-                        <button type="button" name="button" class="btn welcome__button">Sign in</button>
+                            <input type="password" asp-for="Password" placeholder="Password" class="form-control">
+                        </div>
+                        <button type="submit" name="button" class="btn welcome__button">Sign in</button>
                     </div>
+                    }
+                    
                 </div>
                 <div class="col-xs-6 welcome__right">
                     <div class="welcome__item welcome__item--balance">

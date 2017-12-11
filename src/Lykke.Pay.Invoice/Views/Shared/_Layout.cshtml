@@ -1,4 +1,5 @@
 ﻿@inject Microsoft.ApplicationInsights.AspNetCore.JavaScriptSnippet JavaScriptSnippet
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -146,31 +147,35 @@
                 <a href="/">
                     <img class="header_logo__img" src="/img/lykke_new.svg" height="36" alt="lykke_logo"> </a>
             </div>
-            @*<div class="header__actions header_actions pull-right">
-                <!--div class="header_actions__logout visible-xs pull-right">
-                <a href="/Home/LogOut" class="btn btn--icon btn_logout">
-                    <i class="icon icon--exit"></i>
+@if (ViewContext.HttpContext.User.Identity.IsAuthenticated)
+{
+    <div class="header__actions header_actions pull-right">
+        <!--div class="header_actions__logout visible-xs pull-right">
+        <a href="/Home/LogOut" class="btn btn--icon btn_logout">
+            <i class="icon icon--exit"></i>
+        </a>
+        </div-->
+
+        <div class="header_actions__login header_login pull-right">
+            <div class="header_user dropdown__control">
+                <a href="/Home/SignIn">
+                    <!--<div class="header_login__title">Sign in</div>-->
+                    <div class="header_user__img">
+                        <img src="/img/user_default.svg" width="40" alt="user_image">
+                    </div>
+                    <div class="header_login__title">@ViewContext.HttpContext.User.Identity.Name</div>
                 </a>
-                </div-->
-                <div class="header_actions__login header_login pull-right">
-                    <div class="header_user dropdown__control">
-                        <a href="/Home/SignIn">
-                            <!--<div class="header_login__title">Sign in</div>-->
-                            <div class="header_user__img">
-                                <img src="/img/user_default.svg" width="40" alt="user_image"> </div>
-                            <div class="header_login__title">Leroy</div>
-                        </a>
-                    </div>
-                    <!--TODO dropdown-->
-                    <div class="dropdown__container">
-                        <ul class="dropdown__nav">
-                            <li>
-                                <a href="/Home/LogOut">Sign Out</a>
-                            </li>
-                        </ul>
-                    </div>
-                </div>
-                <!--TODO search-->
+            </div>
+            <!--TODO dropdown-->
+            <div class="dropdown__container">
+                <ul class="dropdown__nav">
+                    <li>
+                        <a href="~/Home/SignOut">Sign Out</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        @*<!--TODO search-->
                 <div class="header_actions__search">
                     <button class="btn btn--icon btn_open_search" type="button">
                         <i class="icon icon--search"></i>
@@ -181,8 +186,9 @@
                     <button class="btn btn--icon" type="button">
                         <i class="icon icon--notificaton"></i>
                     </button>
-                </div>
-            </div>*@
+                </div>*@
+    </div>
+}
         </div>
         <div class="header_search">
             <div class="container">

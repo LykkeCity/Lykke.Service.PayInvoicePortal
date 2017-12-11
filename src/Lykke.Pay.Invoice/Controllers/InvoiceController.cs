@@ -17,25 +17,13 @@ using Newtonsoft.Json;
 
 namespace Lykke.Pay.Invoice.Controllers
 {
-    public class InvoiceController : Controller
+    public class InvoiceController : BaseController
     {
-        private readonly IInvoiceRepository _invoiceRequestRepo;
-        private readonly string _connectionStrings;
-        private readonly string _lykkePayOrderUrl;
-        private readonly string _merchantId;
-        private readonly string _merchantApiKey;
-        private readonly string _merchantPrivateKey;
+       
 
-        public InvoiceController(IConfiguration configuration)
+        public InvoiceController(IConfiguration configuration) : base(configuration)
         {
-            _connectionStrings = configuration.GetValue<string>("ConnectionStrings");
-            _lykkePayOrderUrl = configuration.GetValue<string>("LykkePayOrderUrl");
-            _merchantId = configuration.GetValue<string>("MerchantId");
-            _merchantApiKey = configuration.GetValue<string>("MerchantApiKey");
-            _merchantPrivateKey = configuration.GetValue<string>("MerchantPrivateKey");
 
-            _invoiceRequestRepo =
-                new InvoiceRepository(new AzureTableStorage<InvoiceEntity>(_connectionStrings, "Invoices", null));
         }
 
 
@@ -47,7 +35,7 @@ namespace Lykke.Pay.Invoice.Controllers
         public async Task<IActionResult> Index(string invoiceId)
         {
             var model = new InvoiceResult();
-            var inv = await _invoiceRequestRepo.GetInvoice(invoiceId);
+            var inv = await InvoiceRequestRepo.GetInvoice(invoiceId);
             if (inv == null)
             {
                 return NotFound();
@@ -75,18 +63,18 @@ namespace Lykke.Pay.Invoice.Controllers
 
 
             var bodyRequest = JsonConvert.SerializeObject(order);
-            var strToSign = string.Format("{0}{1}", _merchantApiKey, bodyRequest);
+            var strToSign = string.Format("{0}{1}", MerchantApiKey, bodyRequest);
 
 
-            var csp = CreateRsaFromPrivateKey(_merchantPrivateKey);//certificate.GetRSAPrivateKey();
+            var csp = CreateRsaFromPrivateKey(MerchantPrivateKey);//certificate.GetRSAPrivateKey();
             var sign = Convert.ToBase64String(csp.SignData(Encoding.UTF8.GetBytes(strToSign), HashAlgorithmName.SHA256, RSASignaturePadding.Pkcs1));
 
             var httpClient = new HttpClient();
-            httpClient.DefaultRequestHeaders.Add("Lykke-Merchant-Id", _merchantId);
+            httpClient.DefaultRequestHeaders.Add("Lykke-Merchant-Id", MerchantId);
             httpClient.DefaultRequestHeaders.Add("Lykke-Merchant-Sign", sign);
+            
 
-
-            var result = await httpClient.PostAsync(_lykkePayOrderUrl,
+            var result = await httpClient.PostAsync(LykkePayOrderUrl,
                 new StringContent(bodyRequest, Encoding.UTF8, "application/json"));
             var resp = await result.Content.ReadAsStringAsync();
 

@@ -2,8 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -30,7 +33,24 @@ namespace Lykke.Pay.Invoice
             // Add framework services.
             services.AddSingleton<IConfiguration>(Configuration);
             services.AddMvc();
-            
+
+            services.AddAuthentication(opts => {
+                    opts.DefaultAuthenticateScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+                    opts.DefaultChallengeScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+
+                })
+                .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme, o =>
+
+                {
+                    o.LoginPath = new PathString("/Home/Welcome");
+                    o.ExpireTimeSpan = TimeSpan.FromMinutes(int.Parse(Configuration["UserLoginTime"]));
+                });
+
+            services.AddAuthorization(options =>
+            {
+                options.DefaultPolicy = new AuthorizationPolicyBuilder(CookieAuthenticationDefaults.AuthenticationScheme).RequireAuthenticatedUser().Build();
+            });
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -50,7 +70,7 @@ namespace Lykke.Pay.Invoice
             }
             app.UseStatusCodePagesWithReExecute("/Error/{0}");
             app.UseStaticFiles();
-
+            app.UseAuthentication();
             app.UseMvc(routes =>
             {
                 routes.MapRoute(
