@@ -19,7 +19,8 @@
         "ConnectionStrings": "DefaultEndpointsProtocol=https;AccountName=kubetestmerchant;AccountKey=JyRnjWnTduXE84Nx1kKSPIReIog7GVLkecYc+lROkBmoNBYmJ8C9jQuu/5gY7UH+G0qalG3XjhSVz7EuAEn7mQ== ",
         "LykkePayUrl": "https://payapi-test.lykkex.net/api/",
         "ASPNETCORE_ENVIRONMENT": "Development",
-        "MerchantAuthService": "http://pay-merchant-auth.lykke-pay.svc.cluster.local/api/merchant/staffSignIn"
+        "MerchantAuthService": "http://pay-merchant-auth.lykke-pay.svc.cluster.local/api/merchant/staffSignIn",
+        "InvoicesService": "http://pay-invoice-service.lykke-pay.svc.cluster.local"
       }
     },
     "Lykke.Pay.Invoice": {

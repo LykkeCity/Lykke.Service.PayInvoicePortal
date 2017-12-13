@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Lykke.Pay.Service.Invoces.Client;
 
 namespace Lykke.Pay.Invoice
 {
@@ -50,7 +51,7 @@ namespace Lykke.Pay.Invoice
             {
                 options.DefaultPolicy = new AuthorizationPolicyBuilder(CookieAuthenticationDefaults.AuthenticationScheme).RequireAuthenticatedUser().Build();
             });
-
+            services.AddSingleton<IInvoicesservice>(new Invoicesservice(new Uri("http://pay-invoice-service.lykke-pay.svc.cluster.local")));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

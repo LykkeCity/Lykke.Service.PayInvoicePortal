@@ -18,17 +18,18 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
+using Lykke.Pay.Service.Invoces.Client;
 
 namespace Lykke.Pay.Invoice.Controllers
 {
     [Route("home")]
     public class HomeController : BaseController
     {
+        private readonly IInvoicesservice _invoiceService;
 
-
-        public HomeController(IConfiguration configuration) : base(configuration)
+        public HomeController(IConfiguration configuration, IInvoicesservice invoiceService) : base(configuration)
         {
-
+            _invoiceService = invoiceService;
         }
 
 
@@ -86,7 +87,26 @@ namespace Lykke.Pay.Invoice.Controllers
         }
 
 
+        [HttpGet("profile")]
+        public IActionResult Profile()
+        {
+            return View();
+        }
 
+        [HttpPost("profile")]
+        public async Task<IActionResult> Profile(Models.InvoiceRequest request, string returnUrl)
+        {
+            if (string.IsNullOrEmpty(request.InvoiceNumber) || string.IsNullOrEmpty(request.ClientEmail) || string.IsNullOrEmpty(request.Amount.ToString()))
+            {
+                return View();
+            }
+            var item = request.CreateEntity();
+            _invoiceService.ApiInvoicesPost(item);
+            //var resp = await _invoiceService.ApiInvoicesPostWithHttpMessagesAsync(item);
+            //var result = resp.Body ?? false;
+            return View();
+
+        }
 
         [HttpGet("SignOut")]
         public async Task<IActionResult> SignOut()
