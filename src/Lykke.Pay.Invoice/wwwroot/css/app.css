@@ -124,7 +124,7 @@
 	border-radius: 35px;
 	background-image: url("../img/loading.png");
 	background-size: 35px;
-	background-position: center;
+	background-position: left top;
 }
 
 .invoice__payment {

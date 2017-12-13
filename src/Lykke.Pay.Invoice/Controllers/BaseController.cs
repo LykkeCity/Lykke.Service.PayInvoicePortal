@@ -10,7 +10,7 @@ namespace Lykke.Pay.Invoice.Controllers
     {
         protected readonly IInvoiceRepository InvoiceRequestRepo;
         protected readonly string ConnectionStrings;
-        protected readonly string LykkePayOrderUrl;
+        protected readonly string LykkePayUrl;
         protected readonly string MerchantId;
         protected readonly string MerchantApiKey;
         protected readonly string MerchantPrivateKey;
@@ -21,7 +21,7 @@ namespace Lykke.Pay.Invoice.Controllers
         public BaseController(IConfiguration configuration)
         {
             ConnectionStrings = configuration.GetValue<string>("ConnectionStrings");
-            LykkePayOrderUrl = configuration.GetValue<string>("LykkePayOrderUrl");
+            LykkePayUrl = configuration.GetValue<string>("LykkePayUrl");
             MerchantId = configuration.GetValue<string>("MerchantId");
             MerchantApiKey = configuration.GetValue<string>("MerchantApiKey");
             MerchantPrivateKey = configuration.GetValue<string>("MerchantPrivateKey");

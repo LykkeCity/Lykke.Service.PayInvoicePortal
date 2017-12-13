@@ -74,7 +74,7 @@ namespace Lykke.Pay.Invoice.Controllers
             httpClient.DefaultRequestHeaders.Add("Lykke-Merchant-Sign", sign);
             
 
-            var result = await httpClient.PostAsync(LykkePayOrderUrl,
+            var result = await httpClient.PostAsync(LykkePayUrl + "Order",
                 new StringContent(bodyRequest, Encoding.UTF8, "application/json"));
             var resp = await result.Content.ReadAsStringAsync();
 
@@ -87,10 +87,72 @@ namespace Lykke.Pay.Invoice.Controllers
 
             dynamic orderResp = JsonConvert.DeserializeObject(resp);
 
+            
+
             model.Amount = orderResp.amount;
             model.QRCode =
                 $@"https://chart.googleapis.com/chart?chs=220x220&chld=L|2&cht=qr&chl=bitcoin:{orderResp.address}?amount={orderResp.amount}%26label=LykkePay%26message={orderResp.orderId}";
+
+            ViewBag.invoiceTimeRefresh = 1;
+                //ViewBag["invoiceTimeDueDate"]
+            ViewBag.orderRequestId = orderResp.orderRequestId;
+            ViewBag.invoiceId = invoiceId;
             return View(model);
+
+        }
+
+        [HttpPost("Regenerate")]
+        public async Task<IActionResult> Regenerate(string invoiceId, string orderRequestId)
+        {
+
+            var model = new InvoiceResult();
+            var inv = await InvoiceRequestRepo.GetInvoice(invoiceId);
+            if (inv == null)
+            {
+                return NotFound();
+            }
+
+
+            model.OrigAmount = inv.Amount;
+            model.Currency = inv.Currency;
+            model.InvoiceNumber = inv.InvoiceNumber;
+
+            var strToSign = string.Format(MerchantApiKey);
+
+
+            var csp = CreateRsaFromPrivateKey(MerchantPrivateKey);//certificate.GetRSAPrivateKey();
+            var sign = Convert.ToBase64String(csp.SignData(Encoding.UTF8.GetBytes(strToSign), HashAlgorithmName.SHA256, RSASignaturePadding.Pkcs1));
+
+            var httpClient = new HttpClient();
+            httpClient.DefaultRequestHeaders.Add("Lykke-Merchant-Id", MerchantId);
+            httpClient.DefaultRequestHeaders.Add("Lykke-Merchant-Sign", sign);
+
+
+            var result = await httpClient.PostAsync(LykkePayUrl + $"Order/ReCreate/{orderRequestId}",
+                new StringContent("", Encoding.UTF8, "application/json"));
+            var resp = await result.Content.ReadAsStringAsync();
+
+
+
+            if (result.StatusCode != HttpStatusCode.OK)
+            {
+                return BadRequest();
+            }
+
+            dynamic orderResp = JsonConvert.DeserializeObject(resp);
+
+
+            
+            model.Amount = orderResp.amount;
+            model.QRCode =
+                $@"https://chart.googleapis.com/chart?chs=220x220&chld=L|2&cht=qr&chl=bitcoin:{orderResp.address}?amount={orderResp.amount}%26label=LykkePay%26message={orderResp.orderId}";
+
+            ViewBag.invoiceTimeRefresh = 1;
+            //ViewBag["invoiceTimeDueDate"]
+            ViewBag.orderRequestId = orderResp.OrderRequestId;
+            ViewBag.invoiceId = invoiceId;
+
+            return Json(model);
 
         }
 
@@ -169,5 +231,7 @@ namespace Lykke.Pay.Invoice.Controllers
             binr.BaseStream.Seek(-1, SeekOrigin.Current);
             return count;
         }
+
+       
     }
 }
