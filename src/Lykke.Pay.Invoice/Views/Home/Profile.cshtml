@@ -1,0 +1,560 @@
+﻿@model Lykke.Pay.Invoice.Models.InvoiceRequest
+@{
+    ViewData["Title"] = "Profile";
+}
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@using (Html.BeginForm())
+{
+    <div class="create">
+        <ul class="create__top">
+            <li class="create__top-item">
+                <a href="#" class="create__top-link">Profile</a>
+            </li>
+            <li class="create__top-arrow">
+                <i class="icon icon--chevron-thin-right"></i>
+            </li>
+            <li class="create__top-item"> Creat new invoice </li>
+        </ul>
+        <div class="create__body">
+            <div class="create__title">Invoice</div>
+            <div class="create__form">
+                <div class="create__input-group">
+                    <label class="create__input-label">Invoice number</label>
+                    <input type="text" asp-for="InvoiceNumber" placeholder="" class="form-control">
+                </div>
+                <div class="create__input-group">
+                    <label class="create__input-label">Client</label>
+                    <input type="text" asp-for="Client" placeholder="" class="form-control">
+                </div>
+                <div class="create__input-group">
+                    <label class="create__input-label">Email</label>
+                    <input type="email" asp-for="ClientEmail" placeholder="" class="form-control">
+                </div>
+                <div class="create__input-group">
+                    <div class="create__input-amount">
+                        <label class="create__input-label">Amount</label>
+                        <div class="input-group">
+                            <span class="">CHF</span>
+                            <input type="text" asp-for="Amount" placeholder="0.00" class="form-control">
+                        </div>
+                    </div>
+                    <div class="create__input-date">
+                        <label class="create__input-label">Pay due date</label>
+                        <div class="input-group">
+                            <i class="icon icon--cal"></i>
+                            <input type="text" asp-for="DueDate" placeholder="03.12.2017" class="form-control">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="create__item">
+                <div class="create__item-name">Status</div>
+                <div class="create__item-description">Not created</div>
+            </div>
+            <div class="create__actions">
+                <button type="submit" name="button" class="btn create__button">Generate</button>
+                <button type="submit" name="button" class="btn btn--stroke create__link">Safe draft</button>
+                <button type="button" name="button" class="btn btn--stroke create__link">Cancel and close</button>
+            </div>
+        </div>
+    </div>
+}
+<article class="">
+    <div class="container-full">
+        <div class="profile">
+            <div class="balance">
+                <div class="balance__title">Current balance</div>
+                <div class="balance__row">
+                    <div class="balance__left">
+                        <span class="balance__quantity">10,000 CHF</span>
+                        <button type="button" name="button" class="btn btn_create balance__button">Create new invoice</button>
+                    </div>
+                    <div class="balance__export">
+                        Export XLSX file
+                        <a href="#" class="balance__download">Download</a>
+                    </div>
+                    <div class="balance__export">
+                        Export DTA file
+                        <a href="#" class="balance__download">Download</a>
+                    </div>
+                </div>
+            </div>
+            <div class="invoices">
+                <div class="invoices__title">Invoices</div>
+                <div class="invoices__head">
+                    <ul class="nav nav-tabs" role="tablist">
+                        <li>
+                            <button class="invoices__search" type="button">
+                                <i class="icon icon--search"></i>
+                            </button>
+                        </li>
+                        <li role="presentation" class="active">
+                            <a href="#all" aria-controls="all" role="tab" data-toggle="tab">All ⋅ 32</a>
+                        </li>
+                        <li role="presentation">
+                            <a href="#paid" aria-controls="paid" role="tab" data-toggle="tab">Paid ⋅ 9</a>
+                        </li>
+                        <li role="presentation">
+                            <a href="#unpaid" aria-controls="unpaid" role="tab" data-toggle="tab">Unpaid ⋅ 21</a>
+                        </li>
+                        <li role="presentation">
+                            <a href="#draft" aria-controls="draft" role="tab" data-toggle="tab">Draft ⋅ 2</a>
+                        </li>
+                    </ul>
+                </div>
+                <div class="tab-content">
+                    <div class="invoices__table">
+                        <div class="invoices__row">
+                            <div class="invoices__cell invoices__cell--number">Invoice number, date</div>
+                            <div class="invoices__cell invoices__cell--client">Client</div>
+                            <div class="invoices__cell invoices__cell--amount">Amount</div>
+                            <div class="invoices__cell invoices__cell--currency">Currency</div>
+                            <div class="invoices__cell invoices__cell--status">Status</div>
+                            <div class="invoices__cell invoices__cell--date">Pay due date</div>
+                            <div class="invoices__cell invoices__cell--delete"></div>
+                        </div>
+                    </div>
+                    <div role="tabpanel" class="tab-pane active" id="all">
+                        <div class="invoices__table">
+                            <div class="invoices_item">
+                                <div class="invoices_item__cell invoices_item__cell--number">
+                                    <a href="#" class="invoices_item__text">#4974732</a>
+                                    <div class="invoices_item__text invoices_item__text--light">15 Nov 2017</div>
+                                </div>
+                                <div class="invoices_item__cell invoices_item__cell--client">
+                                    <div class="invoices_item__text">Verizon Communications</div>
+                                    <div class="invoices_item__text invoices_item__text--light">info@verizon.com</div>
+                                </div>
+                                <div class="invoices_item__cell  invoices_item__cell--amount">
+                                    <div class="invoices_item__text invoices_item__text--small">1,324.92</div>
+                                </div>
+                                <div class="invoices_item__cell invoices_item__cell--currency">
+                                    <div class="invoices_item__text invoices_item__text--small">CHF</div>
+                                </div>
+                                <div class="invoices_item__cell invoices_item__cell--status">
+                                    <div class="invoices_item__status invoices_item__status--paid"> paid </div>
+                                </div>
+                                <div class="invoices_item__cell invoices_item__cell--date">
+                                    <div class="invoices_item__text invoices_item__text--small">15 Nov 2017</div>
+                                </div>
+                                <div class="invoices_item__cell invoices_item__cell--delete">
+                                    <button class="btn btn--icon btn--disabled" type="button" disabled>
+                                        <i class="icon icon--trash"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="invoices_item">
+                                <div class="invoices_item__cell invoices_item__cell--number">
+                                    <a href="#" class="invoices_item__text">#4974732</a>
+                                    <div class="invoices_item__text invoices_item__text--light">15 Nov 2017</div>
+                                </div>
+                                <div class="invoices_item__cell invoices_item__cell--client">
+                                    <div class="invoices_item__text">Verizon Communications</div>
+                                    <div class="invoices_item__text invoices_item__text--light">info@verizon.com</div>
+                                </div>
+                                <div class="invoices_item__cell  invoices_item__cell--amount">
+                                    <div class="invoices_item__text invoices_item__text--small">1,324.92</div>
+                                </div>
+                                <div class="invoices_item__cell invoices_item__cell--currency">
+                                    <div class="invoices_item__text invoices_item__text--small">CHF</div>
+                                </div>
+                                <div class="invoices_item__cell invoices_item__cell--status">
+                                    <div class="invoices_item__status invoices_item__status--unpaid"> unpaid </div>
+                                </div>
+                                <div class="invoices_item__cell invoices_item__cell--date">
+                                    <div class="invoices_item__text invoices_item__text--small">15 Nov 2017</div>
+                                </div>
+                                <div class="invoices_item__cell invoices_item__cell--delete">
+                                    <button class="btn btn--icon" type="button">
+                                        <i class="icon icon--trash"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="invoices_item">
+                                <div class="invoices_item__cell invoices_item__cell--number">
+                                    <a href="#" class="invoices_item__text">#4974732</a>
+                                    <div class="invoices_item__text invoices_item__text--light">15 Nov 2017</div>
+                                </div>
+                                <div class="invoices_item__cell invoices_item__cell--client">
+                                    <div class="invoices_item__text">Verizon Communications</div>
+                                    <div class="invoices_item__text invoices_item__text--light">info@verizon.com</div>
+                                </div>
+                                <div class="invoices_item__cell  invoices_item__cell--amount">
+                                    <div class="invoices_item__text invoices_item__text--small">1,324.92</div>
+                                </div>
+                                <div class="invoices_item__cell invoices_item__cell--currency">
+                                    <div class="invoices_item__text invoices_item__text--small">CHF</div>
+                                </div>
+                                <div class="invoices_item__cell invoices_item__cell--status">
+                                    <div class="invoices_item__status invoices_item__status--paid"> paid </div>
+                                </div>
+                                <div class="invoices_item__cell invoices_item__cell--date">
+                                    <div class="invoices_item__text invoices_item__text--small">15 Nov 2017</div>
+                                </div>
+                                <div class="invoices_item__cell invoices_item__cell--delete">
+                                    <button class="btn btn--icon btn--disabled" type="button" disabled>
+                                        <i class="icon icon--trash"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="invoices_item">
+                                <div class="invoices_item__cell invoices_item__cell--number">
+                                    <a href="#" class="invoices_item__text">#4974732</a>
+                                    <div class="invoices_item__text invoices_item__text--light">15 Nov 2017</div>
+                                </div>
+                                <div class="invoices_item__cell invoices_item__cell--client">
+                                    <div class="invoices_item__text">Verizon Communications</div>
+                                    <div class="invoices_item__text invoices_item__text--light">info@verizon.com</div>
+                                </div>
+                                <div class="invoices_item__cell  invoices_item__cell--amount">
+                                    <div class="invoices_item__text invoices_item__text--small">1,324.92</div>
+                                </div>
+                                <div class="invoices_item__cell invoices_item__cell--currency">
+                                    <div class="invoices_item__text invoices_item__text--small">CHF</div>
+                                </div>
+                                <div class="invoices_item__cell invoices_item__cell--status">
+                                    <div class="invoices_item__status invoices_item__status--paid"> paid </div>
+                                </div>
+                                <div class="invoices_item__cell invoices_item__cell--date">
+                                    <div class="invoices_item__text invoices_item__text--small">15 Nov 2017</div>
+                                </div>
+                                <div class="invoices_item__cell invoices_item__cell--delete">
+                                    <button class="btn btn--icon btn--disabled" type="button" disabled>
+                                        <i class="icon icon--trash"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="invoices_item">
+                                <div class="invoices_item__cell invoices_item__cell--number">
+                                    <a href="#" class="invoices_item__text">#4974732</a>
+                                    <div class="invoices_item__text invoices_item__text--light">15 Nov 2017</div>
+                                </div>
+                                <div class="invoices_item__cell invoices_item__cell--client">
+                                    <div class="invoices_item__text">Verizon Communications</div>
+                                    <div class="invoices_item__text invoices_item__text--light">info@verizon.com</div>
+                                </div>
+                                <div class="invoices_item__cell  invoices_item__cell--amount">
+                                    <div class="invoices_item__text invoices_item__text--small">1,324.92</div>
+                                </div>
+                                <div class="invoices_item__cell invoices_item__cell--currency">
+                                    <div class="invoices_item__text invoices_item__text--small">CHF</div>
+                                </div>
+                                <div class="invoices_item__cell invoices_item__cell--status">
+                                    <div class="invoices_item__status invoices_item__status--draft"> draft </div>
+                                </div>
+                                <div class="invoices_item__cell invoices_item__cell--date">
+                                    <div class="invoices_item__text invoices_item__text--small">15 Nov 2017</div>
+                                </div>
+                                <div class="invoices_item__cell invoices_item__cell--delete">
+                                    <button class="btn btn--icon" type="button">
+                                        <i class="icon icon--trash"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="invoices_item">
+                                <div class="invoices_item__cell invoices_item__cell--number">
+                                    <a href="#" class="invoices_item__text">#4974732</a>
+                                    <div class="invoices_item__text invoices_item__text--light">15 Nov 2017</div>
+                                </div>
+                                <div class="invoices_item__cell invoices_item__cell--client">
+                                    <div class="invoices_item__text">Verizon Communications</div>
+                                    <div class="invoices_item__text invoices_item__text--light">info@verizon.com</div>
+                                </div>
+                                <div class="invoices_item__cell  invoices_item__cell--amount">
+                                    <div class="invoices_item__text invoices_item__text--small">1,324.92</div>
+                                </div>
+                                <div class="invoices_item__cell invoices_item__cell--currency">
+                                    <div class="invoices_item__text invoices_item__text--small">CHF</div>
+                                </div>
+                                <div class="invoices_item__cell invoices_item__cell--status">
+                                    <div class="invoices_item__status invoices_item__status--unpaid"> unpaid </div>
+                                </div>
+                                <div class="invoices_item__cell invoices_item__cell--date">
+                                    <div class="invoices_item__text invoices_item__text--small">15 Nov 2017</div>
+                                </div>
+                                <div class="invoices_item__cell invoices_item__cell--delete">
+                                    <button class="btn btn--icon" type="button">
+                                        <i class="icon icon--trash"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="invoices_item">
+                                <div class="invoices_item__cell invoices_item__cell--number">
+                                    <a href="#" class="invoices_item__text">#4974732</a>
+                                    <div class="invoices_item__text invoices_item__text--light">15 Nov 2017</div>
+                                </div>
+                                <div class="invoices_item__cell invoices_item__cell--client">
+                                    <div class="invoices_item__text">Verizon Communications</div>
+                                    <div class="invoices_item__text invoices_item__text--light">info@verizon.com</div>
+                                </div>
+                                <div class="invoices_item__cell  invoices_item__cell--amount">
+                                    <div class="invoices_item__text invoices_item__text--small">1,324.92</div>
+                                </div>
+                                <div class="invoices_item__cell invoices_item__cell--currency">
+                                    <div class="invoices_item__text invoices_item__text--small">CHF</div>
+                                </div>
+                                <div class="invoices_item__cell invoices_item__cell--status">
+                                    <div class="invoices_item__status invoices_item__status--unpaid"> unpaid </div>
+                                </div>
+                                <div class="invoices_item__cell invoices_item__cell--date">
+                                    <div class="invoices_item__text invoices_item__text--small">15 Nov 2017</div>
+                                </div>
+                                <div class="invoices_item__cell invoices_item__cell--delete">
+                                    <button class="btn btn--icon" type="button">
+                                        <i class="icon icon--trash"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="invoices_item">
+                                <div class="invoices_item__cell invoices_item__cell--number">
+                                    <a href="#" class="invoices_item__text">#4974732</a>
+                                    <div class="invoices_item__text invoices_item__text--light">15 Nov 2017</div>
+                                </div>
+                                <div class="invoices_item__cell invoices_item__cell--client">
+                                    <div class="invoices_item__text">Verizon Communications</div>
+                                    <div class="invoices_item__text invoices_item__text--light">info@verizon.com</div>
+                                </div>
+                                <div class="invoices_item__cell  invoices_item__cell--amount">
+                                    <div class="invoices_item__text invoices_item__text--small">1,324.92</div>
+                                </div>
+                                <div class="invoices_item__cell invoices_item__cell--currency">
+                                    <div class="invoices_item__text invoices_item__text--small">CHF</div>
+                                </div>
+                                <div class="invoices_item__cell invoices_item__cell--status">
+                                    <div class="invoices_item__status invoices_item__status--unpaid"> unpaid </div>
+                                </div>
+                                <div class="invoices_item__cell invoices_item__cell--date">
+                                    <div class="invoices_item__text invoices_item__text--small">15 Nov 2017</div>
+                                </div>
+                                <div class="invoices_item__cell invoices_item__cell--delete">
+                                    <button class="btn btn--icon" type="button">
+                                        <i class="icon icon--trash"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="invoices_item">
+                                <div class="invoices_item__cell invoices_item__cell--number">
+                                    <a href="#" class="invoices_item__text">#4974732</a>
+                                    <div class="invoices_item__text invoices_item__text--light">15 Nov 2017</div>
+                                </div>
+                                <div class="invoices_item__cell invoices_item__cell--client">
+                                    <div class="invoices_item__text">Verizon Communications</div>
+                                    <div class="invoices_item__text invoices_item__text--light">info@verizon.com</div>
+                                </div>
+                                <div class="invoices_item__cell  invoices_item__cell--amount">
+                                    <div class="invoices_item__text invoices_item__text--small">1,324.92</div>
+                                </div>
+                                <div class="invoices_item__cell invoices_item__cell--currency">
+                                    <div class="invoices_item__text invoices_item__text--small">CHF</div>
+                                </div>
+                                <div class="invoices_item__cell invoices_item__cell--status">
+                                    <div class="invoices_item__status invoices_item__status--draft"> draft </div>
+                                </div>
+                                <div class="invoices_item__cell invoices_item__cell--date">
+                                    <div class="invoices_item__text invoices_item__text--small">15 Nov 2017</div>
+                                </div>
+                                <div class="invoices_item__cell invoices_item__cell--delete">
+                                    <button class="btn btn--icon" type="button">
+                                        <i class="icon icon--trash"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="invoices_item">
+                                <div class="invoices_item__cell invoices_item__cell--number">
+                                    <a href="#" class="invoices_item__text">#4974732</a>
+                                    <div class="invoices_item__text invoices_item__text--light">15 Nov 2017</div>
+                                </div>
+                                <div class="invoices_item__cell invoices_item__cell--client">
+                                    <div class="invoices_item__text">Verizon Communications</div>
+                                    <div class="invoices_item__text invoices_item__text--light">info@verizon.com</div>
+                                </div>
+                                <div class="invoices_item__cell  invoices_item__cell--amount">
+                                    <div class="invoices_item__text invoices_item__text--small">1,324.92</div>
+                                </div>
+                                <div class="invoices_item__cell invoices_item__cell--currency">
+                                    <div class="invoices_item__text invoices_item__text--small">CHF</div>
+                                </div>
+                                <div class="invoices_item__cell invoices_item__cell--status">
+                                    <div class="invoices_item__status invoices_item__status--unpaid"> unpaid </div>
+                                </div>
+                                <div class="invoices_item__cell invoices_item__cell--date">
+                                    <div class="invoices_item__text invoices_item__text--small">15 Nov 2017</div>
+                                </div>
+                                <div class="invoices_item__cell invoices_item__cell--delete">
+                                    <button class="btn btn--icon" type="button">
+                                        <i class="icon icon--trash"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="invoices_item">
+                                <div class="invoices_item__cell invoices_item__cell--number">
+                                    <a href="#" class="invoices_item__text">#4974732</a>
+                                    <div class="invoices_item__text invoices_item__text--light">15 Nov 2017</div>
+                                </div>
+                                <div class="invoices_item__cell invoices_item__cell--client">
+                                    <div class="invoices_item__text">Verizon Communications</div>
+                                    <div class="invoices_item__text invoices_item__text--light">info@verizon.com</div>
+                                </div>
+                                <div class="invoices_item__cell  invoices_item__cell--amount">
+                                    <div class="invoices_item__text invoices_item__text--small">1,324.92</div>
+                                </div>
+                                <div class="invoices_item__cell invoices_item__cell--currency">
+                                    <div class="invoices_item__text invoices_item__text--small">CHF</div>
+                                </div>
+                                <div class="invoices_item__cell invoices_item__cell--status">
+                                    <div class="invoices_item__status invoices_item__status--unpaid"> unpaid </div>
+                                </div>
+                                <div class="invoices_item__cell invoices_item__cell--date">
+                                    <div class="invoices_item__text invoices_item__text--small">15 Nov 2017</div>
+                                </div>
+                                <div class="invoices_item__cell invoices_item__cell--delete">
+                                    <button class="btn btn--icon" type="button">
+                                        <i class="icon icon--trash"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="invoices_item">
+                                <div class="invoices_item__cell invoices_item__cell--number">
+                                    <a href="#" class="invoices_item__text">#4974732</a>
+                                    <div class="invoices_item__text invoices_item__text--light">15 Nov 2017</div>
+                                </div>
+                                <div class="invoices_item__cell invoices_item__cell--client">
+                                    <div class="invoices_item__text">Verizon Communications</div>
+                                    <div class="invoices_item__text invoices_item__text--light">info@verizon.com</div>
+                                </div>
+                                <div class="invoices_item__cell  invoices_item__cell--amount">
+                                    <div class="invoices_item__text invoices_item__text--small">1,324.92</div>
+                                </div>
+                                <div class="invoices_item__cell invoices_item__cell--currency">
+                                    <div class="invoices_item__text invoices_item__text--small">CHF</div>
+                                </div>
+                                <div class="invoices_item__cell invoices_item__cell--status">
+                                    <div class="invoices_item__status invoices_item__status--paid"> paid </div>
+                                </div>
+                                <div class="invoices_item__cell invoices_item__cell--date">
+                                    <div class="invoices_item__text invoices_item__text--small">15 Nov 2017</div>
+                                </div>
+                                <div class="invoices_item__cell invoices_item__cell--delete">
+                                    <button class="btn btn--icon btn--disabled" type="button" disabled>
+                                        <i class="icon icon--trash"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="invoices_item">
+                                <div class="invoices_item__cell invoices_item__cell--number">
+                                    <a href="#" class="invoices_item__text">#4974732</a>
+                                    <div class="invoices_item__text invoices_item__text--light">15 Nov 2017</div>
+                                </div>
+                                <div class="invoices_item__cell invoices_item__cell--client">
+                                    <div class="invoices_item__text">Verizon Communications</div>
+                                    <div class="invoices_item__text invoices_item__text--light">info@verizon.com</div>
+                                </div>
+                                <div class="invoices_item__cell  invoices_item__cell--amount">
+                                    <div class="invoices_item__text invoices_item__text--small">1,324.92</div>
+                                </div>
+                                <div class="invoices_item__cell invoices_item__cell--currency">
+                                    <div class="invoices_item__text invoices_item__text--small">CHF</div>
+                                </div>
+                                <div class="invoices_item__cell invoices_item__cell--status">
+                                    <div class="invoices_item__status invoices_item__status--draft"> draft </div>
+                                </div>
+                                <div class="invoices_item__cell invoices_item__cell--date">
+                                    <div class="invoices_item__text invoices_item__text--small">15 Nov 2017</div>
+                                </div>
+                                <div class="invoices_item__cell invoices_item__cell--delete">
+                                    <button class="btn btn--icon" type="button">
+                                        <i class="icon icon--trash"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="invoices_item">
+                                <div class="invoices_item__cell invoices_item__cell--number">
+                                    <a href="#" class="invoices_item__text">#4974732</a>
+                                    <div class="invoices_item__text invoices_item__text--light">15 Nov 2017</div>
+                                </div>
+                                <div class="invoices_item__cell invoices_item__cell--client">
+                                    <div class="invoices_item__text">Verizon Communications</div>
+                                    <div class="invoices_item__text invoices_item__text--light">info@verizon.com</div>
+                                </div>
+                                <div class="invoices_item__cell  invoices_item__cell--amount">
+                                    <div class="invoices_item__text invoices_item__text--small">1,324.92</div>
+                                </div>
+                                <div class="invoices_item__cell invoices_item__cell--currency">
+                                    <div class="invoices_item__text invoices_item__text--small">CHF</div>
+                                </div>
+                                <div class="invoices_item__cell invoices_item__cell--status">
+                                    <div class="invoices_item__status invoices_item__status--unpaid"> unpaid </div>
+                                </div>
+                                <div class="invoices_item__cell invoices_item__cell--date">
+                                    <div class="invoices_item__text invoices_item__text--small">15 Nov 2017</div>
+                                </div>
+                                <div class="invoices_item__cell invoices_item__cell--delete">
+                                    <button class="btn btn--icon" type="button">
+                                        <i class="icon icon--trash"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="invoices_item">
+                                <div class="invoices_item__cell invoices_item__cell--number">
+                                    <a href="#" class="invoices_item__text">#4974732</a>
+                                    <div class="invoices_item__text invoices_item__text--light">15 Nov 2017</div>
+                                </div>
+                                <div class="invoices_item__cell invoices_item__cell--client">
+                                    <div class="invoices_item__text">Verizon Communications</div>
+                                    <div class="invoices_item__text invoices_item__text--light">info@verizon.com</div>
+                                </div>
+                                <div class="invoices_item__cell  invoices_item__cell--amount">
+                                    <div class="invoices_item__text invoices_item__text--small">1,324.92</div>
+                                </div>
+                                <div class="invoices_item__cell invoices_item__cell--currency">
+                                    <div class="invoices_item__text invoices_item__text--small">CHF</div>
+                                </div>
+                                <div class="invoices_item__cell invoices_item__cell--status">
+                                    <div class="invoices_item__status invoices_item__status--unpaid"> unpaid </div>
+                                </div>
+                                <div class="invoices_item__cell invoices_item__cell--date">
+                                    <div class="invoices_item__text invoices_item__text--small">15 Nov 2017</div>
+                                </div>
+                                <div class="invoices_item__cell invoices_item__cell--delete">
+                                    <button class="btn btn--icon" type="button">
+                                        <i class="icon icon--trash"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="invoices_item">
+                                <div class="invoices_item__cell invoices_item__cell--number">
+                                    <a href="#" class="invoices_item__text">#4974732</a>
+                                    <div class="invoices_item__text invoices_item__text--light">15 Nov 2017</div>
+                                </div>
+                                <div class="invoices_item__cell invoices_item__cell--client">
+                                    <div class="invoices_item__text">Verizon Communications</div>
+                                    <div class="invoices_item__text invoices_item__text--light">info@verizon.com</div>
+                                </div>
+                                <div class="invoices_item__cell  invoices_item__cell--amount">
+                                    <div class="invoices_item__text invoices_item__text--small">1,324.92</div>
+                                </div>
+                                <div class="invoices_item__cell invoices_item__cell--currency">
+                                    <div class="invoices_item__text invoices_item__text--small">CHF</div>
+                                </div>
+                                <div class="invoices_item__cell invoices_item__cell--status">
+                                    <div class="invoices_item__status invoices_item__status--paid"> paid </div>
+                                </div>
+                                <div class="invoices_item__cell invoices_item__cell--date">
+                                    <div class="invoices_item__text invoices_item__text--small">15 Nov 2017</div>
+                                </div>
+                                <div class="invoices_item__cell invoices_item__cell--delete">
+                                    <button class="btn btn--icon btn--disabled" type="button" disabled>
+                                        <i class="icon icon--trash"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div role="tabpanel" class="tab-pane" id="paid">"Paid"</div>
+                    <div role="tabpanel" class="tab-pane" id="unpaid">"Unpaid"</div>
+                    <div role="tabpanel" class="tab-pane" id="draft">"Draft"</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</article>
