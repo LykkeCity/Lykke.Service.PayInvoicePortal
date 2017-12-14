@@ -198,16 +198,21 @@ namespace Lykke.Pay.Invoice.Controllers
 
             dynamic orderResp = JsonConvert.DeserializeObject(resp);
 
+            var paimentRequest = Enum.Parse<MerchantPayRequestStatus>(orderResp.MerchantPayRequestStatus);
+            if (paimentRequest == MerchantPayRequestStatus.Completed || paimentRequest == MerchantPayRequestStatus.Failed)
+            {
+                inv.Status = (paimentRequest == MerchantPayRequestStatus.Completed ? InvoiceStatus.Paid : InvoiceStatus.Decline).ToString();
+                await _invoicesservice.ApiInvoicesPostWithHttpMessagesAsync(inv.CreateInvoiceEntity());
+                //TODO Add Transaction if success.
+                return null;
 
+            }
 
             model.Amount = orderResp.amount;
             model.QRCode =
                 $@"https://chart.googleapis.com/chart?chs=220x220&chld=L|2&cht=qr&chl=bitcoin:{orderResp.address}?amount={orderResp.amount}%26label=LykkePay%26message={orderResp.orderId}";
 
-            ViewBag.invoiceTimeRefresh = 1;
-            //ViewBag["invoiceTimeDueDate"]
-            ViewBag.orderRequestId = orderResp.OrderRequestId;
-            ViewBag.invoiceId = inv.InvoiceId;
+            FillViewBag(inv, orderResp);
             return model;
         }
 
