@@ -11,8 +11,9 @@ namespace Lykke.Pay.Invoice.Models
     public class InvoiceRequest
     {
         public string InvoiceNumber { get; set; }
+        public string InvoiceId { get; set; }
 
-        public string Client { get; set; }
+        public string ClientName { get; set; }
 
         public string ClientEmail { get; set; }
 
@@ -27,7 +28,7 @@ namespace Lykke.Pay.Invoice.Models
 
         public InvoiceEntity CreateEntity()
         {
-            if (string.IsNullOrEmpty(Client) || string.IsNullOrEmpty(ClientEmail))
+            if (string.IsNullOrEmpty(ClientName) || string.IsNullOrEmpty(ClientEmail))
                 //string.IsNullOrEmpty(Currency))
             {
                 return null;
@@ -39,7 +40,7 @@ namespace Lykke.Pay.Invoice.Models
             {
                 Amount = Amount,
                 ClientEmail = ClientEmail,
-                ClientName = Client,
+                ClientName = ClientName,
                 Currency = Currency,
                 InvoiceNumber = InvoiceNumber,
                 InvoiceId = Guid.NewGuid().ToString(),
