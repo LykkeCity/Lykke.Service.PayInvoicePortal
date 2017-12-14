@@ -88,8 +88,11 @@ namespace Lykke.Pay.Invoice.Controllers
 
 
         [HttpGet("profile")]
-        public IActionResult Profile()
+        public async Task<IActionResult> Profile()
         {
+            var result = _invoiceService.ApiInvoicesGet();
+            var model = new Models.InvoiceRequest();
+            ViewBag.Result = result;
             return View();
         }
 
@@ -102,8 +105,6 @@ namespace Lykke.Pay.Invoice.Controllers
             }
             var item = request.CreateEntity();
             _invoiceService.ApiInvoicesPost(item);
-            //var resp = await _invoiceService.ApiInvoicesPostWithHttpMessagesAsync(item);
-            //var result = resp.Body ?? false;
             return View();
 
         }
@@ -114,8 +115,5 @@ namespace Lykke.Pay.Invoice.Controllers
             await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
             return Redirect(HomeUrl);
         }
-
-
     }
 }
-

@@ -1,0 +1,76 @@
+﻿
+<script>var invoices = eval(@Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(ViewBag.Result)))</script>
+<div class="invoices">
+    <div class="invoices__title">Invoices</div>
+    <div class="invoices__head">
+        <ul class="nav nav-tabs" role="tablist">
+            <li>
+                <button class="invoices__search" type="button">
+                    <i class="icon icon--search"></i>
+                </button>
+            </li>
+            <li>
+                <input type="text" placeholder="" class="form-control" id="searchfield" name="Search" value="">
+            </li>
+            <li role="presentation" class="active">
+                <a href="#all" aria-controls="all" role="tab" data-toggle="tab" id="alllink">All ⋅ <span></span></a>
+            </li>
+            <li role="presentation">
+                <a href="#paid" aria-controls="paid" role="tab" data-toggle="tab"id="paidlink">Paid ⋅ <span></span></a>
+            </li>
+            <li role="presentation">
+                <a href="#unpaid" aria-controls="unpaid" role="tab" data-toggle="tab" id="unpaidlink">Unpaid ⋅ <span></span></a>
+            </li>
+            <li role="presentation">
+                <a href="#draft" aria-controls="draft" role="tab" data-toggle="tab" id="draftlink">Draft ⋅ <span></span></a>
+            </li>
+        </ul>
+    </div>
+    <div class="tab-content">
+        <div class="invoices__table">
+            <div class="invoices__row">
+                <div class="invoices__cell invoices__cell--number">Invoice number, date</div>
+                <div class="invoices__cell invoices__cell--client">Client</div>
+                <div class="invoices__cell invoices__cell--amount">Amount</div>
+                <div class="invoices__cell invoices__cell--currency">Currency</div>
+                <div class="invoices__cell invoices__cell--status">Status</div>
+                <div class="invoices__cell invoices__cell--date">Pay due date</div>
+                <div class="invoices__cell invoices__cell--delete"></div>
+            </div>
+        </div>
+        <div role="tabpanel" class="tab-pane active" id="all">
+        </div>
+        <div role="tabpanel" class="tab-pane" id="paid"></div>
+        <div role="tabpanel" class="tab-pane" id="unpaid"></div>
+        <div role="tabpanel" class="tab-pane" id="draft"></div>
+    </div>
+</div>
+<div id="rowtemplate" style="display: none">
+    <div class="invoices_item">
+        <div class="invoices_item__cell invoices_item__cell--number">
+            <a href="#" class="invoices_item__text">#4974732</a>
+            <div class="invoices_item__text invoices_item__text--light"></div>
+        </div>
+        <div class="invoices_item__cell invoices_item__cell--client">
+            <div class="invoices_item__text">{{ClientName}}</div>
+            <div class="invoices_item__text invoices_item__text--light">{{ClientEmail}}</div>
+        </div>
+        <div class="invoices_item__cell  invoices_item__cell--amount">
+            <div class="invoices_item__text invoices_item__text--small">{{Amount}}</div>
+        </div>
+        <div class="invoices_item__cell invoices_item__cell--currency">
+            <div class="invoices_item__text invoices_item__text--small">CHF</div>
+        </div>
+        <div class="invoices_item__cell invoices_item__cell--status">
+            <div class="invoices_item__status invoices_item__status--paid"> paid </div>
+        </div>
+        <div class="invoices_item__cell invoices_item__cell--date">
+            <div class="invoices_item__text invoices_item__text--small">{{DueDate}}</div>
+        </div>
+        <div class="invoices_item__cell invoices_item__cell--delete">
+            <button class="btn btn--icon btn--disabled" type="button" disabled>
+                <i class="icon icon--trash"></i>
+            </button>
+        </div>
+    </div>
+</div>
