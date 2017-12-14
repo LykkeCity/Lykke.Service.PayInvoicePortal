@@ -1,4 +1,5 @@
-﻿using Lykke.AzureRepositories;
+﻿using System;
+using Lykke.AzureRepositories;
 using Lykke.AzureRepositories.Azure.Tables;
 using Lykke.Core;
 using Microsoft.AspNetCore.Mvc;
@@ -16,6 +17,8 @@ namespace Lykke.Pay.Invoice.Controllers
         protected readonly string MerchantPrivateKey;
         protected readonly string MerchantAuthService;
         protected readonly string HomeUrl = "~/Home/Welcome";
+        protected readonly TimeSpan InvoiceLiveTime;
+        protected readonly TimeSpan OrderLiveTime;
 
 
         public BaseController(IConfiguration configuration)
@@ -26,7 +29,8 @@ namespace Lykke.Pay.Invoice.Controllers
             MerchantApiKey = configuration.GetValue<string>("MerchantApiKey");
             MerchantPrivateKey = configuration.GetValue<string>("MerchantPrivateKey");
             MerchantAuthService = configuration.GetValue<string>("MerchantAuthService");
-
+            InvoiceLiveTime = configuration.GetValue<TimeSpan>("InvliceLiveTime");
+            OrderLiveTime = configuration.GetValue<TimeSpan>("OrderLiveTime");
         }
     }
 }
