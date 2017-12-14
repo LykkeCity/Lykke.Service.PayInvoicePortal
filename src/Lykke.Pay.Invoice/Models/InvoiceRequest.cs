@@ -1,4 +1,6 @@
-﻿using Lykke.Pay.Service.Invoces.Client.Models;
+﻿
+
+using Lykke.Pay.Service.Invoces.Client.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -20,6 +22,7 @@ namespace Lykke.Pay.Invoice.Models
         public string Label { get; set; }
 
         public string DueDate { get; set; }
+        public string Status { get; set; }
 
         public InvoiceEntity CreateEntity()
         {
@@ -39,9 +42,10 @@ namespace Lykke.Pay.Invoice.Models
                 Currency = Currency,
                 InvoiceNumber = InvoiceNumber,
                 InvoiceId = Guid.NewGuid().ToString(),
-                DueDate = DueDate,
-                Label = Label
+                Label = Label,
+                Status = Status
             };
         }
+        public IList<IInvoiceEntity> InvoiceList { get; set; }
     }
 }
