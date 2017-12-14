@@ -16,7 +16,7 @@ namespace Lykke.Pay.Invoice.Controllers
         protected readonly string MerchantApiKey;
         protected readonly string MerchantPrivateKey;
         protected readonly string MerchantAuthService;
-        protected readonly string HomeUrl = "~/Home/Welcome";
+        protected readonly string HomeUrl = "~/Home/Profile";
         protected readonly TimeSpan InvoiceLiveTime;
         protected readonly TimeSpan OrderLiveTime;
 
@@ -29,7 +29,7 @@ namespace Lykke.Pay.Invoice.Controllers
             MerchantApiKey = configuration.GetValue<string>("MerchantApiKey");
             MerchantPrivateKey = configuration.GetValue<string>("MerchantPrivateKey");
             MerchantAuthService = configuration.GetValue<string>("MerchantAuthService");
-            InvoiceLiveTime = configuration.GetValue<TimeSpan>("InvliceLiveTime");
+            InvoiceLiveTime = configuration.GetValue<TimeSpan>("InvoiceLiveTime");
             OrderLiveTime = configuration.GetValue<TimeSpan>("OrderLiveTime");
         }
     }

@@ -42,12 +42,12 @@ namespace Lykke.Pay.Invoice.Controllers
             {
                 return NotFound();
             }
-            if (inv.StartDate.GetRepoDateTime() > DateTime.Today)
+            if (!string.IsNullOrEmpty(inv.StartDate) && inv.StartDate.GetRepoDateTime() > DateTime.Today)
             {
                 return NotFound();
             }
 
-            if (inv.DueDate.GetRepoDateTime() < DateTime.Now)
+            if (!string.IsNullOrEmpty(inv.DueDate) && inv.DueDate.GetRepoDateTime() < DateTime.Now)
             {
                 inv.Status = InvoiceStatus.Decline.ToString();
                 await _invoicesservice.ApiInvoicesPostWithHttpMessagesAsync(inv.CreateInvoiceEntity());
@@ -124,8 +124,9 @@ namespace Lykke.Pay.Invoice.Controllers
 
         private void FillViewBag(IInvoiceEntity inv, dynamic orderResp)
         {
-            ViewBag.invoiceTimeRefresh = (((string)orderResp.TransactionWaitingTime).FromUnixFormat() - DateTime.Now).Seconds;
-            ViewBag.invoiceTimeDueDate = (inv.DueDate.FromUnixFormat() - DateTime.Now).Seconds;
+            var orderTimeLive = orderResp.TransactionWaitingTime as string;
+            ViewBag.invoiceTimeRefresh =  string.IsNullOrEmpty(orderTimeLive) ? OrderLiveTime.Seconds : (orderTimeLive.FromUnixFormat() - DateTime.Now).Seconds;
+            ViewBag.invoiceTimeDueDate = (inv.DueDate.GetRepoDateTime() - DateTime.Now).Seconds;
             ViewBag.orderRequestId = orderResp.orderRequestId;
             ViewBag.invoiceId = inv.InvoiceId;
 
@@ -141,7 +142,7 @@ namespace Lykke.Pay.Invoice.Controllers
             {
                 return NotFound();
             }
-            if (inv.StartDate.GetRepoDateTime() > DateTime.Today)
+            if (!string.IsNullOrEmpty(inv.StartDate) && inv.StartDate.GetRepoDateTime() > DateTime.Today)
             {
                 return NotFound();
             }

@@ -90,7 +90,7 @@ namespace Lykke.Pay.Invoice.Controllers
         [HttpGet("profile")]
         public async Task<IActionResult> Profile()
         {
-            var result = _invoiceService.ApiInvoicesGet();
+            var result = _invoiceService.ApiInvoicesGetWithHttpMessagesAsync();
             ViewBag.Result = result;
             return View();
         }
@@ -103,7 +103,7 @@ namespace Lykke.Pay.Invoice.Controllers
                 return View();
             }
             var item = request.CreateEntity();
-            _invoiceService.ApiInvoicesPost(item);
+            await _invoiceService.ApiInvoicesPostWithHttpMessagesAsync(item);
             var result = _invoiceService.ApiInvoicesGet();
             ViewBag.Result = result;
             return View();
