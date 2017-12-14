@@ -46,9 +46,9 @@
     </div>
 </div>
 <div id="rowtemplate" style="display: none">
-    <div class="invoices_item">
+    <div class="invoices_item" invoice="{{InvoiceId}}">
         <div class="invoices_item__cell invoices_item__cell--number">
-            <a href="#" class="invoices_item__text">#4974732</a>
+            <a href="#" class="invoices_item__text">#{{InvoiceNumber}}</a>
             <div class="invoices_item__text invoices_item__text--light"></div>
         </div>
         <div class="invoices_item__cell invoices_item__cell--client">
@@ -68,7 +68,7 @@
             <div class="invoices_item__text invoices_item__text--small">{{DueDate}}</div>
         </div>
         <div class="invoices_item__cell invoices_item__cell--delete">
-            <button class="btn btn--icon btn--disabled" type="button" disabled>
+            <button class="btn btn--icon {{DisCssClass}} " type="button"  {{disoption}}>
                 <i class="icon icon--trash"></i>
             </button>
         </div>
