@@ -79,21 +79,24 @@ function renderGrid(search) {
                     invoicevisible = true;
         }
         if (invoicevisible) {
-            allstring += tempstr;
             switch (invoices[i].Status) {
                 case "Paid":
                     paidcnt++;
+                    tempstr = tempstr.replace("{{CssClass}}", "paid");
                     paidstring += tempstr;
                     break;
                 case "Unpaid":
                     unpaidcnt++;
-                    unpaidstring += tempstr;
+                    tempstr = tempstr.replace("{{CssClass}}", "unpaid");
+                    unpaidstring += tempstr.replace("{{CssClass}}", "unpaid");
                     break;
                 case "Draft":
                     draftcnt++;
-                    draftstring += tempstr;
+                    tempstr = tempstr.replace("{{CssClass}}", "draft");
+                    draftstring += tempstr.replace("{{CssClass}}", "draft");
                     break;
             }
+            allstring += tempstr;
         }
     }
     divtableall.innerHTML = allstring;
