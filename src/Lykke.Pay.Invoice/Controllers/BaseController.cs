@@ -8,7 +8,7 @@ namespace Lykke.Pay.Invoice.Controllers
 {
     public class BaseController : Controller
     {
-        protected readonly IInvoiceRepository InvoiceRequestRepo;
+
         protected readonly string ConnectionStrings;
         protected readonly string LykkePayUrl;
         protected readonly string MerchantId;
@@ -26,8 +26,7 @@ namespace Lykke.Pay.Invoice.Controllers
             MerchantApiKey = configuration.GetValue<string>("MerchantApiKey");
             MerchantPrivateKey = configuration.GetValue<string>("MerchantPrivateKey");
             MerchantAuthService = configuration.GetValue<string>("MerchantAuthService");
-            InvoiceRequestRepo =
-                new InvoiceRepository(new AzureTableStorage<InvoiceEntity>(ConnectionStrings, "Invoices", null));
+
         }
     }
 }

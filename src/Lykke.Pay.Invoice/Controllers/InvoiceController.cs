@@ -7,10 +7,9 @@ using System.Net.Http;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
-using Lykke.AzureRepositories;
-using Lykke.AzureRepositories.Azure.Tables;
 using Lykke.Core;
 using Lykke.Pay.Invoice.Models;
+using Lykke.Pay.Service.Invoces.Client;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
@@ -19,11 +18,11 @@ namespace Lykke.Pay.Invoice.Controllers
 {
     public class InvoiceController : BaseController
     {
-       
+        private readonly IInvoicesservice _invoicesservice;
 
-        public InvoiceController(IConfiguration configuration) : base(configuration)
+        public InvoiceController(IConfiguration configuration, IInvoicesservice invoicesservice) : base(configuration)
         {
-
+            _invoicesservice = invoicesservice;
         }
 
 
@@ -35,12 +34,17 @@ namespace Lykke.Pay.Invoice.Controllers
         public async Task<IActionResult> Index(string invoiceId)
         {
             var model = new InvoiceResult();
-            var inv = await InvoiceRequestRepo.GetInvoice(invoiceId);
+            var respInv = await _invoicesservice.ApiInvoicesByInvoiceIdGetWithHttpMessagesAsync(invoiceId);
+            var inv = respInv.Body;
             if (inv == null)
             {
                 return NotFound();
             }
 
+            if (!string.IsNullOrEmpty(inv.WalletAddress))
+            {
+                return View(await GenerateIfExists(inv, null));
+            }
 
             model.OrigAmount = inv.Amount;
             model.Currency = inv.Currency;
@@ -104,13 +108,29 @@ namespace Lykke.Pay.Invoice.Controllers
         [HttpPost("Regenerate")]
         public async Task<IActionResult> Regenerate(string invoiceId, string orderRequestId)
         {
-
             var model = new InvoiceResult();
-            var inv = await InvoiceRequestRepo.GetInvoice(invoiceId);
+            var respInv = await _invoicesservice.ApiInvoicesByInvoiceIdGetWithHttpMessagesAsync(invoiceId);
+            var inv = respInv.Body;
             if (inv == null)
             {
                 return NotFound();
             }
+
+            var order = await GenerateIfExists(inv, orderRequestId);
+            if (order == null)
+            {
+                return NotFound();
+            }
+
+            return Json(order);
+
+        }
+
+
+        private async Task<InvoiceResult> GenerateIfExists(Service.Invoces.Client.Models.IInvoiceEntity inv, string orderRequestId)
+        {
+            var model = new InvoiceResult();
+           
 
 
             model.OrigAmount = inv.Amount;
@@ -136,13 +156,13 @@ namespace Lykke.Pay.Invoice.Controllers
 
             if (result.StatusCode != HttpStatusCode.OK)
             {
-                return BadRequest();
+                return null;
             }
 
             dynamic orderResp = JsonConvert.DeserializeObject(resp);
 
 
-            
+
             model.Amount = orderResp.amount;
             model.QRCode =
                 $@"https://chart.googleapis.com/chart?chs=220x220&chld=L|2&cht=qr&chl=bitcoin:{orderResp.address}?amount={orderResp.amount}%26label=LykkePay%26message={orderResp.orderId}";
@@ -150,11 +170,10 @@ namespace Lykke.Pay.Invoice.Controllers
             ViewBag.invoiceTimeRefresh = 1;
             //ViewBag["invoiceTimeDueDate"]
             ViewBag.orderRequestId = orderResp.OrderRequestId;
-            ViewBag.invoiceId = invoiceId;
-
-            return Json(model);
-
+            ViewBag.invoiceId = inv.InvoiceId;
+            return model;
         }
+
 
         private static RSA CreateRsaFromPrivateKey(string privateKey)
         {
