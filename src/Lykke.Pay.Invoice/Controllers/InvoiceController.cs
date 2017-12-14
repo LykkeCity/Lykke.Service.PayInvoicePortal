@@ -8,11 +8,14 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 using Lykke.Core;
+using Lykke.Pay.Invoice.AppCode;
 using Lykke.Pay.Invoice.Models;
 using Lykke.Pay.Service.Invoces.Client;
+using Lykke.Pay.Service.Invoces.Client.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
+using IInvoiceEntity = Lykke.Pay.Service.Invoces.Client.Models.IInvoiceEntity;
 
 namespace Lykke.Pay.Invoice.Controllers
 {
@@ -33,11 +36,21 @@ namespace Lykke.Pay.Invoice.Controllers
         [Route("{InvoiceId}")]
         public async Task<IActionResult> Index(string invoiceId)
         {
-            var model = new InvoiceResult();
             var respInv = await _invoicesservice.ApiInvoicesByInvoiceIdGetWithHttpMessagesAsync(invoiceId);
             var inv = respInv.Body;
-            if (inv == null)
+            if (inv == null || !InvoiceStatus.Unpaid.ToString().Equals(inv.Status, StringComparison.InvariantCultureIgnoreCase))
             {
+                return NotFound();
+            }
+            if (inv.StartDate.GetRepoDateTime() > DateTime.Today)
+            {
+                return NotFound();
+            }
+
+            if (inv.DueDate.GetRepoDateTime() < DateTime.Now)
+            {
+                inv.Status = InvoiceStatus.Decline.ToString();
+                await _invoicesservice.ApiInvoicesPostWithHttpMessagesAsync(inv.CreateInvoiceEntity());
                 return NotFound();
             }
 
@@ -46,9 +59,12 @@ namespace Lykke.Pay.Invoice.Controllers
                 return View(await GenerateIfExists(inv, null));
             }
 
-            model.OrigAmount = inv.Amount;
-            model.Currency = inv.Currency;
-            model.InvoiceNumber = inv.InvoiceNumber;
+            var model = new InvoiceResult
+            {
+                OrigAmount = inv.Amount,
+                Currency = inv.Currency,
+                InvoiceNumber = inv.InvoiceNumber
+            };
 
             var order = new
             {
@@ -91,28 +107,49 @@ namespace Lykke.Pay.Invoice.Controllers
 
             dynamic orderResp = JsonConvert.DeserializeObject(resp);
 
-            
+            inv.WalletAddress = orderResp.address;
+            inv.DueDate = DateTime.Now.Add(InvoiceLiveTime).RepoDateStr();
+            await _invoicesservice.ApiInvoicesPostWithHttpMessagesAsync(inv.CreateInvoiceEntity());
 
             model.Amount = orderResp.amount;
             model.QRCode =
                 $@"https://chart.googleapis.com/chart?chs=220x220&chld=L|2&cht=qr&chl=bitcoin:{orderResp.address}?amount={orderResp.amount}%26label=LykkePay%26message={orderResp.orderId}";
 
-            ViewBag.invoiceTimeRefresh = 1;
-                //ViewBag["invoiceTimeDueDate"]
-            ViewBag.orderRequestId = orderResp.orderRequestId;
-            ViewBag.invoiceId = invoiceId;
+
+            FillViewBag(inv, orderResp);
+            
             return View(model);
+
+        }
+
+        private void FillViewBag(IInvoiceEntity inv, dynamic orderResp)
+        {
+            ViewBag.invoiceTimeRefresh = (((string)orderResp.TransactionWaitingTime).FromUnixFormat() - DateTime.Now).Seconds;
+            ViewBag.invoiceTimeDueDate = (inv.DueDate.FromUnixFormat() - DateTime.Now).Seconds;
+            ViewBag.orderRequestId = orderResp.orderRequestId;
+            ViewBag.invoiceId = inv.InvoiceId;
 
         }
 
         [HttpPost("Regenerate")]
         public async Task<IActionResult> Regenerate(string invoiceId, string orderRequestId)
         {
-            var model = new InvoiceResult();
+            
             var respInv = await _invoicesservice.ApiInvoicesByInvoiceIdGetWithHttpMessagesAsync(invoiceId);
             var inv = respInv.Body;
-            if (inv == null)
+            if (inv == null || !InvoiceStatus.Unpaid.ToString().Equals(inv.Status,StringComparison.InvariantCultureIgnoreCase))
             {
+                return NotFound();
+            }
+            if (inv.StartDate.GetRepoDateTime() > DateTime.Today)
+            {
+                return NotFound();
+            }
+
+            if (inv.DueDate.GetRepoDateTime() < DateTime.Now)
+            {
+                inv.Status = InvoiceStatus.Decline.ToString();
+                await _invoicesservice.ApiInvoicesPostWithHttpMessagesAsync(inv.CreateInvoiceEntity());
                 return NotFound();
             }
 
