@@ -86,15 +86,15 @@ namespace Lykke.Pay.Invoice.Controllers
 
         }
 
-
+        [Authorize]
         [HttpGet("profile")]
         public async Task<IActionResult> Profile()
         {
-            var result = _invoiceService.ApiInvoicesGet();
-            ViewBag.Result = result;
+            var result = await _invoiceService.ApiInvoicesGetWithHttpMessagesAsync();
+            ViewBag.Result = result.Body;
             return View();
         }
-
+        [Authorize]
         [HttpPost("profile")]
         public async Task<IActionResult> Profile(Models.InvoiceRequest request, string returnUrl)
         {
@@ -103,12 +103,13 @@ namespace Lykke.Pay.Invoice.Controllers
                 return View();
             }
             var item = request.CreateEntity();
-            _invoiceService.ApiInvoicesPost(item);
-            var result = _invoiceService.ApiInvoicesGet();
-            ViewBag.Result = result;
+            await _invoiceService.ApiInvoicesPostWithHttpMessagesAsync(item);
+            var result = await _invoiceService.ApiInvoicesGetWithHttpMessagesAsync();
+            ViewBag.Result = result.Body;
             return View();
 
         }
+        [Authorize]
         [HttpGet("deleteinvoice")]
         public async Task<EmptyResult> DeleteInvoice(string invoiceId)
         {
