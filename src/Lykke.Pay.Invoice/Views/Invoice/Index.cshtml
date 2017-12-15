@@ -17,10 +17,10 @@
                         </div>
                         <div class="invoice__row">
                             <div class="invoice__remain">
-                                <div class="invoice__remain-load">
-                                    <div class="invoice__remain-loading"> </div>
+                                <div class="invoice__remain-load ">
+                                    <div class="invoice__remain-loading loader"> </div>
                                 </div>
-                                <span class="invoice__remain-text">10 min remaining…</span>
+                                <span class="invoice__remain-text"></span>
                             </div>
                         </div>
                     </div>
@@ -35,10 +35,7 @@
                         </div>
                         <div class="invoice__description">
                             <div class="invoice__label">Waiting for payment </div>
-                            <div class="invoice__value">
-                                The address will be invalid in 10 minutes
-                                <br>due to inactivity
-                            </div>
+                            <div class="invoice__value"></div>
                         </div>
                     </div>
                 </div>
@@ -48,3 +45,14 @@
 </article>
 
 
+@section Scripts
+{
+    <script type="text/javascript">
+        $.invoiceTimeRefresh = @ViewBag.invoiceTimeRefresh;
+        $.invoiceTimeDueDate = '@ViewBag.invoiceTimeDueDate';
+        $.orderRequestId = '@ViewBag.orderRequestId';
+        $.invoiceId = '@ViewBag.invoiceId';
+        $.updateOrderUrl = '@Url.Action("Regenerate")';
+    </script>
+    <script src='/js/invoice.js' type="text/javascript"></script>
+}

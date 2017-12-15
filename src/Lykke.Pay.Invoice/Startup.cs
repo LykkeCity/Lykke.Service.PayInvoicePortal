@@ -51,7 +51,7 @@ namespace Lykke.Pay.Invoice
             {
                 options.DefaultPolicy = new AuthorizationPolicyBuilder(CookieAuthenticationDefaults.AuthenticationScheme).RequireAuthenticatedUser().Build();
             });
-            services.AddSingleton<IInvoicesservice>(new Invoicesservice(new Uri("http://pay-invoice-service.lykke-pay.svc.cluster.local")));
+            services.AddSingleton<IInvoicesservice>(new Invoicesservice(new Uri(Configuration["InvoicesService"])));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
