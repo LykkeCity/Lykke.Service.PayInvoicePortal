@@ -125,10 +125,12 @@ namespace Lykke.Pay.Invoice.Controllers
         private void FillViewBag(IInvoiceEntity inv, dynamic orderResp)
         {
             var orderTimeLive = orderResp.TransactionWaitingTime as string;
-            ViewBag.invoiceTimeRefresh =  string.IsNullOrEmpty(orderTimeLive) ? OrderLiveTime.Seconds : (orderTimeLive.FromUnixFormat() - DateTime.Now).Seconds;
-            ViewBag.invoiceTimeDueDate = (inv.DueDate.GetRepoDateTime() - DateTime.Now).Seconds;
+            ViewBag.invoiceTimeRefresh =  string.IsNullOrEmpty(orderTimeLive) ? OrderLiveTime.TotalSeconds : (orderTimeLive.FromUnixFormat() - DateTime.Now).TotalSeconds;
+            ViewBag.invoiceTimeDueDate = (inv.DueDate.GetRepoDateTime() - DateTime.Now).TotalSeconds;
             ViewBag.orderRequestId = orderResp.orderRequestId;
             ViewBag.invoiceId = inv.InvoiceId;
+            ViewBag.invoiceTimeRefresh = (int)Math.Round(ViewBag.invoiceTimeRefresh);
+            ViewBag.invoiceTimeDueDate = (int)Math.Round(ViewBag.invoiceTimeDueDate);
 
         }
 

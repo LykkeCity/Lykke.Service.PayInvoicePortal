@@ -36,8 +36,8 @@ $.updateProgress = function () {
         $.imageIndex = 0;
         return;
     }
-    var value = '0px -' + index * 35 + 'px';
-    $('.invoice__remain-loading').css({ 'background-position': value });
+
+
     if (minRemind > 1) {
         $('.invoice__remain-text').text('' + minRemind + ' min remaining…');
         $('.invoice__value').html('The address will be invalid in ' + minRemind + ' minutes<br> due to inactivity');
