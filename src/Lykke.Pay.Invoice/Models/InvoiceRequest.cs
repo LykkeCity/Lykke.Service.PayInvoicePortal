@@ -47,12 +47,10 @@ namespace Lykke.Pay.Invoice.Models
                 InvoiceId = Guid.NewGuid().ToString(),
                 Label = Label,
                 Status = Status,
-<<<<<<< HEAD
                 WalletAddress = WalletAddress,
                 DueDate = DateTimeExt.RepoDateStr(DateTime.UtcNow)
-=======
-                WalletAddress = WalletAddress
->>>>>>> upstream/dev
+                
+
             };
         }
         public IList<IInvoiceEntity> InvoiceList { get; set; }

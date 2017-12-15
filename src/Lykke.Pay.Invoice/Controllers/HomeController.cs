@@ -90,13 +90,10 @@ namespace Lykke.Pay.Invoice.Controllers
         [HttpGet("profile")]
         public async Task<IActionResult> Profile()
         {
-<<<<<<< HEAD
+
             var result = await _invoiceService.ApiInvoicesGetWithHttpMessagesAsync();
             ViewBag.Result = result.Body;
-=======
-            var result = _invoiceService.ApiInvoicesGetWithHttpMessagesAsync();
-            ViewBag.Result = result;
->>>>>>> upstream/dev
+
             return View();
         }
         [Authorize]
@@ -109,13 +106,10 @@ namespace Lykke.Pay.Invoice.Controllers
             }
             var item = request.CreateEntity();
             await _invoiceService.ApiInvoicesPostWithHttpMessagesAsync(item);
-<<<<<<< HEAD
+
             var result = await _invoiceService.ApiInvoicesGetWithHttpMessagesAsync();
             ViewBag.Result = result.Body;
-=======
-            var result = _invoiceService.ApiInvoicesGet();
-            ViewBag.Result = result;
->>>>>>> upstream/dev
+
             return View();
 
         }

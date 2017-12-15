@@ -56,7 +56,7 @@ namespace Lykke.Pay.Invoice.Controllers
 
             if (!string.IsNullOrEmpty(inv.WalletAddress))
             {
-                return View(await GenerateIfExists(inv, null));
+                return View(await GenerateIfExists(inv, inv.WalletAddress));
             }
 
             var model = new InvoiceResult
