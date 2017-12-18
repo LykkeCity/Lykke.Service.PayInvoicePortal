@@ -13,15 +13,20 @@
             'address': $.walletAddress
         },
         function (data) {
+            
             if (!data) {
                 $('.invoice__remain-text').text('invoice is not avaible…');
                 $('.invoice__value').html('The invoice is not avaible more');
                 return;
             }
 
-            $('.invoice__qr > img').attr('src', data.qrCode);
-            $('.invoice__payment').html('' + data.amount + ' BTC<div class="invoice__info"> for payment </div>');
-            $('.invoice__original').html('' + data.origAmount + ' ' + data.currency + '<div class="invoice__info"> original </div>');
+            $.invoiceTimeRefresh = data.invoiceTimeRefresh;
+            $.startCountDown();
+
+            $('.invoice__qr > img').attr('src', data.order.qrCode);
+            $('.invoice__payment').html('' + data.order.amount.toFixed(8) + ' BTC<div class="invoice__info"> for payment </div>');
+            $('.invoice__original').html('' + data.order.origAmount + ' ' + data.currency + '<div class="invoice__info"> original </div>');
+            
         }
     );
 };
@@ -32,8 +37,11 @@ $.updateProgress = function () {
     var secRemind = $.invoiceTimeRefresh - $.imageIndex;
     var minRemind = secRemind / 60 | 0;
     if (secRemind < 1) {
+        clearInterval($.intTimer);
         $.updateOrder();
         $.imageIndex = 0;
+        $('.invoice__remain-text').text('…');
+        $('.invoice__value').html('…');
         return;
     }
 

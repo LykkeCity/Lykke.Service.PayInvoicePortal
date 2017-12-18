@@ -124,7 +124,7 @@ namespace Lykke.Pay.Invoice.Controllers
 
         private void FillViewBag(IInvoiceEntity inv, dynamic orderResp)
         {
-            var orderTimeLive = orderResp.TransactionWaitingTime as string;
+            string orderTimeLive = orderResp.transactionWaitingTime.ToString();
             ViewBag.invoiceTimeRefresh =  string.IsNullOrEmpty(orderTimeLive) ? OrderLiveTime.TotalSeconds : (orderTimeLive.FromUnixFormat() - DateTime.Now).TotalSeconds;
             ViewBag.invoiceTimeDueDate = (inv.DueDate.GetRepoDateTime() - DateTime.Now).TotalSeconds;
             ViewBag.address = orderResp.address;
@@ -162,7 +162,12 @@ namespace Lykke.Pay.Invoice.Controllers
                 return NotFound();
             }
 
-            return Json(order);
+
+            return Json(new
+            {
+                order,
+                ViewBag.invoiceTimeRefresh
+            });
 
         }
 
@@ -201,7 +206,19 @@ namespace Lykke.Pay.Invoice.Controllers
 
             dynamic orderResp = JsonConvert.DeserializeObject(resp);
 
-            var paimentRequest = Enum.Parse<MerchantPayRequestStatus>(orderResp.MerchantPayRequestStatus);
+            
+            string status = orderResp.merchantPayRequestStatus.ToString();
+            int e = 0;
+            MerchantPayRequestStatus paimentRequest;
+            if (int.TryParse(status, out e))
+            {
+                paimentRequest = (MerchantPayRequestStatus) e;
+            }
+            else
+            {
+                paimentRequest = Enum.Parse<MerchantPayRequestStatus>(status);
+            }
+            
             if (paimentRequest == MerchantPayRequestStatus.Completed || paimentRequest == MerchantPayRequestStatus.Failed)
             {
                 inv.Status = (paimentRequest == MerchantPayRequestStatus.Completed ? InvoiceStatus.Paid : InvoiceStatus.Decline).ToString();
