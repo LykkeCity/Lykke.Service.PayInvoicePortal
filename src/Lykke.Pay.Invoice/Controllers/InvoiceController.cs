@@ -127,7 +127,7 @@ namespace Lykke.Pay.Invoice.Controllers
             var orderTimeLive = orderResp.TransactionWaitingTime as string;
             ViewBag.invoiceTimeRefresh =  string.IsNullOrEmpty(orderTimeLive) ? OrderLiveTime.TotalSeconds : (orderTimeLive.FromUnixFormat() - DateTime.Now).TotalSeconds;
             ViewBag.invoiceTimeDueDate = (inv.DueDate.GetRepoDateTime() - DateTime.Now).TotalSeconds;
-            ViewBag.orderRequestId = orderResp.orderRequestId;
+            ViewBag.address = orderResp.address;
             ViewBag.invoiceId = inv.InvoiceId;
             ViewBag.invoiceTimeRefresh = (int)Math.Round(ViewBag.invoiceTimeRefresh);
             ViewBag.invoiceTimeDueDate = (int)Math.Round(ViewBag.invoiceTimeDueDate);
@@ -135,7 +135,7 @@ namespace Lykke.Pay.Invoice.Controllers
         }
 
         [HttpPost("Regenerate")]
-        public async Task<IActionResult> Regenerate(string invoiceId, string orderRequestId)
+        public async Task<IActionResult> Regenerate(string invoiceId, string address)
         {
             
             var respInv = await _invoicesservice.ApiInvoicesByInvoiceIdGetWithHttpMessagesAsync(invoiceId);
@@ -156,7 +156,7 @@ namespace Lykke.Pay.Invoice.Controllers
                 return NotFound();
             }
 
-            var order = await GenerateIfExists(inv, orderRequestId);
+            var order = await GenerateIfExists(inv, address);
             if (order == null)
             {
                 return NotFound();
@@ -167,7 +167,7 @@ namespace Lykke.Pay.Invoice.Controllers
         }
 
 
-        private async Task<InvoiceResult> GenerateIfExists(Service.Invoces.Client.Models.IInvoiceEntity inv, string orderRequestId)
+        private async Task<InvoiceResult> GenerateIfExists(Service.Invoces.Client.Models.IInvoiceEntity inv, string address)
         {
             var model = new InvoiceResult();
            
@@ -188,7 +188,7 @@ namespace Lykke.Pay.Invoice.Controllers
             httpClient.DefaultRequestHeaders.Add("Lykke-Merchant-Sign", sign);
 
 
-            var result = await httpClient.PostAsync(LykkePayUrl + $"Order/ReCreate/{orderRequestId}",
+            var result = await httpClient.PostAsync(LykkePayUrl + $"Order/ReCreate/{address}",
                 new StringContent("", Encoding.UTF8, "application/json"));
             var resp = await result.Content.ReadAsStringAsync();
 

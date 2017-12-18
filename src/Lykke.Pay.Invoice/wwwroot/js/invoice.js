@@ -10,7 +10,7 @@
     $.post($.updateOrderUrl,
         {
             'invoiceId': $.invoiceId,
-            'orderRequestId': $.orderRequestId
+            'address': $.walletAddress
         },
         function (data) {
             if (!data) {

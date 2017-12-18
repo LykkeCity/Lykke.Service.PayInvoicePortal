@@ -26,6 +26,7 @@ namespace Lykke.Pay.Invoice.Models
         public string DueDate { get; set; }
         public string Status { get; set; }
         public string WalletAddress { get; set; }
+        public string StartDate { get; set; }
 
         public InvoiceEntity CreateEntity()
         {
@@ -48,7 +49,7 @@ namespace Lykke.Pay.Invoice.Models
                 Label = Label,
                 Status = Status,
                 WalletAddress = WalletAddress,
-                DueDate = DateTimeExt.RepoDateStr(DateTime.UtcNow)
+                StartDate = DateTime.Today.RepoDateStr()
                 
 
             };
