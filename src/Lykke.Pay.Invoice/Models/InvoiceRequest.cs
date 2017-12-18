@@ -4,6 +4,7 @@ using Lykke.Pay.Invoice.AppCode;
 using Lykke.Pay.Service.Invoces.Client.Models;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -18,7 +19,7 @@ namespace Lykke.Pay.Invoice.Models
 
         public string ClientEmail { get; set; }
 
-        public double Amount { get; set; }
+        public string Amount { get; set; }
         public string Currency { get; set; }
 
         public string Label { get; set; }
@@ -35,23 +36,19 @@ namespace Lykke.Pay.Invoice.Models
             {
                 return null;
             }
-
-            return
-
-            new InvoiceEntity
+            var invoiceid = string.IsNullOrEmpty(InvoiceId) ? Guid.NewGuid().ToString() : InvoiceId;
+            return new InvoiceEntity
             {
-                Amount = Amount,
+                Amount = double.Parse(Amount, CultureInfo.InvariantCulture),
                 ClientEmail = ClientEmail,
                 ClientName = ClientName,
                 Currency = Currency,
                 InvoiceNumber = InvoiceNumber,
-                InvoiceId = Guid.NewGuid().ToString(),
+                InvoiceId = invoiceid,
                 Label = Label,
                 Status = Status,
                 WalletAddress = WalletAddress,
                 StartDate = DateTime.Today.RepoDateStr()
-                
-
             };
         }
         public IList<IInvoiceEntity> InvoiceList { get; set; }

@@ -9,9 +9,6 @@
                     <i class="icon icon--search"></i>
                 </button>
             </li>
-            <li>
-                <input type="text" placeholder="" class="form-control" id="searchfield" name="Search" value="">
-            </li>
             <li role="presentation" class="active">
                 <a href="#all" aria-controls="all" role="tab" data-toggle="tab" id="alllink">All ⋅ <span></span></a>
             </li>
@@ -25,6 +22,25 @@
                 <a href="#draft" aria-controls="draft" role="tab" data-toggle="tab" id="draftlink">Draft ⋅ <span></span></a>
             </li>
         </ul>
+    </div>
+    <div class="profile_search">
+        <div class="select profile_search__select" data-control="select">
+            <div class="select__value">
+                <span class="_value">In the past month</span>
+            </div>
+            <select id="select1" class="form-control select__elem">
+                <option>In the past month</option>
+                <option>In the past month2</option>
+            </select>
+        </div>
+        <div class="profile_search__input_group">
+            <button type="button" name="button" class="profile_search__button_search">
+                <i class="icon icon--search"></i>
+            </button>
+            <input type="text" name="i1" placeholder="Asset or address…" class="form-control profile_search__input" id="searchvalue">
+            <button type="button" name="button" class="profile_search__button_close"> </button>
+        </div>
+        <button type="button" name="button" class="profile_search__button">Cancel</button>
     </div>
     <div class="tab-content">
         <div class="invoices__table">
@@ -48,7 +64,7 @@
 <div id="rowtemplate" style="display: none">
     <div class="invoices_item" invoice="{{InvoiceId}}">
         <div class="invoices_item__cell invoices_item__cell--number">
-            <a href="#" class="invoices_item__text">#{{InvoiceNumber}}</a>
+            <a href="/invoice/?invoiceId={{InvoiceId}}" class="invoices_item__text">#{{InvoiceNumber}}</a>
             <div class="invoices_item__text invoices_item__text--light"></div>
         </div>
         <div class="invoices_item__cell invoices_item__cell--client">
@@ -59,7 +75,7 @@
             <div class="invoices_item__text invoices_item__text--small">{{Amount}}</div>
         </div>
         <div class="invoices_item__cell invoices_item__cell--currency">
-            <div class="invoices_item__text invoices_item__text--small">CHF</div>
+            <div class="invoices_item__text invoices_item__text--small">{{Currency}}</div>
         </div>
         <div class="invoices_item__cell invoices_item__cell--status">
             <div class="invoices_item__status invoices_item__status--{{CssClass}}"> {{Status}} </div>

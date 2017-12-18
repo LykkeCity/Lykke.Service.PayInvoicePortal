@@ -552,6 +552,7 @@
 	line-height: 30px;
 	letter-spacing: 0.2px;
 	color: #333333;
+    cursor: pointer;
 }
 
 .invoices__cell--number {

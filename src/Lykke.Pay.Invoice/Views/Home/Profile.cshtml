@@ -4,6 +4,7 @@
 }
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 
+<link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
 @using (Html.BeginForm())
 {
     <div class="create">
@@ -21,29 +22,29 @@
             <div class="create__form">
                 <div class="create__input-group">
                     <label class="create__input-label">Invoice number</label>
-                    <input type="text" asp-for="InvoiceNumber" placeholder="" class="form-control">
+                    <input type="text" asp-for="InvoiceNumber" required placeholder="" class="form-control">
                 </div>
                 <div class="create__input-group">
                     <label class="create__input-label">Client</label>
-                    <input type="text" asp-for="ClientName" placeholder="" class="form-control">
+                    <input type="text" asp-for="ClientName" required placeholder="" class="form-control">
                 </div>
                 <div class="create__input-group">
                     <label class="create__input-label">Email</label>
-                    <input type="email" asp-for="ClientEmail" placeholder="" class="form-control">
+                    <input type="email" asp-for="ClientEmail" required placeholder="" class="form-control">
                 </div>
                 <div class="create__input-group">
                     <div class="create__input-amount">
                         <label class="create__input-label">Amount</label>
                         <div class="input-group">
                             <span class="">CHF</span>
-                            <input type="text" asp-for="Amount" placeholder="0.00" class="form-control">
+                            <input type="text" asp-for="Amount" required placeholder="0.00" class="form-control">
                         </div>
                     </div>
                     <div class="create__input-date">
                         <label class="create__input-label">Pay due date</label>
                         <div class="input-group">
                             <i class="icon icon--cal"></i>
-                            <input type="text" asp-for="StartDate" placeholder="03.12.2017" class="form-control">
+                            <input type="text" asp-for="StartDate" required placeholder="03.12.2017" class="form-control">
                         </div>
                     </div>
                 </div>
@@ -83,9 +84,12 @@
                 </div>
             </div>
             @Html.Partial("~/Views/Home/InvoiceGridPartial.cshtml")
-            
+
         </div>
     </div>
 </article>
-<script src="/js/vendor/jquery.min.js"></script>
-<script src="~/js/profile.js"></script>
+@section Scripts
+    {
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+    <script src="/js/profile.js" type="text/javascript"></script>
+}
