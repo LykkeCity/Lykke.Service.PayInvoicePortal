@@ -6,15 +6,15 @@ $('.btn_create').on('click', function (e) {
     e.stopPropagation();
 
     $('body').addClass('body--menu_opened');
-    $('.create').addClass('create--open');
+    $('.create.draft').addClass('create--open');
 });
 
 $('body').on('click', function () {
     $('body').removeClass('body--menu_opened');
-    $('.create').removeClass('create--open');
-
+    $('.create.draft').removeClass('create--open');
+    $('.create.unpaid').removeClass('create--open');
 });
-$('.create').on('click', function (e) {
+$('.create.draft').on('click', function (e) {
     e.stopPropagation();
 });
 $(document).ready(function () {
@@ -32,7 +32,6 @@ $(document).ready(function () {
     $('#closebtn').on('click', function (e) {
         $('body').removeClass('body--menu_opened');
         $('.create').removeClass('create--open');
-
     });
     $("#StartDate").datepicker();
     $('.invoices__search').on('click', function () {
@@ -202,7 +201,36 @@ function renderGrid(gridModel) {
         if ($(element).has('.invoices_item__status--draft').length !== 0) {
             editItem(invoiceid);
             $('body').addClass('body--menu_opened');
-            $('.create').addClass('create--open');
+            $('.create.draft').addClass('create--open');
+        }
+        if ($(element).has('.invoices_item__status--unpaid').length !== 0) {
+            showItem(invoiceid);
+            $('body').addClass('body--menu_opened');
+            $('.create.unpaid').addClass('create--open');
         }
     });
+}
+function showItem(invoiceId) {
+    var currentItem = null;
+    for (var i = 0; i < invoices.length; i++) {
+        if (invoices[i].InvoiceId == invoiceId) {
+            currentItem = invoices[i];
+            break;
+        }
+    }
+    var keyNames = Object.keys(currentItem);
+    for (var j = 0; j < keyNames.length; j++) {
+        var value = currentItem[keyNames[j]];
+        if (!value)
+            value = "";
+        var item = document.getElementById("Unpaid" + keyNames[j]);
+        if (keyNames[j] == "StartDate")
+            value = value.substr(0, 10);
+        if (item)
+            item.innerText = value;
+        if (keyNames[j] == "InvoiceId") {
+            var url = document.getElementById("UnpaidUrl");
+            url.innerText = window.location.origin + "/invoice/?invoiceId=" + value;
+        }
+    }
 }

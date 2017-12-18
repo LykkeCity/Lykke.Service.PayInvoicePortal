@@ -7,7 +7,7 @@
 <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
 @using (Html.BeginForm())
 {
-    <div class="create">
+    <div class="create draft">
         <ul class="create__top">
             <li class="create__top-item">
                 <a href="#" class="create__top-link">Profile</a>
@@ -63,6 +63,69 @@
         </div>
     </div>
 }
+<div class="create unpaid">
+    <ul class="create__top">
+        <li class="create__top-item">
+            <a href="#" class="create__top-link">Profile</a>
+        </li>
+        <li class="create__top-arrow">
+            <i class="icon icon--chevron-thin-right"></i>
+        </li>
+        <li class="create__top-item"> Creat new invoice </li>
+    </ul>
+    <div class="create__body">
+        <div class="create__title">Invoice</div>
+        <div class="create__item">
+            <div class="create__item-name">Invoice number</div>
+            <div class="create__item-description" id="UnpaidInvoiceNumber"></div>
+        </div>
+        <div class="create__item">
+            <div class="create__item-name">Client</div>
+            <div class="create__item-description" id="UnpaidClientName"></div>
+        </div>
+        <div class="create__item">
+            <div class="create__item-name">Email</div>
+            <div class="create__item-description" id="UnpaidClientEmail"></div>
+        </div>
+        <div class="create__item">
+            <div class="create__item-name">Amount</div>
+            <div class="create__item-description"id="UnpaidAmount"></div>
+        </div>
+        <div class="create__item">
+            <div class="create__item-name">Pay due date</div>
+            <div class="create__item-description" id="UnpaidStartDate"></div>
+        </div>
+        <div class="create__item">
+            <div class="create__item-name">Status</div>
+            <div class="create__item-description">Unpaid</div>
+        </div>
+        <div class="create__item">
+            <div class="create__item-name">Hyperlink</div>
+            <div class="create__item-description" id="UnpaidUrl"></div>
+            <a href="#" type="button" name="button" class="create__item-copy">
+                <i class="icon icon--copy"></i>
+            </a>
+        </div>
+        <div class="create__item">
+            <div class="create__item-name">Share</div>
+            <div class="create__item-description">Send account details to email</div>
+            <div class="form">
+                <div class="create__item-group">
+                    <div class="create__item-input">
+                        <i class="icon icon--email"></i>
+                        <input type="email" placeholder="E-mail address" class="form-control">
+                    </div>
+                    <button class="btn btn--primary btn--circle" type="button">
+                        <i class="icon icon--arrow-right-alt"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div class="create__actions">
+            <button type="button" name="button" class="btn create__button">Close</button>
+        </div>
+    </div>
+</div>
 <article class="">
     <div class="container-full">
         <div class="profile">
