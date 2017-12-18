@@ -1,4 +1,7 @@
-﻿$('.btn_create').on('click', function (e) {
+﻿var invoices = null;
+var sortfield = "";
+var sortway = 0;
+$('.btn_create').on('click', function (e) {
 
     e.stopPropagation();
 
@@ -15,20 +18,50 @@ $('.create').on('click', function (e) {
     e.stopPropagation();
 });
 $(document).ready(function () {
-    renderGrid();
-    $('#searchfield').on('input', function (e) {
-        renderGrid($('#searchfield').val());
-    });
+
+    updateGrid();
+
     $('#generatebtn').on('click', function (e) {
         $('#Status').val("Unpaid");
+        updateGrid();
     });
     $('#draftbtn').on('click', function (e) {
         $('#Status').val("Draft");
+        updateGrid();
     });
     $('#closebtn').on('click', function (e) {
         $('body').removeClass('body--menu_opened');
         $('.create').removeClass('create--open');
 
+    });
+    $("#StartDate").datepicker();
+    $('.invoices__search').on('click', function () {
+        $('.profile_search').toggleClass('vis');
+    });
+    $('.invoices__row .invoices__cell').on('click', function (sender) {
+        var element = sender.target;
+        sortfield = "";
+        sortway = (sortway == 0) ? 1 : 0;
+        if (element.className.indexOf("number") !== -1)
+            sortfield = "number";
+        if (element.className.indexOf("client") !== -1)
+            sortfield = "client";
+        if (element.className.indexOf("amount") !== -1)
+            sortfield = "amount";
+        if (element.className.indexOf("currency") !== -1)
+            sortfield = "currency";
+        if (element.className.indexOf("status") !== -1)
+            sortfield = "status";
+        if (sortfield !== "")
+            updateGrid("", sortfield, sortway);
+    });
+    $('.profile_search__button').on('click', function () {
+        $('.profile_search').removeClass('vis');
+        $('#searchvalue').val("");
+        updateGrid();
+    });
+    $('#searchvalue').on('input', function (e) {
+        updateGrid($('#searchvalue').val(), sortfield);
     });
 });
 function editItem(invoiceId) {
@@ -45,17 +78,33 @@ function editItem(invoiceId) {
         if (!value)
             value = "";
         var item = document.getElementById(keyNames[j]);
+        if (keyNames[j] == "StartDate")
+            value = value.substr(0, 10);
         if (item)
             item.value = value;
     }
 }
-function renderGrid(search) {
+function updateGrid(searchValue, sortField, sortway) {
+    var data = { SearchValue: searchValue, SortField: sortField, Page: 1, SortWay: sortway  };
+    $.ajax({
+        url: "/home/Invoices",
+        dataType: 'json',
+        type: "POST",
+        data: data,
+        success: function (gridModel) {
+            renderGrid(gridModel); //grid need update after deletion item
+        }
+    });
+}
+function renderGrid(gridModel) {
     var alllink = document.getElementById("alllink");
     var paidlink = document.getElementById("paidlink");
     var unpaidlink = document.getElementById("unpaidlink");
     var draftlink = document.getElementById("draftlink");
 
-    var paidcnt = 0, draftcnt = 0, unpaidcnt = 0;
+    var paidcnt = gridModel.paidCount;
+    var draftcnt = gridModel.draftCount;
+    var unpaidcnt = gridModel.unpaidCount;
 
     var template = document.getElementById("rowtemplate").innerHTML;
     var taball = document.getElementById("all");
@@ -81,14 +130,14 @@ function renderGrid(search) {
     var divtabledraft = document.createElement("div");
     divtabledraft.className = "invoices__table";
     tabdraft.appendChild(divtabledraft);
-    var invoicevisible = (search != null) ? false : true;
+    //var invoicevisible = (search != null) ? false : true;
 
     var allstring = "";
     var paidstring = "";
     var unpaidstring = "";
     var draftstring = "";
+    invoices = gridModel.data;
     for (var i = 0; i < invoices.length; i++) {
-        invoicevisible = (search != null) ? false : true;
         var tempstr = template;
         var keyNames = Object.keys(invoices[i]);
         for (var j = 0; j < keyNames.length; j++) {
@@ -97,44 +146,34 @@ function renderGrid(search) {
                 value = "";
             if (keyNames[j] == "Status" && value == "")
                 value = "Draft";
-            tempstr = tempstr.replace("{{" + keyNames[j] + "}}", value);
-
-            if (search != null)
-                if (!invoicevisible && value.toString().indexOf(search) !== -1 && keyNames[j] !== "InvoiceId")
-                    invoicevisible = true;
+            tempstr = tempstr.replace(new RegExp("{{" + keyNames[j] + "}}", 'g'), value);
         }
-        if (invoicevisible) {
-            switch (invoices[i].Status) {
-                case "Paid":
-                    paidcnt++;
-                    tempstr = tempstr.replace("{{CssClass}}", "paid");
-                    paidstring += tempstr;
-                    break;
-                case "Unpaid":
-                    unpaidcnt++;
-
-                    tempstr = tempstr.replace("{{CssClass}}", "unpaid");
-                    unpaidstring += tempstr.replace("{{CssClass}}", "unpaid");
-                    break;
-                case "Draft":
-                default:
-                    draftcnt++;
-                    tempstr = tempstr.replace("{{disoption}}", "");
-                    tempstr = tempstr.replace("{{DisCssClass}}", "");
-                    tempstr = tempstr.replace("{{CssClass}}", "draft");
-                    draftstring += tempstr.replace("{{CssClass}}", "draft");
-                    break;
-            }
-            tempstr = tempstr.replace("{{DisCssClass}}", "btn--disabled");
-            tempstr = tempstr.replace("{{disoption}}", "disabled");
-            allstring += tempstr;
+        switch (invoices[i].Status) {
+            case "Paid":
+                tempstr = tempstr.replace("{{CssClass}}", "paid");
+                paidstring += tempstr;
+                break;
+            case "Unpaid":
+                tempstr = tempstr.replace("{{CssClass}}", "unpaid");
+                unpaidstring += tempstr.replace("{{CssClass}}", "unpaid");
+                break;
+            case "Draft":
+            default:
+                tempstr = tempstr.replace("{{disoption}}", "");
+                tempstr = tempstr.replace("{{DisCssClass}}", "");
+                tempstr = tempstr.replace("{{CssClass}}", "draft");
+                draftstring += tempstr.replace("{{CssClass}}", "draft");
+                break;
         }
+        tempstr = tempstr.replace("{{DisCssClass}}", "btn--disabled");
+        tempstr = tempstr.replace("{{disoption}}", "disabled");
+        allstring += tempstr;
     }
     divtableall.innerHTML = allstring;
     divtablepaid.innerHTML = paidstring;
     divtableunpaid.innerHTML = unpaidstring;
     divtabledraft.innerHTML = draftstring;
-    alllink.childNodes[1].innerText = invoices.length;
+    alllink.childNodes[1].innerText = gridModel.allCount;
     draftlink.childNodes[1].innerText = draftcnt;
     paidlink.childNodes[1].innerText = paidcnt;
     unpaidlink.childNodes[1].innerText = unpaidcnt;
@@ -160,8 +199,10 @@ function renderGrid(search) {
             }
         }
         var invoiceid = $(element).attr("invoice");
-        editItem(invoiceid);
-        $('body').addClass('body--menu_opened');
-        $('.create').addClass('create--open');
+        if ($(element).has('.invoices_item__status--draft').length !== 0) {
+            editItem(invoiceid);
+            $('body').addClass('body--menu_opened');
+            $('.create').addClass('create--open');
+        }
     });
 }

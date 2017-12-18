@@ -19,6 +19,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using Lykke.Pay.Service.Invoces.Client;
+using System.Linq;
+using PagedList;
 
 namespace Lykke.Pay.Invoice.Controllers
 {
@@ -90,10 +92,6 @@ namespace Lykke.Pay.Invoice.Controllers
         [HttpGet("profile")]
         public async Task<IActionResult> Profile()
         {
-
-            var result = await _invoiceService.ApiInvoicesGetWithHttpMessagesAsync();
-            ViewBag.Result = result.Body;
-
             return View();
         }
         [Authorize]
@@ -106,11 +104,58 @@ namespace Lykke.Pay.Invoice.Controllers
             }
             var item = request.CreateEntity();
             await _invoiceService.ApiInvoicesPostWithHttpMessagesAsync(item);
-
-            var result = await _invoiceService.ApiInvoicesGetWithHttpMessagesAsync();
-            ViewBag.Result = result.Body;
-
             return View();
+        }
+        [Authorize]
+        [HttpPost("invoices")]
+        public async Task<JsonResult> Invoices(GridModel model)
+        {
+            var respmodel = new GridModel();
+            var result = await _invoiceService.ApiInvoicesGetWithHttpMessagesAsync();
+            var orderedlist = result.Body.OrderByDescending(i => i.StartDate).ToList();
+            if (!string.IsNullOrEmpty(model.SearchValue))
+            {
+                orderedlist = orderedlist.Where(i => (i.WalletAddress != null && i.WalletAddress.Contains(model.SearchValue)) ||
+                (i.Currency != null && i.Currency.Contains(model.SearchValue)))
+                .OrderByDescending(i => i.StartDate).ToList();
+            }
+            respmodel.AllCount = orderedlist.Count;
+            respmodel.DraftCount = orderedlist.Where(i => i.Status == "Draft").Count();
+            respmodel.PaidCount = orderedlist.Where(i => i.Status == "Paid").Count();
+            respmodel.UnpaidCount = orderedlist.Where(i => i.Status == "Unpaid").Count();
+            if (!string.IsNullOrEmpty(model.SortField))
+            {
+                switch(model.SortField)
+                {
+                    case "number":
+                        if (model.SortWay == 0)
+                            orderedlist = orderedlist.OrderBy(i => i.InvoiceNumber).OrderByDescending(i => i.StartDate).ToList();
+                        else orderedlist = orderedlist.OrderByDescending(i => i.InvoiceNumber).OrderByDescending(i => i.StartDate).ToList();
+                        break;
+                    case "client":
+                        if (model.SortWay == 0)
+                            orderedlist = orderedlist.OrderBy(i => i.ClientName).OrderByDescending(i => i.StartDate).ToList();
+                        else orderedlist = orderedlist.OrderByDescending(i => i.ClientName).OrderByDescending(i => i.StartDate).ToList();
+                        break;
+                    case "amount":
+                        if (model.SortWay == 0)
+                            orderedlist = orderedlist.OrderBy(i => i.Amount).OrderByDescending(i => i.StartDate).ToList();
+                        else orderedlist = orderedlist.OrderByDescending(i => i.Amount).OrderByDescending(i => i.StartDate).ToList();
+                        break;
+                    case "currency":
+                        if (model.SortWay == 0)
+                            orderedlist = orderedlist.OrderBy(i => i.Currency).OrderByDescending(i => i.StartDate).ToList();
+                        else orderedlist = orderedlist.OrderByDescending(i => i.Currency).OrderByDescending(i => i.StartDate).ToList();
+                        break;
+                    case "status":
+                        if (model.SortWay == 0)
+                            orderedlist = orderedlist.OrderBy(i => i.Status).OrderByDescending(i => i.StartDate).ToList();
+                        else orderedlist = orderedlist.OrderByDescending(i => i.Status).OrderByDescending(i => i.StartDate).ToList();
+                        break;
+                }
+            }
+            respmodel.Data = orderedlist.ToPagedList(model.Page, 100000).ToList();
+            return Json(respmodel);
 
         }
         [Authorize]
