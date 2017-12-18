@@ -160,8 +160,10 @@ function renderGrid(search) {
             }
         }
         var invoiceid = $(element).attr("invoice");
-        editItem(invoiceid);
-        $('body').addClass('body--menu_opened');
-        $('.create').addClass('create--open');
+        if ($(element).has('.invoices_item__status--draft').length !== 0) {
+            editItem(invoiceid);
+            $('body').addClass('body--menu_opened');
+            $('.create').addClass('create--open');
+        }
     });
 }
