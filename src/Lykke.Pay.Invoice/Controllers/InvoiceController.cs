@@ -111,14 +111,14 @@ namespace Lykke.Pay.Invoice.Controllers
             inv.DueDate = DateTime.Now.Add(InvoiceLiveTime).RepoDateStr();
             await _invoicesservice.ApiInvoicesPostWithHttpMessagesAsync(inv.CreateInvoiceEntity());
 
-            model.Amount = orderResp.amount;
+            model.Amount = RoundDouble((double)orderResp.amount);
             model.QRCode =
-                $@"https://chart.googleapis.com/chart?chs=220x220&chld=L|2&cht=qr&chl=bitcoin:{orderResp.address}?amount={orderResp.amount}%26label=LykkePay%26message={orderResp.orderId}";
+                $@"https://chart.googleapis.com/chart?chs=220x220&chld=L|2&cht=qr&chl=bitcoin:{orderResp.address}?amount={model.Amount}%26label=LykkePay%26message={orderResp.orderId}";
 
 
             FillViewBag(inv, orderResp);
             
-            return View(model);
+            return View(model); 
 
         }
 
@@ -228,14 +228,18 @@ namespace Lykke.Pay.Invoice.Controllers
 
             }
 
-            model.Amount = orderResp.amount;
+            model.Amount = RoundDouble((double)orderResp.amount);
             model.QRCode =
-                $@"https://chart.googleapis.com/chart?chs=220x220&chld=L|2&cht=qr&chl=bitcoin:{orderResp.address}?amount={orderResp.amount}%26label=LykkePay%26message={orderResp.orderId}";
+                $@"https://chart.googleapis.com/chart?chs=220x220&chld=L|2&cht=qr&chl=bitcoin:{orderResp.address}?amount={model.Amount}%26label=LykkePay%26message={orderResp.orderId}";
 
             FillViewBag(inv, orderResp);
             return model;
         }
 
+        private double RoundDouble(double modelAmount)
+        {
+            return Math.Round(modelAmount, 8);
+        }
 
         private static RSA CreateRsaFromPrivateKey(string privateKey)
         {

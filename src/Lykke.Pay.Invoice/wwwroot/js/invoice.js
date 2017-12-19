@@ -24,7 +24,7 @@
             $.startCountDown();
 
             $('.invoice__qr > img').attr('src', data.order.qrCode);
-            $('.invoice__payment').html('' + data.order.amount.toFixed(8) + ' BTC<div class="invoice__info"> for payment </div>');
+            $('.invoice__payment').html('' + data.order.amount + ' BTC<div class="invoice__info"> for payment </div>');
             $('.invoice__original').html('' + data.order.origAmount + ' ' + data.currency + '<div class="invoice__info"> original </div>');
             
         }

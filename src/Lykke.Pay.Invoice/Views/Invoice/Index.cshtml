@@ -1,12 +1,6 @@
 ﻿@model Lykke.Pay.Invoice.Models.InvoiceResult
 
-@functions {
-    private double RoundDouble(double modelAmount)
-    {
-        return Math.Round(modelAmount, 8);
-    }
 
-}
 @{
     ViewData["Title"] = "Invoices";
 }
@@ -37,7 +31,7 @@
                     </div>
                     <div class="col-xs-12 col-sm-7 col-md-6">
                         <div class="invoice__payment">
-                            @RoundDouble(Model.Amount) BTC
+                            @Model.Amount BTC
                             <div class="invoice__info"> for payment </div>
                         </div>
                         <div class="invoice__original">
