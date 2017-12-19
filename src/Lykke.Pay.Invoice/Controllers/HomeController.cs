@@ -160,7 +160,10 @@ namespace Lykke.Pay.Invoice.Controllers
             if (!string.IsNullOrEmpty(model.SearchValue))
             {
                 orderedlist = orderedlist.Where(i => (i.WalletAddress != null && i.WalletAddress.Contains(model.SearchValue)) ||
-                (i.Currency != null && i.Currency.Contains(model.SearchValue)))
+                (i.Currency != null && i.Currency.Contains(model.SearchValue)) ||
+                (i.ClientEmail != null && i.ClientEmail.Contains(model.SearchValue)) ||
+                (i.ClientName != null && i.ClientName.Contains(model.SearchValue)) ||
+                (i.InvoiceNumber != null && i.InvoiceNumber.Contains(model.SearchValue)))
                 .OrderByDescending(i => i.StartDate).ToList();
             }
             respmodel.AllCount = orderedlist.Count;
