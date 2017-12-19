@@ -60,12 +60,14 @@
         <div role="tabpanel" class="tab-pane" id="unpaid"></div>
         <div role="tabpanel" class="tab-pane" id="draft"></div>
     </div>
+    <div class="showmore" style="cursor: pointer">Show more</div>
 </div>
+
 <div id="rowtemplate" style="display: none">
     <div class="invoices_item" invoice="{{InvoiceId}}">
         <div class="invoices_item__cell invoices_item__cell--number">
             <a href="#" class="invoices_item__text">#{{InvoiceNumber}}</a>
-            <div class="invoices_item__text invoices_item__text--light"></div>
+            <div class="invoices_item__text invoices_item__text--light">{{StartDate}}</div>
         </div>
         <div class="invoices_item__cell invoices_item__cell--client">
             <div class="invoices_item__text">{{ClientName}}</div>

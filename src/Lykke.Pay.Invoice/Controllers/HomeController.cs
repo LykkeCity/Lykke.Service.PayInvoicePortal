@@ -109,6 +109,11 @@ namespace Lykke.Pay.Invoice.Controllers
         public async Task<IActionResult> InvoiceDetail(InvoiceDetailModel model)
         {
             var request = new Models.InvoiceRequest();
+            if(model.Data.Status == InvoiceStatus.Deleted.ToString())
+            {
+                DeleteInvoiceFromBase(model.Data.InvoiceId);
+                return Redirect("/home/profile");
+            }
             request.Amount = model.Data.Amount.ToString();
             request.ClientEmail = model.Data.ClientEmail;
             request.ClientName = model.Data.ClientName;
@@ -193,7 +198,8 @@ namespace Lykke.Pay.Invoice.Controllers
                         break;
                 }
             }
-            respmodel.Data = orderedlist.ToPagedList(model.Page, 100000).ToList();
+            respmodel.PageCount = orderedlist.Count / 5;
+            respmodel.Data = orderedlist.ToPagedList(model.Page, 5).ToList();
             return Json(respmodel);
 
         }
@@ -201,7 +207,8 @@ namespace Lykke.Pay.Invoice.Controllers
         [HttpGet("deleteinvoice")]
         public async Task<EmptyResult> DeleteInvoice(string invoiceId)
         {
-            _invoiceService.ApiInvoicesByInvoiceIdDeleteGet(invoiceId);
+            //_invoiceService.ApiInvoicesByInvoiceIdDeleteGet(invoiceId);
+            DeleteInvoiceFromBase(invoiceId);
             return new EmptyResult();
         }
         [HttpGet("SignOut")]
@@ -209,6 +216,10 @@ namespace Lykke.Pay.Invoice.Controllers
         {
             await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
             return Redirect(HomeUrl);
+        }
+        protected async void DeleteInvoiceFromBase(string invoiceId)
+        {
+            _invoiceService.ApiInvoicesByInvoiceIdDeleteGet(invoiceId);
         }
     }
 }

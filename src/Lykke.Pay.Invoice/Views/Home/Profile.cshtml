@@ -9,7 +9,8 @@
 </script>
 
 <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
-@using (Html.BeginForm())
+@*<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">*@
+@using (Html.BeginForm(null, null, FormMethod.Post, new { name = "createform", id = "createform" }))
 {
     <div class="create draft">
         <ul class="create__top">
@@ -26,29 +27,35 @@
             <div class="create__form">
                 <div class="create__input-group">
                     <label class="create__input-label">Invoice number</label>
-                    <input type="text" asp-for="InvoiceNumber" required placeholder="" class="form-control">
+                    <div class="Rectangle-6" style="display: none" req-for="InvoiceNumber"></div>
+                    <input type="text" asp-for="InvoiceNumber" require placeholder="" class="form-control">
                 </div>
                 <div class="create__input-group">
                     <label class="create__input-label">Client</label>
-                    <input type="text" asp-for="ClientName" required placeholder="" class="form-control">
+                    <div class="Rectangle-6" style="display: none" req-for="ClientName"></div>
+                    <input type="text" asp-for="ClientName" require placeholder="" class="form-control">
                 </div>
                 <div class="create__input-group">
                     <label class="create__input-label">Email</label>
-                    <input type="email" asp-for="ClientEmail" required placeholder="" class="form-control">
+                    <div class="Rectangle-6" style="display: none" req-for="ClientEmail"></div>
+                    <input type="email" asp-for="ClientEmail" require placeholder="" class="form-control">
                 </div>
                 <div class="create__input-group">
                     <div class="create__input-amount">
                         <label class="create__input-label">Amount</label>
                         <div class="input-group">
+                            <div class="Rectangle-6" style="display: none" req-for="Amount"></div>
                             <span class="">CHF</span>
-                            <input type="text" asp-for="Amount" required placeholder="0.00" class="form-control">
+                            <input type="text" asp-for="Amount" require placeholder="0.00" class="form-control">
                         </div>
                     </div>
                     <div class="create__input-date">
                         <label class="create__input-label">Pay due date</label>
+                        
                         <div class="input-group">
+                            <div class="Rectangle-6" style="display: none" req-for="StartDate"></div>
                             <i class="icon icon--cal"></i>
-                            <input type="text" asp-for="StartDate" required placeholder="03.12.2017" class="form-control">
+                            <input type="text" asp-for="StartDate" require placeholder="03.12.2017" class="form-control">
                         </div>
                     </div>
                 </div>
