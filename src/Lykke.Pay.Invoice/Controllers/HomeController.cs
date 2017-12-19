@@ -99,6 +99,7 @@ namespace Lykke.Pay.Invoice.Controllers
             var model = new InvoiceDetailModel();
             var result = await _invoiceService.ApiInvoicesByInvoiceIdGetWithHttpMessagesAsync(InvoiceId);
             model.Data = result.Body;
+            model.InvoiceUrl = Request.Scheme + "://" + Request.Host + "/invoice/?invoiceId=" + InvoiceId;
             if (model.Data.Status != InvoiceStatus.Paid.ToString())
                 model.QRCode =
                     $@"https://chart.googleapis.com/chart?chs=220x220&chld=L|2&cht=qr&chl=bitcoin:{model.Data.WalletAddress}?amount={model.Data.Amount}%26label=LykkePay%26message={model.Data.InvoiceId}";
@@ -126,8 +127,11 @@ namespace Lykke.Pay.Invoice.Controllers
             request.Status = model.Data.Status;
             await _invoiceService.ApiInvoicesPostWithHttpMessagesAsync(request.CreateEntity());
             if (model.Data.Status != InvoiceStatus.Paid.ToString())
+            {
                 model.QRCode =
                     $@"https://chart.googleapis.com/chart?chs=220x220&chld=L|2&cht=qr&chl=bitcoin:{model.Data.WalletAddress}?amount={model.Data.Amount}%26label=LykkePay%26message={model.Data.InvoiceId}";
+                model.InvoiceUrl = Request.Scheme + "://" + Request.Host + "/invoice/?invoiceId=" + model.Data.InvoiceId;
+            }
             return View(model);
         }
 
@@ -156,7 +160,7 @@ namespace Lykke.Pay.Invoice.Controllers
         {
             var respmodel = new GridModel();
             var result = await _invoiceService.ApiInvoicesGetWithHttpMessagesAsync();
-            var orderedlist = result.Body.OrderByDescending(i => i.StartDate).ToList();
+            var orderedlist = result.Body.Where(i=>i.Status != InvoiceStatus.Decline.ToString()).OrderByDescending(i => i.StartDate).ToList();
             if (!string.IsNullOrEmpty(model.SearchValue))
             {
                 orderedlist = orderedlist.Where(i => (i.WalletAddress != null && i.WalletAddress.Contains(model.SearchValue)) ||
@@ -167,9 +171,9 @@ namespace Lykke.Pay.Invoice.Controllers
                 .OrderByDescending(i => i.StartDate).ToList();
             }
             respmodel.AllCount = orderedlist.Count;
-            respmodel.DraftCount = orderedlist.Where(i => i.Status == "Draft").Count();
-            respmodel.PaidCount = orderedlist.Where(i => i.Status == "Paid").Count();
-            respmodel.UnpaidCount = orderedlist.Where(i => i.Status == "Unpaid").Count();
+            respmodel.DraftCount = orderedlist.Where(i => i.Status == InvoiceStatus.Draft.ToString()).Count();
+            respmodel.PaidCount = orderedlist.Where(i => i.Status == InvoiceStatus.Paid.ToString()).Count();
+            respmodel.UnpaidCount = orderedlist.Where(i => i.Status == InvoiceStatus.Unpaid.ToString()).Count();
             if (!string.IsNullOrEmpty(model.SortField))
             {
                 switch(model.SortField)
