@@ -1,4 +1,5 @@
 ﻿@using Lykke.Pay.Invoice.AppCode
+@using System.Web
 @model Lykke.Pay.Invoice.Models.InvoiceDetailModel
 @{
     ViewData["Title"] = "Invoice Detail";
@@ -20,7 +21,7 @@
                                     <div class="invoice_paid__title">Invoice #@Model.Data.InvoiceNumber</div>
                                     @if (Model.Data.Status != InvoiceStatus.Paid.ToString())
                                     {
-                                        <a href="#" class="invoice_paid__link">https://www.lykke.com/invoices/#@Model.Data.InvoiceNumber</a>
+                                        <a href="@Model.InvoiceUrl" class="invoice_paid__link">@Model.InvoiceUrl</a>
                                     }
                                 </div>
                                 @if (Model.Data.Status != InvoiceStatus.Paid.ToString())

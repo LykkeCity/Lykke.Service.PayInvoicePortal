@@ -30,10 +30,14 @@ $(document).ready(function () {
 
     $('#generatebtn').on('click', function (e) {
         $('#Status').val("Unpaid");
+        if ($('#Currency').val() == "")
+            $('#Currency').val("USD");
         updateGrid();
     });
     $('#draftbtn').on('click', function (e) {
         $('#Status').val("Draft");
+        if ($('#Currency').val() == "")
+            $('#Currency').val("USD");
         updateGrid();
     });
     $('.showmore').on('click', function (e) {
