@@ -1,10 +1,10 @@
 ﻿var invoices = null;
-var sortfield = "";
-var sortway = 0;
+var sortField = "";
+var searchValue = "";
+var sortWay = 0;
+var pagenumber = 1;
 $('.btn_create').on('click', function (e) {
-
     e.stopPropagation();
-
     $('body').addClass('body--menu_opened');
     $('.create.draft').addClass('create--open');
 });
@@ -17,6 +17,7 @@ $('body').on('click', function () {
 $('.create.draft').on('click', function (e) {
     e.stopPropagation();
 });
+
 $(document).ready(function () {
 
     updateGrid();
@@ -34,6 +35,10 @@ $(document).ready(function () {
     $('#draftbtn').on('click', function (e) {
         $('#Status').val("Draft");
         updateGrid();
+    });
+    $('.showmore').on('click', function (e) {
+        pagenumber++;
+        updateGrid(null, null, null, true);
     });
     $('#closebtn').on('click', function (e) {
         $('body').removeClass('body--menu_opened');
@@ -66,7 +71,19 @@ $(document).ready(function () {
         updateGrid();
     });
     $('#searchvalue').on('input', function (e) {
-        updateGrid($('#searchvalue').val(), sortfield);
+        updateGrid($('#searchvalue').val(), sortField);
+    });
+    $('#createform').submit(function () {
+        var errors = 0;
+        var inputs = $('#createform input').filter('[require]:visible')
+        for (var i = 0; i < inputs.length; i++) {
+            if ($(inputs[i]).val() == "") {
+                var req = $("[req-for='" + $(inputs[i]).attr("id") + "']");
+                $(req).css('display', '');
+                errors++
+            }
+        }
+        return (errors == 0);
     });
 });
 function editItem(invoiceId) {
@@ -90,19 +107,23 @@ function editItem(invoiceId) {
     }
 }
 
-function updateGrid(searchValue, sortField, sortway) {
-    var data = { SearchValue: searchValue, SortField: sortField, Page: 1, SortWay: sortway };
+function updateGrid(searchValue, sortField, sortway, loadmore) {
+    var data = { SearchValue: searchValue, SortField: sortField, Page: pagenumber, SortWay: sortway };
     $.ajax({
         url: "/home/Invoices",
         dataType: 'json',
         type: "POST",
         data: data,
         success: function (gridModel) {
-            renderGrid(gridModel); //grid need update after deletion item
+            renderGrid(gridModel, loadmore); //grid need update after deletion item
         }
     });
 }
-function renderGrid(gridModel) {
+var divtableall = null;
+var divtablepaid = null;
+var divtableunpaid = null;
+var divtabledraft = null;
+function renderGrid(gridModel, loadMore) {
     var alllink = document.getElementById("alllink");
     var paidlink = document.getElementById("paidlink");
     var unpaidlink = document.getElementById("unpaidlink");
@@ -114,29 +135,32 @@ function renderGrid(gridModel) {
 
     var template = document.getElementById("rowtemplate").innerHTML;
     var taball = document.getElementById("all");
-    taball.innerHTML = "";
-    var divtableall = document.createElement("div");
-    divtableall.className = "invoices__table";
-    taball.appendChild(divtableall);
-
     var tabpaid = document.getElementById("paid");
-    tabpaid.innerHTML = "";
-    var divtablepaid = document.createElement("div");
-    divtablepaid.className = "invoices__table";
-    tabpaid.appendChild(divtablepaid);
-
     var tabunpaid = document.getElementById("unpaid");
-    tabunpaid.innerHTML = "";
-    var divtableunpaid = document.createElement("div");
-    divtableunpaid.className = "invoices__table";
-    tabunpaid.appendChild(divtableunpaid);
-
     var tabdraft = document.getElementById("draft");
-    tabdraft.innerHTML = "";
-    var divtabledraft = document.createElement("div");
-    divtabledraft.className = "invoices__table";
-    tabdraft.appendChild(divtabledraft);
-    //var invoicevisible = (search != null) ? false : true;
+
+    if (!loadMore) {
+        taball.innerHTML = "";
+        tabpaid.innerHTML = "";
+        tabunpaid.innerHTML = "";
+        tabdraft.innerHTML = "";
+
+        divtableall = document.createElement("div");
+        divtableall.className = "invoices__table";
+        taball.appendChild(divtableall);
+
+        divtablepaid = document.createElement("div");
+        divtablepaid.className = "invoices__table";
+        tabpaid.appendChild(divtablepaid);
+
+        divtableunpaid = document.createElement("div");
+        divtableunpaid.className = "invoices__table";
+        tabunpaid.appendChild(divtableunpaid);
+
+        divtabledraft = document.createElement("div");
+        divtabledraft.className = "invoices__table";
+        tabdraft.appendChild(divtabledraft);
+    }
 
     var allstring = "";
     var paidstring = "";
@@ -175,10 +199,10 @@ function renderGrid(gridModel) {
         tempstr = tempstr.replace("{{disoption}}", "disabled");
         allstring += tempstr;
     }
-    divtableall.innerHTML = allstring;
-    divtablepaid.innerHTML = paidstring;
-    divtableunpaid.innerHTML = unpaidstring;
-    divtabledraft.innerHTML = draftstring;
+    divtableall.innerHTML += allstring;
+    divtablepaid.innerHTML += paidstring;
+    divtableunpaid.innerHTML += unpaidstring;
+    divtabledraft.innerHTML += draftstring;
     alllink.childNodes[1].innerText = gridModel.allCount;
     draftlink.childNodes[1].innerText = draftcnt;
     paidlink.childNodes[1].innerText = paidcnt;

@@ -5,6 +5,7 @@
         Draft,
         Paid,
         Unpaid,
-        Decline
+        Decline,
+        Deleted
     }
 }
