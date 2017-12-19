@@ -21,6 +21,12 @@ $(document).ready(function () {
 
     updateGrid();
 
+    if (generateditem) {
+        showItem(generateditem);
+        $('body').addClass('body--menu_opened');
+        $('.create.unpaid').addClass('create--open');
+    }
+
     $('#generatebtn').on('click', function (e) {
         $('#Status').val("Unpaid");
         updateGrid();
@@ -83,8 +89,9 @@ function editItem(invoiceId) {
             item.value = value;
     }
 }
+
 function updateGrid(searchValue, sortField, sortway) {
-    var data = { SearchValue: searchValue, SortField: sortField, Page: 1, SortWay: sortway  };
+    var data = { SearchValue: searchValue, SortField: sortField, Page: 1, SortWay: sortway };
     $.ajax({
         url: "/home/Invoices",
         dataType: 'json',
@@ -198,26 +205,29 @@ function renderGrid(gridModel) {
             }
         }
         var invoiceid = $(element).attr("invoice");
-        if ($(element).has('.invoices_item__status--draft').length !== 0) {
-            editItem(invoiceid);
-            $('body').addClass('body--menu_opened');
-            $('.create.draft').addClass('create--open');
-        }
-        if ($(element).has('.invoices_item__status--unpaid').length !== 0) {
-            showItem(invoiceid);
-            $('body').addClass('body--menu_opened');
-            $('.create.unpaid').addClass('create--open');
-        }
+        //if ($(element).has('.invoices_item__status--draft').length !== 0) {
+        //    editItem(invoiceid);
+        //    $('body').addClass('body--menu_opened');
+        //    $('.create.draft').addClass('create--open');
+        //}
+        //if ($(element).has('.invoices_item__status--unpaid').length !== 0) {
+        //    showItem(invoiceid);
+        //    $('body').addClass('body--menu_opened');
+        //    $('.create.unpaid').addClass('create--open');
+        //}
+
+        window.location.href = "/home/invoicedetail/?InvoiceId=" + invoiceid;
     });
 }
-function showItem(invoiceId) {
-    var currentItem = null;
-    for (var i = 0; i < invoices.length; i++) {
-        if (invoices[i].InvoiceId == invoiceId) {
-            currentItem = invoices[i];
-            break;
-        }
-    }
+function showItem(invoice) {
+    var currentItem = invoice;
+    //for (var i = 0; i < invoices.length; i++) {
+    //    if (invoices[i].InvoiceId == invoiceId) {
+    //        currentItem = invoices[i];
+    //        break;
+    //    }
+    //}
+
     var keyNames = Object.keys(currentItem);
     for (var j = 0; j < keyNames.length; j++) {
         var value = currentItem[keyNames[j]];
