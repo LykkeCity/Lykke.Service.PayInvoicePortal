@@ -191,7 +191,7 @@ function renderGrid(gridModel) {
             url: "/home/deleteinvoice?invoiceId=" + invoiceid,
             dataType: 'html',
             success: function (data) {
-                renderGrid(); //grid need update after deletion item
+                updateGrid(); //grid need update after deletion item
             }
         });
     });

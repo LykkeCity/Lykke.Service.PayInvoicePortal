@@ -51,6 +51,5 @@ namespace Lykke.Pay.Invoice.Models
                 StartDate = DateTime.Today.RepoDateStr()
             };
         }
-        public IList<IInvoiceEntity> InvoiceList { get; set; }
     }
 }
