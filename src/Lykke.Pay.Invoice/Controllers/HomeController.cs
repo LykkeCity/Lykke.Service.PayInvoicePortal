@@ -21,6 +21,7 @@ using Newtonsoft.Json;
 using Lykke.Pay.Service.Invoces.Client;
 using System.Linq;
 using PagedList;
+using Lykke.Pay.Invoice.AppCode;
 
 namespace Lykke.Pay.Invoice.Controllers
 {
@@ -89,6 +90,19 @@ namespace Lykke.Pay.Invoice.Controllers
         }
 
         [Authorize]
+        [HttpGet("InvoiceDetail")]
+        public async Task<IActionResult> InvoiceDetail(string InvoiceId)
+        {
+            var model = new InvoiceDetailModel();
+            var result = await _invoiceService.ApiInvoicesByInvoiceIdGetWithHttpMessagesAsync(InvoiceId);
+            model.Data = result.Body;
+            if (model.Data.Status != InvoiceStatus.Paid.ToString())
+                model.QRCode =
+                    $@"https://chart.googleapis.com/chart?chs=220x220&chld=L|2&cht=qr&chl=bitcoin:{model.Data.WalletAddress}?amount={model.Data.Amount}%26label=LykkePay%26message={model.Data.InvoiceId}";
+            return View(model);
+        }
+
+        [Authorize]
         [HttpGet("profile")]
         public async Task<IActionResult> Profile()
         {
@@ -103,7 +117,8 @@ namespace Lykke.Pay.Invoice.Controllers
                 return View();
             }
             var item = request.CreateEntity();
-            await _invoiceService.ApiInvoicesPostWithHttpMessagesAsync(item);
+            var result = await _invoiceService.ApiInvoicesPostWithHttpMessagesAsync(item);
+            ViewBag.GeneratedItem = JsonConvert.SerializeObject(item);
             return View();
         }
         [Authorize]
