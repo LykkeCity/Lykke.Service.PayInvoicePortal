@@ -9,26 +9,36 @@
             <div class="row">
                 <div class="col-xs-6 welcome__left">
                     <div class="welcome__title">Invoicing system</div>
-                    <div class="welcome__subtitle">Lorem ipsum dolor sit amet, consectetur
+                    <div class="welcome__subtitle">
+                        Lorem ipsum dolor sit amet, consectetur
                         <br> adipiscing elit, sed do eiusmod tempor incididunt
-                        <br> ut labore et dolore magna aliqua.</div>
+                        <br> ut labore et dolore magna aliqua.
+                    </div>
                     @using (Html.BeginForm())
                     {
-                    <input type="hidden" id="returnUrl" value="@ViewData["returnUrl"]">
-                    <div class="welcome__form">
-                        <div class="welcome__form-title">Sign in</div>
-                        <div class="welcome__input">
-                            <i class="icon icon--email"></i>
-                            <input type="text" asp-for="Login" placeholder="E-mail" class="form-control">
+                        <input type="hidden" id="returnUrl" value="@ViewData["returnUrl"]">
+                        <div class="welcome__form">
+                            <div class="welcome__form-title">Sign in</div>
+                            <div class="welcome__input">
+                                <i class="icon icon--email"></i>
+                                <input type="text" asp-for="Login" placeholder="E-mail" class="form-control">
+                            </div>
+                            <div class="welcome__input">
+                                @if (ViewBag.Error != null)
+                                {
+                                    <div class="Rectangle-6"></div>   
+                                }
+                                <i class="icon icon--lock"></i>
+                                <input type="password" asp-for="Password" placeholder="Password" class="form-control">
+                            </div>
+                            @if (ViewBag.Error != null)
+                            {
+                                <div class="The-username-or-pass">The username or password you entered incorrect</div>
+                            }
+                            <button type="submit" name="button" class="btn welcome__button">Sign in</button>
                         </div>
-                        <div class="welcome__input">
-                            <i class="icon icon--lock"></i>
-                            <input type="password" asp-for="Password" placeholder="Password" class="form-control">
-                        </div>
-                        <button type="submit" name="button" class="btn welcome__button">Sign in</button>
-                    </div>
                     }
-                    
+
                 </div>
                 <div class="col-xs-6 welcome__right">
                     <div class="welcome__item welcome__item--balance">

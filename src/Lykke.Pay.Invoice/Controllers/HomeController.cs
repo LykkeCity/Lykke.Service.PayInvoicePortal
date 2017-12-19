@@ -55,6 +55,7 @@ namespace Lykke.Pay.Invoice.Controllers
             //};
             if (string.IsNullOrEmpty(request.Login) || string.IsNullOrEmpty(request.Password))
             {
+                ViewBag.Error = true;
                 return View();
             }
             var httpClient = new HttpClient();
@@ -62,6 +63,7 @@ namespace Lykke.Pay.Invoice.Controllers
             var rstText = await response.Content.ReadAsStringAsync();
             if (string.IsNullOrEmpty(rstText))
             {
+                ViewBag.Error = true;
                 return View();
             }
 
@@ -70,6 +72,7 @@ namespace Lykke.Pay.Invoice.Controllers
 
             if (user == null)
             {
+                ViewBag.Error = true;
                 return View();
             }
 
@@ -96,6 +99,27 @@ namespace Lykke.Pay.Invoice.Controllers
             var model = new InvoiceDetailModel();
             var result = await _invoiceService.ApiInvoicesByInvoiceIdGetWithHttpMessagesAsync(InvoiceId);
             model.Data = result.Body;
+            if (model.Data.Status != InvoiceStatus.Paid.ToString())
+                model.QRCode =
+                    $@"https://chart.googleapis.com/chart?chs=220x220&chld=L|2&cht=qr&chl=bitcoin:{model.Data.WalletAddress}?amount={model.Data.Amount}%26label=LykkePay%26message={model.Data.InvoiceId}";
+            return View(model);
+        }
+        [Authorize]
+        [HttpPost("InvoiceDetail")]
+        public async Task<IActionResult> InvoiceDetail(InvoiceDetailModel model)
+        {
+            var request = new Models.InvoiceRequest();
+            request.Amount = model.Data.Amount.ToString();
+            request.ClientEmail = model.Data.ClientEmail;
+            request.ClientName = model.Data.ClientName;
+            request.Currency = model.Data.Currency;
+            request.DueDate = model.Data.DueDate;
+            request.InvoiceId = model.Data.InvoiceId;
+            request.InvoiceNumber = model.Data.InvoiceNumber;
+            request.StartDate = model.Data.StartDate;
+            request.WalletAddress = model.Data.WalletAddress;
+            request.Status = model.Data.Status;
+            await _invoiceService.ApiInvoicesPostWithHttpMessagesAsync(request.CreateEntity());
             if (model.Data.Status != InvoiceStatus.Paid.ToString())
                 model.QRCode =
                     $@"https://chart.googleapis.com/chart?chs=220x220&chld=L|2&cht=qr&chl=bitcoin:{model.Data.WalletAddress}?amount={model.Data.Amount}%26label=LykkePay%26message={model.Data.InvoiceId}";
@@ -177,8 +201,7 @@ namespace Lykke.Pay.Invoice.Controllers
         [HttpGet("deleteinvoice")]
         public async Task<EmptyResult> DeleteInvoice(string invoiceId)
         {
-            //_invoiceService.DeleteInvoice(invoiceId); //TODO
-            //return View();
+            _invoiceService.ApiInvoicesByInvoiceIdDeleteGet(invoiceId);
             return new EmptyResult();
         }
         [HttpGet("SignOut")]
