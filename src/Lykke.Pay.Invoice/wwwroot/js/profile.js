@@ -51,7 +51,7 @@ $(document).ready(function () {
     $('.invoices__row .invoices__cell').on('click', function (sender) {
         var element = sender.target;
         sortfield = "";
-        sortway = (sortway == 0) ? 1 : 0;
+        sortWay = (sortWay == 0) ? 1 : 0;
         if (element.className.indexOf("number") !== -1)
             sortfield = "number";
         if (element.className.indexOf("client") !== -1)
@@ -63,7 +63,7 @@ $(document).ready(function () {
         if (element.className.indexOf("status") !== -1)
             sortfield = "status";
         if (sortfield !== "")
-            updateGrid("", sortfield, sortway);
+            updateGrid("", sortfield, sortWay);
     });
     $('.profile_search__button').on('click', function () {
         $('.profile_search').removeClass('vis');
