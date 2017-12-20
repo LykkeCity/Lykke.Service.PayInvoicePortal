@@ -28,6 +28,3 @@ $('#deletebtn').on('click', function (e) {
     });
     
 });
-$('#createform').submit(function () {
-    return $('#Data_Status').val() == "Deleted";
-});
