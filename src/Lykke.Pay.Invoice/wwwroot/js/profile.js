@@ -187,10 +187,14 @@ function renderGrid(gridModel, loadMore) {
         switch (invoices[i].Status) {
             case "Paid":
                 tempstr = tempstr.replace("{{CssClass}}", "paid");
+                tempstr = tempstr.replace("{{DisCssClass}}", "btn--disabled");
+                tempstr = tempstr.replace("{{disoption}}", "disabled");
                 paidstring += tempstr;
                 break;
             case "Unpaid":
                 tempstr = tempstr.replace("{{CssClass}}", "unpaid");
+                tempstr = tempstr.replace("{{DisCssClass}}", "btn--disabled");
+                tempstr = tempstr.replace("{{disoption}}", "disabled");
                 unpaidstring += tempstr.replace("{{CssClass}}", "unpaid");
                 break;
             case "Draft":
@@ -201,8 +205,8 @@ function renderGrid(gridModel, loadMore) {
                 draftstring += tempstr.replace("{{CssClass}}", "draft");
                 break;
         }
-        tempstr = tempstr.replace("{{DisCssClass}}", "btn--disabled");
-        tempstr = tempstr.replace("{{disoption}}", "disabled");
+        //tempstr = tempstr.replace("{{DisCssClass}}", "btn--disabled");
+        //tempstr = tempstr.replace("{{disoption}}", "disabled");
         allstring += tempstr;
     }
     divtableall.innerHTML += allstring;
