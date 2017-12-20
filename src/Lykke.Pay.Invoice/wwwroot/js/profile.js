@@ -22,7 +22,7 @@ $('.create.draft').on('click', function (e) {
 $(document).ready(function () {
 
     updateGrid();
-
+    updateBalance();
     if (generateditem) {
         if (generateditem.Status !== "Draft") {
             showItem(generateditem);
@@ -30,7 +30,6 @@ $(document).ready(function () {
             $('.create.unpaid').addClass('create--open');
         }
     }
-
     $('#generatebtn').on('click', function (e) {
         $('#Status').val("Unpaid");
         if ($('#Currency').val() == "")
@@ -85,6 +84,18 @@ $(document).ready(function () {
         return (errors == 0);
     });
 });
+
+function updateBalance() {
+    $.ajax({
+        url: "/home/Balance",
+        dataType: 'json',
+        type: "POST",
+        success: function (balance) {
+            $('.balance__quantity').text(balance);
+        }
+    });
+}
+
 function validate(clearvalidate) {
     var errors = 0;
     var style = clearvalidate ? "none" : "";

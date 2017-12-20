@@ -154,6 +154,14 @@ namespace Lykke.Pay.Invoice.Controllers
             ViewBag.GeneratedItem = JsonConvert.SerializeObject(item);
             return View();
         }
+
+        [Authorize]
+        [HttpPost("balance")]
+        public async Task<JsonResult> Balance()
+        {
+            return Json("1 000 CHF"); //TODO Anton
+        }
+
         [Authorize]
         [HttpPost("invoices")]
         public async Task<JsonResult> Invoices(GridModel model)
@@ -171,9 +179,9 @@ namespace Lykke.Pay.Invoice.Controllers
                 .OrderByDescending(i => i.StartDate).ToList();
             }
             respmodel.AllCount = orderedlist.Count;
-            respmodel.DraftCount = orderedlist.Where(i => i.Status == InvoiceStatus.Draft.ToString()).Count();
-            respmodel.PaidCount = orderedlist.Where(i => i.Status == InvoiceStatus.Paid.ToString()).Count();
-            respmodel.UnpaidCount = orderedlist.Where(i => i.Status == InvoiceStatus.Unpaid.ToString()).Count();
+            respmodel.DraftCount = orderedlist.Count(i => i.Status == InvoiceStatus.Draft.ToString());
+            respmodel.PaidCount = orderedlist.Count(i => i.Status == InvoiceStatus.Paid.ToString());
+            respmodel.UnpaidCount = orderedlist.Count(i=>i.Status == InvoiceStatus.Unpaid.ToString());
             if (!string.IsNullOrEmpty(model.SortField))
             {
                 switch(model.SortField)
