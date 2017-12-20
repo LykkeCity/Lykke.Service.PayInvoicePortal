@@ -12,6 +12,7 @@ using Lykke.Pay.Invoice.AppCode;
 using Lykke.Pay.Invoice.Models;
 using Lykke.Pay.Service.Invoces.Client;
 using Lykke.Pay.Service.Invoces.Client.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
@@ -33,7 +34,7 @@ namespace Lykke.Pay.Invoice.Controllers
         {
             return NotFound();
         }
-        [Route("{InvoiceId}")]
+        [Route("invoice/{InvoiceId}")]
         public async Task<IActionResult> Index(string invoiceId)
         {
             var respInv = await _invoicesservice.ApiInvoicesByInvoiceIdGetWithHttpMessagesAsync(invoiceId);
@@ -121,7 +122,12 @@ namespace Lykke.Pay.Invoice.Controllers
             return View(model); 
 
         }
-
+        [Authorize]
+        [HttpPost("status")]
+        public async Task<JsonResult> Status()
+        {
+            return Json("Paid"); //TODO Anton
+        }
         private void FillViewBag(IInvoiceEntity inv, dynamic orderResp)
         {
             string orderTimeLive = orderResp.transactionWaitingTime.ToString();

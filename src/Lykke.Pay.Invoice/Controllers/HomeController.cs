@@ -99,7 +99,7 @@ namespace Lykke.Pay.Invoice.Controllers
             var model = new InvoiceDetailModel();
             var result = await _invoiceService.ApiInvoicesByInvoiceIdGetWithHttpMessagesAsync(InvoiceId);
             model.Data = result.Body;
-            model.InvoiceUrl = Request.Scheme + "://" + Request.Host + "/invoice/?invoiceId=" + InvoiceId;
+            model.InvoiceUrl = Request.Scheme + "://" + Request.Host + "/invoice/" + InvoiceId;
             if (model.Data.Status != InvoiceStatus.Paid.ToString())
                 model.QRCode =
                     $@"https://chart.googleapis.com/chart?chs=220x220&chld=L|2&cht=qr&chl=bitcoin:{model.Data.WalletAddress}?amount={model.Data.Amount}%26label=LykkePay%26message={model.Data.InvoiceId}";
@@ -130,7 +130,7 @@ namespace Lykke.Pay.Invoice.Controllers
             {
                 model.QRCode =
                     $@"https://chart.googleapis.com/chart?chs=220x220&chld=L|2&cht=qr&chl=bitcoin:{model.Data.WalletAddress}?amount={model.Data.Amount}%26label=LykkePay%26message={model.Data.InvoiceId}";
-                model.InvoiceUrl = Request.Scheme + "://" + Request.Host + "/invoice/?invoiceId=" + model.Data.InvoiceId;
+                model.InvoiceUrl = Request.Scheme + "://" + Request.Host + "/invoice/" + model.Data.InvoiceId;
             }
             return View(model);
         }
