@@ -215,13 +215,34 @@ function renderGrid(gridModel, loadMore) {
     $('.btn.btn--icon').on('click', function (e) {
         e.stopPropagation();
         var invoiceid = $(e.target.parentNode.parentNode.parentNode).attr("invoice");
-        $.ajax({
-            url: "/home/deleteinvoice?invoiceId=" + invoiceid,
-            dataType: 'html',
-            success: function (data) {
-                updateGrid(); //grid need update after deletion item
+        $.confirm({
+            title: 'Are you sure?',
+            content: 'Do you really want to delete this invoice?',
+            icon: 'fa fa-question-circle',
+            animation: 'scale',
+            closeAnimation: 'scale',
+            opacity: 0.5,
+            buttons: {
+                'confirm': {
+                    text: 'Yes',
+                    btnClass: 'btn-blue',
+                    action: function () {
+                        $.ajax({
+                            url: "/home/deleteinvoice?invoiceId=" + invoiceid,
+                            dataType: 'html',
+                            success: function (data) {
+                                updateGrid(); //grid need update after deletion item
+                            }
+                        });
+                    }
+                },
+                cancel: function () {
+
+                }
             }
         });
+
+
     });
 
     $('.invoices_item').on('click', function (e) {
