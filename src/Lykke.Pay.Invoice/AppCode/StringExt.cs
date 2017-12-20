@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
+using Lykke.Core;
 
 namespace Lykke.Pay.Invoice.AppCode
 {
@@ -32,6 +33,22 @@ namespace Lykke.Pay.Invoice.AppCode
                 return DateTime.Now;
             }
 
+        }
+
+        public static MerchantPayRequestStatus ParseOrderStatus(this string status)
+        {
+            int e;
+            MerchantPayRequestStatus result;
+            if (int.TryParse(status, out e))
+            {
+                result = (MerchantPayRequestStatus)e;
+            }
+            else
+            {
+                result = Enum.Parse<MerchantPayRequestStatus>(status);
+            }
+
+            return result;
         }
     }
 }
