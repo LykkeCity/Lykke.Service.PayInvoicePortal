@@ -23,9 +23,11 @@ $(document).ready(function () {
     updateGrid();
 
     if (generateditem) {
-        showItem(generateditem);
-        $('body').addClass('body--menu_opened');
-        $('.create.unpaid').addClass('create--open');
+        if (generateditem.Status !== "Draft") {
+            showItem(generateditem);
+            $('body').addClass('body--menu_opened');
+            $('.create.unpaid').addClass('create--open');
+        }
     }
 
     $('#generatebtn').on('click', function (e) {
@@ -241,8 +243,6 @@ function renderGrid(gridModel, loadMore) {
                 }
             }
         });
-
-
     });
 
     $('.invoices_item').on('click', function (e) {
@@ -276,7 +276,6 @@ function showItem(invoice) {
     //        break;
     //    }
     //}
-
     var keyNames = Object.keys(currentItem);
     for (var j = 0; j < keyNames.length; j++) {
         var value = currentItem[keyNames[j]];
