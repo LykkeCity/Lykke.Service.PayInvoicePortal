@@ -236,7 +236,7 @@ function renderGrid(gridModel, loadMore) {
     paidlink.childNodes[1].innerText = paidcnt;
     unpaidlink.childNodes[1].innerText = unpaidcnt;
 
-    $('.btn.btn--icon').on('click', function (e) {
+    $('.btn.btn--icon.delete').on('click', function (e) {
         e.stopPropagation();
         var invoiceid = $(e.target.parentNode.parentNode.parentNode).attr("invoice");
         $.confirm({
