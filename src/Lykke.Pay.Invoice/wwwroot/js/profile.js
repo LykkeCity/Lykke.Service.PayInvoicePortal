@@ -5,6 +5,7 @@ var sortWay = 0;
 var pagenumber = 1;
 $('.btn_create').on('click', function (e) {
     e.stopPropagation();
+    validate(true);
     $('body').addClass('body--menu_opened');
     $('.create.draft').addClass('create--open');
 });
@@ -80,18 +81,24 @@ $(document).ready(function () {
         updateGrid($('#searchvalue').val(), sortField);
     });
     $('#createform').submit(function () {
-        var errors = 0;
-        var inputs = $('#createform input').filter('[require]:visible')
-        for (var i = 0; i < inputs.length; i++) {
-            if ($(inputs[i]).val() == "") {
-                var req = $("[req-for='" + $(inputs[i]).attr("id") + "']");
-                $(req).css('display', '');
-                errors++
-            }
-        }
+        var errors = validate();
         return (errors == 0);
     });
 });
+function validate(clearvalidate) {
+    var errors = 0;
+    var style = clearvalidate ? "none" : "";
+    var inputs = $('#createform input').filter('[require]:visible');
+    for (var i = 0; i < inputs.length; i++) {
+        if ($(inputs[i]).val() == "") {
+            var req = $("[req-for='" + $(inputs[i]).attr("id") + "']");
+            $(req).css('display', style);
+            if (!clearvalidate)
+                errors++;
+        }
+    }
+    return errors;
+}
 function editItem(invoiceId) {
     var currentItem = null;
     for (var i = 0; i < invoices.length; i++) {
@@ -252,8 +259,8 @@ function renderGrid(gridModel, loadMore) {
     $('.invoices_item').on('click', function (e) {
         e.stopPropagation();
         var element = e.target;
-        if (element.className != "invoices_item") {
-            while (element.className != "invoices_item") {
+        if (element.className !== "invoices_item") {
+            while (element.className !== "invoices_item") {
                 element = element.parentNode;
             }
         }
