@@ -1,6 +1,9 @@
 ﻿$('#generatebtn').on('click', function (e) {
     $('#Data_Status').val("Unpaid");
 });
+$('.invoice_paid__back').on('click', function (e) {
+    window.location.href = "/home/profile";
+});
 $('#draftbtn').on('click', function (e) {
     $('#Data_Status').val("Draft");
 });
