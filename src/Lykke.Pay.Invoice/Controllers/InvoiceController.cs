@@ -236,7 +236,7 @@ namespace Lykke.Pay.Invoice.Controllers
             dynamic orderResp = JsonConvert.DeserializeObject(resp);
 
 
-            var paimentRequest = orderResp.merchantPayRequestStatus.ToString().ParseOrderStatus();
+            var paimentRequest = ((string)orderResp.merchantPayRequestStatus).ParseOrderStatus();
             
             
             if (paimentRequest == MerchantPayRequestStatus.Completed || paimentRequest == MerchantPayRequestStatus.Failed)

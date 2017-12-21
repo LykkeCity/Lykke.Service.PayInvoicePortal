@@ -1,15 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Net;
+﻿using System.Collections.Generic;
 using System.Net.Http;
 using System.Security.Claims;
-using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
-using Lykke.AzureRepositories;
-using Lykke.AzureRepositories.Azure.Tables;
-using Lykke.Core;
 using Lykke.Pay.Common.Entities.Entities;
 using Lykke.Pay.Invoice.Models;
 using Microsoft.AspNetCore.Authentication;
@@ -159,7 +152,8 @@ namespace Lykke.Pay.Invoice.Controllers
         [HttpPost("balance")]
         public async Task<JsonResult> Balance()
         {
-            return Json("1 000 CHF"); //TODO Anton
+            double amount = 1000;
+            return Json($"{string.Format("{0:0.00}", amount)} CHF"); 
         }
 
         [Authorize]
