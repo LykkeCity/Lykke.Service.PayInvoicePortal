@@ -247,8 +247,8 @@
 	letter-spacing: 0px;
 	color: #0388EF;
 	padding-right: 37px;
-	background: url("../img/icon_copy_large.svg") no-repeat;
-	background-position: right center;
+	/*background: url("../img/icon_copy_large.svg") no-repeat;
+	background-position: right center;*/
 }
 
 .invoice_paid__qr {
@@ -669,13 +669,16 @@
 	color: #111111;
 	margin-bottom: 37px;
 }
-
+.noborder {
+    border: none;
+}
 .create__form {
 	margin-bottom: 40px;
 }
 
 .create__input-group {
 	margin-bottom: 22px;
+    position: relative;
 }
 
 .create__input-group:before, .create__input-group:after {
