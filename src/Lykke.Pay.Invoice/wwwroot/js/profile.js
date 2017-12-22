@@ -61,7 +61,7 @@ $(document).ready(function (e) {
         $('body').removeClass('body--menu_opened');
         $('.create').removeClass('create--open');
     });
-    $("#StartDate").datepicker();
+    $("#StartDate").datepicker().datepicker("setDate", new Date());;
     $('.invoices__search').on('click', function () {
         $('.profile_search').toggleClass('vis');
     });

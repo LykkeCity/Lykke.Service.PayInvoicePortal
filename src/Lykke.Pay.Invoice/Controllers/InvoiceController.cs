@@ -115,7 +115,7 @@ namespace Lykke.Pay.Invoice.Controllers
 
             model.Amount = RoundDouble((double)orderResp.amount);
             model.QRCode =
-                $@"https://chart.googleapis.com/chart?chs=220x220&chld=L|2&cht=qr&chl=bitcoin:{orderResp.address}?amount={model.Amount}%26label=LykkePay%26message={orderResp.orderId}";
+                $@"https://chart.googleapis.com/chart?chs=220x220&chld=L|2&cht=qr&chl=bitcoin:{orderResp.address}?amount={model.Amount}%26label=invoice%20#{inv.InvoiceNumber}%26message={orderResp.orderId}";
 
 
             FillViewBag(inv, orderResp);
