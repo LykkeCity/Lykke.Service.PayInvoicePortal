@@ -21,12 +21,15 @@
                             <div class="row">
                                 <div class="col-xs-7">
                                     <div class="invoice_paid__title">Invoice #@Model.Data.InvoiceNumber</div>
-                                    @if (Model.Data.Status != InvoiceStatus.Paid.ToString())
+                                    @if (Model.Data.Status != InvoiceStatus.Paid.ToString() && Model.Data.Status != InvoiceStatus.Draft.ToString())
                                     {
                                         <a href="@Model.InvoiceUrl" class="invoice_paid__link">@Model.InvoiceUrl</a>
+                                        <a href="#" type="button" name="button" class="create__item-copy" style="position: relative">
+                                            <i class="icon icon--copy"></i>
+                                        </a>
                                     }
                                 </div>
-                                @if (Model.Data.Status != InvoiceStatus.Paid.ToString())
+                                @if (Model.Data.Status != InvoiceStatus.Paid.ToString() && Model.Data.Status != InvoiceStatus.Draft.ToString())
                                 {
                                     <div class="col-xs-5">
                                         <div class="invoice_paid__qr">
@@ -43,7 +46,7 @@
                                     @if (string.IsNullOrEmpty(Model.Data.Status) || Model.Data.Status == InvoiceStatus.Draft.ToString())
                                     {
                                         @*<input type="text" id="InvoiceNumber" value="@Model.Data.InvoiceNumber" required placeholder="" class="form-control">*@
-                                        <input type="text" asp-for="Data.InvoiceNumber" required placeholder="" class="form-control">
+                                        <input type="text" asp-for="Data.InvoiceNumber" required placeholder="" class="form-control  noborder">
                                     }
                                     else
                                     {
@@ -55,7 +58,7 @@
                                     @if (string.IsNullOrEmpty(Model.Data.Status) || Model.Data.Status == InvoiceStatus.Draft.ToString())
                                     {
                                         @*<input type="text" id="Amount" value="@Model.Data.Amount" required placeholder="" class="form-control">*@
-                                        <input type="text" asp-for="Data.Amount" required placeholder="" class="form-control">
+                                        <input type="text" asp-for="Data.Amount" required placeholder="" class="form-control noborder">
                                     }
                                     else
                                     {
@@ -73,7 +76,7 @@
                                     @if (string.IsNullOrEmpty(Model.Data.Status) || Model.Data.Status == InvoiceStatus.Draft.ToString())
                                     {
                                         @*<input type="text" id="Currency" value="@Model.Data.Currency" required placeholder="" class="form-control">*@
-                                        <input type="text" asp-for="Data.Currency" required placeholder="" class="form-control">
+                                        <input type="text" asp-for="Data.Currency" required placeholder="" class="form-control noborder">
                                     }
                                     else
                                     {
@@ -87,7 +90,7 @@
                                     @if (string.IsNullOrEmpty(Model.Data.Status) || Model.Data.Status == InvoiceStatus.Draft.ToString())
                                     {
                                         @*<input type="text" id="ClientName" value="@Model.Data.ClientName" required placeholder="" class="form-control">*@
-                                        <input type="text" asp-for="Data.ClientName" required placeholder="" class="form-control">
+                                        <input type="text" asp-for="Data.ClientName" required placeholder="" class="form-control noborder">
                                     }
                                     else
                                     {
@@ -105,7 +108,7 @@
                                     @if (string.IsNullOrEmpty(Model.Data.Status) || Model.Data.Status == InvoiceStatus.Draft.ToString())
                                     {
                                         @*<input type="text" id="ClientName" value="@Model.Data.ClientEmail" required placeholder="" class="form-control">*@
-                                        <input type="text" asp-for="Data.ClientEmail" required placeholder="" class="form-control">
+                                        <input type="text" asp-for="Data.ClientEmail" required placeholder="" class="form-control noborder">
                                     }
                                     else
                                     {
@@ -131,10 +134,7 @@
                             <button type="submit" name="button" class="btn invoice_paid__button" id="generatebtn">Generate</button>
                             <button type="submit" name="button" class="btn invoice_paid__button btn--stroke" id="draftbtn">Save draft</button>
                         }
-                        @if (Model.Data.Status == InvoiceStatus.Paid.ToString())
-                        {
-                            <a href="#" class="invoice_paid__bottom">Blockchain Settlement</a>
-                        }
+                        <a href="#" class="invoice_paid__bottom">Blockchain Settlement</a>
                     </div>
                 </div>
             </div>

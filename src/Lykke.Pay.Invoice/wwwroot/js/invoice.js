@@ -7,12 +7,21 @@
 
             if (data) {
                 if (data.status > 1) {
-                    window.location.href = window.location.href;
+                    //window.location.href = window.location.href;
+                    $.finish(data);
                 }
             }
 
         }
     );
+}
+$.finish = function (data) {
+    $('.invoice__qr > img').attr('style', 'display: none;');
+    if (data.status === 3)
+        $('.invoice__label').text('success');
+    else if (data.status === 2)
+        $('.invoice__label').text('error');
+    $('.invoice__remain').attr('style', 'display: none;');
 }
 $.updateOrder = function () {
     //var now = Date.now();

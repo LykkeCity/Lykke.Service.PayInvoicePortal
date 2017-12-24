@@ -48,7 +48,7 @@ namespace Lykke.Pay.Invoice.Models
                 Label = Label,
                 Status = Status,
                 WalletAddress = WalletAddress,
-                StartDate = DateTime.Today.RepoDateStr()
+                StartDate = DateTime.Now.RepoDateStr()
             };
         }
     }

@@ -10,7 +10,7 @@ $('.btn_create').on('click', function (e) {
     $('.create.draft').addClass('create--open');
 });
 
-$('body').on('click', function () {
+$('body').on('click', function (e) {
     $('body').removeClass('body--menu_opened');
     $('.create.draft').removeClass('create--open');
     $('.create.unpaid').removeClass('create--open');
@@ -18,8 +18,11 @@ $('body').on('click', function () {
 $('.create.draft').on('click', function (e) {
     e.stopPropagation();
 });
+$('.create.unpaid').on('click', function (e) {
+    e.stopPropagation();
+});
 
-$(document).ready(function () {
+$(document).ready(function (e) {
 
     updateGrid();
     updateBalance();
@@ -36,6 +39,14 @@ $(document).ready(function () {
             $('#Currency').val("USD");
         updateGrid();
     });
+    $('.icon.icon--copy').on('click', function (e) {
+        e.stopPropagation();
+        var $temp = $("<input>");
+        $("body").append($temp);
+        $temp.val($('#UnpaidUrl').text()).select();
+        document.execCommand("copy");
+        $temp.remove();
+    });
     $('#draftbtn').on('click', function (e) {
         $('#Status').val("Draft");
         if ($('#Currency').val() == "")
@@ -50,7 +61,7 @@ $(document).ready(function () {
         $('body').removeClass('body--menu_opened');
         $('.create').removeClass('create--open');
     });
-    $("#StartDate").datepicker();
+    $("#StartDate").datepicker().datepicker("setDate", new Date());;
     $('.invoices__search').on('click', function () {
         $('.profile_search').toggleClass('vis');
     });

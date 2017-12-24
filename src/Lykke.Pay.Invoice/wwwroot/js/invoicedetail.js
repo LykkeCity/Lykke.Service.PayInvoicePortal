@@ -7,6 +7,14 @@ $('.invoice_paid__back').on('click', function (e) {
 $('#draftbtn').on('click', function (e) {
     $('#Data_Status').val("Draft");
 });
+$('.icon.icon--copy').on('click', function (e) {
+    e.stopPropagation();
+    var $temp = $("<input>");
+    $("body").append($temp);
+    $temp.val($('.invoice_paid__link').text()).select();
+    document.execCommand("copy");
+    $temp.remove();
+});
 $('#deletebtn').on('click', function (e) {
     $.confirm({
         title: 'Are you sure?',
