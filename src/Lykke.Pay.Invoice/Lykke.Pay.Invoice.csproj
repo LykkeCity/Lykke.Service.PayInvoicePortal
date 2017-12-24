@@ -12,6 +12,7 @@
   <ItemGroup>
     <PackageReference Include="Lykke.AzureRepositories" Version="1.0.101" />
     <PackageReference Include="Lykke.Core" Version="1.0.101" />
+    <PackageReference Include="Lykke.Pay.Common" Version="1.0.67" />
     <PackageReference Include="Lykke.Pay.Common.Entities" Version="1.0.1" />
     <PackageReference Include="Lykke.Pay.Service.Invoces.Client" Version="1.0.13" />
     <PackageReference Include="Microsoft.ApplicationInsights.AspNetCore" Version="2.1.1" />

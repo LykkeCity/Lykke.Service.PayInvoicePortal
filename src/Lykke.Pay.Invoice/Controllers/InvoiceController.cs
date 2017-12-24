@@ -8,6 +8,7 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 using Lykke.Core;
+using Lykke.Pay.Common;
 using Lykke.Pay.Invoice.AppCode;
 using Lykke.Pay.Invoice.Models;
 using Lykke.Pay.Service.Invoces.Client;
@@ -43,14 +44,14 @@ namespace Lykke.Pay.Invoice.Controllers
             {
                 return NotFound();
             }
-            if (!string.IsNullOrEmpty(inv.StartDate) && inv.StartDate.GetRepoDateTime() > DateTime.Today)
+            if (!string.IsNullOrEmpty(inv.StartDate) && inv.StartDate.GetRepoDateTime() > DateTime.Today.ToUniversalTime())
             {
                 return NotFound();
             }
 
             if (!string.IsNullOrEmpty(inv.DueDate) && inv.DueDate.GetRepoDateTime() < DateTime.Now)
             {
-                inv.Status = InvoiceStatus.Decline.ToString();
+                inv.Status = InvoiceStatus.Removed.ToString();
                 await _invoicesservice.ApiInvoicesPostWithHttpMessagesAsync(inv.CreateInvoiceEntity());
                 return NotFound();
             }
@@ -180,7 +181,7 @@ namespace Lykke.Pay.Invoice.Controllers
 
             if (inv.DueDate.GetRepoDateTime() < DateTime.Now)
             {
-                inv.Status = InvoiceStatus.Decline.ToString();
+                inv.Status = InvoiceStatus.Removed.ToString();
                 await _invoicesservice.ApiInvoicesPostWithHttpMessagesAsync(inv.CreateInvoiceEntity());
                 return NotFound();
             }
@@ -241,7 +242,7 @@ namespace Lykke.Pay.Invoice.Controllers
             
             if (paimentRequest == MerchantPayRequestStatus.Completed || paimentRequest == MerchantPayRequestStatus.Failed)
             {
-                inv.Status = (paimentRequest == MerchantPayRequestStatus.Completed ? InvoiceStatus.Paid : InvoiceStatus.Decline).ToString();
+                inv.Status = (paimentRequest == MerchantPayRequestStatus.Completed ? InvoiceStatus.Paid : InvoiceStatus.Removed).ToString();
                 await _invoicesservice.ApiInvoicesPostWithHttpMessagesAsync(inv.CreateInvoiceEntity());
                 
                 return null;

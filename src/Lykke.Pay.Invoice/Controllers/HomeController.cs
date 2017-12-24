@@ -13,6 +13,7 @@ using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using Lykke.Pay.Service.Invoces.Client;
 using System.Linq;
+using Lykke.Pay.Common;
 using PagedList;
 using Lykke.Pay.Invoice.AppCode;
 
@@ -103,7 +104,7 @@ namespace Lykke.Pay.Invoice.Controllers
         public async Task<IActionResult> InvoiceDetail(InvoiceDetailModel model)
         {
             var request = new Models.InvoiceRequest();
-            if(model.Data.Status == InvoiceStatus.Deleted.ToString())
+            if(model.Data.Status == InvoiceStatus.Removed.ToString())
             {
                 DeleteInvoiceFromBase(model.Data.InvoiceId);
                 return Redirect("/home/profile");
@@ -162,7 +163,7 @@ namespace Lykke.Pay.Invoice.Controllers
         {
             var respmodel = new GridModel();
             var result = await _invoiceService.ApiInvoicesGetWithHttpMessagesAsync();
-            var orderedlist = result.Body.Where(i=>i.Status != InvoiceStatus.Decline.ToString()).OrderByDescending(i => i.StartDate).ToList();
+            var orderedlist = result.Body.Where(i=>i.Status != InvoiceStatus.Removed.ToString()).OrderByDescending(i => i.StartDate).ToList();
             if (!string.IsNullOrEmpty(model.SearchValue))
             {
                 orderedlist = orderedlist.Where(i => (i.WalletAddress != null && i.WalletAddress.Contains(model.SearchValue)) ||
