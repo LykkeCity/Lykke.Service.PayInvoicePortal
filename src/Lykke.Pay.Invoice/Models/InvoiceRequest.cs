@@ -31,12 +31,13 @@ namespace Lykke.Pay.Invoice.Models
 
         public InvoiceEntity CreateEntity()
         {
-            if (string.IsNullOrEmpty(ClientName) || string.IsNullOrEmpty(ClientEmail))
-                //string.IsNullOrEmpty(Currency))
+            if (string.IsNullOrEmpty(ClientName))
             {
                 return null;
             }
             var invoiceid = string.IsNullOrEmpty(InvoiceId) ? Guid.NewGuid().ToString() : InvoiceId;
+            if (string.IsNullOrEmpty(Amount))
+                Amount = "0";
             return new InvoiceEntity
             {
                 Amount = double.Parse(Amount, CultureInfo.InvariantCulture),

@@ -19,6 +19,10 @@
 
 /*@import "guide";*/
 
+/*custom section*/
+.invoices_item__status--red {
+    background: red !important;
+}
 .The-username-or-pass {
     width: 370px;
     height: 20px;
@@ -39,6 +43,8 @@
     background-color: #ff3e2e;
     position: absolute;
 }
+/*custom section*/
+
 .container-full {
 	width: 1200px;
 	padding: 0 15px;

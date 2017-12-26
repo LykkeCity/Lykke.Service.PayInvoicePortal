@@ -139,7 +139,7 @@ namespace Lykke.Pay.Invoice.Controllers
         [HttpPost("profile")]
         public async Task<IActionResult> Profile(Models.InvoiceRequest request, string returnUrl)
         {
-            if (string.IsNullOrEmpty(request.InvoiceNumber) || string.IsNullOrEmpty(request.ClientEmail) || string.IsNullOrEmpty(request.Amount.ToString()))
+            if (request.Status != InvoiceStatus.Draft.ToString() && (string.IsNullOrEmpty(request.InvoiceNumber) || string.IsNullOrEmpty(request.ClientEmail) || string.IsNullOrEmpty(request.Amount.ToString())))
             {
                 return View();
             }
@@ -208,8 +208,8 @@ namespace Lykke.Pay.Invoice.Controllers
                         break;
                 }
             }
-            respmodel.PageCount = orderedlist.Count / 5;
-            respmodel.Data = orderedlist.ToPagedList(model.Page, 5).ToList();
+            respmodel.PageCount = orderedlist.Count / 20;
+            respmodel.Data = orderedlist.ToPagedList(model.Page, 20).ToList();
             return Json(respmodel);
 
         }

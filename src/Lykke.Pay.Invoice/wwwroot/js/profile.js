@@ -92,6 +92,10 @@ $(document).ready(function (e) {
     });
     $('#createform').submit(function () {
         var errors = validate();
+        if ($('#Status').val() === "Draft") {
+            if ($('#ClientName').val() !== "")
+                return true;
+        }
         return (errors == 0);
     });
 });
@@ -222,16 +226,24 @@ function renderGrid(gridModel, loadMore) {
                 break;
             case "Unpaid":
                 tempstr = tempstr.replace("{{CssClass}}", "unpaid");
-                tempstr = tempstr.replace("{{DisCssClass}}", "btn--disabled");
-                tempstr = tempstr.replace("{{disoption}}", "disabled");
+                tempstr = tempstr.replace("{{DisCssClass}}", "");
+                tempstr = tempstr.replace("{{disoption}}", "");
                 unpaidstring += tempstr.replace("{{CssClass}}", "unpaid");
                 break;
             case "Draft":
-            default:
                 tempstr = tempstr.replace("{{disoption}}", "");
                 tempstr = tempstr.replace("{{DisCssClass}}", "");
                 tempstr = tempstr.replace("{{CssClass}}", "draft");
                 draftstring += tempstr.replace("{{CssClass}}", "draft");
+                break;
+            case "LatePaid":
+            case "OverPaid":
+            case "Removed":
+            case "UnderPaid":
+            default:
+                tempstr = tempstr.replace("{{CssClass}}", "red");
+                tempstr = tempstr.replace("{{DisCssClass}}", "btn--disabled");
+                tempstr = tempstr.replace("{{disoption}}", "disabled");
                 break;
         }
         //tempstr = tempstr.replace("{{DisCssClass}}", "btn--disabled");

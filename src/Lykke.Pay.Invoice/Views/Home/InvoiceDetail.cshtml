@@ -130,9 +130,12 @@
                             <input type="hidden" asp-for="Data.WalletAddress" class="form-control">
                             <input type="hidden" asp-for="Data.ClientUserId" class="form-control">
                             <input type="hidden" asp-for="Data.ClientId" class="form-control">
-                            <button type="submit" name="button" class="btn btn--default invoice_paid__button" id="deletebtn">Delete Invoice</button>
                             <button type="submit" name="button" class="btn invoice_paid__button" id="generatebtn">Generate</button>
                             <button type="submit" name="button" class="btn invoice_paid__button btn--stroke" id="draftbtn">Save draft</button>
+                        }
+                        @if (string.IsNullOrEmpty(Model.Data.Status) || Model.Data.Status == InvoiceStatus.Draft.ToString() || Model.Data.Status == InvoiceStatus.Unpaid.ToString())
+                        {
+                            <button type="submit" name="button" class="btn btn--default invoice_paid__button" id="deletebtn">Delete Invoice</button>
                         }
                         <a href="#" class="invoice_paid__bottom">Blockchain Settlement</a>
                     </div>
