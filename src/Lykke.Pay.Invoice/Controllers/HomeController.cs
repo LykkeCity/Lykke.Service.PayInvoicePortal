@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Globalization;
 using System.Net.Http;
 using System.Security.Claims;
 using System.Text;
@@ -15,7 +16,6 @@ using Lykke.Pay.Service.Invoces.Client;
 using System.Linq;
 using Lykke.Pay.Common;
 using PagedList;
-using Lykke.Pay.Invoice.AppCode;
 
 namespace Lykke.Pay.Invoice.Controllers
 {
@@ -88,12 +88,12 @@ namespace Lykke.Pay.Invoice.Controllers
 
         [Authorize]
         [HttpGet("InvoiceDetail")]
-        public async Task<IActionResult> InvoiceDetail(string InvoiceId)
+        public async Task<IActionResult> InvoiceDetail(string invoiceId)
         {
             var model = new InvoiceDetailModel();
-            var result = await _invoiceService.ApiInvoicesByInvoiceIdGetWithHttpMessagesAsync(InvoiceId);
+            var result = await _invoiceService.ApiInvoicesByInvoiceIdGetWithHttpMessagesAsync(invoiceId);
             model.Data = result.Body;
-            model.InvoiceUrl = Request.Scheme + "://" + Request.Host + "/invoice/" + InvoiceId;
+            model.InvoiceUrl = Request.Scheme + "://" + Request.Host + "/invoice/" + invoiceId;
             if (model.Data.Status != InvoiceStatus.Paid.ToString())
                 model.QRCode =
                     $@"https://chart.googleapis.com/chart?chs=220x220&chld=L|2&cht=qr&chl=bitcoin:{model.Data.WalletAddress}?amount={model.Data.Amount}%26label=LykkePay%26message={model.Data.InvoiceId}";
@@ -106,10 +106,10 @@ namespace Lykke.Pay.Invoice.Controllers
             var request = new Models.InvoiceRequest();
             if(model.Data.Status == InvoiceStatus.Removed.ToString())
             {
-                DeleteInvoiceFromBase(model.Data.InvoiceId);
+                await DeleteInvoiceFromBase(model.Data.InvoiceId);
                 return Redirect("/home/profile");
             }
-            request.Amount = model.Data.Amount.ToString();
+            request.Amount = model.Data.Amount.ToString(CultureInfo.InvariantCulture);
             request.ClientEmail = model.Data.ClientEmail;
             request.ClientName = model.Data.ClientName;
             request.Currency = model.Data.Currency;
@@ -131,7 +131,7 @@ namespace Lykke.Pay.Invoice.Controllers
 
         [Authorize]
         [HttpGet("profile")]
-        public async Task<IActionResult> Profile()
+        public IActionResult Profile()
         {
             return View();
         }
@@ -139,12 +139,12 @@ namespace Lykke.Pay.Invoice.Controllers
         [HttpPost("profile")]
         public async Task<IActionResult> Profile(Models.InvoiceRequest request, string returnUrl)
         {
-            if (request.Status != InvoiceStatus.Draft.ToString() && (string.IsNullOrEmpty(request.InvoiceNumber) || string.IsNullOrEmpty(request.ClientEmail) || string.IsNullOrEmpty(request.Amount.ToString())))
+            if (request.Status != InvoiceStatus.Draft.ToString() && (string.IsNullOrEmpty(request.InvoiceNumber) || string.IsNullOrEmpty(request.ClientEmail) || string.IsNullOrEmpty(request.Amount)))
             {
                 return View();
             }
             var item = request.CreateEntity(OrderLiveTime);
-            var result = await _invoiceService.ApiInvoicesPostWithHttpMessagesAsync(item);
+            await _invoiceService.ApiInvoicesPostWithHttpMessagesAsync(item);
             ViewBag.GeneratedItem = JsonConvert.SerializeObject(item);
             return View();
         }
@@ -182,29 +182,19 @@ namespace Lykke.Pay.Invoice.Controllers
                 switch(model.SortField)
                 {
                     case "number":
-                        if (model.SortWay == 0)
-                            orderedlist = orderedlist.OrderBy(i => i.InvoiceNumber).OrderByDescending(i => i.StartDate).ToList();
-                        else orderedlist = orderedlist.OrderByDescending(i => i.InvoiceNumber).OrderByDescending(i => i.StartDate).ToList();
+                        orderedlist = model.SortWay == 0 ? orderedlist.OrderBy(i => i.InvoiceNumber).ThenByDescending(i => i.StartDate).ToList() : orderedlist.OrderByDescending(i => i.InvoiceNumber).ThenByDescending(i => i.StartDate).ToList();
                         break;
                     case "client":
-                        if (model.SortWay == 0)
-                            orderedlist = orderedlist.OrderBy(i => i.ClientName).OrderByDescending(i => i.StartDate).ToList();
-                        else orderedlist = orderedlist.OrderByDescending(i => i.ClientName).OrderByDescending(i => i.StartDate).ToList();
+                        orderedlist = model.SortWay == 0 ? orderedlist.OrderBy(i => i.ClientName).ThenByDescending(i => i.StartDate).ToList() : orderedlist.OrderByDescending(i => i.ClientName).ThenByDescending(i => i.StartDate).ToList();
                         break;
                     case "amount":
-                        if (model.SortWay == 0)
-                            orderedlist = orderedlist.OrderBy(i => i.Amount).OrderByDescending(i => i.StartDate).ToList();
-                        else orderedlist = orderedlist.OrderByDescending(i => i.Amount).OrderByDescending(i => i.StartDate).ToList();
+                        orderedlist = model.SortWay == 0 ? orderedlist.OrderBy(i => i.Amount).ThenByDescending(i => i.StartDate).ToList() : orderedlist.OrderByDescending(i => i.Amount).ThenByDescending(i => i.StartDate).ToList();
                         break;
                     case "currency":
-                        if (model.SortWay == 0)
-                            orderedlist = orderedlist.OrderBy(i => i.Currency).OrderByDescending(i => i.StartDate).ToList();
-                        else orderedlist = orderedlist.OrderByDescending(i => i.Currency).OrderByDescending(i => i.StartDate).ToList();
+                        orderedlist = model.SortWay == 0 ? orderedlist.OrderBy(i => i.Currency).ThenByDescending(i => i.StartDate).ToList() : orderedlist.OrderByDescending(i => i.Currency).ThenByDescending(i => i.StartDate).ToList();
                         break;
                     case "status":
-                        if (model.SortWay == 0)
-                            orderedlist = orderedlist.OrderBy(i => i.Status).OrderByDescending(i => i.StartDate).ToList();
-                        else orderedlist = orderedlist.OrderByDescending(i => i.Status).OrderByDescending(i => i.StartDate).ToList();
+                        orderedlist = model.SortWay == 0 ? orderedlist.OrderBy(i => i.Status).ThenByDescending(i => i.StartDate).ToList() : orderedlist.OrderByDescending(i => i.Status).ThenByDescending(i => i.StartDate).ToList();
                         break;
                 }
             }
@@ -218,7 +208,7 @@ namespace Lykke.Pay.Invoice.Controllers
         public async Task<EmptyResult> DeleteInvoice(string invoiceId)
         {
             //_invoiceService.ApiInvoicesByInvoiceIdDeleteGet(invoiceId);
-            DeleteInvoiceFromBase(invoiceId);
+            await DeleteInvoiceFromBase(invoiceId);
             return new EmptyResult();
         }
         [HttpGet("SignOut")]
@@ -227,9 +217,9 @@ namespace Lykke.Pay.Invoice.Controllers
             await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
             return Redirect(HomeUrl);
         }
-        protected async void DeleteInvoiceFromBase(string invoiceId)
+        protected async Task DeleteInvoiceFromBase(string invoiceId)
         {
-            _invoiceService.ApiInvoicesByInvoiceIdDeleteGet(invoiceId);
+            await _invoiceService.ApiInvoicesByInvoiceIdDeleteGetWithHttpMessagesAsync(invoiceId);
         }
     }
 }
