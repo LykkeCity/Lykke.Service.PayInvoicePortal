@@ -39,3 +39,8 @@ $('#deletebtn').on('click', function (e) {
     });
     
 });
+$(document).ready(function(e) {
+    var duedate = $("#Data_DueDate").val();
+    var startdate = $('#Data_StartDate').text();
+    $("#Data_DueDate").datepicker('option', 'minDate', new Date(startdate)).datepicker("setDate", new Date(duedate));
+});

@@ -6,6 +6,7 @@
     ViewData["Title"] = "Invoice Detail";
 }
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+<link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
 <link rel="stylesheet" type="text/css" href="~/css/jquery-confirm.css" />
 <article class="">
     @using (Html.BeginForm(null, null, FormMethod.Post, new { name = "createform", id = "createform" }))
@@ -69,7 +70,7 @@
                             <div class="invoice_paid__row">
                                 <div class="invoice_paid__cell">
                                     <div class="invoice_paid__name">Date</div>
-                                    <div class="invoice_paid__desc">@Model.Data.StartDate</div>
+                                    <div class="invoice_paid__desc" id="Data_StartDate">@Model.Data.StartDate</div>
                                 </div>
                                 <div class="invoice_paid__cell">
                                     <div class="invoice_paid__name">Currency</div>
@@ -117,7 +118,14 @@
                                 </div>
                                 <div class="invoice_paid__cell">
                                     <div class="invoice_paid__name">Pay due date</div>
-                                    <div class="invoice_paid__desc">@Model.Data.DueDate</div>
+                                    @if (string.IsNullOrEmpty(Model.Data.Status) || Model.Data.Status == InvoiceStatus.Draft.ToString())
+                                    {
+                                        <input type="text" asp-for="Data.DueDate" required placeholder="" class="form-control noborder">
+                                    }
+                                    else
+                                    {
+                                        <div class="invoice_paid__desc">@Model.Data.DueDate</div>
+                                    }
                                 </div>
                             </div>
                         </div>
@@ -137,7 +145,10 @@
                         {
                             <button type="submit" name="button" class="btn btn--default invoice_paid__button" id="deletebtn">Delete Invoice</button>
                         }
-                        <a href="#" class="invoice_paid__bottom">Blockchain Settlement</a>
+                        @if (Model.Data.Status == InvoiceStatus.Paid.ToString())
+                        {
+                            <a href="https://private-bcn-explorer-test.lykkex.net/address/@Model.Data.WalletAddress" class="invoice_paid__bottom">Blockchain Settlement</a>
+                        }
                     </div>
                 </div>
             </div>
