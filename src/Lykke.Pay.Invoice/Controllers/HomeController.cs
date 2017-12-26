@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Globalization;
 using System.Net.Http;
 using System.Security.Claims;
@@ -53,7 +54,7 @@ namespace Lykke.Pay.Invoice.Controllers
                 return View();
             }
             var httpClient = new HttpClient();
-            var response = await httpClient.PostAsync(MerchantAuthService, new StringContent(JsonConvert.SerializeObject(request), Encoding.UTF8, "application/json"));
+            var response = await httpClient.PostAsync($"{MerchantAuthService}staffSignIn", new StringContent(JsonConvert.SerializeObject(request), Encoding.UTF8, "application/json"));
             var rstText = await response.Content.ReadAsStringAsync();
             if (string.IsNullOrEmpty(rstText))
             {
@@ -153,8 +154,33 @@ namespace Lykke.Pay.Invoice.Controllers
         [HttpPost("balance")]
         public async Task<JsonResult> Balance()
         {
-            double amount = 1000;
-            return Json($"{string.Format("{0:0.00}", amount)} CHF"); 
+            var assert = "CHF";
+            
+            var httpClient = new HttpClient();
+            var response = await httpClient.GetAsync($"{MerchantAuthService}balance/{User.Claims.First(u => u.Type == ClaimTypes.Sid).Value}");
+            var rstText = await response.Content.ReadAsStringAsync();
+            if (string.IsNullOrEmpty(rstText))
+            {
+               
+                return Json($"0.00 {assert}");
+            }
+
+            var balance = JsonConvert.DeserializeObject<MerchantBalance>(rstText);
+            if (balance == null)
+            {
+                return Json($"0.00 {assert}");
+            }
+
+            var assertBalance =
+                balance.Asserts.FirstOrDefault(
+                    ab => ab.Assert.Equals(assert, StringComparison.InvariantCultureIgnoreCase));
+
+            if (assertBalance == null)
+            {
+                return Json($"0.00 {assert}");
+            }
+
+            return Json($"{string.Format("{0:0.00}", assertBalance.Assert)}  {assert}"); 
         }
 
         [Authorize]
