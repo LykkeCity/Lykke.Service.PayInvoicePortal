@@ -6,6 +6,7 @@ var pagenumber = 1;
 $('.btn_create').on('click', function (e) {
     e.stopPropagation();
     validate(true);
+    $("#StartDate").datepicker().datepicker("setDate", new Date());;
     $('body').addClass('body--menu_opened');
     $('.create.draft').addClass('create--open');
 });
@@ -61,7 +62,6 @@ $(document).ready(function (e) {
         $('body').removeClass('body--menu_opened');
         $('.create').removeClass('create--open');
     });
-    $("#StartDate").datepicker().datepicker("setDate", new Date());;
     $('.invoices__search').on('click', function () {
         $('.profile_search').toggleClass('vis');
     });
@@ -116,6 +116,8 @@ function validate(clearvalidate) {
     var style = clearvalidate ? "none" : "";
     var inputs = $('#createform input').filter('[require]:visible');
     for (var i = 0; i < inputs.length; i++) {
+        if (clearvalidate)
+            $(inputs[i]).val("");
         if ($(inputs[i]).val() == "") {
             var req = $("[req-for='" + $(inputs[i]).attr("id") + "']");
             $(req).css('display', style);

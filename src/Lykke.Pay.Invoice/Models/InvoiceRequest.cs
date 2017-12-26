@@ -39,7 +39,7 @@ namespace Lykke.Pay.Invoice.Models
             var invoiceid = string.IsNullOrEmpty(InvoiceId) ? Guid.NewGuid().ToString() : InvoiceId;
             if (string.IsNullOrEmpty(Amount))
                 Amount = "0";
-
+            StartDate = (StartDate == null) ? DateTime.Now.RepoDateStr() : StartDate;
             var dueDate = DateTime.Parse(StartDate, CultureInfo.InvariantCulture);
             dueDate = dueDate.Add(orderLiveTime);
             return new InvoiceEntity
