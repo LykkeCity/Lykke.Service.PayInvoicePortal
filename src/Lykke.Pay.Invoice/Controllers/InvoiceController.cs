@@ -40,86 +40,105 @@ namespace Lykke.Pay.Invoice.Controllers
         {
             var respInv = await _invoicesservice.ApiInvoicesByInvoiceIdGetWithHttpMessagesAsync(invoiceId);
             var inv = respInv.Body;
-            if (inv == null || !InvoiceStatus.Unpaid.ToString().Equals(inv.Status, StringComparison.InvariantCultureIgnoreCase))
+            if (inv == null)
             {
                 return NotFound();
             }
-            if (!string.IsNullOrEmpty(inv.StartDate) && inv.StartDate.GetRepoDateTime() > DateTime.Today.ToUniversalTime())
+            
+            var invoiceStatus = inv.Status.ParsePayEnum<InvoiceStatus>();
+
+            if (invoiceStatus == InvoiceStatus.Draft || invoiceStatus == InvoiceStatus.Removed ||
+                !string.IsNullOrEmpty(inv.StartDate) && inv.StartDate.GetRepoDateTime() > DateTime.Now)
             {
                 return NotFound();
             }
 
-            if (!string.IsNullOrEmpty(inv.DueDate) && inv.DueDate.GetRepoDateTime() < DateTime.Now)
-            {
-                inv.Status = InvoiceStatus.Removed.ToString();
-                await _invoicesservice.ApiInvoicesPostWithHttpMessagesAsync(inv.CreateInvoiceEntity());
-                return NotFound();
-            }
+            InvoiceResult model = null;
+            
 
             if (!string.IsNullOrEmpty(inv.WalletAddress))
             {
-                return View(await GenerateIfExists(inv, inv.WalletAddress));
+                model = await GenerateIfExists(inv, inv.WalletAddress);
             }
 
-            var model = new InvoiceResult
-            {
-                OrigAmount = inv.Amount,
-                Currency = inv.Currency,
-                InvoiceNumber = inv.InvoiceNumber
-            };
 
-            var order = new
+
+            if (!string.IsNullOrEmpty(inv.DueDate) && inv.DueDate.GetRepoDateTime() < DateTime.Now)
             {
-                inv.Currency,
-                inv.Amount,
-                ExchangeCurrency = "BTC",
-                OrderId = inv.InvoiceNumber,
-                Markup = new
+                inv.Status = InvoiceStatus.LatePaid.ToString();
+                ViewBag.invoiceStatus = inv.Status;
+                await _invoicesservice.ApiInvoicesPostWithHttpMessagesAsync(inv.CreateInvoiceEntity());
+            }
+            else
+            {
+                if (model == null)
                 {
-                    Percent = 1,
-                    Pips = 10
+                    model = new InvoiceResult()
+                    {
+                        OrigAmount = inv.Amount,
+                        Currency = inv.Currency,
+                        InvoiceNumber = inv.InvoiceNumber
+                    };
+
+                    var order = new
+                    {
+                        inv.Currency,
+                        inv.Amount,
+                        ExchangeCurrency = "BTC",
+                        OrderId = inv.InvoiceNumber,
+                        Markup = new
+                        {
+                            Percent = 1,
+                            Pips = 10
+                        }
+                    };
+
+
+
+
+                    var bodyRequest = JsonConvert.SerializeObject(order);
+                    var strToSign = string.Format("{0}{1}", MerchantApiKey, bodyRequest);
+
+
+                    var csp = CreateRsaFromPrivateKey(MerchantPrivateKey);//certificate.GetRSAPrivateKey();
+                    var sign = Convert.ToBase64String(csp.SignData(Encoding.UTF8.GetBytes(strToSign), HashAlgorithmName.SHA256, RSASignaturePadding.Pkcs1));
+
+                    var httpClient = new HttpClient();
+                    httpClient.DefaultRequestHeaders.Add("Lykke-Merchant-Id", MerchantId);
+                    httpClient.DefaultRequestHeaders.Add("Lykke-Merchant-Sign", sign);
+
+
+                    var result = await httpClient.PostAsync(LykkePayUrl + "Order",
+                        new StringContent(bodyRequest, Encoding.UTF8, "application/json"));
+                    var resp = await result.Content.ReadAsStringAsync();
+
+
+
+                    if (result.StatusCode != HttpStatusCode.OK)
+                    {
+                        return BadRequest();
+                    }
+
+                    dynamic orderResp = JsonConvert.DeserializeObject(resp);
+
+                    inv.WalletAddress = orderResp.address;
+                    inv.DueDate = DateTime.Now.Add(InvoiceLiveTime).RepoDateStr();
+                    inv.StartDate = DateTime.Now.RepoDateStr();
+                    await _invoicesservice.ApiInvoicesPostWithHttpMessagesAsync(inv.CreateInvoiceEntity());
+
+                    model.Amount = RoundDouble((double)orderResp.amount);
+                    model.QRCode =
+                        $@"https://chart.googleapis.com/chart?chs=220x220&chld=L|2&cht=qr&chl=bitcoin:{orderResp.address}?amount={model.Amount}%26label=invoice%20#{inv.InvoiceNumber}%26message={orderResp.orderId}";
+
+                    FillViewBag(inv, orderResp);
                 }
-            };
-
-
-
-
-            var bodyRequest = JsonConvert.SerializeObject(order);
-            var strToSign = string.Format("{0}{1}", MerchantApiKey, bodyRequest);
-
-
-            var csp = CreateRsaFromPrivateKey(MerchantPrivateKey);//certificate.GetRSAPrivateKey();
-            var sign = Convert.ToBase64String(csp.SignData(Encoding.UTF8.GetBytes(strToSign), HashAlgorithmName.SHA256, RSASignaturePadding.Pkcs1));
-
-            var httpClient = new HttpClient();
-            httpClient.DefaultRequestHeaders.Add("Lykke-Merchant-Id", MerchantId);
-            httpClient.DefaultRequestHeaders.Add("Lykke-Merchant-Sign", sign);
-            
-
-            var result = await httpClient.PostAsync(LykkePayUrl + "Order",
-                new StringContent(bodyRequest, Encoding.UTF8, "application/json"));
-            var resp = await result.Content.ReadAsStringAsync();
-
-
-
-            if (result.StatusCode != HttpStatusCode.OK)
-            {
-                return BadRequest();
             }
+            ViewBag.invoiceStatus = inv.Status;
 
-            dynamic orderResp = JsonConvert.DeserializeObject(resp);
+            ViewBag.needAutoUpdate = invoiceStatus == InvoiceStatus.InProgress || invoiceStatus == InvoiceStatus.Unpaid
+                ? 1
+                : 0;
 
-            inv.WalletAddress = orderResp.address;
-            inv.DueDate = DateTime.Now.Add(InvoiceLiveTime).RepoDateStr();
-            inv.StartDate = DateTime.Now.RepoDateStr();
-            await _invoicesservice.ApiInvoicesPostWithHttpMessagesAsync(inv.CreateInvoiceEntity());
-
-            model.Amount = RoundDouble((double)orderResp.amount);
-            model.QRCode =
-                $@"https://chart.googleapis.com/chart?chs=220x220&chld=L|2&cht=qr&chl=bitcoin:{orderResp.address}?amount={model.Amount}%26label=invoice%20#{inv.InvoiceNumber}%26message={orderResp.orderId}";
-
-
-            FillViewBag(inv, orderResp);
             
             return View(model); 
 
@@ -150,7 +169,7 @@ namespace Lykke.Pay.Invoice.Controllers
             {
                 return Json(new { status = (int)MerchantPayRequestStatus.InProgress });
             }
-            return Json(new { status = (int)resp.ParseOrderStatus() });
+            return Json(new { status = resp.ParsePayEnum<InvoiceStatus>() });
         }
         private void FillViewBag(IInvoiceEntity inv, dynamic orderResp)
         {
@@ -192,12 +211,19 @@ namespace Lykke.Pay.Invoice.Controllers
                 return NotFound();
             }
 
+            ViewBag.invoiceStatus = inv.Status;
+
+            var invoiceStatus = inv.Status.ParsePayEnum<InvoiceStatus>();
 
             return Json(new
             {
                 order,
-                ViewBag.invoiceTimeRefresh
-            });
+                ViewBag.invoiceTimeRefresh,
+                status = inv.Status,
+                needAutoUpdate = invoiceStatus == InvoiceStatus.InProgress || invoiceStatus == InvoiceStatus.Unpaid
+                    ? 1
+                    : 0
+        });
 
         }
 
@@ -237,15 +263,13 @@ namespace Lykke.Pay.Invoice.Controllers
             dynamic orderResp = JsonConvert.DeserializeObject(resp);
 
 
-            var paimentRequest = ((string)orderResp.merchantPayRequestStatus).ParseOrderStatus();
+            var paimentRequest = ((string)orderResp.merchantPayRequestStatus).ParsePayEnum<MerchantPayRequestStatus>();
             
             
             if (paimentRequest == MerchantPayRequestStatus.Completed || paimentRequest == MerchantPayRequestStatus.Failed)
             {
-                inv.Status = (paimentRequest == MerchantPayRequestStatus.Completed ? InvoiceStatus.Paid : InvoiceStatus.Removed).ToString();
+                inv.Status = ((string)orderResp.transactionStatus).ParsePayEnum<InvoiceStatus>().ToString();
                 await _invoicesservice.ApiInvoicesPostWithHttpMessagesAsync(inv.CreateInvoiceEntity());
-                
-                return null;
 
             }
 

@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
+using Lykke.Pay.Common;
 
 namespace Lykke.Pay.Invoice.Models
 {

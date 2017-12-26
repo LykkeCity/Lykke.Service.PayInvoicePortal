@@ -6,23 +6,16 @@
         function (data) {
 
             if (data) {
-                if (data.status > 1) {
-                    //window.location.href = window.location.href;
-                    $.finish(data);
+                if ($.invoiceStatus != data.status) {
+                    window.location.href = window.location.href;
+                    return;
                 }
             }
 
         }
     );
 }
-$.finish = function (data) {
-    $('.invoice__qr > img').attr('style', 'display: none;');
-    if (data.status === 3)
-        $('.invoice__label').text('success');
-    else if (data.status === 2)
-        $('.invoice__label').text('error');
-    $('.invoice__remain').attr('style', 'display: none;');
-}
+
 $.updateOrder = function () {
     //var now = Date.now();
     //if ($.invoiceTimeDueDate < now) {
@@ -51,7 +44,15 @@ $.updateOrder = function () {
             $('.invoice__qr > img').attr('src', data.order.qrCode);
             $('.invoice__payment').html('' + data.order.amount + ' BTC<div class="invoice__info"> for payment </div>');
             $('.invoice__original').html('' + data.order.origAmount + ' ' + data.currency + '<div class="invoice__info"> original </div>');
-            
+
+            if ($.invoiceStatus != data.status) {
+                window.location.href = window.location.href;
+                return;
+            }
+
+            $.needAutoUpdate = data.needAutoUpdate;
+
+
         }
     );
 };

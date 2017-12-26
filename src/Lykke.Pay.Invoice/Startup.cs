@@ -76,7 +76,7 @@ namespace Lykke.Pay.Invoice
             {
                 routes.MapRoute(
                     name: "default",
-                    template: "{controller=Invoice}/{action=Index}/{id?}");
+                    template: "{controller=Home}/{action=Profile}/{id?}");
             });
         }
     }
