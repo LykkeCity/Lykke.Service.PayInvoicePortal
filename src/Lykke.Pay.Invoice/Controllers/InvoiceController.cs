@@ -33,7 +33,7 @@ namespace Lykke.Pay.Invoice.Controllers
 
         public IActionResult Index()
         {
-            return NotFound();
+            return Redirect(HomeUrl); 
         }
         [Route("invoice/{InvoiceId}")]
         public async Task<IActionResult> Index(string invoiceId)
