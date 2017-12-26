@@ -29,7 +29,7 @@ namespace Lykke.Pay.Invoice.Models
         public string WalletAddress { get; set; }
         public string StartDate { get; set; }
 
-        public InvoiceEntity CreateEntity()
+        public InvoiceEntity CreateEntity(TimeSpan orderLiveTime)
         {
             if (string.IsNullOrEmpty(ClientName))
             {
@@ -38,6 +38,9 @@ namespace Lykke.Pay.Invoice.Models
             var invoiceid = string.IsNullOrEmpty(InvoiceId) ? Guid.NewGuid().ToString() : InvoiceId;
             if (string.IsNullOrEmpty(Amount))
                 Amount = "0";
+
+            var dueDate = DateTime.Parse(StartDate, CultureInfo.InvariantCulture);
+            dueDate = dueDate.Add(orderLiveTime);
             return new InvoiceEntity
             {
                 Amount = double.Parse(Amount, CultureInfo.InvariantCulture),
@@ -49,7 +52,8 @@ namespace Lykke.Pay.Invoice.Models
                 Label = Label,
                 Status = Status,
                 WalletAddress = WalletAddress,
-                StartDate = DateTime.Now.RepoDateStr()
+                StartDate = DateTime.Now.RepoDateStr(),
+                DueDate = dueDate.RepoDateStr()
             };
         }
     }

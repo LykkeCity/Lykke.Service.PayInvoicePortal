@@ -119,7 +119,7 @@ namespace Lykke.Pay.Invoice.Controllers
             request.StartDate = model.Data.StartDate;
             request.WalletAddress = model.Data.WalletAddress;
             request.Status = model.Data.Status;
-            await _invoiceService.ApiInvoicesPostWithHttpMessagesAsync(request.CreateEntity());
+            await _invoiceService.ApiInvoicesPostWithHttpMessagesAsync(request.CreateEntity(OrderLiveTime));
             if (model.Data.Status != InvoiceStatus.Paid.ToString())
             {
                 model.QRCode =
@@ -143,7 +143,7 @@ namespace Lykke.Pay.Invoice.Controllers
             {
                 return View();
             }
-            var item = request.CreateEntity();
+            var item = request.CreateEntity(OrderLiveTime);
             var result = await _invoiceService.ApiInvoicesPostWithHttpMessagesAsync(item);
             ViewBag.GeneratedItem = JsonConvert.SerializeObject(item);
             return View();
