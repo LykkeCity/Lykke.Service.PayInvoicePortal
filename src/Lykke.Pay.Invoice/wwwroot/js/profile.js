@@ -37,7 +37,7 @@ $(document).ready(function (e) {
     $('#generatebtn').on('click', function (e) {
         $('#Status').val("Unpaid");
         if ($('#Currency').val() == "")
-            $('#Currency').val("USD");
+            $('#Currency').val("CHF");
         updateGrid();
     });
     $('.icon.icon--copy').on('click', function (e) {
@@ -47,6 +47,7 @@ $(document).ready(function (e) {
         $temp.val($('#UnpaidUrl').text()).select();
         document.execCommand("copy");
         $temp.remove();
+        setTooltip('Copied!');
     });
     $('#draftbtn').on('click', function (e) {
         $('#Status').val("Draft");
@@ -98,6 +99,12 @@ $(document).ready(function (e) {
         }
         return (errors == 0);
     });
+    $('.create__item-copy').tooltip({
+        show: {
+            effect: "slideDown",
+            delay: 250
+        }
+    });
 });
 
 function updateBalance() {
@@ -141,7 +148,7 @@ function editItem(invoiceId) {
         if (!value)
             value = "";
         var item = document.getElementById(keyNames[j]);
-        if (keyNames[j] == "StartDate")
+        if (keyNames[j] === "StartDate" || keyNames[j] === "DueDate")
             value = value.substr(0, 10);
         if (item)
             item.value = value;
@@ -217,6 +224,8 @@ function renderGrid(gridModel, loadMore) {
                 value = "";
             if (keyNames[j] == "Status" && value == "")
                 value = "Draft";
+            if (keyNames[j] === "StartDate")
+                value = value.substr(0, 10);
             tempstr = tempstr.replace(new RegExp("{{" + keyNames[j] + "}}", 'g'), value);
         }
         switch (invoices[i].Status) {
@@ -329,13 +338,18 @@ function showItem(invoice) {
         if (!value)
             value = "";
         var item = document.getElementById("Unpaid" + keyNames[j]);
-        if (keyNames[j] == "StartDate")
+        if (keyNames[j] === "StartDate")
             value = value.substr(0, 10);
         if (item)
             item.innerText = value;
         if (keyNames[j] == "InvoiceId") {
             var url = document.getElementById("UnpaidUrl");
-            url.innerText = window.location.origin + "/invoice/?invoiceId=" + value;
+            url.innerText = window.location.origin + "/invoice/" + value;
         }
     }
+}
+function setTooltip(message) {
+    $('.create__item-copy')
+        .attr('title', message);
+    $('.create__item-copy').tooltip("open");
 }

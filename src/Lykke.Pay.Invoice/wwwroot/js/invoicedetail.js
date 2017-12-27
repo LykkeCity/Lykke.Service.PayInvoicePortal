@@ -14,6 +14,7 @@ $('.icon.icon--copy').on('click', function (e) {
     $temp.val($('.invoice_paid__link').text()).select();
     document.execCommand("copy");
     $temp.remove();
+    setTooltip('Copied!');
 });
 $('#deletebtn').on('click', function (e) {
     $.confirm({
@@ -43,4 +44,15 @@ $(document).ready(function(e) {
     var duedate = $("#Data_DueDate").val();
     var startdate = $('#Data_StartDate').text();
     $("#Data_DueDate").datepicker('option', 'minDate', new Date(startdate)).datepicker("setDate", new Date(duedate));
+    $('.create__item-copy').tooltip({
+        show: {
+            effect: "slideDown",
+            delay: 250
+        }
+    });
 });
+function setTooltip(message) {
+    $('.create__item-copy')
+        .attr('title', message);
+    $('.create__item-copy').tooltip("open");
+}
