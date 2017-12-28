@@ -92,14 +92,13 @@ namespace Lykke.Pay.Invoice.Controllers
         public async Task<IActionResult> InvoiceDetail(string invoiceId)
         {
             var model = new InvoiceDetailModel();
-            var result = await _invoiceService.ApiInvoicesByInvoiceIdGetWithHttpMessagesAsync(invoiceId, MerchantId);
+            var result = await _invoiceService.ApiInvoicesByInvoiceIdGetWithHttpMessagesAsync(invoiceId);
             model.Data = result.Body;
             model.InvoiceUrl = Request.Scheme + "://" + Request.Host + "/invoice/" + invoiceId;
             if (model.Data.Status != InvoiceStatus.Paid.ToString())
                 model.QRCode =
                     $@"https://chart.googleapis.com/chart?chs=220x220&chld=L|2&cht=qr&chl=bitcoin:{model.Data.WalletAddress}?amount={model.Data.Amount}%26label=LykkePay%26message={model.Data.InvoiceId}";
             return View(model);
-            
         }
         [Authorize]
         [HttpPost("InvoiceDetail")]
@@ -121,7 +120,7 @@ namespace Lykke.Pay.Invoice.Controllers
             request.StartDate = model.Data.StartDate;
             request.WalletAddress = model.Data.WalletAddress;
             request.Status = model.Data.Status;
-            await _invoiceService.ApiInvoicesPostWithHttpMessagesAsync(request.CreateEntity(OrderLiveTime, MerchantId));
+            await _invoiceService.ApiInvoicesPostWithHttpMessagesAsync(request.CreateEntity(OrderLiveTime));
             if (model.Data.Status != InvoiceStatus.Paid.ToString())
             {
                 model.QRCode =
@@ -145,7 +144,7 @@ namespace Lykke.Pay.Invoice.Controllers
             {
                 return View();
             }
-            var item = request.CreateEntity(OrderLiveTime, MerchantId);
+            var item = request.CreateEntity(OrderLiveTime);
             await _invoiceService.ApiInvoicesPostWithHttpMessagesAsync(item);
             ViewBag.GeneratedItem = JsonConvert.SerializeObject(item);
             return View();
@@ -189,39 +188,54 @@ namespace Lykke.Pay.Invoice.Controllers
         public async Task<JsonResult> Invoices(GridModel model)
         {
             var respmodel = new GridModel();
-            var result = await _invoiceService.ApiInvoicesGetWithHttpMessagesAsync(MerchantId);
-            var orderedlist = result.Body.Where(i=>i.Status != InvoiceStatus.Removed.ToString()).OrderByDescending(i => i.StartDate).ToList();
-            if (!string.IsNullOrEmpty(model.SearchValue))
+            var result = await _invoiceService.ApiInvoicesGetWithHttpMessagesAsync();
+            var orderedlist = result.Body.OrderByDescending(i => i.StartDate).ToList();
+            if (model.Filter.Status != "All")
             {
-                orderedlist = orderedlist.Where(i => (i.WalletAddress != null && i.WalletAddress.Contains(model.SearchValue)) ||
-                (i.Currency != null && i.Currency.Contains(model.SearchValue)) ||
-                (i.ClientEmail != null && i.ClientEmail.Contains(model.SearchValue)) ||
-                (i.ClientName != null && i.ClientName.Contains(model.SearchValue)) ||
-                (i.InvoiceNumber != null && i.InvoiceNumber.Contains(model.SearchValue)))
+                orderedlist = orderedlist.Where(i => i.Status == model.Filter.Status).ToList();
+            }
+            if (!string.IsNullOrEmpty(model.Filter.SearchValue))
+            {
+                orderedlist = orderedlist.Where(i => (i.WalletAddress != null && i.WalletAddress.Contains(model.Filter.SearchValue)) ||
+                (i.Currency != null && i.Currency.Contains(model.Filter.SearchValue)) ||
+                (i.ClientEmail != null && i.ClientEmail.Contains(model.Filter.SearchValue)) ||
+                (i.ClientName != null && i.ClientName.Contains(model.Filter.SearchValue)) ||
+                (i.InvoiceNumber != null && i.InvoiceNumber.Contains(model.Filter.SearchValue)))
                 .OrderByDescending(i => i.StartDate).ToList();
             }
-            respmodel.AllCount = orderedlist.Count;
-            respmodel.DraftCount = orderedlist.Count(i => i.Status == InvoiceStatus.Draft.ToString());
-            respmodel.PaidCount = orderedlist.Count(i => i.Status == InvoiceStatus.Paid.ToString());
-            respmodel.UnpaidCount = orderedlist.Count(i=>i.Status == InvoiceStatus.Unpaid.ToString());
-            if (!string.IsNullOrEmpty(model.SortField))
+            if (model.Filter.Status == "All")
             {
-                switch(model.SortField)
+                respmodel.Header.AllCount = orderedlist.Count;
+                respmodel.Header.DraftCount = orderedlist.Count(i => i.Status == InvoiceStatus.Draft.ToString());
+                respmodel.Header.PaidCount = orderedlist.Count(i => i.Status == InvoiceStatus.Paid.ToString());
+                respmodel.Header.UnpaidCount = orderedlist.Count(i => i.Status == InvoiceStatus.Unpaid.ToString());
+                respmodel.Header.RemovedCount = orderedlist.Count(i => i.Status == InvoiceStatus.Removed.ToString());
+                respmodel.Header.InProgressCount =
+                    orderedlist.Count(i => i.Status == InvoiceStatus.InProgress.ToString());
+                respmodel.Header.LatePaidCount = orderedlist.Count(i => i.Status == InvoiceStatus.LatePaid.ToString());
+                respmodel.Header.UnderpaidCount =
+                    orderedlist.Count(i => i.Status == InvoiceStatus.Underpaid.ToString());
+                respmodel.Header.OverpaidCount = orderedlist.Count(i => i.Status == InvoiceStatus.Overpaid.ToString());
+            }
+            respmodel.Filter.Status = model.Filter.Status;
+            if (!string.IsNullOrEmpty(model.Filter.SortField))
+            {
+                switch(model.Filter.SortField)
                 {
                     case "number":
-                        orderedlist = model.SortWay == 0 ? orderedlist.OrderBy(i => i.InvoiceNumber).ThenByDescending(i => i.StartDate).ToList() : orderedlist.OrderByDescending(i => i.InvoiceNumber).ThenByDescending(i => i.StartDate).ToList();
+                        orderedlist = model.Filter.SortWay == 0 ? orderedlist.OrderBy(i => i.InvoiceNumber).ThenByDescending(i => i.StartDate).ToList() : orderedlist.OrderByDescending(i => i.InvoiceNumber).ThenByDescending(i => i.StartDate).ToList();
                         break;
                     case "client":
-                        orderedlist = model.SortWay == 0 ? orderedlist.OrderBy(i => i.ClientName).ThenByDescending(i => i.StartDate).ToList() : orderedlist.OrderByDescending(i => i.ClientName).ThenByDescending(i => i.StartDate).ToList();
+                        orderedlist = model.Filter.SortWay == 0 ? orderedlist.OrderBy(i => i.ClientName).ThenByDescending(i => i.StartDate).ToList() : orderedlist.OrderByDescending(i => i.ClientName).ThenByDescending(i => i.StartDate).ToList();
                         break;
                     case "amount":
-                        orderedlist = model.SortWay == 0 ? orderedlist.OrderBy(i => i.Amount).ThenByDescending(i => i.StartDate).ToList() : orderedlist.OrderByDescending(i => i.Amount).ThenByDescending(i => i.StartDate).ToList();
+                        orderedlist = model.Filter.SortWay == 0 ? orderedlist.OrderBy(i => i.Amount).ThenByDescending(i => i.StartDate).ToList() : orderedlist.OrderByDescending(i => i.Amount).ThenByDescending(i => i.StartDate).ToList();
                         break;
                     case "currency":
-                        orderedlist = model.SortWay == 0 ? orderedlist.OrderBy(i => i.Currency).ThenByDescending(i => i.StartDate).ToList() : orderedlist.OrderByDescending(i => i.Currency).ThenByDescending(i => i.StartDate).ToList();
+                        orderedlist = model.Filter.SortWay == 0 ? orderedlist.OrderBy(i => i.Currency).ThenByDescending(i => i.StartDate).ToList() : orderedlist.OrderByDescending(i => i.Currency).ThenByDescending(i => i.StartDate).ToList();
                         break;
                     case "status":
-                        orderedlist = model.SortWay == 0 ? orderedlist.OrderBy(i => i.Status).ThenByDescending(i => i.StartDate).ToList() : orderedlist.OrderByDescending(i => i.Status).ThenByDescending(i => i.StartDate).ToList();
+                        orderedlist = model.Filter.SortWay == 0 ? orderedlist.OrderBy(i => i.Status).ThenByDescending(i => i.StartDate).ToList() : orderedlist.OrderByDescending(i => i.Status).ThenByDescending(i => i.StartDate).ToList();
                         break;
                 }
             }
@@ -234,6 +248,7 @@ namespace Lykke.Pay.Invoice.Controllers
         [HttpGet("deleteinvoice")]
         public async Task<EmptyResult> DeleteInvoice(string invoiceId)
         {
+            //_invoiceService.ApiInvoicesByInvoiceIdDeleteGet(invoiceId);
             await DeleteInvoiceFromBase(invoiceId);
             return new EmptyResult();
         }
@@ -245,7 +260,7 @@ namespace Lykke.Pay.Invoice.Controllers
         }
         protected async Task DeleteInvoiceFromBase(string invoiceId)
         {
-            await _invoiceService.ApiInvoicesByInvoiceIdDeleteGetWithHttpMessagesAsync(invoiceId, MerchantId);
+            await _invoiceService.ApiInvoicesByInvoiceIdDeleteGetWithHttpMessagesAsync(invoiceId);
         }
     }
 }
