@@ -1,111 +1,10 @@
-﻿var invoices = null;
-var sortField = "";
-var searchValue = "";
-var sortWay = 0;
-var pagenumber = 1;
-$('.btn_create').on('click', function (e) {
-    e.stopPropagation();
-    validate(true);
-    $("#StartDate").datepicker().datepicker("setDate", new Date());;
-    $('body').addClass('body--menu_opened');
-    $('.create.draft').addClass('create--open');
-});
-
-$('body').on('click', function (e) {
-    $('body').removeClass('body--menu_opened');
-    $('.create.draft').removeClass('create--open');
-    $('.create.unpaid').removeClass('create--open');
-});
-$('.create.draft').on('click', function (e) {
-    e.stopPropagation();
-});
-$('.create.unpaid').on('click', function (e) {
-    e.stopPropagation();
-});
-
-$(document).ready(function (e) {
-
-    updateGrid();
-    updateBalance();
-    if (generateditem) {
-        if (generateditem.Status !== "Draft") {
-            showItem(generateditem);
-            $('body').addClass('body--menu_opened');
-            $('.create.unpaid').addClass('create--open');
-        }
-    }
-    $('#generatebtn').on('click', function (e) {
-        $('#Status').val("Unpaid");
-        if ($('#Currency').val() == "")
-            $('#Currency').val("CHF");
-        updateGrid();
-    });
-    $('.icon.icon--copy').on('click', function (e) {
-        e.stopPropagation();
-        var $temp = $("<input>");
-        $("body").append($temp);
-        $temp.val($('#UnpaidUrl').text()).select();
-        document.execCommand("copy");
-        $temp.remove();
-        setTooltip('Copied!');
-    });
-    $('#draftbtn').on('click', function (e) {
-        $('#Status').val("Draft");
-        if ($('#Currency').val() == "")
-            $('#Currency').val("USD");
-        updateGrid();
-    });
-    $('.showmore').on('click', function (e) {
-        pagenumber++;
-        updateGrid(null, null, null, true);
-    });
-    $('#closebtn').on('click', function (e) {
-        $('body').removeClass('body--menu_opened');
-        $('.create').removeClass('create--open');
-    });
-    $('.invoices__search').on('click', function () {
-        $('.profile_search').toggleClass('vis');
-    });
-    $('.invoices__row .invoices__cell').on('click', function (sender) {
-        var element = sender.target;
-        sortfield = "";
-        sortWay = (sortWay == 0) ? 1 : 0;
-        if (element.className.indexOf("number") !== -1)
-            sortfield = "number";
-        if (element.className.indexOf("client") !== -1)
-            sortfield = "client";
-        if (element.className.indexOf("amount") !== -1)
-            sortfield = "amount";
-        if (element.className.indexOf("currency") !== -1)
-            sortfield = "currency";
-        if (element.className.indexOf("status") !== -1)
-            sortfield = "status";
-        if (sortfield !== "")
-            updateGrid("", sortfield, sortWay);
-    });
-    $('.profile_search__button').on('click', function () {
-        $('.profile_search').removeClass('vis');
-        $('#searchvalue').val("");
-        updateGrid();
-    });
-    $('#searchvalue').on('input', function (e) {
-        updateGrid($('#searchvalue').val(), sortField);
-    });
-    $('#createform').submit(function () {
-        var errors = validate();
-        if ($('#Status').val() === "Draft") {
-            if ($('#ClientName').val() !== "")
-                return true;
-        }
-        return (errors == 0);
-    });
-    $('.create__item-copy').tooltip({
-        show: {
-            effect: "slideDown",
-            delay: 250
-        }
-    });
-});
+﻿var pagenumber = 1;
+var filter = {};
+filter.sortField = "";
+filter.searchValue = "";
+filter.sortWay = 0;
+var updatedStatusCnt = 0;
+var statuses = ["All", "Paid", "Unpaid", "Draft", "Removed", "InProgress", "Overpaid", "Underpaid", "LatePaid"];
 
 function updateBalance() {
     $.ajax({
@@ -155,121 +54,30 @@ function editItem(invoiceId) {
     }
 }
 
-function updateGrid(searchValue, sortField, sortway, loadmore) {
-    var data = { SearchValue: searchValue, SortField: sortField, Page: pagenumber, SortWay: sortway };
-    $.ajax({
-        url: "/home/Invoices",
-        dataType: 'json',
-        type: "POST",
-        data: data,
-        success: function (gridModel) {
-            renderGrid(gridModel, loadmore); //grid need update after deletion item
-        }
-    });
+function updateGrid(loadmore) {
+    var serverlink = "/home/Invoices";
+    var data = { Filter: filter, Page: pagenumber };
+    for (var i = 0; i < statuses.length; i++) {
+        filter.status = statuses[i];
+        $.ajax({
+            url: serverlink,
+            dataType: 'json',
+            type: "POST",
+            data: data,
+            success: function (model) {
+                
+                if (model.filter.status === "All")
+                    renderGridHeader(model);
+                renderStatus(model, loadmore);
+                updatedStatusCnt++;
+                if (updatedStatusCnt === statuses.length)
+                    setEvents();
+            }
+        });
+    }
 }
-var divtableall = null;
-var divtablepaid = null;
-var divtableunpaid = null;
-var divtabledraft = null;
-function renderGrid(gridModel, loadMore) {
-    var alllink = document.getElementById("alllink");
-    var paidlink = document.getElementById("paidlink");
-    var unpaidlink = document.getElementById("unpaidlink");
-    var draftlink = document.getElementById("draftlink");
 
-    var paidcnt = gridModel.paidCount;
-    var draftcnt = gridModel.draftCount;
-    var unpaidcnt = gridModel.unpaidCount;
-
-    var template = document.getElementById("rowtemplate").innerHTML;
-    var taball = document.getElementById("all");
-    var tabpaid = document.getElementById("paid");
-    var tabunpaid = document.getElementById("unpaid");
-    var tabdraft = document.getElementById("draft");
-
-    if (!loadMore) {
-        taball.innerHTML = "";
-        tabpaid.innerHTML = "";
-        tabunpaid.innerHTML = "";
-        tabdraft.innerHTML = "";
-
-        divtableall = document.createElement("div");
-        divtableall.className = "invoices__table";
-        taball.appendChild(divtableall);
-
-        divtablepaid = document.createElement("div");
-        divtablepaid.className = "invoices__table";
-        tabpaid.appendChild(divtablepaid);
-
-        divtableunpaid = document.createElement("div");
-        divtableunpaid.className = "invoices__table";
-        tabunpaid.appendChild(divtableunpaid);
-
-        divtabledraft = document.createElement("div");
-        divtabledraft.className = "invoices__table";
-        tabdraft.appendChild(divtabledraft);
-    }
-
-    var allstring = "";
-    var paidstring = "";
-    var unpaidstring = "";
-    var draftstring = "";
-    invoices = gridModel.data;
-    for (var i = 0; i < invoices.length; i++) {
-        var tempstr = template;
-        var keyNames = Object.keys(invoices[i]);
-        for (var j = 0; j < keyNames.length; j++) {
-            var value = invoices[i][keyNames[j]];
-            if (!value)
-                value = "";
-            if (keyNames[j] == "Status" && value == "")
-                value = "Draft";
-            if (keyNames[j] === "StartDate")
-                value = value.substr(0, 10);
-            tempstr = tempstr.replace(new RegExp("{{" + keyNames[j] + "}}", 'g'), value);
-        }
-        switch (invoices[i].Status) {
-            case "Paid":
-                tempstr = tempstr.replace("{{CssClass}}", "paid");
-                tempstr = tempstr.replace("{{DisCssClass}}", "btn--disabled");
-                tempstr = tempstr.replace("{{disoption}}", "disabled");
-                paidstring += tempstr;
-                break;
-            case "Unpaid":
-                tempstr = tempstr.replace("{{CssClass}}", "unpaid");
-                tempstr = tempstr.replace("{{DisCssClass}}", "");
-                tempstr = tempstr.replace("{{disoption}}", "");
-                unpaidstring += tempstr.replace("{{CssClass}}", "unpaid");
-                break;
-            case "Draft":
-                tempstr = tempstr.replace("{{disoption}}", "");
-                tempstr = tempstr.replace("{{DisCssClass}}", "");
-                tempstr = tempstr.replace("{{CssClass}}", "draft");
-                draftstring += tempstr.replace("{{CssClass}}", "draft");
-                break;
-            case "LatePaid":
-            case "OverPaid":
-            case "Removed":
-            case "UnderPaid":
-            default:
-                tempstr = tempstr.replace("{{CssClass}}", "red");
-                tempstr = tempstr.replace("{{DisCssClass}}", "btn--disabled");
-                tempstr = tempstr.replace("{{disoption}}", "disabled");
-                break;
-        }
-        //tempstr = tempstr.replace("{{DisCssClass}}", "btn--disabled");
-        //tempstr = tempstr.replace("{{disoption}}", "disabled");
-        allstring += tempstr;
-    }
-    divtableall.innerHTML += allstring;
-    divtablepaid.innerHTML += paidstring;
-    divtableunpaid.innerHTML += unpaidstring;
-    divtabledraft.innerHTML += draftstring;
-    alllink.childNodes[1].innerText = gridModel.allCount;
-    draftlink.childNodes[1].innerText = draftcnt;
-    paidlink.childNodes[1].innerText = paidcnt;
-    unpaidlink.childNodes[1].innerText = unpaidcnt;
-
+function setEvents() {
     $('.btn.btn--icon.delete').on('click', function (e) {
         e.stopPropagation();
         var invoiceid = $(e.target.parentNode.parentNode.parentNode).attr("invoice");
@@ -289,7 +97,7 @@ function renderGrid(gridModel, loadMore) {
                             url: "/home/deleteinvoice?invoiceId=" + invoiceid,
                             dataType: 'html',
                             success: function (data) {
-                                updateGrid(); //grid need update after deletion item
+                                updateGrid();
                             }
                         });
                     }
@@ -300,6 +108,92 @@ function renderGrid(gridModel, loadMore) {
             }
         });
     });
+    updatedStatusCnt = 0;
+}
+
+function renderGridHeader(model) {
+    var alllink = document.getElementById("alllink");
+    var paidlink = document.getElementById("paidlink");
+    var unpaidlink = document.getElementById("unpaidlink");
+    var draftlink = document.getElementById("draftlink");
+    var removedlink = document.getElementById("removedlink");
+    var latepaidlink = document.getElementById("latepaidlink");
+    var overpaidlink = document.getElementById("overpaidlink");
+    var inprogresslink = document.getElementById("inprogresslink");
+    var underpaidlink = document.getElementById("underpaidlink");
+
+    alllink.childNodes[1].innerText = model.header.allCount;
+    draftlink.childNodes[1].innerText = model.header.draftCount;
+    paidlink.childNodes[1].innerText = model.header.paidCount;
+    unpaidlink.childNodes[1].innerText = model.header.unpaidCount;
+    removedlink.childNodes[1].innerText = model.header.removedCount;
+    inprogresslink.childNodes[1].innerText = model.header.inProgressCount;
+    underpaidlink.childNodes[1].innerText = model.header.underpaidCount;
+    latepaidlink.childNodes[1].innerText = model.header.latePaidCount;
+    overpaidlink.childNodes[1].innerText = model.header.overpaidCount;
+}
+
+function renderStatus(model, loadmore) {
+    var tabdiv = null;
+    if (model.filter.status === null)
+        model.filter.status = "all";
+    var allstring = "";
+    var template = document.getElementById("rowtemplate").innerHTML;
+    var tabstatus = document.getElementById(model.filter.status.toLowerCase());
+    if (tabstatus.childNodes.length === 0) {
+        tabdiv = document.createElement("div");
+        tabdiv.className = "invoices__table";
+        tabstatus.appendChild(tabdiv);
+    } else {
+        tabdiv = tabstatus.getElementsByClassName("invoices__table")[0];
+    }
+    var invoices = model.data;
+    for (var i = 0; i < invoices.length; i++) {
+        var tempstr = template;
+        var keyNames = Object.keys(invoices[i]);
+        for (var j = 0; j < keyNames.length; j++) {
+            var value = invoices[i][keyNames[j]];
+            if (!value)
+                value = "";
+            if (keyNames[j] == "Status" && value == "")
+                value = "Draft";
+            if (keyNames[j] === "StartDate")
+                value = value.substr(0, 10);
+            tempstr = tempstr.replace(new RegExp("{{" + keyNames[j] + "}}", 'g'), value);
+        }
+        switch (invoices[i].Status) {
+            case "Paid":
+                tempstr = tempstr.replace("{{CssClass}}", "paid");
+                tempstr = tempstr.replace("{{DisCssClass}}", "btn--disabled");
+                tempstr = tempstr.replace("{{disoption}}", "disabled");
+                break;
+            case "Unpaid":
+                tempstr = tempstr.replace("{{CssClass}}", "unpaid");
+                tempstr = tempstr.replace("{{DisCssClass}}", "");
+                tempstr = tempstr.replace("{{disoption}}", "");
+                break;
+            case "Draft":
+                tempstr = tempstr.replace("{{disoption}}", "");
+                tempstr = tempstr.replace("{{DisCssClass}}", "");
+                tempstr = tempstr.replace("{{CssClass}}", "draft");
+                break;
+            case "LatePaid":
+            case "OverPaid":
+            case "Removed":
+            case "UnderPaid":
+            default:
+                tempstr = tempstr.replace("{{CssClass}}", "red");
+                tempstr = tempstr.replace("{{DisCssClass}}", "btn--disabled");
+                tempstr = tempstr.replace("{{disoption}}", "disabled");
+                break;
+        }
+        allstring += tempstr;
+    }
+    if (loadmore)
+        tabdiv.innerHTML += allstring;
+    else
+        tabdiv.innerHTML = allstring;
+    
 
     $('.invoices_item').on('click', function (e) {
         e.stopPropagation();
@@ -310,28 +204,12 @@ function renderGrid(gridModel, loadMore) {
             }
         }
         var invoiceid = $(element).attr("invoice");
-        //if ($(element).has('.invoices_item__status--draft').length !== 0) {
-        //    editItem(invoiceid);
-        //    $('body').addClass('body--menu_opened');
-        //    $('.create.draft').addClass('create--open');
-        //}
-        //if ($(element).has('.invoices_item__status--unpaid').length !== 0) {
-        //    showItem(invoiceid);
-        //    $('body').addClass('body--menu_opened');
-        //    $('.create.unpaid').addClass('create--open');
-        //}
-
         window.location.href = "/home/invoicedetail/?InvoiceId=" + invoiceid;
     });
 }
+
 function showItem(invoice) {
     var currentItem = invoice;
-    //for (var i = 0; i < invoices.length; i++) {
-    //    if (invoices[i].InvoiceId == invoiceId) {
-    //        currentItem = invoices[i];
-    //        break;
-    //    }
-    //}
     var keyNames = Object.keys(currentItem);
     for (var j = 0; j < keyNames.length; j++) {
         var value = currentItem[keyNames[j]];
@@ -353,3 +231,122 @@ function setTooltip(message) {
         .attr('title', message);
     $('.create__item-copy').tooltip("open");
 }
+
+$(document).ready(function (e) {
+
+    updateGrid();
+    updateBalance();
+
+    if (generateditem) {
+        if (generateditem.Status !== "Draft") {
+            showItem(generateditem);
+            $('body').addClass('body--menu_opened');
+            $('.create.unpaid').addClass('create--open');
+        }
+    }
+
+    $('#generatebtn').on('click', function (e) {
+        $('#Status').val("Unpaid");
+        if ($('#Currency').val() == "")
+            $('#Currency').val("CHF");
+        updateGrid();
+    });
+
+    $('.icon.icon--copy').on('click', function (e) {
+        e.stopPropagation();
+        var $temp = $("<input>");
+        $("body").append($temp);
+        $temp.val($('#UnpaidUrl').text()).select();
+        document.execCommand("copy");
+        $temp.remove();
+        setTooltip('Copied!');
+    });
+
+    $('#draftbtn').on('click', function (e) {
+        $('#Status').val("Draft");
+        if ($('#Currency').val() == "")
+            $('#Currency').val("CHF");
+        updateGrid();
+    });
+
+    $('.showmore').on('click', function (e) {
+        pagenumber++;
+        updateGrid(true);
+    });
+
+    $('#closebtn').on('click', function (e) {
+        $('body').removeClass('body--menu_opened');
+        $('.create').removeClass('create--open');
+    });
+
+    $('.invoices__search').on('click', function () {
+        $('.profile_search').toggleClass('vis');
+    });
+    $('.invoices__row .invoices__cell').on('click', function (sender) {
+        var element = sender.target;
+        filter.sortField = "";
+        filter.sortWay = (filter.sortWay == 0) ? 1 : 0;
+        if (element.className.indexOf("number") !== -1)
+            filter.sortField = "number";
+        if (element.className.indexOf("client") !== -1)
+            filter.sortField = "client";
+        if (element.className.indexOf("amount") !== -1)
+            filter.sortField = "amount";
+        if (element.className.indexOf("currency") !== -1)
+            filter.sortField = "currency";
+        if (element.className.indexOf("status") !== -1)
+            filter.sortField = "status";
+        if (filter.sortField !== "")
+            updateGrid();
+    });
+
+    $('.profile_search__button').on('click', function () {
+        $('.profile_search').removeClass('vis');
+        $('#searchvalue').val("");
+        filter.searchValue = "";
+        updateGrid();
+    });
+
+    $('#searchvalue').on('input', function (e) {
+        filter.searchValue = $('#searchvalue').val();
+        updateGrid();
+    });
+
+    $('#createform').submit(function () {
+        var errors = validate();
+        if ($('#Status').val() === "Draft") {
+            if ($('#ClientName').val() !== "")
+                return true;
+        }
+        return (errors == 0);
+    });
+
+    $('.create__item-copy').tooltip({
+        show: {
+            effect: "slideDown",
+            delay: 250
+        }
+    });
+
+    $('.btn_create').on('click', function (e) {
+        e.stopPropagation();
+        validate(true);
+        $("#StartDate").datepicker().datepicker("setDate", new Date());;
+        $('body').addClass('body--menu_opened');
+        $('.create.draft').addClass('create--open');
+    });
+
+    $('body').on('click', function (e) {
+        $('body').removeClass('body--menu_opened');
+        $('.create.draft').removeClass('create--open');
+        $('.create.unpaid').removeClass('create--open');
+    });
+
+    $('.create.draft').on('click', function (e) {
+        e.stopPropagation();
+    });
+
+    $('.create.unpaid').on('click', function (e) {
+        e.stopPropagation();
+    });
+});

@@ -189,38 +189,53 @@ namespace Lykke.Pay.Invoice.Controllers
         {
             var respmodel = new GridModel();
             var result = await _invoiceService.ApiInvoicesGetWithHttpMessagesAsync();
-            var orderedlist = result.Body.Where(i=>i.Status != InvoiceStatus.Removed.ToString()).OrderByDescending(i => i.StartDate).ToList();
-            if (!string.IsNullOrEmpty(model.SearchValue))
+            var orderedlist = result.Body.OrderByDescending(i => i.StartDate).ToList();
+            if (model.Filter.Status != "All")
             {
-                orderedlist = orderedlist.Where(i => (i.WalletAddress != null && i.WalletAddress.Contains(model.SearchValue)) ||
-                (i.Currency != null && i.Currency.Contains(model.SearchValue)) ||
-                (i.ClientEmail != null && i.ClientEmail.Contains(model.SearchValue)) ||
-                (i.ClientName != null && i.ClientName.Contains(model.SearchValue)) ||
-                (i.InvoiceNumber != null && i.InvoiceNumber.Contains(model.SearchValue)))
+                orderedlist = orderedlist.Where(i => i.Status == model.Filter.Status).ToList();
+            }
+            if (!string.IsNullOrEmpty(model.Filter.SearchValue))
+            {
+                orderedlist = orderedlist.Where(i => (i.WalletAddress != null && i.WalletAddress.Contains(model.Filter.SearchValue)) ||
+                (i.Currency != null && i.Currency.Contains(model.Filter.SearchValue)) ||
+                (i.ClientEmail != null && i.ClientEmail.Contains(model.Filter.SearchValue)) ||
+                (i.ClientName != null && i.ClientName.Contains(model.Filter.SearchValue)) ||
+                (i.InvoiceNumber != null && i.InvoiceNumber.Contains(model.Filter.SearchValue)))
                 .OrderByDescending(i => i.StartDate).ToList();
             }
-            respmodel.AllCount = orderedlist.Count;
-            respmodel.DraftCount = orderedlist.Count(i => i.Status == InvoiceStatus.Draft.ToString());
-            respmodel.PaidCount = orderedlist.Count(i => i.Status == InvoiceStatus.Paid.ToString());
-            respmodel.UnpaidCount = orderedlist.Count(i=>i.Status == InvoiceStatus.Unpaid.ToString());
-            if (!string.IsNullOrEmpty(model.SortField))
+            if (model.Filter.Status == "All")
             {
-                switch(model.SortField)
+                respmodel.Header.AllCount = orderedlist.Count;
+                respmodel.Header.DraftCount = orderedlist.Count(i => i.Status == InvoiceStatus.Draft.ToString());
+                respmodel.Header.PaidCount = orderedlist.Count(i => i.Status == InvoiceStatus.Paid.ToString());
+                respmodel.Header.UnpaidCount = orderedlist.Count(i => i.Status == InvoiceStatus.Unpaid.ToString());
+                respmodel.Header.RemovedCount = orderedlist.Count(i => i.Status == InvoiceStatus.Removed.ToString());
+                respmodel.Header.InProgressCount =
+                    orderedlist.Count(i => i.Status == InvoiceStatus.InProgress.ToString());
+                respmodel.Header.LatePaidCount = orderedlist.Count(i => i.Status == InvoiceStatus.LatePaid.ToString());
+                respmodel.Header.UnderpaidCount =
+                    orderedlist.Count(i => i.Status == InvoiceStatus.Underpaid.ToString());
+                respmodel.Header.OverpaidCount = orderedlist.Count(i => i.Status == InvoiceStatus.Overpaid.ToString());
+            }
+            respmodel.Filter.Status = model.Filter.Status;
+            if (!string.IsNullOrEmpty(model.Filter.SortField))
+            {
+                switch(model.Filter.SortField)
                 {
                     case "number":
-                        orderedlist = model.SortWay == 0 ? orderedlist.OrderBy(i => i.InvoiceNumber).ThenByDescending(i => i.StartDate).ToList() : orderedlist.OrderByDescending(i => i.InvoiceNumber).ThenByDescending(i => i.StartDate).ToList();
+                        orderedlist = model.Filter.SortWay == 0 ? orderedlist.OrderBy(i => i.InvoiceNumber).ThenByDescending(i => i.StartDate).ToList() : orderedlist.OrderByDescending(i => i.InvoiceNumber).ThenByDescending(i => i.StartDate).ToList();
                         break;
                     case "client":
-                        orderedlist = model.SortWay == 0 ? orderedlist.OrderBy(i => i.ClientName).ThenByDescending(i => i.StartDate).ToList() : orderedlist.OrderByDescending(i => i.ClientName).ThenByDescending(i => i.StartDate).ToList();
+                        orderedlist = model.Filter.SortWay == 0 ? orderedlist.OrderBy(i => i.ClientName).ThenByDescending(i => i.StartDate).ToList() : orderedlist.OrderByDescending(i => i.ClientName).ThenByDescending(i => i.StartDate).ToList();
                         break;
                     case "amount":
-                        orderedlist = model.SortWay == 0 ? orderedlist.OrderBy(i => i.Amount).ThenByDescending(i => i.StartDate).ToList() : orderedlist.OrderByDescending(i => i.Amount).ThenByDescending(i => i.StartDate).ToList();
+                        orderedlist = model.Filter.SortWay == 0 ? orderedlist.OrderBy(i => i.Amount).ThenByDescending(i => i.StartDate).ToList() : orderedlist.OrderByDescending(i => i.Amount).ThenByDescending(i => i.StartDate).ToList();
                         break;
                     case "currency":
-                        orderedlist = model.SortWay == 0 ? orderedlist.OrderBy(i => i.Currency).ThenByDescending(i => i.StartDate).ToList() : orderedlist.OrderByDescending(i => i.Currency).ThenByDescending(i => i.StartDate).ToList();
+                        orderedlist = model.Filter.SortWay == 0 ? orderedlist.OrderBy(i => i.Currency).ThenByDescending(i => i.StartDate).ToList() : orderedlist.OrderByDescending(i => i.Currency).ThenByDescending(i => i.StartDate).ToList();
                         break;
                     case "status":
-                        orderedlist = model.SortWay == 0 ? orderedlist.OrderBy(i => i.Status).ThenByDescending(i => i.StartDate).ToList() : orderedlist.OrderByDescending(i => i.Status).ThenByDescending(i => i.StartDate).ToList();
+                        orderedlist = model.Filter.SortWay == 0 ? orderedlist.OrderBy(i => i.Status).ThenByDescending(i => i.StartDate).ToList() : orderedlist.OrderByDescending(i => i.Status).ThenByDescending(i => i.StartDate).ToList();
                         break;
                 }
             }
