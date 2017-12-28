@@ -91,11 +91,11 @@ namespace Lykke.Pay.Invoice.Controllers
         [HttpGet("InvoiceDetail")]
         public async Task<IActionResult> InvoiceDetail(string invoiceId)
         {
-            ViewBag.Request = JsonConvert.SerializeObject(Request);
+           
             var model = new InvoiceDetailModel();
             var result = await _invoiceService.ApiInvoicesByInvoiceIdGetWithHttpMessagesAsync(invoiceId, MerchantId);
             model.Data = result.Body;
-            model.InvoiceUrl = Request.Scheme + "://" + Request.Host.Value + "/invoice/" + invoiceId;
+            model.InvoiceUrl = $"https://{HttpContext.Request.Host}/invoice/{invoiceId}";
             if (model.Data.Status != InvoiceStatus.Paid.ToString())
                 model.QRCode =
                     $@"https://chart.googleapis.com/chart?chs=220x220&chld=L|2&cht=qr&chl=bitcoin:{model.Data.WalletAddress}?amount={model.Data.Amount}%26label=LykkePay%26message=Invoice%23%20{model.Data.InvoiceNumber}";
@@ -124,9 +124,10 @@ namespace Lykke.Pay.Invoice.Controllers
             await _invoiceService.ApiInvoicesPostWithHttpMessagesAsync(request.CreateEntity(OrderLiveTime, MerchantId));
             if (model.Data.Status != InvoiceStatus.Paid.ToString())
             {
+                model.InvoiceUrl = $"https://{HttpContext.Request.Host}/invoice/{model.Data.InvoiceId}";
                 model.QRCode =
-                    $@"https://chart.googleapis.com/chart?chs=220x220&chld=L|2&cht=qr&chl=bitcoin:{model.Data.WalletAddress}?amount={model.Data.Amount}%26label=LykkePay%26message={model.Data.InvoiceId}";
-                model.InvoiceUrl = Request.Scheme + "://" + Request.Host + "/invoice/" + model.Data.InvoiceId;
+                    $@"https://chart.googleapis.com/chart?chs=220x220&chld=L|2&cht=qr&chl={model.InvoiceUr}";
+               
             }
             return View(model);
         }
