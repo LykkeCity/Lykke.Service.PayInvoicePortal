@@ -91,13 +91,14 @@ namespace Lykke.Pay.Invoice.Controllers
         [HttpGet("InvoiceDetail")]
         public async Task<IActionResult> InvoiceDetail(string invoiceId)
         {
+            ViewBag.Request = JsonConvert.SerializeObject(Request);
             var model = new InvoiceDetailModel();
             var result = await _invoiceService.ApiInvoicesByInvoiceIdGetWithHttpMessagesAsync(invoiceId, MerchantId);
             model.Data = result.Body;
-            model.InvoiceUrl = Request.Scheme + "://" + Request.Host + "/invoice/" + invoiceId;
+            model.InvoiceUrl = Request.Scheme + "://" + Request.Host.Value + "/invoice/" + invoiceId;
             if (model.Data.Status != InvoiceStatus.Paid.ToString())
                 model.QRCode =
-                    $@"https://chart.googleapis.com/chart?chs=220x220&chld=L|2&cht=qr&chl=bitcoin:{model.Data.WalletAddress}?amount={model.Data.Amount}%26label=LykkePay%26message={model.Data.InvoiceId}";
+                    $@"https://chart.googleapis.com/chart?chs=220x220&chld=L|2&cht=qr&chl=bitcoin:{model.Data.WalletAddress}?amount={model.Data.Amount}%26label=LykkePay%26message=Invoice%23%20{model.Data.InvoiceNumber}";
             return View(model);
         }
         [Authorize]
