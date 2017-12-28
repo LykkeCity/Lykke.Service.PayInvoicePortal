@@ -33,18 +33,18 @@ namespace Lykke.Pay.Invoice.Controllers
 
         public IActionResult Index()
         {
-            return Redirect(HomeUrl); 
+            return Redirect(HomeUrl);
         }
         [Route("invoice/{InvoiceId}")]
         public async Task<IActionResult> Index(string invoiceId)
         {
-            var respInv = await _invoicesservice.ApiInvoicesByInvoiceIdGetWithHttpMessagesAsync(invoiceId);
+            var respInv = await _invoicesservice.ApiInvoicesByInvoiceIdGetWithHttpMessagesAsync(invoiceId, MerchantId);
             var inv = respInv.Body;
             if (inv == null)
             {
                 return NotFound();
             }
-            
+
             var invoiceStatus = inv.Status.ParsePayEnum<InvoiceStatus>();
 
             if (invoiceStatus == InvoiceStatus.Draft || invoiceStatus == InvoiceStatus.Removed ||
@@ -54,7 +54,7 @@ namespace Lykke.Pay.Invoice.Controllers
             }
 
             InvoiceResult model = null;
-            
+
 
             if (!string.IsNullOrEmpty(inv.WalletAddress))
             {
@@ -67,7 +67,7 @@ namespace Lykke.Pay.Invoice.Controllers
             {
                 inv.Status = InvoiceStatus.LatePaid.ToString();
                 ViewBag.invoiceStatus = inv.Status;
-                await _invoicesservice.ApiInvoicesPostWithHttpMessagesAsync(inv.CreateInvoiceEntity());
+                await _invoicesservice.ApiInvoicesPostWithHttpMessagesAsync(inv.CreateInvoiceEntity(MerchantId));
             }
             else
             {
@@ -97,15 +97,10 @@ namespace Lykke.Pay.Invoice.Controllers
 
 
                     var bodyRequest = JsonConvert.SerializeObject(order);
-                    var strToSign = string.Format("{0}{1}", MerchantApiKey, bodyRequest);
-
-
-                    var csp = CreateRsaFromPrivateKey(MerchantPrivateKey);//certificate.GetRSAPrivateKey();
-                    var sign = Convert.ToBase64String(csp.SignData(Encoding.UTF8.GetBytes(strToSign), HashAlgorithmName.SHA256, RSASignaturePadding.Pkcs1));
 
                     var httpClient = new HttpClient();
                     httpClient.DefaultRequestHeaders.Add("Lykke-Merchant-Id", MerchantId);
-                    httpClient.DefaultRequestHeaders.Add("Lykke-Merchant-Sign", sign);
+                    httpClient.DefaultRequestHeaders.Add("Lykke-Merchant-Traster-SignIn", "true");
 
 
                     var result = await httpClient.PostAsync(LykkePayUrl + "Order",
@@ -124,7 +119,7 @@ namespace Lykke.Pay.Invoice.Controllers
                     inv.WalletAddress = orderResp.address;
                     inv.DueDate = DateTime.Now.Add(InvoiceLiveTime).RepoDateStr();
                     inv.StartDate = DateTime.Now.RepoDateStr();
-                    await _invoicesservice.ApiInvoicesPostWithHttpMessagesAsync(inv.CreateInvoiceEntity());
+                    await _invoicesservice.ApiInvoicesPostWithHttpMessagesAsync(inv.CreateInvoiceEntity(MerchantId));
 
                     model.Amount = RoundDouble((double)orderResp.amount);
                     model.QRCode =
@@ -139,42 +134,38 @@ namespace Lykke.Pay.Invoice.Controllers
                 ? 1
                 : 0;
 
-            
-            return View(model); 
+
+            return View(model);
 
         }
-        
+
         [HttpPost("status")]
         public async Task<JsonResult> Status(string address)
         {
-            var strToSign = string.Format(MerchantApiKey);
-
-
-            var csp = CreateRsaFromPrivateKey(MerchantPrivateKey);//certificate.GetRSAPrivateKey();
-            var sign = Convert.ToBase64String(csp.SignData(Encoding.UTF8.GetBytes(strToSign), HashAlgorithmName.SHA256, RSASignaturePadding.Pkcs1));
-
-            var httpClient = new HttpClient();
-            httpClient.DefaultRequestHeaders.Add("Lykke-Merchant-Id", MerchantId);
-            httpClient.DefaultRequestHeaders.Add("Lykke-Merchant-Sign", sign);
-
-
-            var result = await httpClient.PostAsync(LykkePayUrl + $"Order/Status/{address}",
-                new StringContent("", Encoding.UTF8, "application/json"));
-            if (result.StatusCode != HttpStatusCode.OK)
+            if (string.IsNullOrEmpty(address))
             {
-                return Json(new {status = (int) MerchantPayRequestStatus.InProgress});
+                return Json(new { status = InvoiceStatus.Removed });
             }
-            var resp = await result.Content.ReadAsStringAsync();
-            if (string.IsNullOrEmpty(resp))
+            var resp = await _invoicesservice.ApiInvoicesGetWithHttpMessagesAsync(MerchantId);
+            if (resp.Body == null)
             {
-                return Json(new { status = (int)MerchantPayRequestStatus.InProgress });
+                return Json(new { status = InvoiceStatus.Removed });
             }
-            return Json(new { status = resp.ParsePayEnum<InvoiceStatus>() });
+            var invoice = (from i in resp.Body
+                           where address.Equals(i.WalletAddress, StringComparison.InvariantCultureIgnoreCase)
+                           select i).FirstOrDefault();
+
+            if (invoice == null)
+            {
+                return Json(new { status = InvoiceStatus.Removed });
+            }
+
+            return Json(new { status = invoice.Status.ParsePayEnum<InvoiceStatus>() });
         }
         private void FillViewBag(IInvoiceEntity inv, dynamic orderResp)
         {
             string orderTimeLive = orderResp.transactionWaitingTime.ToString();
-            ViewBag.invoiceTimeRefresh =  string.IsNullOrEmpty(orderTimeLive) ? OrderLiveTime.TotalSeconds : (orderTimeLive.FromUnixFormat() - DateTime.Now).TotalSeconds;
+            ViewBag.invoiceTimeRefresh = string.IsNullOrEmpty(orderTimeLive) ? OrderLiveTime.TotalSeconds : (orderTimeLive.FromUnixFormat() - DateTime.Now).TotalSeconds;
             ViewBag.invoiceTimeDueDate = (inv.DueDate.GetRepoDateTime() - DateTime.Now).TotalSeconds;
             ViewBag.address = orderResp.address;
             ViewBag.invoiceId = inv.InvoiceId;
@@ -186,10 +177,10 @@ namespace Lykke.Pay.Invoice.Controllers
         [HttpPost("Regenerate")]
         public async Task<IActionResult> Regenerate(string invoiceId, string address)
         {
-            
-            var respInv = await _invoicesservice.ApiInvoicesByInvoiceIdGetWithHttpMessagesAsync(invoiceId);
+
+            var respInv = await _invoicesservice.ApiInvoicesByInvoiceIdGetWithHttpMessagesAsync(invoiceId, MerchantId);
             var inv = respInv.Body;
-            if (inv == null || !InvoiceStatus.Unpaid.ToString().Equals(inv.Status,StringComparison.InvariantCultureIgnoreCase))
+            if (inv == null || !InvoiceStatus.Unpaid.ToString().Equals(inv.Status, StringComparison.InvariantCultureIgnoreCase))
             {
                 return NotFound();
             }
@@ -201,7 +192,7 @@ namespace Lykke.Pay.Invoice.Controllers
             if (inv.DueDate.GetRepoDateTime() < DateTime.Now)
             {
                 inv.Status = InvoiceStatus.Removed.ToString();
-                await _invoicesservice.ApiInvoicesPostWithHttpMessagesAsync(inv.CreateInvoiceEntity());
+                await _invoicesservice.ApiInvoicesPostWithHttpMessagesAsync(inv.CreateInvoiceEntity(MerchantId));
                 return NotFound();
             }
 
@@ -223,7 +214,7 @@ namespace Lykke.Pay.Invoice.Controllers
                 needAutoUpdate = invoiceStatus == InvoiceStatus.InProgress || invoiceStatus == InvoiceStatus.Unpaid
                     ? 1
                     : 0
-        });
+            });
 
         }
 
@@ -231,22 +222,16 @@ namespace Lykke.Pay.Invoice.Controllers
         private async Task<InvoiceResult> GenerateIfExists(Service.Invoces.Client.Models.IInvoiceEntity inv, string address)
         {
             var model = new InvoiceResult();
-           
+
 
 
             model.OrigAmount = inv.Amount;
             model.Currency = inv.Currency;
             model.InvoiceNumber = inv.InvoiceNumber;
 
-            var strToSign = string.Format(MerchantApiKey);
-
-
-            var csp = CreateRsaFromPrivateKey(MerchantPrivateKey);//certificate.GetRSAPrivateKey();
-            var sign = Convert.ToBase64String(csp.SignData(Encoding.UTF8.GetBytes(strToSign), HashAlgorithmName.SHA256, RSASignaturePadding.Pkcs1));
-
             var httpClient = new HttpClient();
             httpClient.DefaultRequestHeaders.Add("Lykke-Merchant-Id", MerchantId);
-            httpClient.DefaultRequestHeaders.Add("Lykke-Merchant-Sign", sign);
+            httpClient.DefaultRequestHeaders.Add("Lykke-Merchant-Sign", "true");
 
 
             var result = await httpClient.PostAsync(LykkePayUrl + $"Order/ReCreate/{address}",
@@ -264,12 +249,12 @@ namespace Lykke.Pay.Invoice.Controllers
 
 
             var paimentRequest = ((string)orderResp.merchantPayRequestStatus).ParsePayEnum<MerchantPayRequestStatus>();
-            
-            
+
+
             if (paimentRequest == MerchantPayRequestStatus.Completed || paimentRequest == MerchantPayRequestStatus.Failed)
             {
                 inv.Status = ((string)orderResp.transactionStatus).ParsePayEnum<InvoiceStatus>().ToString();
-                await _invoicesservice.ApiInvoicesPostWithHttpMessagesAsync(inv.CreateInvoiceEntity());
+                await _invoicesservice.ApiInvoicesPostWithHttpMessagesAsync(inv.CreateInvoiceEntity(MerchantId));
 
             }
 
@@ -362,6 +347,6 @@ namespace Lykke.Pay.Invoice.Controllers
             return count;
         }
 
-       
+
     }
 }

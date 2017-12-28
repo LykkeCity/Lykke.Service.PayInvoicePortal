@@ -30,7 +30,7 @@ namespace Lykke.Pay.Invoice.Models
         public string WalletAddress { get; set; }
         public string StartDate { get; set; }
 
-        public InvoiceEntity CreateEntity(TimeSpan orderLiveTime)
+        public InvoiceEntity CreateEntity(TimeSpan orderLiveTime, string merchantId)
         {
             if (string.IsNullOrEmpty(ClientName))
             {
@@ -54,7 +54,8 @@ namespace Lykke.Pay.Invoice.Models
                 Status = Status,
                 WalletAddress = WalletAddress,
                 StartDate = DateTime.Now.RepoDateStr(),
-                DueDate = dueDate.RepoDateStr()
+                DueDate = dueDate.RepoDateStr(),
+                MerchantId = merchantId
             };
         }
     }

@@ -8,7 +8,7 @@ namespace Lykke.Pay.Invoice.AppCode
 {
     public static class InvoiceEntityExt
     {
-        public static InvoiceEntity CreateInvoiceEntity(this IInvoiceEntity inv)
+        public static InvoiceEntity CreateInvoiceEntity(this IInvoiceEntity inv, string merchantId)
         {
             return new InvoiceEntity()
             {
@@ -24,7 +24,8 @@ namespace Lykke.Pay.Invoice.AppCode
                 Label = inv.Label,
                 Status = inv.Status,
                 WalletAddress = inv.WalletAddress,
-                StartDate = inv.StartDate
+                StartDate = inv.StartDate,
+                MerchantId = merchantId
         };
         }
     }

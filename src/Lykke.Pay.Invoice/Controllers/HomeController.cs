@@ -92,13 +92,14 @@ namespace Lykke.Pay.Invoice.Controllers
         public async Task<IActionResult> InvoiceDetail(string invoiceId)
         {
             var model = new InvoiceDetailModel();
-            var result = await _invoiceService.ApiInvoicesByInvoiceIdGetWithHttpMessagesAsync(invoiceId);
+            var result = await _invoiceService.ApiInvoicesByInvoiceIdGetWithHttpMessagesAsync(invoiceId, MerchantId);
             model.Data = result.Body;
             model.InvoiceUrl = Request.Scheme + "://" + Request.Host + "/invoice/" + invoiceId;
             if (model.Data.Status != InvoiceStatus.Paid.ToString())
                 model.QRCode =
                     $@"https://chart.googleapis.com/chart?chs=220x220&chld=L|2&cht=qr&chl=bitcoin:{model.Data.WalletAddress}?amount={model.Data.Amount}%26label=LykkePay%26message={model.Data.InvoiceId}";
             return View(model);
+            
         }
         [Authorize]
         [HttpPost("InvoiceDetail")]
@@ -120,7 +121,7 @@ namespace Lykke.Pay.Invoice.Controllers
             request.StartDate = model.Data.StartDate;
             request.WalletAddress = model.Data.WalletAddress;
             request.Status = model.Data.Status;
-            await _invoiceService.ApiInvoicesPostWithHttpMessagesAsync(request.CreateEntity(OrderLiveTime));
+            await _invoiceService.ApiInvoicesPostWithHttpMessagesAsync(request.CreateEntity(OrderLiveTime, MerchantId));
             if (model.Data.Status != InvoiceStatus.Paid.ToString())
             {
                 model.QRCode =
@@ -144,7 +145,7 @@ namespace Lykke.Pay.Invoice.Controllers
             {
                 return View();
             }
-            var item = request.CreateEntity(OrderLiveTime);
+            var item = request.CreateEntity(OrderLiveTime, MerchantId);
             await _invoiceService.ApiInvoicesPostWithHttpMessagesAsync(item);
             ViewBag.GeneratedItem = JsonConvert.SerializeObject(item);
             return View();
@@ -188,7 +189,7 @@ namespace Lykke.Pay.Invoice.Controllers
         public async Task<JsonResult> Invoices(GridModel model)
         {
             var respmodel = new GridModel();
-            var result = await _invoiceService.ApiInvoicesGetWithHttpMessagesAsync();
+            var result = await _invoiceService.ApiInvoicesGetWithHttpMessagesAsync(MerchantId);
             var orderedlist = result.Body.Where(i=>i.Status != InvoiceStatus.Removed.ToString()).OrderByDescending(i => i.StartDate).ToList();
             if (!string.IsNullOrEmpty(model.SearchValue))
             {
@@ -233,7 +234,6 @@ namespace Lykke.Pay.Invoice.Controllers
         [HttpGet("deleteinvoice")]
         public async Task<EmptyResult> DeleteInvoice(string invoiceId)
         {
-            //_invoiceService.ApiInvoicesByInvoiceIdDeleteGet(invoiceId);
             await DeleteInvoiceFromBase(invoiceId);
             return new EmptyResult();
         }
@@ -245,7 +245,7 @@ namespace Lykke.Pay.Invoice.Controllers
         }
         protected async Task DeleteInvoiceFromBase(string invoiceId)
         {
-            await _invoiceService.ApiInvoicesByInvoiceIdDeleteGetWithHttpMessagesAsync(invoiceId);
+            await _invoiceService.ApiInvoicesByInvoiceIdDeleteGetWithHttpMessagesAsync(invoiceId, MerchantId);
         }
     }
 }
