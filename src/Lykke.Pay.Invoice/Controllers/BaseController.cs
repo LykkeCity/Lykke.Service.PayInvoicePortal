@@ -32,6 +32,7 @@ namespace Lykke.Pay.Invoice.Controllers
 
                 return _merchantId;
             }
+            set => _merchantId = value;
         }
 
         public BaseController(IConfiguration configuration)

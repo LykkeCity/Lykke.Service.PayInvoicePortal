@@ -38,12 +38,15 @@ namespace Lykke.Pay.Invoice.Controllers
         [Route("invoice/{InvoiceId}")]
         public async Task<IActionResult> Index(string invoiceId)
         {
-            var respInv = await _invoicesservice.ApiInvoicesByInvoiceIdGetWithHttpMessagesAsync(invoiceId, MerchantId);
+            var respInv = await _invoicesservice.ApiInvoicesByInvoiceIdGetWithHttpMessagesAsync(invoiceId, string.Empty);
             var inv = respInv.Body;
+            
             if (inv == null)
             {
                 return NotFound();
             }
+
+            MerchantId = inv.MerchantId;
 
             var invoiceStatus = inv.Status.ParsePayEnum<InvoiceStatus>();
 
@@ -61,7 +64,7 @@ namespace Lykke.Pay.Invoice.Controllers
                 model = await GenerateIfExists(inv, inv.WalletAddress);
             }
 
-
+            dynamic orderResp = null;
 
             if (!string.IsNullOrEmpty(inv.DueDate) && inv.DueDate.GetRepoDateTime() < DateTime.Now)
             {
@@ -114,7 +117,7 @@ namespace Lykke.Pay.Invoice.Controllers
                         return BadRequest();
                     }
 
-                    dynamic orderResp = JsonConvert.DeserializeObject(resp);
+                    orderResp = JsonConvert.DeserializeObject(resp);
 
                     inv.WalletAddress = orderResp.address;
                     inv.DueDate = DateTime.Now.Add(InvoiceLiveTime).RepoDateStr();
@@ -125,15 +128,27 @@ namespace Lykke.Pay.Invoice.Controllers
                     model.QRCode =
                         $@"https://chart.googleapis.com/chart?chs=220x220&chld=L|2&cht=qr&chl=bitcoin:{orderResp.address}?amount={model.Amount}%26label=invoice%20#{inv.InvoiceNumber}%26message={orderResp.orderId}";
 
-                    FillViewBag(inv, orderResp);
+                    
                 }
             }
+            FillViewBag(inv, orderResp);
             ViewBag.invoiceStatus = inv.Status;
 
             ViewBag.needAutoUpdate = invoiceStatus == InvoiceStatus.InProgress || invoiceStatus == InvoiceStatus.Unpaid
                 ? 1
                 : 0;
 
+
+            if (model == null)
+            {
+                model = new InvoiceResult()
+                {
+                    OrigAmount = inv.Amount,
+                    Currency = inv.Currency,
+                    InvoiceNumber = inv.InvoiceNumber
+                };
+
+            }
 
             return View(model);
 
@@ -146,28 +161,30 @@ namespace Lykke.Pay.Invoice.Controllers
             {
                 return Json(new { status = InvoiceStatus.Removed });
             }
-            var resp = await _invoicesservice.ApiInvoicesGetWithHttpMessagesAsync(MerchantId);
+            var resp = await _invoicesservice.ApiInvoicesAddressByAddressGetWithHttpMessagesAsync(address);
             if (resp.Body == null)
             {
                 return Json(new { status = InvoiceStatus.Removed });
             }
-            var invoice = (from i in resp.Body
-                           where address.Equals(i.WalletAddress, StringComparison.InvariantCultureIgnoreCase)
-                           select i).FirstOrDefault();
+            
 
-            if (invoice == null)
-            {
-                return Json(new { status = InvoiceStatus.Removed });
-            }
-
-            return Json(new { status = invoice.Status.ParsePayEnum<InvoiceStatus>() });
+            return Json(new { status = resp.Body.Status.ParsePayEnum<InvoiceStatus>() });
         }
         private void FillViewBag(IInvoiceEntity inv, dynamic orderResp)
         {
-            string orderTimeLive = orderResp.transactionWaitingTime.ToString();
-            ViewBag.invoiceTimeRefresh = string.IsNullOrEmpty(orderTimeLive) ? OrderLiveTime.TotalSeconds : (orderTimeLive.FromUnixFormat() - DateTime.Now).TotalSeconds;
+            if (orderResp != null)
+            {
+                string orderTimeLive = orderResp.transactionWaitingTime.ToString();
+                ViewBag.invoiceTimeRefresh = string.IsNullOrEmpty(orderTimeLive) ? OrderLiveTime.TotalSeconds : (orderTimeLive.FromUnixFormat() - DateTime.Now).TotalSeconds;
+                ViewBag.address = orderResp.address;
+            }
+            else
+            {
+                ViewBag.invoiceTimeRefresh = OrderLiveTime.TotalSeconds;
+                ViewBag.address = inv.WalletAddress;
+            }
+
             ViewBag.invoiceTimeDueDate = (inv.DueDate.GetRepoDateTime() - DateTime.Now).TotalSeconds;
-            ViewBag.address = orderResp.address;
             ViewBag.invoiceId = inv.InvoiceId;
             ViewBag.invoiceTimeRefresh = (int)Math.Round(ViewBag.invoiceTimeRefresh);
             ViewBag.invoiceTimeDueDate = (int)Math.Round(ViewBag.invoiceTimeDueDate);
@@ -178,12 +195,13 @@ namespace Lykke.Pay.Invoice.Controllers
         public async Task<IActionResult> Regenerate(string invoiceId, string address)
         {
 
-            var respInv = await _invoicesservice.ApiInvoicesByInvoiceIdGetWithHttpMessagesAsync(invoiceId, MerchantId);
+            var respInv = await _invoicesservice.ApiInvoicesByInvoiceIdGetWithHttpMessagesAsync(invoiceId, string.Empty);
             var inv = respInv.Body;
             if (inv == null || !InvoiceStatus.Unpaid.ToString().Equals(inv.Status, StringComparison.InvariantCultureIgnoreCase))
             {
                 return NotFound();
             }
+            MerchantId = inv.MerchantId;
             if (!string.IsNullOrEmpty(inv.StartDate) && inv.StartDate.GetRepoDateTime() > DateTime.Today)
             {
                 return NotFound();
@@ -271,8 +289,8 @@ namespace Lykke.Pay.Invoice.Controllers
             return Math.Round(modelAmount, 8);
         }
 
-        [HttpPost()]
-        public async Task<IActionResult> UpdateStatusSuccess()
+        //[HttpPost()]
+        //public async Task<IActionResult> UpdateStatusSuccess()
 
         #region Sign request methods
         //private static RSA CreateRsaFromPrivateKey(string privateKey)
