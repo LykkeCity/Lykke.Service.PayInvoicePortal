@@ -126,7 +126,7 @@ namespace Lykke.Pay.Invoice.Controllers
             {
                 model.InvoiceUrl = $"https://{HttpContext.Request.Host}/invoice/{model.Data.InvoiceId}";
                 model.QRCode =
-                    $@"https://chart.googleapis.com/chart?chs=220x220&chld=L|2&cht=qr&chl={model.InvoiceUr}";
+                    $@"https://chart.googleapis.com/chart?chs=220x220&chld=L|2&cht=qr&chl={model.InvoiceUrl}";
                
             }
             return View(model);
