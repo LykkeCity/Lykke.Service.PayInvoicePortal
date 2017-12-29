@@ -20,6 +20,9 @@
 /*@import "guide";*/
 
 /*custom section*/
+.create__item-description {
+    width: 90%;
+}
 .invoices_item__status--red {
     background: red !important;
 }
