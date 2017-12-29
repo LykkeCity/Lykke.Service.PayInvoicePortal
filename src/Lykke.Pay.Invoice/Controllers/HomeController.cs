@@ -158,6 +158,10 @@ namespace Lykke.Pay.Invoice.Controllers
         public async Task<JsonResult> Balance()
         {
             var assert = "CHF";
+
+            try
+            {
+
             
             var httpClient = new HttpClient();
             var response = await httpClient.GetAsync($"{MerchantAuthService}balance/{User.Claims.First(u => u.Type == ClaimTypes.Sid).Value}");
@@ -168,22 +172,39 @@ namespace Lykke.Pay.Invoice.Controllers
                 return Json($"0.00 {assert}");
             }
 
-            var balance = JsonConvert.DeserializeObject<MerchantBalance>(rstText);
+            var balance = JsonConvert.DeserializeObject<dynamic>(rstText);
             if (balance == null)
             {
                 return Json($"0.00 {assert}");
             }
 
-            var assertBalance =
-                balance.Asserts.FirstOrDefault(
-                    ab => ab.Assert.Equals(assert, StringComparison.InvariantCultureIgnoreCase));
+                MerchantAssertBalance assertBalance = null;
 
+                foreach (var a in balance.asserts)
+                {
+                    string ast = (string)a.assert;
+                    if (ast.Equals(assert, StringComparison.InvariantCultureIgnoreCase))
+                    {
+                        assertBalance = new MerchantAssertBalance
+                        {
+                            Assert = ast,
+                            Value = a.value
+                        };
+                        break;
+                    }
+                }
+                  
             if (assertBalance == null)
             {
                 return Json($"0.00 {assert}");
             }
 
-            return Json($"{string.Format("{0:0.00}", assertBalance.Assert)}  {assert}"); 
+            return Json($"{string.Format("{0:0.00}", assertBalance.Value)}  {assert}");
+            }
+            catch (Exception e)
+            {
+                return Json($"0.00 {assert}");
+            }
         }
 
         [Authorize]
