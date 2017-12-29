@@ -95,7 +95,8 @@ namespace Lykke.Pay.Invoice.Controllers
             var model = new InvoiceDetailModel();
             var result = await _invoiceService.ApiInvoicesByInvoiceIdGetWithHttpMessagesAsync(invoiceId, MerchantId);
             model.Data = result.Body;
-            model.InvoiceUrl = $"https://{HttpContext.Request.Host}/invoice/{invoiceId}";
+
+            model.InvoiceUrl = $"{SiteUrl}/invoice/{invoiceId}";
             if (model.Data.Status != InvoiceStatus.Paid.ToString())
                 model.QRCode =
                     $@"https://chart.googleapis.com/chart?chs=220x220&chld=L|2&cht=qr&chl=bitcoin:{model.Data.WalletAddress}?amount={model.Data.Amount}%26label=LykkePay%26message=Invoice%23%20{model.Data.InvoiceNumber}";
