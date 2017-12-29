@@ -279,6 +279,10 @@ $(document).ready(function (e) {
         $('body').removeClass('body--menu_opened');
         $('.create').removeClass('create--open');
     });
+    $('#closeunpaidbtn').on('click', function (e) {
+        $('body').removeClass('body--menu_opened');
+        $('.create').removeClass('create--open');
+    });
 
     $('.invoices__search').on('click', function () {
         $('.profile_search').toggleClass('vis');
