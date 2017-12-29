@@ -11,7 +11,6 @@ namespace Lykke.Pay.Invoice.Controllers
     public class BaseController : Controller
     {
 
-        protected readonly string ConnectionStrings;
         protected readonly string LykkePayUrl;
         protected readonly string MerchantAuthService;
         protected readonly string SiteUrl;
@@ -37,7 +36,6 @@ namespace Lykke.Pay.Invoice.Controllers
 
         public BaseController(IConfiguration configuration)
         {
-            ConnectionStrings = configuration.GetValue<string>("ConnectionStrings");
             LykkePayUrl = configuration.GetValue<string>("LykkePayUrl");
             MerchantAuthService = configuration.GetValue<string>("MerchantAuthService");
             InvoiceLiveTime = configuration.GetValue<TimeSpan>("InvoiceLiveTime");
