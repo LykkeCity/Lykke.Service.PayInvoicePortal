@@ -342,9 +342,12 @@ $(document).ready(function (e) {
     });
 
     $('body').on('click', function (e) {
-        $('body').removeClass('body--menu_opened');
-        $('.create.draft').removeClass('create--open');
-        $('.create.unpaid').removeClass('create--open');
+        if (e.target.className === "menu_overlay") {
+            $('body').removeClass('body--menu_opened');
+            $('.create.draft').removeClass('create--open');
+            $('.create.unpaid').removeClass('create--open');
+        }
+        else $('body').addClass('body--menu_opened');
     });
 
     $('.create.draft').on('click', function (e) {
