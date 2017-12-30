@@ -27,6 +27,7 @@ namespace Lykke.Pay.Invoice.Models
         public string Status { get; set; }
         public string SearchValue { get; set; }
         public string SortField { get; set; }
+        public int Period { get; set; }
     }
 
     public class GridHeader

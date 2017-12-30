@@ -3,6 +3,7 @@ var filter = {};
 filter.sortField = "";
 filter.searchValue = "";
 filter.sortWay = 0;
+filter.period = 0;
 var updatedStatusCnt = 0;
 var statuses = ["All", "Paid", "Unpaid", "Draft", "Removed", "InProgress", "Overpaid", "Underpaid", "LatePaid"];
 
@@ -309,6 +310,7 @@ $(document).ready(function (e) {
         $('.profile_search').removeClass('vis');
         $('#searchvalue').val("");
         filter.searchValue = "";
+        filter.period = 0;
         updateGrid();
     });
 
@@ -347,7 +349,7 @@ $(document).ready(function (e) {
             $('.create.draft').removeClass('create--open');
             $('.create.unpaid').removeClass('create--open');
         }
-        else $('body').addClass('body--menu_opened');
+        else if (e.target.className === "ui-icon ui-icon-circle-triangle-w") $('body').addClass('body--menu_opened');
     });
 
     $('.create.draft').on('click', function (e) {
@@ -356,5 +358,9 @@ $(document).ready(function (e) {
 
     $('.create.unpaid').on('click', function (e) {
         e.stopPropagation();
+    });
+    $('#selectperiod').on('change', function (e) {
+        $('._value').text($("#selectperiod option:selected").text());
+        filter.period = $("#selectperiod option:selected").val();
     });
 });

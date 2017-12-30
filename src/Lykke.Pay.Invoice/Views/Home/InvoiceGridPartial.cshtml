@@ -41,18 +41,19 @@
     <div class="profile_search">
         <div class="select profile_search__select" data-control="select">
             <div class="select__value">
-                <span class="_value">In the past month</span>
+                <span class="_value">Current month</span>
             </div>
-            <select id="select1" class="form-control select__elem">
-                <option>In the past month</option>
-                <option>In the past month2</option>
+            <select id="selectperiod" class="form-control select__elem">
+                <option value="1">Current month</option>
+                <option value="2">Last month</option>
+                <option value="3">Three month ago</option>
             </select>
         </div>
         <div class="profile_search__input_group">
             <button type="button" name="button" class="profile_search__button_search">
                 <i class="icon icon--search"></i>
             </button>
-            <input type="text" name="i1" placeholder="Asset or address…" class="form-control profile_search__input" id="searchvalue">
+            <input type="text" name="i1" placeholder="Invoice number or  email…" class="form-control profile_search__input" id="searchvalue">
             <button type="button" name="button" class="profile_search__button_close"> </button>
         </div>
         <button type="button" name="button" class="profile_search__button">Cancel</button>

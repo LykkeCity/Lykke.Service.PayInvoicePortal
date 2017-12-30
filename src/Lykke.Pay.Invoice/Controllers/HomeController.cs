@@ -220,10 +220,11 @@ namespace Lykke.Pay.Invoice.Controllers
             }
             if (!string.IsNullOrEmpty(model.Filter.SearchValue))
             {
-                orderedlist = orderedlist.Where(i => (i.WalletAddress != null && i.WalletAddress.Contains(model.Filter.SearchValue)) ||
-                (i.Currency != null && i.Currency.Contains(model.Filter.SearchValue)) ||
+                orderedlist = orderedlist.Where(i => 
+                //(i.WalletAddress != null && i.WalletAddress.Contains(model.Filter.SearchValue)) ||
+                //(i.Currency != null && i.Currency.Contains(model.Filter.SearchValue)) ||
                 (i.ClientEmail != null && i.ClientEmail.Contains(model.Filter.SearchValue)) ||
-                (i.ClientName != null && i.ClientName.Contains(model.Filter.SearchValue)) ||
+                //(i.ClientName != null && i.ClientName.Contains(model.Filter.SearchValue)) ||
                 (i.InvoiceNumber != null && i.InvoiceNumber.Contains(model.Filter.SearchValue)))
                 .OrderByDescending(i => i.StartDate).ToList();
             }
@@ -263,6 +264,22 @@ namespace Lykke.Pay.Invoice.Controllers
                         break;
                 }
             }
+            var period = DateTime.Now;
+            switch (model.Filter.Period)
+            {
+                
+                case 1:
+                    period = period.AddDays(-30);
+                    break;
+                case 2:
+                    period = period.AddDays(-60);
+                    break;
+                case 3:
+                    period = period.AddDays(-90);
+                    break;
+            }
+            if (period != DateTime.Now)
+                orderedlist = orderedlist.Where(i => i.StartDate.GetRepoDateTime() <= period).ToList();
             respmodel.PageCount = orderedlist.Count / 20;
             respmodel.Data = orderedlist.ToPagedList(model.Page, 20).ToList();
             return Json(respmodel);
