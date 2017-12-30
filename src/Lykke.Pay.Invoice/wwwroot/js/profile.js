@@ -225,7 +225,7 @@ function showItem(invoice) {
             url.innerText = window.location.origin + "/invoice/" + value;
         }
     }
-    $('#UnpaidInvoiceNumberHeader').text(" Invoice #" + invoice.InvoiceNumber);
+    //$('#UnpaidInvoiceNumberHeader').text(" Invoice #" + invoice.InvoiceNumber);
 }
 function setTooltip(message) {
     $('.create__item-copy')
