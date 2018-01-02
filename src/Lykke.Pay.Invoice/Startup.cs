@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Lykke.Pay.Invoice.AppCode;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
@@ -11,11 +12,14 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Lykke.Pay.Service.Invoces.Client;
+using Lykke.SettingsReader;
 
 namespace Lykke.Pay.Invoice
 {
     public class Startup
     {
+        public AppSettings Settings { get; set; }
+
         public Startup(IHostingEnvironment env)
         {
             var builder = new ConfigurationBuilder()
@@ -32,7 +36,7 @@ namespace Lykke.Pay.Invoice
         public void ConfigureServices(IServiceCollection services)
         {
             // Add framework services.
-            services.AddSingleton<IConfiguration>(Configuration);
+            Settings = HttpSettingsLoader.Load<AppSettings>();
             services.AddMvc();
 
             services.AddAuthentication(opts => {
@@ -44,14 +48,16 @@ namespace Lykke.Pay.Invoice
 
                 {
                     o.LoginPath = new PathString("/Home/Welcome");
-                    o.ExpireTimeSpan = TimeSpan.FromMinutes(int.Parse(Configuration["UserLoginTime"]));
+                    o.ExpireTimeSpan = TimeSpan.FromMinutes(Settings.PayInvoice.UserLoginTime);
                 });
 
+            services.AddSingleton(Settings);
             services.AddAuthorization(options =>
             {
                 options.DefaultPolicy = new AuthorizationPolicyBuilder(CookieAuthenticationDefaults.AuthenticationScheme).RequireAuthenticatedUser().Build();
             });
-            services.AddSingleton<IInvoicesservice>(new Invoicesservice(new Uri(Configuration["InvoicesService"])));
+            services.AddSingleton<IInvoicesservice>(new Invoicesservice(new Uri(Settings.PayInvoice.InvoicesService)));
+            
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

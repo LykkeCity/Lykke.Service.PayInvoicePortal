@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Security.Claims;
 using Lykke.Pay.Common.Entities.Entities;
+using Lykke.Pay.Invoice.AppCode;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
@@ -35,13 +36,13 @@ namespace Lykke.Pay.Invoice.Controllers
             set => _merchantId = value;
         }
 
-        public BaseController(IConfiguration configuration)
+        public BaseController(AppSettings settings)
         {
-            LykkePayUrl = configuration.GetValue<string>("LykkePayUrl");
-            MerchantAuthService = configuration.GetValue<string>("MerchantAuthService");
-            InvoiceLiveTime = configuration.GetValue<TimeSpan>("InvoiceLiveTime");
-            OrderLiveTime = configuration.GetValue<TimeSpan>("OrderLiveTime");
-            SiteUrl = configuration.GetValue<string>("SiteUrl");
+            LykkePayUrl = settings.PayInvoice.LykkePayUrl;
+            MerchantAuthService = settings.PayInvoice.MerchantAuthService;
+            InvoiceLiveTime = settings.PayInvoice.InvoiceLiveTime;
+            OrderLiveTime = settings.PayInvoice.OrderLiveTime;
+            SiteUrl = settings.PayInvoice.SiteUrl;
         }
     }
 }

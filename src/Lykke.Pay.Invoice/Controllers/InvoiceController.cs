@@ -25,7 +25,7 @@ namespace Lykke.Pay.Invoice.Controllers
     {
         private readonly IInvoicesservice _invoicesservice;
 
-        public InvoiceController(IConfiguration configuration, IInvoicesservice invoicesservice) : base(configuration)
+        public InvoiceController(AppSettings settings, IInvoicesservice invoicesservice) : base(settings)
         {
             _invoicesservice = invoicesservice;
         }

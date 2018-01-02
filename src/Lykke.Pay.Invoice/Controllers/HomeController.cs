@@ -16,6 +16,7 @@ using Newtonsoft.Json;
 using Lykke.Pay.Service.Invoces.Client;
 using System.Linq;
 using Lykke.Pay.Common;
+using Lykke.Pay.Invoice.AppCode;
 using PagedList;
 
 namespace Lykke.Pay.Invoice.Controllers
@@ -25,7 +26,7 @@ namespace Lykke.Pay.Invoice.Controllers
     {
         private readonly IInvoicesservice _invoiceService;
 
-        public HomeController(IConfiguration configuration, IInvoicesservice invoiceService) : base(configuration)
+        public HomeController(AppSettings settings, IInvoicesservice invoiceService) : base(settings)
         {
             _invoiceService = invoiceService;
         }
