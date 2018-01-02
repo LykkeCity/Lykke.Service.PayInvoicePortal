@@ -68,9 +68,13 @@ namespace Lykke.Pay.Invoice.Controllers
 
             if (!string.IsNullOrEmpty(inv.DueDate) && inv.DueDate.GetRepoDateTime() < DateTime.Now)
             {
-                inv.Status = InvoiceStatus.LatePaid.ToString();
-                ViewBag.invoiceStatus = inv.Status;
-                await _invoicesservice.ApiInvoicesPostWithHttpMessagesAsync(inv.CreateInvoiceEntity(MerchantId));
+                if (inv.Status.ParsePayEnum<InvoiceStatus>() != InvoiceStatus.LatePaid)
+                {
+                    inv.Status = InvoiceStatus.LatePaid.ToString();
+                    ViewBag.invoiceStatus = inv.Status;
+                    await _invoicesservice.ApiInvoicesPostWithHttpMessagesAsync(inv.CreateInvoiceEntity(MerchantId));
+                }
+                
             }
             else
             {
@@ -154,7 +158,7 @@ namespace Lykke.Pay.Invoice.Controllers
 
         }
 
-        [HttpPost("status")]
+        [HttpPost("invoice/status")]
         public async Task<JsonResult> Status(string address)
         {
             if (string.IsNullOrEmpty(address))
@@ -191,10 +195,13 @@ namespace Lykke.Pay.Invoice.Controllers
 
         }
 
-        [HttpPost("Regenerate")]
+        [HttpPost("invoice/Regenerate")]
         public async Task<IActionResult> Regenerate(string invoiceId, string address)
         {
-
+            if (string.IsNullOrEmpty(invoiceId) || string.IsNullOrEmpty(address))
+            {
+                return NotFound();
+            }
             var respInv = await _invoicesservice.ApiInvoicesByInvoiceIdGetWithHttpMessagesAsync(invoiceId, string.Empty);
             var inv = respInv.Body;
             if (inv == null || !InvoiceStatus.Unpaid.ToString().Equals(inv.Status, StringComparison.InvariantCultureIgnoreCase))
