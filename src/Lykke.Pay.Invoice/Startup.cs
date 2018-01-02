@@ -84,6 +84,8 @@ namespace Lykke.Pay.Invoice
                     name: "default",
                     template: "{controller=Invoice}/{action=Index}");
             });
+
+            //app.UseMiddleware<ApiTraceMiddleware>();
         }
     }
 }

@@ -15,6 +15,7 @@ using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using Lykke.Pay.Service.Invoces.Client;
 using System.Linq;
+using Common;
 using Lykke.Pay.Common;
 using Lykke.Pay.Invoice.AppCode;
 using PagedList;
@@ -103,6 +104,7 @@ namespace Lykke.Pay.Invoice.Controllers
                     $@"https://chart.googleapis.com/chart?chs=220x220&chld=L|2&cht=qr&chl=bitcoin:{model.Data.WalletAddress}?amount={model.Data.Amount}%26label=LykkePay%26message=Invoice%23%20{model.Data.InvoiceNumber}";
             return View(model);
         }
+
         [Authorize]
         [HttpPost("InvoiceDetail")]
         public async Task<IActionResult> InvoiceDetail(InvoiceDetailModel model)
@@ -140,6 +142,7 @@ namespace Lykke.Pay.Invoice.Controllers
         {
             return View();
         }
+
         [Authorize]
         [HttpPost("profile")]
         public async Task<IActionResult> Profile(Models.InvoiceRequest request, string returnUrl)
@@ -149,7 +152,11 @@ namespace Lykke.Pay.Invoice.Controllers
                 return View();
             }
             var item = request.CreateEntity(OrderLiveTime, MerchantId);
-            await _invoiceService.ApiInvoicesPostWithHttpMessagesAsync(item);
+            var result = await _invoiceService.ApiInvoicesPostWithHttpMessagesAsync(item);
+            if (result.Body != true)
+            {
+                return BadRequest("Cannot create invoce!");
+            }
             ViewBag.GeneratedItem = JsonConvert.SerializeObject(item);
             return View();
         }
@@ -289,6 +296,7 @@ namespace Lykke.Pay.Invoice.Controllers
             return Json(respmodel);
 
         }
+
         [Authorize]
         [HttpGet("deleteinvoice")]
         public async Task<EmptyResult> DeleteInvoice(string invoiceId)
@@ -296,12 +304,14 @@ namespace Lykke.Pay.Invoice.Controllers
             await DeleteInvoiceFromBase(invoiceId);
             return new EmptyResult();
         }
+
         [HttpGet("SignOut")]
         public async Task<IActionResult> SignOut()
         {
             await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
             return Redirect(HomeUrl);
         }
+
         protected async Task DeleteInvoiceFromBase(string invoiceId)
         {
             await _invoiceService.ApiInvoicesByInvoiceIdDeleteGetWithHttpMessagesAsync(invoiceId, MerchantId);

@@ -20,9 +20,15 @@
       "commandName": "Project",
       "launchBrowser": true,
       "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Development"
-      },
-      "applicationUrl": "http://localhost:8825/"
+        "UserLoginTime": "30",
+        "InvoiceLiveTime": "1.00:00:00",
+        "LykkePayUrl": "https://payapi-test.lykkex.net/api/v1/",
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "SiteUrl": "http://localhost:8824",
+        "MerchantAuthService": "http://pay-merchant-auth.lykke-pay.svc.cluster.local/api/merchant/",
+        "InvoicesService": "http://pay-invoice-service.lykke-pay.svc.cluster.local",
+        "OrderLiveTime": "00:11:00"
+      }
     }
   }
 }
