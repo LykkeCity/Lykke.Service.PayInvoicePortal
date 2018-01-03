@@ -158,7 +158,7 @@ function renderStatus(model, loadmore) {
                 value = "";
             if (keyNames[j] == "Status" && value == "")
                 value = "Draft";
-            if (keyNames[j] === "StartDate")
+            if (keyNames[j] === "StartDate" || keyNames[j] === "DueDate" )
                 value = value.substr(0, 10);
             tempstr = tempstr.replace(new RegExp("{{" + keyNames[j] + "}}", 'g'), value);
         }
@@ -217,7 +217,10 @@ function showItem(invoice) {
         if (!value)
             value = "";
         var item = document.getElementById("Unpaid" + keyNames[j]);
-        if (keyNames[j] === "StartDate")
+        if (keyNames[j] === "Amount") {
+            value = currentItem[keyNames[j]] + " " + currentItem["Currency"];
+        }
+        if (keyNames[j] === "StartDate" || keyNames[j] === "DueDate")
             value = value.substr(0, 10);
         if (item)
             item.innerText = value;
@@ -225,6 +228,7 @@ function showItem(invoice) {
             var url = document.getElementById("UnpaidUrl");
             url.innerText = window.location.origin + "/invoice/" + value;
         }
+        
     }
     //$('#UnpaidInvoiceNumberHeader').text(" Invoice #" + invoice.InvoiceNumber);
 }
