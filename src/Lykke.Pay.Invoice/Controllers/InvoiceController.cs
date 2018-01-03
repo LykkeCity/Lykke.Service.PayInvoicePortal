@@ -207,8 +207,8 @@ namespace Lykke.Pay.Invoice.Controllers
 
             if (inv.DueDate.GetRepoDateTime() < DateTime.Now)
             {
-                inv.Status = InvoiceStatus.LatePaid.ToString();
-                await _invoicesservice.ApiInvoicesPostWithHttpMessagesAsync(inv.CreateInvoiceEntity(MerchantId));
+                //inv.Status = InvoiceStatus.LatePaid.ToString();
+                //await _invoicesservice.ApiInvoicesPostWithHttpMessagesAsync(inv.CreateInvoiceEntity(MerchantId));
                 return NotFound();
             }
 
