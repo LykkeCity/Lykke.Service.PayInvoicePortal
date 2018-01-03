@@ -161,16 +161,16 @@ namespace Lykke.Pay.Invoice.Controllers
         {
             if (string.IsNullOrEmpty(address))
             {
-                return Json(new { status = InvoiceStatus.Removed });
+                return Json(new { status = InvoiceStatus.Removed.ToString() });
             }
             var resp = await _invoicesservice.ApiInvoicesAddressByAddressGetWithHttpMessagesAsync(address);
             if (resp.Body == null)
             {
-                return Json(new { status = InvoiceStatus.Removed });
+                return Json(new { status = InvoiceStatus.Removed.ToString() });
             }
             
 
-            return Json(new { status = resp.Body.Status.ParsePayEnum<InvoiceStatus>() });
+            return Json(new { status = resp.Body.Status.ParsePayEnum<InvoiceStatus>().ToString() });
         }
         private void FillViewBag(IInvoiceEntity inv, dynamic orderResp)
         {
