@@ -1,10 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
 using System.Net;
 using System.Net.Http;
-using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 using Lykke.Core;
@@ -12,10 +8,7 @@ using Lykke.Pay.Common;
 using Lykke.Pay.Invoice.AppCode;
 using Lykke.Pay.Invoice.Models;
 using Lykke.Pay.Service.Invoces.Client;
-using Lykke.Pay.Service.Invoces.Client.Models;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using IInvoiceEntity = Lykke.Pay.Service.Invoces.Client.Models.IInvoiceEntity;
 
@@ -40,7 +33,7 @@ namespace Lykke.Pay.Invoice.Controllers
         {
             var respInv = await _invoicesservice.ApiInvoicesByInvoiceIdGetWithHttpMessagesAsync(invoiceId, string.Empty);
             var inv = respInv.Body;
-            
+
             if (inv == null)
             {
                 return NotFound();
@@ -73,7 +66,7 @@ namespace Lykke.Pay.Invoice.Controllers
                     ViewBag.invoiceStatus = inv.Status;
                     await _invoicesservice.ApiInvoicesPostWithHttpMessagesAsync(inv.CreateInvoiceEntity(MerchantId));
                 }
-                
+
             }
             else
             {
@@ -96,7 +89,10 @@ namespace Lykke.Pay.Invoice.Controllers
                         {
                             Percent = 1,
                             Pips = 10
-                        }
+                        },
+                        SuccessUrl = $"{SiteUrl}/invoice/{invoiceId}/success",
+                        ErrorUrl = $"{SiteUrl}/invoice/{invoiceId}/error",
+                        ProgressUrl = $"{SiteUrl}/invoice/{invoiceId}/progress"
                     };
 
 
@@ -130,7 +126,7 @@ namespace Lykke.Pay.Invoice.Controllers
                     model.QRCode =
                         $@"https://chart.googleapis.com/chart?chs=220x220&chld=L|2&cht=qr&chl=bitcoin:{orderResp.address}?amount={model.Amount}%26label=invoice%20#{inv.InvoiceNumber}%26message={orderResp.orderId}";
 
-                    
+
                 }
             }
             FillViewBag(inv, orderResp);
@@ -168,7 +164,7 @@ namespace Lykke.Pay.Invoice.Controllers
             {
                 return Json(new { status = InvoiceStatus.Removed.ToString() });
             }
-            
+
 
             return Json(new { status = resp.Body.Status.ParsePayEnum<InvoiceStatus>().ToString() });
         }
@@ -207,7 +203,7 @@ namespace Lykke.Pay.Invoice.Controllers
                 return NotFound();
             }
             MerchantId = inv.MerchantId;
-            
+
 
             if (inv.DueDate.GetRepoDateTime() < DateTime.Now)
             {
@@ -226,7 +222,7 @@ namespace Lykke.Pay.Invoice.Controllers
 
             var invoiceStatus = inv.Status.ParsePayEnum<InvoiceStatus>();
 
-           
+
 
             return Json(new
             {
@@ -293,8 +289,58 @@ namespace Lykke.Pay.Invoice.Controllers
             return Math.Round(modelAmount, 8);
         }
 
-        //[HttpPost()]
-        //public async Task<IActionResult> UpdateStatusSuccess()
+
+        private async Task<IActionResult> UpdateInvoiceStatus(string invoiceId, InvoiceStatus newStatus)
+        {
+            if (string.IsNullOrEmpty(invoiceId))
+            {
+                return NotFound();
+            }
+            var respInv = await _invoicesservice.ApiInvoicesByInvoiceIdGetWithHttpMessagesAsync(invoiceId, string.Empty);
+            var inv = respInv.Body;
+            if (inv == null || !InvoiceStatus.Unpaid.ToString().Equals(inv.Status, StringComparison.InvariantCultureIgnoreCase))
+            {
+                return NotFound();
+            }
+            inv.Status = newStatus.ToString();
+            await _invoicesservice.ApiInvoicesPostWithHttpMessagesAsync(inv.CreateInvoiceEntity(inv.MerchantId));
+            return Ok();
+        }
+
+        [HttpPost("invoice/{invoiceId}/success")]
+        public async Task<IActionResult> UpdateStatusSuccess(string invoiceId, [FromBody]PaymentSuccessResponse response)
+        {
+            return await UpdateInvoiceStatus(invoiceId, InvoiceStatus.Paid);
+        }
+
+        [HttpPost("invoice/{invoiceId}/progress")]
+        public async Task<IActionResult> UpdateStatusProgress(string invoiceId, [FromBody]PaymentInProgressResponse response)
+        {
+            return await UpdateInvoiceStatus(invoiceId, InvoiceStatus.InProgress);
+        }
+
+        [HttpPost("invoice/{invoiceId}/error")]
+        public async Task<IActionResult> UpdateStatusError(string invoiceId, [FromBody]PaymentErrorReturn response)
+        {
+            InvoiceStatus status;
+            switch (response.PaymentResponse.PaymentError)
+            {
+                case PaymentError.AMOUNT_ABOVE:
+                    status = InvoiceStatus.Overpaid;
+                    break;
+                case PaymentError.AMOUNT_BELOW:
+                    status = InvoiceStatus.Underpaid;
+                    break;
+                case PaymentError.PAYMENT_EXPIRED:
+                    status = InvoiceStatus.LatePaid;
+                    break;
+                default:
+                    status = InvoiceStatus.Removed;
+                    break;
+            }
+
+            return await UpdateInvoiceStatus(invoiceId, status);
+        }
 
         #region Sign request methods
         //private static RSA CreateRsaFromPrivateKey(string privateKey)
