@@ -143,7 +143,7 @@
                         }
                         @if (string.IsNullOrEmpty(Model.Data.Status) || Model.Data.Status == InvoiceStatus.Draft.ToString() || Model.Data.Status == InvoiceStatus.Unpaid.ToString())
                         {
-                            <button type="submit" name="button" class="btn btn--default invoice_paid__button" id="deletebtn">Delete Invoice</button>
+                            <button type="button" name="button" class="btn btn--default invoice_paid__button" id="deletebtn">Delete Invoice</button>
                         }
                         @if (Model.Data.Status == InvoiceStatus.Paid.ToString())
                         {
