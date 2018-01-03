@@ -62,9 +62,9 @@ namespace Lykke.Pay.Invoice.Controllers
             {
                 if (inv.Status.ParsePayEnum<InvoiceStatus>() != InvoiceStatus.LatePaid)
                 {
-                    inv.Status = InvoiceStatus.LatePaid.ToString();
+                    //inv.Status = InvoiceStatus.LatePaid.ToString();
                     ViewBag.invoiceStatus = inv.Status;
-                    await _invoicesservice.ApiInvoicesPostWithHttpMessagesAsync(inv.CreateInvoiceEntity(MerchantId));
+                    //await _invoicesservice.ApiInvoicesPostWithHttpMessagesAsync(inv.CreateInvoiceEntity(MerchantId));
                 }
 
             }
@@ -126,10 +126,10 @@ namespace Lykke.Pay.Invoice.Controllers
                     model.QRCode =
                         $@"https://chart.googleapis.com/chart?chs=220x220&chld=L|2&cht=qr&chl=bitcoin:{orderResp.address}?amount={model.Amount}%26label=invoice%20#{inv.InvoiceNumber}%26message={orderResp.orderId}";
 
-
+                   FillViewBag(inv, orderResp);
                 }
             }
-            FillViewBag(inv, orderResp);
+            
             ViewBag.invoiceStatus = inv.Status;
 
             ViewBag.needAutoUpdate = invoiceStatus == InvoiceStatus.InProgress || invoiceStatus == InvoiceStatus.Unpaid
