@@ -2,6 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AzureStorage.Tables;
+using Common.Log;
+using Lykke.AzureQueueIntegration;
+using Lykke.Common.ApiLibrary.Middleware;
+using Lykke.Logs;
 using Lykke.Pay.Invoice.AppCode;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
@@ -13,11 +18,15 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Lykke.Pay.Service.Invoces.Client;
 using Lykke.SettingsReader;
+using Lykke.SlackNotification.AzureQueue;
+using Microsoft.Rest;
 
 namespace Lykke.Pay.Invoice
 {
     public class Startup
     {
+        private ILog Log { get; set; }
+
         public AppSettings Settings { get; set; }
 
         public Startup(IHostingEnvironment env)
@@ -36,7 +45,9 @@ namespace Lykke.Pay.Invoice
         public void ConfigureServices(IServiceCollection services)
         {
             // Add framework services.
-            Settings = HttpSettingsLoader.Load<AppSettings>();
+            var appSettings = Configuration.LoadSettings<AppSettings>();
+            Settings = appSettings.CurrentValue;
+
             services.AddMvc();
 
             services.AddAuthentication(opts => {
@@ -57,7 +68,9 @@ namespace Lykke.Pay.Invoice
                 options.DefaultPolicy = new AuthorizationPolicyBuilder(CookieAuthenticationDefaults.AuthenticationScheme).RequireAuthenticatedUser().Build();
             });
             services.AddSingleton<IInvoicesservice>(new Invoicesservice(new Uri(Settings.PayInvoice.InvoicesService)));
-            
+
+            Log = CreateLogWithSlack(services, appSettings);
+            services.AddSingleton(Log);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -85,7 +98,81 @@ namespace Lykke.Pay.Invoice
                     template: "{controller=Invoice}/{action=Index}");
             });
 
-            //app.UseMiddleware<ApiTraceMiddleware>();
+            //app.UseLykkeMiddleware("LykkePayInvoceWeb", ex =>
+            //{
+            //    string errorMessage;
+
+            //    switch (ex)
+            //    {
+            //        case InvalidOperationException ioe:
+            //            errorMessage = $"Invalid operation: {ioe.Message}";
+            //            break;
+            //        case ValidationException ve:
+            //            errorMessage = $"Validation error: {ve.Message}";
+            //            break;
+            //        default:
+            //            errorMessage = "Technical problem";
+            //            break;
+            //    }
+
+            //    return Error.Create(Constants.ComponentName, errorMessage);
+            //});
+
+            app.UseMiddleware<ApiTraceMiddleware>();
+        }
+
+        private static ILog CreateLogWithSlack(IServiceCollection services, IReloadingManager<AppSettings> settings)
+        {
+            var consoleLogger = new LogToConsole();
+            var aggregateLogger = new AggregateLogger();
+
+            aggregateLogger.AddLog(consoleLogger);
+
+            // Creating slack notification service, which logs own azure queue processing messages to aggregate log
+            var slackService = services.UseSlackNotificationsSenderViaAzureQueue(new AzureQueueSettings
+            {
+                ConnectionString = settings.CurrentValue.SlackNotifications.AzureQueue.ConnectionString,
+                QueueName = settings.CurrentValue.SlackNotifications.AzureQueue.QueueName
+            }, aggregateLogger);
+
+            var dbLogConnectionStringManager = settings.Nested(x => x.PayInvoice.Logs.LogsConnString);
+            var dbLogConnectionString = dbLogConnectionStringManager.CurrentValue;
+
+            // Creating azure storage logger, which logs own messages to concole log
+            if (!string.IsNullOrEmpty(dbLogConnectionString) && !(dbLogConnectionString.StartsWith("${") && dbLogConnectionString.EndsWith("}")))
+            {
+                const string appName = "Lykke.Service.Assets";
+
+                var slackNotificationsManager = new LykkeLogToAzureSlackNotificationsManager
+                (
+                    appName,
+                    slackService,
+                    consoleLogger
+                );
+
+                var persistenceManager = new LykkeLogToAzureStoragePersistenceManager
+                (
+                    appName,
+                    AzureTableStorage<LogEntity>.Create(settings.ConnectionString(x => x.PayInvoice.Logs.LogsConnString), "LykkePayInvoiceWebLog", consoleLogger),
+                    consoleLogger
+                );
+
+
+
+                var azureStorageLogger = new LykkeLogToAzureStorage
+                (
+                    appName,
+                    persistenceManager,
+                    slackNotificationsManager,
+                    consoleLogger
+                );
+
+                azureStorageLogger.Start();
+
+                aggregateLogger.AddLog(azureStorageLogger);
+            }
+
+            return aggregateLogger;
         }
     }
 }
