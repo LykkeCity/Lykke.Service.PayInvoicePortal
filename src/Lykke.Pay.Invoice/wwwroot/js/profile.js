@@ -309,6 +309,8 @@ $(document).ready(function (e) {
             filter.sortField = "currency";
         if (element.className.indexOf("status") !== -1)
             filter.sortField = "status";
+        if (element.className.indexOf("date") !== -1)
+            filter.sortField = "duedate";
         if (filter.sortField !== "")
             updateGrid();
     });

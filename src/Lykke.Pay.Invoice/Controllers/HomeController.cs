@@ -263,6 +263,9 @@ namespace Lykke.Pay.Invoice.Controllers
                     case "status":
                         orderedlist = model.Filter.SortWay == 0 ? orderedlist.OrderBy(i => i.Status).ThenByDescending(i => i.StartDate).ToList() : orderedlist.OrderByDescending(i => i.Status).ThenByDescending(i => i.StartDate).ToList();
                         break;
+                    case "duedate":
+                        orderedlist = model.Filter.SortWay == 0 ? orderedlist.OrderBy(i => i.DueDate).ThenByDescending(i => i.StartDate).ToList() : orderedlist.OrderByDescending(i => i.DueDate).ThenByDescending(i => i.StartDate).ToList();
+                        break;
                 }
             }
             var period = DateTime.Now;
