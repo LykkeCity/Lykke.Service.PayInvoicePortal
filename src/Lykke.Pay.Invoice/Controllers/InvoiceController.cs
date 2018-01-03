@@ -226,6 +226,8 @@ namespace Lykke.Pay.Invoice.Controllers
 
             var invoiceStatus = inv.Status.ParsePayEnum<InvoiceStatus>();
 
+           
+
             return Json(new
             {
                 order,
@@ -251,7 +253,7 @@ namespace Lykke.Pay.Invoice.Controllers
 
             var httpClient = new HttpClient();
             httpClient.DefaultRequestHeaders.Add("Lykke-Merchant-Id", MerchantId);
-            httpClient.DefaultRequestHeaders.Add("Lykke-Merchant-Sign", "true");
+            httpClient.DefaultRequestHeaders.Add("Lykke-Merchant-Traster-SignIn", "true");
 
 
             var result = await httpClient.PostAsync(LykkePayUrl + $"Order/ReCreate/{address}",
