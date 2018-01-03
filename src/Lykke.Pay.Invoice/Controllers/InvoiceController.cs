@@ -50,8 +50,7 @@ namespace Lykke.Pay.Invoice.Controllers
 
             var invoiceStatus = inv.Status.ParsePayEnum<InvoiceStatus>();
 
-            if (invoiceStatus == InvoiceStatus.Draft || invoiceStatus == InvoiceStatus.Removed ||
-                !string.IsNullOrEmpty(inv.StartDate) && inv.StartDate.GetRepoDateTime() > DateTime.Now)
+            if (invoiceStatus == InvoiceStatus.Draft || invoiceStatus == InvoiceStatus.Removed)
             {
                 return NotFound();
             }
@@ -124,7 +123,6 @@ namespace Lykke.Pay.Invoice.Controllers
                     orderResp = JsonConvert.DeserializeObject(resp);
 
                     inv.WalletAddress = orderResp.address;
-                    inv.DueDate = DateTime.Now.Add(InvoiceLiveTime).RepoDateStr();
                     inv.StartDate = DateTime.Now.RepoDateStr();
                     await _invoicesservice.ApiInvoicesPostWithHttpMessagesAsync(inv.CreateInvoiceEntity(MerchantId));
 
@@ -209,14 +207,11 @@ namespace Lykke.Pay.Invoice.Controllers
                 return NotFound();
             }
             MerchantId = inv.MerchantId;
-            if (!string.IsNullOrEmpty(inv.StartDate) && inv.StartDate.GetRepoDateTime() > DateTime.Today)
-            {
-                return NotFound();
-            }
+            
 
             if (inv.DueDate.GetRepoDateTime() < DateTime.Now)
             {
-                inv.Status = InvoiceStatus.Removed.ToString();
+                inv.Status = InvoiceStatus.LatePaid.ToString();
                 await _invoicesservice.ApiInvoicesPostWithHttpMessagesAsync(inv.CreateInvoiceEntity(MerchantId));
                 return NotFound();
             }
