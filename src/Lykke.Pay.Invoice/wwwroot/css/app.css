@@ -23,6 +23,10 @@
 .create__item-description {
     width: 90%;
 }
+.create__title.subheader {
+    font-size: 28px;
+    margin-bottom: 0px;
+}
 .invoices_item__status--red {
     background: red !important;
 }

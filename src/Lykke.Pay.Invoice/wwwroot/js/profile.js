@@ -178,9 +178,12 @@ function renderStatus(model, loadmore) {
                 tempstr = tempstr.replace("{{DisCssClass}}", "");
                 tempstr = tempstr.replace("{{CssClass}}", "draft");
                 break;
+            case "Removed":
+                tempstr = tempstr.replace("{{CssClass}}", "draft");
+                tempstr = tempstr.replace("{{DisCssClass}}", "btn--disabled");
+                tempstr = tempstr.replace("{{disoption}}", "disabled");
             case "LatePaid":
             case "OverPaid":
-            case "Removed":
             case "UnderPaid":
             default:
                 tempstr = tempstr.replace("{{CssClass}}", "red");
