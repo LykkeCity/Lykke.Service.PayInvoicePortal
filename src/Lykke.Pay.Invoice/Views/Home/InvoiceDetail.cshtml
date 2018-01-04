@@ -22,7 +22,7 @@
                             <div class="row">
                                 <div class="col-xs-7">
                                     <div class="invoice_paid__title">Invoice #@Model.Data.InvoiceNumber</div>
-                                    @if (Model.Data.Status != InvoiceStatus.Paid.ToString() && Model.Data.Status != InvoiceStatus.Draft.ToString())
+                                    @if (Model.Data.Status == InvoiceStatus.Unpaid.ToString())
                                     {
                                         <a href="@Model.InvoiceUrl" class="invoice_paid__link">@Model.InvoiceUrl</a>
                                         <a href="#" type="button" name="button" class="create__item-copy" style="position: relative" >
@@ -30,7 +30,7 @@
                                         </a>
                                     }
                                 </div>
-                                @if (Model.Data.Status != InvoiceStatus.Paid.ToString() && Model.Data.Status != InvoiceStatus.Draft.ToString())
+                                @if (Model.Data.Status == InvoiceStatus.Unpaid.ToString())
                                 {
                                     <div class="col-xs-5">
                                         <div class="invoice_paid__qr">
