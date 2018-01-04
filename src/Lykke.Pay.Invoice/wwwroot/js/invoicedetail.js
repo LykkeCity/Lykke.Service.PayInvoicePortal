@@ -29,8 +29,13 @@ $('#deletebtn').on('click', function (e) {
                 text: 'Yes',
                 btnClass: 'btn-blue',
                 action: function () {
-                    $('#Data_Status').val("Deleted");
-                    $('#createform').submit();
+                    $.ajax({
+                        url: "/home/deleteinvoice" + window.location.search,
+                        type: "GET",
+                        success: function (data) {
+                            window.location.href = "/home/profile";
+                        }
+                    });
                 }
             },
             cancel: function () {
