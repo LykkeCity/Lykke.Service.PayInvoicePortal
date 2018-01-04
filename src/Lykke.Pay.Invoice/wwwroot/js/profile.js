@@ -355,7 +355,11 @@ $(document).ready(function (e) {
             $('.create.draft').removeClass('create--open');
             $('.create.unpaid').removeClass('create--open');
         }
-        else if (e.target.className === "ui-icon ui-icon-circle-triangle-w") $('body').addClass('body--menu_opened');
+        else if (e.target.className === "ui-icon ui-icon-circle-triangle-w" ||
+            e.target.className === "ui-datepicker-prev ui-corner-all ui-state-hover ui-datepicker-prev-hover" ||
+            e.target.className === "ui-datepicker-next ui-corner-all ui-state-hover ui-datepicker-next-hover") {
+            $('body').addClass('body--menu_opened');
+        }
     });
 
     $('.create.draft').on('click', function (e) {
