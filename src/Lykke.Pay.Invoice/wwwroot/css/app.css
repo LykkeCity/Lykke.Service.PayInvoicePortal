@@ -20,6 +20,9 @@
 /*@import "guide";*/
 
 /*custom section*/
+.showmore {
+    cursor: pointer
+}
 .create__item-description {
     width: 90%;
 }

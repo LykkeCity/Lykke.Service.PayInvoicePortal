@@ -66,7 +66,7 @@ function updateGrid(loadmore) {
             type: "POST",
             data: data,
             success: function (model) {
-                
+
                 if (model.filter.status === "All")
                     renderGridHeader(model);
                 renderStatus(model, loadmore);
@@ -132,6 +132,9 @@ function renderGridHeader(model) {
     underpaidlink.childNodes[1].innerText = model.header.underpaidCount;
     latepaidlink.childNodes[1].innerText = model.header.latePaidCount;
     overpaidlink.childNodes[1].innerText = model.header.overpaidCount;
+
+    var showmore = document.getElementsByClassName("showmore")[0];
+    showmore.style.display = (model.pageCount !== 0 && model.pageCount > pagenumber) ? "" : "none";
 }
 
 function renderStatus(model, loadmore) {
@@ -158,7 +161,7 @@ function renderStatus(model, loadmore) {
                 value = "";
             if (keyNames[j] == "Status" && value == "")
                 value = "Draft";
-            if (keyNames[j] === "StartDate" || keyNames[j] === "DueDate" )
+            if (keyNames[j] === "StartDate" || keyNames[j] === "DueDate")
                 value = value.substr(0, 10);
             tempstr = tempstr.replace(new RegExp("{{" + keyNames[j] + "}}", 'g'), value);
         }
@@ -197,7 +200,6 @@ function renderStatus(model, loadmore) {
         tabdiv.innerHTML += allstring;
     else
         tabdiv.innerHTML = allstring;
-    
 
     $('.invoices_item').on('click', function (e) {
         e.stopPropagation();
@@ -231,7 +233,7 @@ function showItem(invoice) {
             var url = document.getElementById("UnpaidUrl");
             url.innerText = window.location.origin + "/invoice/" + value;
         }
-        
+
     }
     //$('#UnpaidInvoiceNumberHeader').text(" Invoice #" + invoice.InvoiceNumber);
 }
@@ -276,11 +278,6 @@ $(document).ready(function (e) {
         if ($('#Currency').val() == "")
             $('#Currency').val("CHF");
         updateGrid();
-    });
-
-    $('.showmore').on('click', function (e) {
-        pagenumber++;
-        updateGrid(true);
     });
 
     $('#closebtn').on('click', function (e) {
@@ -371,5 +368,9 @@ $(document).ready(function (e) {
     $('#selectperiod').on('change', function (e) {
         $('._value').text($("#selectperiod option:selected").text());
         filter.period = $("#selectperiod option:selected").val();
+    });
+    $('.showmore').on('click', function (e) {
+        pagenumber++;
+        updateGrid(true);
     });
 });

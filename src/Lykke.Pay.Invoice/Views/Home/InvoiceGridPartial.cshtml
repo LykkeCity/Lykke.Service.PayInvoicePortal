@@ -13,7 +13,7 @@
                 <a href="#all" aria-controls="all" role="tab" data-toggle="tab" id="alllink">All ⋅ <span></span></a>
             </li>
             <li role="presentation">
-                <a href="#paid" aria-controls="paid" role="tab" data-toggle="tab"id="paidlink">Paid ⋅ <span></span></a>
+                <a href="#paid" aria-controls="paid" role="tab" data-toggle="tab" id="paidlink">Paid ⋅ <span></span></a>
             </li>
             <li role="presentation">
                 <a href="#unpaid" aria-controls="unpaid" role="tab" data-toggle="tab" id="unpaidlink">Unpaid ⋅ <span></span></a>
@@ -80,7 +80,7 @@
         <div role="tabpanel" class="tab-pane" id="latepaid"></div>
         <div role="tabpanel" class="tab-pane" id="inprogress"></div>
     </div>
-    <div class="showmore" style="cursor: pointer">Show more</div>
+    <div class="showmore">Show more</div>
 </div>
 
 <div id="rowtemplate" style="display: none">
@@ -106,7 +106,7 @@
             <div class="invoices_item__text invoices_item__text--small">{{DueDate}}</div>
         </div>
         <div class="invoices_item__cell invoices_item__cell--delete">
-            <button class="btn btn--icon delete {{DisCssClass}} " type="button"  {{disoption}}>
+            <button class="btn btn--icon delete {{DisCssClass}} " type="button" {{disoption}}>
                 <i class="icon icon--trash"></i>
             </button>
         </div>
