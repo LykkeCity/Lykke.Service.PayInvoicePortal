@@ -5,6 +5,7 @@
 @{
     ViewData["Title"] = "Invoices";
 }
+<link rel="stylesheet" href="/js/vendor/pieloader/jquery-pie-loader.css"></link>
 <article class="content">
     <div class="container">
         <div class="invoice">
@@ -23,10 +24,10 @@
                             <div class="invoice__row">
                                 <div class="invoice__remain">
                                     <div class="invoice__remain-load ">
-                                        <div class="invoice__remain-loading loader"> </div>
+                                        <figure id="my-item" class="pie-loader"></figure>
                                         @*<div class="spinner_container">
-                                        <div class="spinner"><div class="spinner__inside"></div></div>
-                                    </div>*@
+                                                <div class="spinner"><div class="spinner__inside"></div></div>
+                                            </div>*@
                                     </div>
                                     <span class="invoice__remain-text"></span>
                                 </div>
@@ -132,7 +133,7 @@
                             </div>
                         </div>
                     }
-                    
+
                 </div>
             </div>
         </div>
@@ -141,9 +142,12 @@
 
 
 @section Scripts
-{
+    {
+    <script type="text/javascript" src="/js/vendor/pieloader/jquery-pie-loader.js"></script>
     <script type="text/javascript">
-        $.invoiceTimeRefresh = @ViewBag.invoiceTimeRefresh;
+        $('#my-item').svgPie({ duration: 2000, percentage: 42, dimension: 30 });
+
+        $.invoiceTimeRefresh = '@ViewBag.invoiceTimeRefresh';
         $.invoiceTimeDueDate = '@ViewBag.invoiceTimeDueDate';
         $.walletAddress = '@ViewBag.address';
         $.invoiceId = '@ViewBag.invoiceId';
