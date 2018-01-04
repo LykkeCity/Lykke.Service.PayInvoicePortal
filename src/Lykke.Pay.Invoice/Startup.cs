@@ -141,7 +141,7 @@ namespace Lykke.Pay.Invoice
             // Creating azure storage logger, which logs own messages to concole log
             if (!string.IsNullOrEmpty(dbLogConnectionString) && !(dbLogConnectionString.StartsWith("${") && dbLogConnectionString.EndsWith("}")))
             {
-                const string appName = "Lykke.Service.Assets";
+                const string appName = "Lykke.Pay.Invoice.Web";
 
                 var slackNotificationsManager = new LykkeLogToAzureSlackNotificationsManager
                 (
