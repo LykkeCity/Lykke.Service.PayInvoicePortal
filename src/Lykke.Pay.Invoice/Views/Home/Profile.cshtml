@@ -46,7 +46,7 @@
                         <div class="input-group">
                             <div class="Rectangle-6" style="display: none" req-for="Amount"></div>
                             <span class="">CHF</span>
-                            <input type="number" asp-for="Amount" require placeholder="0.00" class="form-control">
+                            <input type="number" asp-for="Amount" require placeholder="0.00" min="0.01" step="0.01" class="form-control">
                         </div>
                     </div>
                     <div class="create__input-date">
