@@ -100,8 +100,12 @@ namespace Lykke.Pay.Invoice.Controllers
 
             model.InvoiceUrl = $"{SiteUrl}/invoice/{invoiceId}";
             if (model.Data.Status != InvoiceStatus.Paid.ToString())
+            {
+                model.InvoiceUrl = $"https://{HttpContext.Request.Host}/invoice/{model.Data.InvoiceId}";
                 model.QRCode =
-                    $@"https://chart.googleapis.com/chart?chs=220x220&chld=L|2&cht=qr&chl=bitcoin:{model.Data.WalletAddress}?amount={model.Data.Amount}%26label=LykkePay%26message=Invoice%23%20{model.Data.InvoiceNumber}";
+                    $@"https://chart.googleapis.com/chart?chs=220x220&chld=L|2&cht=qr&chl={model.InvoiceUrl}";
+
+            }
             return View(model);
         }
 
