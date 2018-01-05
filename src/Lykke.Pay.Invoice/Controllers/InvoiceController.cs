@@ -298,7 +298,12 @@ namespace Lykke.Pay.Invoice.Controllers
             }
             var respInv = await _invoicesservice.ApiInvoicesByInvoiceIdGetWithHttpMessagesAsync(invoiceId, string.Empty);
             var inv = respInv.Body;
-            if (inv == null || !InvoiceStatus.Unpaid.ToString().Equals(inv.Status, StringComparison.InvariantCultureIgnoreCase))
+            if (inv == null)
+            {
+                return NotFound();
+            }
+            var status = inv.Status.ParsePayEnum<InvoiceStatus>();
+            if (status != InvoiceStatus.Unpaid && status != InvoiceStatus.InProgress)
             {
                 return NotFound();
             }
@@ -308,13 +313,13 @@ namespace Lykke.Pay.Invoice.Controllers
         }
 
         [HttpPost("invoice/{invoiceId}/success")]
-        public async Task<IActionResult> UpdateStatusSuccess(string invoiceId, [FromBody]PaymentSuccessResponse response)
+        public async Task<IActionResult> UpdateStatusSuccess(string invoiceId, [FromBody]PaymentSuccessReturn response)
         {
             return await UpdateInvoiceStatus(invoiceId, InvoiceStatus.Paid);
         }
 
         [HttpPost("invoice/{invoiceId}/progress")]
-        public async Task<IActionResult> UpdateStatusProgress(string invoiceId, [FromBody]PaymentInProgressResponse response)
+        public async Task<IActionResult> UpdateStatusProgress(string invoiceId, [FromBody]PaymentInProgressReturn response)
         {
             return await UpdateInvoiceStatus(invoiceId, InvoiceStatus.InProgress);
         }
