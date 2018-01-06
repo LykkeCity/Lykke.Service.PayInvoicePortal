@@ -353,9 +353,23 @@ $(document).ready(function (e) {
     $('.btn_create').on('click', function (e) {
         e.stopPropagation();
         validate(true);
-        $("#StartDate").datepicker().datepicker("setDate", new Date());;
+        $("#StartDate").datepicker({
+            beforeShow: function (input, inst) {
+                setTimeout(function () {
+                    var left = parseInt(inst.dpDiv.css('left'));
+                    inst.dpDiv.css({
+                        left: left - 30
+                    });
+                }, 0);
+            }
+        }).datepicker("setDate", new Date());;
         $('body').addClass('body--menu_opened');
         $('.create.draft').addClass('create--open');
+    });
+
+    $('.icon--cal').on('click', function (e) {
+        e.stopPropagation();
+        $("#StartDate").datepicker('show');
     });
 
     $('body').on('click', function (e) {
