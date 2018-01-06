@@ -319,7 +319,13 @@ $(document).ready(function (e) {
         filter.period = 0;
         updateGrid();
     });
-
+    $('.profile_search__button_close').
+        on('click', function () {
+            $('#searchvalue').val("");
+            filter.searchValue = "";
+            filter.period = 0;
+            updateGrid();
+        });
     $('#searchvalue').on('input', function (e) {
         filter.searchValue = $('#searchvalue').val();
         updateGrid();
