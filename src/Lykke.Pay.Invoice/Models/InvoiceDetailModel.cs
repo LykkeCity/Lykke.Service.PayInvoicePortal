@@ -10,6 +10,11 @@ namespace Lykke.Pay.Invoice.Models
     {
         public string QRCode { get; set; }
         public string InvoiceUrl { get; set; }
-        public IInvoiceEntity Data { get; set; }
+        public InvoiceRequest Data { get; set; }
+
+        public InvoiceDetailModel()
+        {
+            Data = new InvoiceRequest();
+        }
     }
 }

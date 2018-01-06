@@ -29,6 +29,8 @@ namespace Lykke.Pay.Invoice.Models
         public string Status { get; set; }
         public string WalletAddress { get; set; }
         public string StartDate { get; set; }
+        public string ClientId { get; set; }
+        public string ClientUserId { get; set; }
 
         public InvoiceEntity CreateEntity(TimeSpan orderLiveTime, string merchantId)
         {
@@ -57,6 +59,22 @@ namespace Lykke.Pay.Invoice.Models
                 DueDate = dueDate.RepoDateStr(),
                 MerchantId = merchantId
             };
+        }
+
+        public void BindEntity(IInvoiceEntity data)
+        {
+            Status = data.Status;
+            Amount = data.Amount.ToString();
+            ClientEmail = data.ClientEmail;
+            ClientId = data.ClientId;
+            ClientName = data.ClientName;
+            ClientUserId = data.ClientUserId;
+            Currency = data.Currency;
+            DueDate = data.DueDate;
+            InvoiceId = data.InvoiceId;
+            InvoiceNumber = data.InvoiceNumber;
+            StartDate = data.StartDate;
+            WalletAddress = data.WalletAddress;
         }
     }
 }

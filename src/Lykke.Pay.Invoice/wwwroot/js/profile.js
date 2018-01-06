@@ -157,7 +157,7 @@ function renderStatus(model, loadmore) {
         var keyNames = Object.keys(invoices[i]);
         for (var j = 0; j < keyNames.length; j++) {
             var value = invoices[i][keyNames[j]];
-            if (!value)
+            if (value == null)
                 value = "";
             if (keyNames[j] == "Status" && value == "")
                 value = "Draft";
@@ -275,6 +275,8 @@ $(document).ready(function (e) {
     });
 
     $('#draftbtn').on('click', function (e) {
+
+        $('#Amount').attr("min", "0.00");
         $('#Status').val("Draft");
         if ($('#Currency').val() == "")
             $('#Currency').val("CHF");

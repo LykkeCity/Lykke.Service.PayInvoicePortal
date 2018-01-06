@@ -59,7 +59,7 @@
                                     @if (string.IsNullOrEmpty(Model.Data.Status) || Model.Data.Status == InvoiceStatus.Draft.ToString())
                                     {
                                         @*<input type="text" id="Amount" value="@Model.Data.Amount" required placeholder="" class="form-control">*@
-                                        <input type="text" asp-for="Data.Amount" required placeholder="" class="form-control noborder">
+                                        <input type="number" asp-for="Data.Amount" required placeholder="0.00" min="0.01" step="0.01" class="form-control noborder">
                                     }
                                     else
                                     {

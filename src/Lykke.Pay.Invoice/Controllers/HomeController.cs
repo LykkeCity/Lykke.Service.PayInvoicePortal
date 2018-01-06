@@ -96,7 +96,7 @@ namespace Lykke.Pay.Invoice.Controllers
            
             var model = new InvoiceDetailModel();
             var result = await _invoiceService.ApiInvoicesByInvoiceIdGetWithHttpMessagesAsync(invoiceId, MerchantId);
-            model.Data = result.Body;
+            model.Data.BindEntity(result.Body);
 
             model.InvoiceUrl = $"{SiteUrl}/invoice/{invoiceId}";
             if (model.Data.Status != InvoiceStatus.Paid.ToString())
@@ -114,23 +114,13 @@ namespace Lykke.Pay.Invoice.Controllers
         [HttpPost("InvoiceDetail")]
         public async Task<IActionResult> InvoiceDetail(InvoiceDetailModel model)
         {
-            var request = new Models.InvoiceRequest();
             if(model.Data.Status == InvoiceStatus.Removed.ToString())
             {
                 await DeleteInvoiceFromBase(model.Data.InvoiceId);
                 return Redirect("/home/profile");
             }
-            request.Amount = model.Data.Amount.ToString(CultureInfo.InvariantCulture);
-            request.ClientEmail = model.Data.ClientEmail;
-            request.ClientName = model.Data.ClientName;
-            request.Currency = model.Data.Currency;
-            request.DueDate = model.Data.DueDate;
-            request.InvoiceId = model.Data.InvoiceId;
-            request.InvoiceNumber = model.Data.InvoiceNumber;
-            request.StartDate = model.Data.StartDate;
-            request.WalletAddress = model.Data.WalletAddress;
-            request.Status = model.Data.Status;
-            await _invoiceService.ApiInvoicesPostWithHttpMessagesAsync(request.CreateEntity(OrderLiveTime, MerchantId));
+
+            await _invoiceService.ApiInvoicesPostWithHttpMessagesAsync(model.Data.CreateEntity(OrderLiveTime, MerchantId));
             if (model.Data.Status != InvoiceStatus.Paid.ToString())
             {
                 model.InvoiceUrl = $"{SiteUrl}/invoice/{ model.Data.InvoiceId}";
