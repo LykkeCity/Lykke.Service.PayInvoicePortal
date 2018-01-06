@@ -253,6 +253,7 @@ $(document).ready(function (e) {
             showItem(generateditem);
             $('body').addClass('body--menu_opened');
             $('.create.unpaid').addClass('create--open');
+            generateditem = null;
         }
     }
 
