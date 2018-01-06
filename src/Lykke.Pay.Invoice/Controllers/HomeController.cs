@@ -133,7 +133,7 @@ namespace Lykke.Pay.Invoice.Controllers
             await _invoiceService.ApiInvoicesPostWithHttpMessagesAsync(request.CreateEntity(OrderLiveTime, MerchantId));
             if (model.Data.Status != InvoiceStatus.Paid.ToString())
             {
-                model.InvoiceUrl = $"https://{HttpContext.Request.Host}/invoice/{model.Data.InvoiceId}";
+                model.InvoiceUrl = $"{SiteUrl}/invoice/{ model.Data.InvoiceId}";
                 model.QRCode =
                     $@"https://chart.googleapis.com/chart?chs=220x220&chld=L|2&cht=qr&chl={model.InvoiceUrl}";
                
