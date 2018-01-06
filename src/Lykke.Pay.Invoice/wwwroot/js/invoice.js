@@ -23,6 +23,9 @@ $.updateOrder = function () {
     //    $('.invoice__value').html('The invoice is not avaible more');
     //    return;
     //}
+    $('#my-item').empty();
+    $('#my-item').removeClass('rendered');
+    $.removeData($('#my-item')[0], "plugin_svgPie");
 
     $.post($.updateOrderUrl,
         {
@@ -42,7 +45,8 @@ $.updateOrder = function () {
 
             $('.invoice__qr > img').attr('src', data.order.qrCode);
             $('.invoice__payment').html('' + data.order.amount + ' BTC<div class="invoice__info"> for payment </div>');
-            $('.invoice__original').html('' + data.order.origAmount + ' ' + data.currency + '<div class="invoice__info"> original </div>');
+            $('.invoice__original').html('' + data.order.origAmount + ' ' + data.order.currency + '<div class="invoice__info"> original </div>');
+            $('#my-item').svgPie({ duration: $.invoiceTimeRefresh * 1000, percentage: 100, dimension: 30 });
 
             if ($.invoiceStatus != data.status) {
                 window.location.href = window.location.href;
