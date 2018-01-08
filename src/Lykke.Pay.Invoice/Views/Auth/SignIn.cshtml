@@ -1,4 +1,4 @@
-﻿@model Lykke.Pay.Invoice.Models.MerchantStaffSignInRequest
+﻿@model Lykke.Pay.Invoice.Models.Auth.SignInViewModel
 @{
     ViewData["Title"] = "Invoices for live";
 }
@@ -16,7 +16,7 @@
                     </div>
                     @using (Html.BeginForm())
                     {
-                        <input type="hidden" id="returnUrl" value="@ViewData["returnUrl"]">
+                        @Html.HiddenFor(o=>o.ReturnUrl);
                         <div class="welcome__form">
                             <div class="welcome__form-title">Sign in</div>
                             <div class="welcome__input">

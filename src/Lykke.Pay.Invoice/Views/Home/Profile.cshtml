@@ -9,7 +9,7 @@
 </script>
 <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
 <link rel="stylesheet" type="text/css" href="~/css/jquery-confirm.css" />
-@using (Html.BeginForm(null, null, FormMethod.Post, new { name = "createform", id = "createform" }))
+@using (Html.BeginForm("Profile", "Home", FormMethod.Post, new { name = "createform", id = "createform" }))
 {
     <div class="create draft">
         <ul class="create__top">
