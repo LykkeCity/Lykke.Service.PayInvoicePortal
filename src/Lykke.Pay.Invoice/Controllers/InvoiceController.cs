@@ -31,7 +31,7 @@ namespace Lykke.Pay.Invoice.Controllers
         [Route("invoice/{InvoiceId}")]
         public async Task<IActionResult> Index(string invoiceId)
         {
-            var respInv = await _invoicesservice.ApiInvoicesByInvoiceIdGetWithHttpMessagesAsync(invoiceId, string.Empty);
+            var respInv = await _invoicesservice.GetInvoiceByIdWithHttpMessagesAsync(invoiceId, string.Empty);
             var inv = respInv.Body;
 
             if (inv == null)
@@ -120,7 +120,7 @@ namespace Lykke.Pay.Invoice.Controllers
 
                     inv.WalletAddress = orderResp.address;
                     inv.StartDate = DateTime.Now.RepoDateStr();
-                    await _invoicesservice.ApiInvoicesPostWithHttpMessagesAsync(inv.CreateInvoiceEntity(MerchantId));
+                    await _invoicesservice.SaveInvoiceWithHttpMessagesAsync(inv.CreateInvoiceEntity(MerchantId));
 
                     model.Amount = RoundDouble((double)orderResp.amount);
                     model.QRCode =
@@ -159,7 +159,7 @@ namespace Lykke.Pay.Invoice.Controllers
             {
                 return Json(new { status = InvoiceStatus.Removed.ToString() });
             }
-            var resp = await _invoicesservice.ApiInvoicesAddressByAddressGetWithHttpMessagesAsync(address);
+            var resp = await _invoicesservice.GetInvoiceByAddressWithHttpMessagesAsync(address);
             if (resp.Body == null)
             {
                 return Json(new { status = InvoiceStatus.Removed.ToString() });
@@ -196,7 +196,7 @@ namespace Lykke.Pay.Invoice.Controllers
             {
                 return NotFound();
             }
-            var respInv = await _invoicesservice.ApiInvoicesByInvoiceIdGetWithHttpMessagesAsync(invoiceId, string.Empty);
+            var respInv = await _invoicesservice.GetInvoiceByIdWithHttpMessagesAsync(invoiceId, string.Empty);
             var inv = respInv.Body;
             if (inv == null || !InvoiceStatus.Unpaid.ToString().Equals(inv.Status, StringComparison.InvariantCultureIgnoreCase))
             {
@@ -272,7 +272,7 @@ namespace Lykke.Pay.Invoice.Controllers
             if (paimentRequest == MerchantPayRequestStatus.Completed || paimentRequest == MerchantPayRequestStatus.Failed)
             {
                 inv.Status = ((string)orderResp.transactionStatus).ParsePayEnum<InvoiceStatus>().ToString();
-                await _invoicesservice.ApiInvoicesPostWithHttpMessagesAsync(inv.CreateInvoiceEntity(MerchantId));
+                await _invoicesservice.SaveInvoiceWithHttpMessagesAsync(inv.CreateInvoiceEntity(MerchantId));
 
             }
 
@@ -296,7 +296,7 @@ namespace Lykke.Pay.Invoice.Controllers
             {
                 return NotFound();
             }
-            var respInv = await _invoicesservice.ApiInvoicesByInvoiceIdGetWithHttpMessagesAsync(invoiceId, string.Empty);
+            var respInv = await _invoicesservice.GetInvoiceByIdWithHttpMessagesAsync(invoiceId, string.Empty);
             var inv = respInv.Body;
             if (inv == null)
             {
@@ -308,7 +308,7 @@ namespace Lykke.Pay.Invoice.Controllers
                 return NotFound();
             }
             inv.Status = newStatus.ToString();
-            await _invoicesservice.ApiInvoicesPostWithHttpMessagesAsync(inv.CreateInvoiceEntity(inv.MerchantId));
+            await _invoicesservice.SaveInvoiceWithHttpMessagesAsync(inv.CreateInvoiceEntity(inv.MerchantId));
             return Ok();
         }
 

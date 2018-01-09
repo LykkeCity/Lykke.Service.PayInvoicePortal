@@ -95,7 +95,7 @@ namespace Lykke.Pay.Invoice.Controllers
         {
            
             var model = new InvoiceDetailModel();
-            var result = await _invoiceService.ApiInvoicesByInvoiceIdGetWithHttpMessagesAsync(invoiceId, MerchantId);
+            var result = await _invoiceService.GetInvoiceByIdWithHttpMessagesAsync(invoiceId, MerchantId);
             model.Data.BindEntity(result.Body);
 
             model.InvoiceUrl = $"{SiteUrl}/invoice/{invoiceId}";
@@ -120,7 +120,7 @@ namespace Lykke.Pay.Invoice.Controllers
                 return Redirect("/home/profile");
             }
 
-            await _invoiceService.ApiInvoicesPostWithHttpMessagesAsync(model.Data.CreateEntity(OrderLiveTime, MerchantId));
+            await _invoiceService.SaveInvoiceWithHttpMessagesAsync(model.Data.CreateEntity(OrderLiveTime, MerchantId));
             if (model.Data.Status != InvoiceStatus.Paid.ToString())
             {
                 model.InvoiceUrl = $"{SiteUrl}/invoice/{ model.Data.InvoiceId}";
@@ -147,7 +147,7 @@ namespace Lykke.Pay.Invoice.Controllers
                 return View();
             }
             var item = request.CreateEntity(OrderLiveTime, MerchantId);
-            var result = await _invoiceService.ApiInvoicesPostWithHttpMessagesAsync(item);
+            var result = await _invoiceService.SaveInvoiceWithHttpMessagesAsync(item);
             if (result.Body != true)
             {
                 return BadRequest("Cannot create invoce!");
@@ -204,7 +204,7 @@ namespace Lykke.Pay.Invoice.Controllers
 
             return Json($"{string.Format("{0:0.00}", assertBalance.Value)}  {assert}");
             }
-            catch (Exception e)
+            catch
             {
                 return Json($"0.00 {assert}");
             }
@@ -215,7 +215,7 @@ namespace Lykke.Pay.Invoice.Controllers
         public async Task<JsonResult> Invoices(GridModel model)
         {
             var respmodel = new GridModel();
-            var result = await _invoiceService.ApiInvoicesGetWithHttpMessagesAsync(MerchantId);
+            var result = await _invoiceService.GetInvoicesWithHttpMessagesAsync(MerchantId);
             var orderedlist = result.Body.OrderByDescending(i => i.StartDate).ToList();
             if (model.Filter.Status != "All")
             {
@@ -309,7 +309,7 @@ namespace Lykke.Pay.Invoice.Controllers
 
         protected async Task DeleteInvoiceFromBase(string invoiceId)
         {
-            await _invoiceService.ApiInvoicesByInvoiceIdDeleteGetWithHttpMessagesAsync(invoiceId, MerchantId);
+            await _invoiceService.DeleteInvoiceWithHttpMessagesAsync(invoiceId, MerchantId);
         }
     }
 }
