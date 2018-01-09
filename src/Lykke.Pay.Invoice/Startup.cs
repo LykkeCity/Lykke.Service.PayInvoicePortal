@@ -54,7 +54,7 @@ namespace Lykke.Pay.Invoice
                 .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme, o =>
 
                 {
-                    o.LoginPath = new PathString("/Home/Welcome");
+                    o.LoginPath = new PathString("/Welcome");
                     o.ExpireTimeSpan = TimeSpan.FromMinutes(Settings.PayInvoice.UserLoginTime);
                 });
 

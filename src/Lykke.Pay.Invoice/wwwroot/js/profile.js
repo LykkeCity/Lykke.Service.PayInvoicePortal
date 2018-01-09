@@ -157,7 +157,7 @@ function renderStatus(model, loadmore) {
         var keyNames = Object.keys(invoices[i]);
         for (var j = 0; j < keyNames.length; j++) {
             var value = invoices[i][keyNames[j]];
-            if (!value)
+            if (value == null)
                 value = "";
             if (keyNames[j] == "status" && value == "")
                 value = "Draft";
@@ -253,6 +253,7 @@ $(document).ready(function (e) {
             showItem(generateditem);
             $('body').addClass('body--menu_opened');
             $('.create.unpaid').addClass('create--open');
+            generateditem = null;
         }
     }
 
@@ -274,6 +275,7 @@ $(document).ready(function (e) {
     });
 
     $('#draftbtn').on('click', function (e) {
+        $('#Amount').attr("min", "0.00");
         $('#Status').val("Draft");
         if ($('#Currency').val() == "")
             $('#Currency').val("CHF");
@@ -319,6 +321,7 @@ $(document).ready(function (e) {
         filter.period = 0;
         updateGrid();
     });
+
     $('.profile_search__button_close').
         on('click', function () {
             $('#searchvalue').val("");
@@ -351,10 +354,26 @@ $(document).ready(function (e) {
     $('.btn_create').on('click', function (e) {
         e.stopPropagation();
         validate(true);
-        $("#StartDate").datepicker().datepicker("setDate", new Date());;
+        $("#StartDate").datepicker({
+            beforeShow: function(input, inst) {
+                setTimeout(function() {
+                        var left = parseInt(inst.dpDiv.css('left'));
+                        inst.dpDiv.css({
+                            left: left - 30
+                        });
+                    },
+                    0);
+            }
+        }).datepicker("setDate", new Date());
         $('body').addClass('body--menu_opened');
         $('.create.draft').addClass('create--open');
     });
+
+    $('.icon--cal').on('click',
+        function(e) {
+            e.stopPropagation();
+            $("#StartDate").datepicker('show');
+        });
 
     $('body').on('click', function (e) {
         if (e.target.className === "menu_overlay") {

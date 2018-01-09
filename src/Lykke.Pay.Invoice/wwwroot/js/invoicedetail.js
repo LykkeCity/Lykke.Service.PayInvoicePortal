@@ -5,6 +5,7 @@ $('.invoice_paid__back').on('click', function (e) {
     window.location.href = "/home/profile";
 });
 $('#draftbtn').on('click', function (e) {
+    $('#Data_Amount').attr("min", "0.00");
     $('#Data_Status').val("Draft");
 });
 $('.icon.icon--copy').on('click', function (e) {

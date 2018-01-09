@@ -57,14 +57,14 @@
                                 <div class="invoice_paid__cell">
                                     <div class="invoice_paid__name">Amount</div>
                                     @if (string.IsNullOrEmpty(Model.Data.Status) || Model.Data.Status == InvoiceStatus.Draft.ToString())
-                                    {
-                                        @*<input type="text" id="Amount" value="@Model.Data.Amount" required placeholder="" class="form-control">*@
-                                        <input type="text" asp-for="Data.Amount" required placeholder="" class="form-control noborder">
-                                    }
-                                    else
-                                    {
-                                        <div class="invoice_paid__desc">@Model.Data.Amount</div>
-                                    }
+    {
+                                @*<input type="text" id="Amount" value="@Model.Data.Amount" required placeholder="" class="form-control">*@
+                                <input type="number" asp-for="Data.Amount" required placeholder="0.00" min="0.01" step="0.01" class="form-control noborder">
+}
+else
+{
+                                <div class="invoice_paid__desc">@Model.Data.Amount</div>
+}
                                 </div>
                             </div>
                             <div class="invoice_paid__row">
