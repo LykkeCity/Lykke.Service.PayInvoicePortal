@@ -270,7 +270,8 @@ namespace Lykke.Pay.Invoice.Controllers
                         break;
                 }
             }
-            var period = DateTime.Now;
+            var now = DateTime.Now;
+            var period = now;
             switch (model.Filter.Period)
             {
                 
@@ -284,7 +285,7 @@ namespace Lykke.Pay.Invoice.Controllers
                     period = period.AddDays(-90);
                     break;
             }
-            if (period != DateTime.Now)
+            if (period != now)
                 orderedlist = orderedlist.Where(i => i.StartDate.GetRepoDateTime() <= period).ToList();
             respmodel.PageCount = orderedlist.Count / 20;
             respmodel.Data = orderedlist.ToPagedList(model.Page, 20).ToList();
