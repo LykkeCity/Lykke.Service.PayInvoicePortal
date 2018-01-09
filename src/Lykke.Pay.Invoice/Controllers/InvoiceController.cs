@@ -50,6 +50,8 @@ namespace Lykke.Pay.Invoice.Controllers
                 ? OrderLiveTime.TotalSeconds
                 : (invoiceSummary.TransactionTime.FromUnixFormat() - DateTime.Now).TotalSeconds);
 
+            double amoint = Math.Round(invoiceSummary.OrderAmount, 8);
+
             var model = new InvoiceViewModel
             {
                 InvoiceId = invoiceSummary.InvoiceId,
@@ -57,10 +59,10 @@ namespace Lykke.Pay.Invoice.Controllers
                 Currency = invoiceSummary.InvoiceCurrency,
                 OrigAmount = invoiceSummary.InvoiceAmount,
                 ClientName = invoiceSummary.ClientName,
-                Amount = Math.Round(invoiceSummary.OrderAmount, 8),
+                Amount = amoint,
                 Status = invoiceSummary.Status,
                 RefreshSeconds = refreshTime,
-                QRCode = $@"https://chart.googleapis.com/chart?chs=220x220&chld=L|2&cht=qr&chl=bitcoin:{invoiceSummary.WalletAddress}?amount={invoiceSummary.OrderAmount}%26label=invoice%20#{invoiceSummary.InvoiceNumber}%26message={invoiceSummary.OrderId}",
+                QRCode = $@"https://chart.googleapis.com/chart?chs=220x220&chld=L|2&cht=qr&chl=bitcoin:{invoiceSummary.WalletAddress}?amount={amoint}%26label=invoice%20#{invoiceSummary.InvoiceNumber}%26message={invoiceSummary.OrderId}",
                 AutoUpdate = invoiceSummary.Status == InvoiceStatus.InProgress.ToString() || invoiceSummary.Status == InvoiceStatus.Unpaid.ToString()
             };
 
