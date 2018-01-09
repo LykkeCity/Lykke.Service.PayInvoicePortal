@@ -85,10 +85,10 @@ namespace Lykke.Pay.Invoice.Controllers
                         inv.Amount,
                         ExchangeCurrency = "BTC",
                         OrderId = inv.InvoiceNumber,
-                        Markup = new
+                        Markup = new //TODO Needs to set Merchant Markup here
                         {
-                            Percent = 1,
-                            Pips = 10
+                            Percent = 0,
+                            Pips = 0
                         },
                         SuccessUrl = $"{SiteUrl}/invoice/{invoiceId}/success",
                         ErrorUrl = $"{SiteUrl}/invoice/{invoiceId}/error",
