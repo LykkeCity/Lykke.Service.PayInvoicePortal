@@ -1,8 +1,5 @@
-﻿using Lykke.Pay.Service.Invoces.Client.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using Lykke.Pay.Service.Invoces.Client.Models.Invoice;
 
 namespace Lykke.Pay.Invoice.Models
 {
@@ -18,7 +15,7 @@ namespace Lykke.Pay.Invoice.Models
         public int Page { get; set; }
         public int PageCount { get; set; }
         
-        public IList<IInvoiceEntity> Data { get; set; }
+        public IList<InvoiceModel> Data { get; set; }
     }
 
     public class GridFilter

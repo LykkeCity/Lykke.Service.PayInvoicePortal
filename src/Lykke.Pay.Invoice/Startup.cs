@@ -1,13 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using AzureStorage.Tables;
 using Common.Log;
 using Lykke.AzureQueueIntegration;
-using Lykke.Common.ApiLibrary.Middleware;
 using Lykke.Logs;
 using Lykke.Pay.Invoice.AppCode;
+using Lykke.Pay.Invoice.Clients.MerchantAuth;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
@@ -19,7 +16,6 @@ using Microsoft.Extensions.Logging;
 using Lykke.Pay.Service.Invoces.Client;
 using Lykke.SettingsReader;
 using Lykke.SlackNotification.AzureQueue;
-using Microsoft.Rest;
 
 namespace Lykke.Pay.Invoice
 {
@@ -58,7 +54,7 @@ namespace Lykke.Pay.Invoice
                 .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme, o =>
 
                 {
-                    o.LoginPath = new PathString("/Home/Welcome");
+                    o.LoginPath = new PathString("/Welcome");
                     o.ExpireTimeSpan = TimeSpan.FromMinutes(Settings.PayInvoice.UserLoginTime);
                 });
 
@@ -67,7 +63,8 @@ namespace Lykke.Pay.Invoice
             {
                 options.DefaultPolicy = new AuthorizationPolicyBuilder(CookieAuthenticationDefaults.AuthenticationScheme).RequireAuthenticatedUser().Build();
             });
-            services.AddSingleton<IInvoicesservice>(new Invoicesservice(new Uri(Settings.PayInvoice.InvoicesService)));
+            services.AddSingleton<IPayInvoicesServiceClient>(new PayInvoicesServiceClient(Settings.PayInvoicesServiceClient));
+            services.AddSingleton<IMerchantAuthServiceClient>(new MerchantAuthServiceClient(Settings.PayInvoice.MerchantAuthService));
 
             Log = CreateLogWithSlack(services, appSettings);
             services.AddSingleton(Log);
@@ -86,7 +83,7 @@ namespace Lykke.Pay.Invoice
             }
             else
             {
-                app.UseExceptionHandler("/Home/Error");
+                app.UseExceptionHandler("/Error");
             }
             app.UseStatusCodePagesWithReExecute("/Error/{0}");
             app.UseStaticFiles();

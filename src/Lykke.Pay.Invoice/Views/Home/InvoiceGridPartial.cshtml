@@ -84,29 +84,29 @@
 </div>
 
 <div id="rowtemplate" style="display: none">
-    <div class="invoices_item" invoice="{{InvoiceId}}">
+    <div class="invoices_item" invoice="{{invoiceId}}">
         <div class="invoices_item__cell invoices_item__cell--number">
-            <a href="#" class="invoices_item__text">#{{InvoiceNumber}}</a>
-            <div class="invoices_item__text invoices_item__text--light">{{StartDate}}</div>
+            <a href="#" class="invoices_item__text">#{{invoiceNumber}}</a>
+            <div class="invoices_item__text invoices_item__text--light">{{startDate}}</div>
         </div>
         <div class="invoices_item__cell invoices_item__cell--client">
-            <div class="invoices_item__text">{{ClientName}}</div>
-            <div class="invoices_item__text invoices_item__text--light">{{ClientEmail}}</div>
+            <div class="invoices_item__text">{{clientName}}</div>
+            <div class="invoices_item__text invoices_item__text--light">{{clientEmail}}</div>
         </div>
         <div class="invoices_item__cell  invoices_item__cell--amount">
-            <div class="invoices_item__text invoices_item__text--small">{{Amount}}</div>
+            <div class="invoices_item__text invoices_item__text--small">{{amount}}</div>
         </div>
         <div class="invoices_item__cell invoices_item__cell--currency">
-            <div class="invoices_item__text invoices_item__text--small">{{Currency}}</div>
+            <div class="invoices_item__text invoices_item__text--small">{{currency}}</div>
         </div>
         <div class="invoices_item__cell invoices_item__cell--status">
-            <div class="invoices_item__status invoices_item__status--{{CssClass}}"> {{Status}} </div>
+            <div class="invoices_item__status invoices_item__status--{{cssClass}}"> {{status}} </div>
         </div>
         <div class="invoices_item__cell invoices_item__cell--date">
-            <div class="invoices_item__text invoices_item__text--small">{{DueDate}}</div>
+            <div class="invoices_item__text invoices_item__text--small">{{dueDate}}</div>
         </div>
         <div class="invoices_item__cell invoices_item__cell--delete">
-            <button class="btn btn--icon delete {{DisCssClass}} " type="button" {{disoption}}>
+            <button class="btn btn--icon delete {{disCssClass}} " type="button" {{disoption}}>
                 <i class="icon icon--trash"></i>
             </button>
         </div>

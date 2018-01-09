@@ -11,11 +11,8 @@ namespace Lykke.Pay.Invoice.Controllers
 {
     public class BaseController : Controller
     {
-
-        protected readonly string LykkePayUrl;
-        protected readonly string MerchantAuthService;
         protected readonly string SiteUrl;
-        protected readonly string HomeUrl = "~/Home/Profile";
+        protected readonly string MerchantAuthService;
         protected readonly TimeSpan InvoiceLiveTime;
         protected readonly TimeSpan OrderLiveTime;
 
@@ -38,11 +35,10 @@ namespace Lykke.Pay.Invoice.Controllers
 
         public BaseController(AppSettings settings)
         {
-            LykkePayUrl = settings.PayInvoice.LykkePayUrl;
+            SiteUrl = settings.PayInvoice.SiteUrl;
             MerchantAuthService = settings.PayInvoice.MerchantAuthService;
             InvoiceLiveTime = settings.PayInvoice.InvoiceLiveTime;
             OrderLiveTime = settings.PayInvoice.OrderLiveTime;
-            SiteUrl = settings.PayInvoice.SiteUrl;
         }
     }
 }

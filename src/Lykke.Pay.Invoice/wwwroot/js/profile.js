@@ -48,7 +48,7 @@ function editItem(invoiceId) {
         if (!value)
             value = "";
         var item = document.getElementById(keyNames[j]);
-        if (keyNames[j] === "StartDate" || keyNames[j] === "DueDate")
+        if (keyNames[j] === "startDate" || keyNames[j] === "dueDate")
             value = value.substr(0, 10);
         if (item)
             item.value = value;
@@ -159,38 +159,38 @@ function renderStatus(model, loadmore) {
             var value = invoices[i][keyNames[j]];
             if (value == null)
                 value = "";
-            if (keyNames[j] == "Status" && value == "")
+            if (keyNames[j] == "status" && value == "")
                 value = "Draft";
-            if (keyNames[j] === "StartDate" || keyNames[j] === "DueDate")
+            if (keyNames[j] === "startDate" || keyNames[j] === "dueDate")
                 value = value.substr(0, 10);
             tempstr = tempstr.replace(new RegExp("{{" + keyNames[j] + "}}", 'g'), value);
         }
-        switch (invoices[i].Status) {
+        switch (invoices[i].status) {
             case "Paid":
-                tempstr = tempstr.replace("{{CssClass}}", "paid");
-                tempstr = tempstr.replace("{{DisCssClass}}", "btn--disabled");
+                tempstr = tempstr.replace("{{cssClass}}", "paid");
+                tempstr = tempstr.replace("{{disCssClass}}", "btn--disabled");
                 tempstr = tempstr.replace("{{disoption}}", "disabled");
                 break;
             case "Unpaid":
-                tempstr = tempstr.replace("{{CssClass}}", "unpaid");
-                tempstr = tempstr.replace("{{DisCssClass}}", "");
+                tempstr = tempstr.replace("{{cssClass}}", "unpaid");
+                tempstr = tempstr.replace("{{disCssClass}}", "");
                 tempstr = tempstr.replace("{{disoption}}", "");
                 break;
             case "Draft":
                 tempstr = tempstr.replace("{{disoption}}", "");
-                tempstr = tempstr.replace("{{DisCssClass}}", "");
-                tempstr = tempstr.replace("{{CssClass}}", "draft");
+                tempstr = tempstr.replace("{{disCssClass}}", "");
+                tempstr = tempstr.replace("{{cssClass}}", "draft");
                 break;
             case "Removed":
-                tempstr = tempstr.replace("{{CssClass}}", "draft");
-                tempstr = tempstr.replace("{{DisCssClass}}", "btn--disabled");
+                tempstr = tempstr.replace("{{cssClass}}", "draft");
+                tempstr = tempstr.replace("{{disCssClass}}", "btn--disabled");
                 tempstr = tempstr.replace("{{disoption}}", "disabled");
             case "LatePaid":
             case "OverPaid":
             case "UnderPaid":
             default:
-                tempstr = tempstr.replace("{{CssClass}}", "red");
-                tempstr = tempstr.replace("{{DisCssClass}}", "btn--disabled");
+                tempstr = tempstr.replace("{{cssClass}}", "red");
+                tempstr = tempstr.replace("{{disCssClass}}", "btn--disabled");
                 tempstr = tempstr.replace("{{disoption}}", "disabled");
                 break;
         }
@@ -223,7 +223,7 @@ function showItem(invoice) {
             value = "";
         var item = document.getElementById("Unpaid" + keyNames[j]);
         if (keyNames[j] === "Amount") {
-            value = currentItem[keyNames[j]] + " " + currentItem["Currency"];
+            value = currentItem[keyNames[j]] + " " + currentItem["currency"];
         }
         if (keyNames[j] === "StartDate" || keyNames[j] === "DueDate")
             value = value.substr(0, 10);
@@ -275,7 +275,6 @@ $(document).ready(function (e) {
     });
 
     $('#draftbtn').on('click', function (e) {
-
         $('#Amount').attr("min", "0.00");
         $('#Status').val("Draft");
         if ($('#Currency').val() == "")
@@ -322,6 +321,7 @@ $(document).ready(function (e) {
         filter.period = 0;
         updateGrid();
     });
+
     $('.profile_search__button_close').
         on('click', function () {
             $('#searchvalue').val("");
@@ -329,6 +329,7 @@ $(document).ready(function (e) {
             filter.period = 0;
             updateGrid();
         });
+
     $('#searchvalue').on('input', function (e) {
         filter.searchValue = $('#searchvalue').val();
         updateGrid();
@@ -354,23 +355,25 @@ $(document).ready(function (e) {
         e.stopPropagation();
         validate(true);
         $("#StartDate").datepicker({
-            beforeShow: function (input, inst) {
-                setTimeout(function () {
-                    var left = parseInt(inst.dpDiv.css('left'));
-                    inst.dpDiv.css({
-                        left: left - 30
-                    });
-                }, 0);
+            beforeShow: function(input, inst) {
+                setTimeout(function() {
+                        var left = parseInt(inst.dpDiv.css('left'));
+                        inst.dpDiv.css({
+                            left: left - 30
+                        });
+                    },
+                    0);
             }
-        }).datepicker("setDate", new Date());;
+        }).datepicker("setDate", new Date());
         $('body').addClass('body--menu_opened');
         $('.create.draft').addClass('create--open');
     });
 
-    $('.icon--cal').on('click', function (e) {
-        e.stopPropagation();
-        $("#StartDate").datepicker('show');
-    });
+    $('.icon--cal').on('click',
+        function(e) {
+            e.stopPropagation();
+            $("#StartDate").datepicker('show');
+        });
 
     $('body').on('click', function (e) {
         if (e.target.className === "menu_overlay") {
