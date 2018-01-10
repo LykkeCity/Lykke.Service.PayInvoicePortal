@@ -411,6 +411,7 @@ $(document).ready(function (e) {
             $('.create.unpaid').removeClass('create--open');
         }
         else if (e.target.className === "ui-icon ui-icon-circle-triangle-w" ||
+            e.target.className === "ui-icon ui-icon-circle-triangle-e" ||
             e.target.className === "ui-datepicker-prev ui-corner-all ui-state-hover ui-datepicker-prev-hover" ||
             e.target.className === "ui-datepicker-next ui-corner-all ui-state-hover ui-datepicker-next-hover") {
             $('body').addClass('body--menu_opened');
