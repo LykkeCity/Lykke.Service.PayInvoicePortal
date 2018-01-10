@@ -20,6 +20,133 @@
 /*@import "guide";*/
 
 /*custom section*/
+.invoice_files {
+    position: relative
+}
+
+    .invoice_files:after {
+        position: absolute;
+        content: '';
+        left: 0;
+        bottom: 0;
+        width: 100%;
+        height: 1px;
+        background: #EBEDEF;
+    }
+
+.invoice_files__top {
+    position: relative;
+}
+
+    .invoice_files__top:after {
+        position: absolute;
+        content: '';
+        left: 0;
+        bottom: 0;
+        width: 100%;
+        height: 1px;
+        background: #EBEDEF;
+    }
+
+.invoice_files__title {
+    font-family: "Proxima Nova";
+    font-weight: 600;
+    font-size: 28px;
+    line-height: 40px;
+    letter-spacing: 0px;
+    color: #000000;
+    padding-bottom: 20px;
+}
+
+.invoice_files__add {
+    background: #0388EF;
+    position: absolute;
+    top: 0;
+    right: 0px;
+    padding: 6px 28px;
+}
+
+.invoice_files__row:before, .invoice_files__row:after {
+    content: " ";
+    display: table;
+}
+
+.invoice_files__row:after {
+    clear: both;
+}
+
+.invoice_files__row {
+    position: relative;
+    padding-top: 20px;
+    padding-bottom: 20px;
+    padding-right: 30px;
+}
+
+.invoice_files__doc {
+    float: left;
+    font-family: "Proxima Nova";
+    font-weight: 600;
+    font-size: 16px;
+    line-height: 30px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    padding: 0 12px;
+    color: #fff;
+    background: #FF3E2E;
+    border-radius: 3px;
+    margin-right: 10px;
+}
+
+.invoice_files__block {
+    float: left;
+    overflow: hidden;
+    width: 50%;
+    margin-right: 10px;
+}
+
+.invoice_files__name {
+    word-break: normal;
+    word-wrap: normal;
+    white-space: nowrap;
+    font-family: "Proxima Nova";
+    font-weight: 600;
+    font-size: 18px;
+    line-height: 30px;
+    letter-spacing: 0px;
+    color: #000000;
+    margin-right: 10px;
+}
+
+.invoice_files__size {
+    width: 20%;
+    float: left;
+    font-family: "Proxima Nova";
+    font-weight: 400;
+    font-size: 16px;
+    line-height: 30px;
+    letter-spacing: 0px;
+    color: #000000;
+}
+
+.invoice_files__button {
+    border: none;
+    background: transparent;
+    position: absolute;
+    top: 25px;
+    right: 0px;
+}
+
+.invoice_files .icon--download {
+    color: #B2B8BF;
+}
+
+.invoice_files__top input {
+    opacity: 0;
+    position: absolute;
+    width: 130px;
+    top: 6px;
+    left: 332px;
+}
 .showmore {
     cursor: pointer
 }

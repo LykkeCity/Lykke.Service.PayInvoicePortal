@@ -264,6 +264,35 @@ $(document).ready(function (e) {
         updateGrid();
     });
 
+    $("#upload").change(function () {
+        var fileUpload = $("#upload").get(0);
+        var files = fileUpload.files;
+        //debugger;
+        var divfiles = document.createElement("div");
+        divfiles.className = "invoice_files__row";
+        var filesdiv = $(".invoice_files")[0];
+        filesdiv.appendChild(divfiles);
+
+        var filetype = document.createElement("div");
+        filetype.className = "invoice_files__doc";
+        filetype.innerText = files[0].name.split('.').pop();
+        divfiles.appendChild(filetype);
+
+        var nameblock = document.createElement("div");
+        nameblock.className = "invoice_files__block";
+        divfiles.appendChild(nameblock);
+
+        var namefile = document.createElement("div");
+        namefile.className = "invoice_files__name";
+        namefile.innerText = files[0].name;
+        nameblock.appendChild(namefile);
+
+        var filesize = document.createElement("div");
+        filesize.className = "invoice_files__size";
+        filesize.innerText = (files[0].size / 1024) + " KB";
+        divfiles.appendChild(filesize);
+    });
+
     $('.icon.icon--copy').on('click', function (e) {
         e.stopPropagation();
         var $temp = $("<input>");
