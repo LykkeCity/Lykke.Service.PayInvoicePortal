@@ -8,15 +8,7 @@ $('#draftbtn').on('click', function (e) {
     $('#Data_Amount').attr("min", "0.00");
     $('#Data_Status').val("Draft");
 });
-$('.icon.icon--copy').on('click', function (e) {
-    e.stopPropagation();
-    var $temp = $("<input>");
-    $("body").append($temp);
-    $temp.val($('.invoice_paid__link').text()).select();
-    document.execCommand("copy");
-    $temp.remove();
-    setTooltip('Copied!');
-});
+
 $('#deletebtn').on('click', function (e) {
     $.confirm({
         title: 'Are you sure?',
@@ -50,15 +42,18 @@ $(document).ready(function(e) {
     var duedate = $("#Data_DueDate").val();
     var startdate = $('#Data_StartDate').text();
     $("#Data_DueDate").datepicker('option', 'minDate', new Date(startdate)).datepicker("setDate", new Date(duedate));
-    $('.create__item-copy').tooltip({
-        show: {
-            effect: "slideDown",
-            delay: 250
+    initClipboard();
+});
+function initClipboard() {
+    var clipboard = new Clipboard('.create__item-copy', {
+        text: function (trigger) {
+            debugger;
+            return trigger.previousElementSibling.innerHTML;
         }
     });
-});
-function setTooltip(message) {
-    $('.create__item-copy')
-        .attr('title', message);
-    $('.create__item-copy').tooltip("open");
+
+    clipboard.on('success', function (e) {
+        e.trigger.innerHTML = '<i class="icon icon--check_thin"></i> Copied';
+        e.clearSelection();
+    });
 }

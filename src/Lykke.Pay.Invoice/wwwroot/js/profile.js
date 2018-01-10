@@ -132,9 +132,6 @@ function renderGridHeader(model) {
     underpaidlink.childNodes[1].innerText = model.header.underpaidCount;
     latepaidlink.childNodes[1].innerText = model.header.latePaidCount;
     overpaidlink.childNodes[1].innerText = model.header.overpaidCount;
-
-    var showmore = document.getElementsByClassName("showmore")[0];
-    showmore.style.display = (model.pageCount !== 0 && model.pageCount > pagenumber) ? "" : "none";
 }
 
 function renderStatus(model, loadmore) {
@@ -144,10 +141,11 @@ function renderStatus(model, loadmore) {
     var allstring = "";
     var template = document.getElementById("rowtemplate").innerHTML;
     var tabstatus = document.getElementById(model.filter.status.toLowerCase());
-    if (tabstatus.childNodes.length === 0) {
+    if (tabstatus.childNodes.length === 2) {
         tabdiv = document.createElement("div");
         tabdiv.className = "invoices__table";
         tabstatus.appendChild(tabdiv);
+        tabstatus.childNodes[0].appendChild(tabdiv);
     } else {
         tabdiv = tabstatus.getElementsByClassName("invoices__table")[0];
     }
@@ -212,6 +210,8 @@ function renderStatus(model, loadmore) {
         var invoiceid = $(element).attr("invoice");
         window.location.href = "/home/invoicedetail/?InvoiceId=" + invoiceid;
     });
+    var showmore = document.getElementsByClassName("showmore " + model.filter.status)[0];
+    showmore.style.display = (model.pageCount !== 0 && model.pageCount > pagenumber) ? "" : "none";
 }
 
 function showItem(invoice) {
@@ -262,6 +262,35 @@ $(document).ready(function (e) {
         if ($('#Currency').val() == "")
             $('#Currency').val("CHF");
         updateGrid();
+    });
+
+    $("#upload").change(function () {
+        var fileUpload = $("#upload").get(0);
+        var files = fileUpload.files;
+
+        var divfiles = document.createElement("div");
+        divfiles.className = "invoice_files__row";
+        var filesdiv = $(".invoice_files")[0];
+        filesdiv.appendChild(divfiles);
+
+        var filetype = document.createElement("div");
+        filetype.className = "invoice_files__doc";
+        filetype.innerText = files[0].name.split('.').pop();
+        divfiles.appendChild(filetype);
+
+        var nameblock = document.createElement("div");
+        nameblock.className = "invoice_files__block";
+        divfiles.appendChild(nameblock);
+
+        var namefile = document.createElement("div");
+        namefile.className = "invoice_files__name";
+        namefile.innerText = files[0].name;
+        nameblock.appendChild(namefile);
+
+        var filesize = document.createElement("div");
+        filesize.className = "invoice_files__size";
+        filesize.innerText = (files[0].size / 1024) + " KB";
+        divfiles.appendChild(filesize);
     });
 
     $('.icon.icon--copy').on('click', function (e) {
@@ -382,6 +411,7 @@ $(document).ready(function (e) {
             $('.create.unpaid').removeClass('create--open');
         }
         else if (e.target.className === "ui-icon ui-icon-circle-triangle-w" ||
+            e.target.className === "ui-icon ui-icon-circle-triangle-e" ||
             e.target.className === "ui-datepicker-prev ui-corner-all ui-state-hover ui-datepicker-prev-hover" ||
             e.target.className === "ui-datepicker-next ui-corner-all ui-state-hover ui-datepicker-next-hover") {
             $('body').addClass('body--menu_opened');

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Globalization;
 using System.Security.Claims;
 using System.Threading.Tasks;
@@ -17,6 +18,8 @@ using Lykke.Pay.Invoice.Clients.MerchantAuth;
 using Lykke.Pay.Invoice.Clients.MerchantAuth.Models;
 using PagedList;
 using Lykke.Pay.Service.Invoces.Client.Models.Invoice;
+using Lykke.Pay.Service.Invoces.Client.Models;
+using Microsoft.AspNetCore.Http;
 using NewInvoiceModel = Lykke.Pay.Invoice.Models.NewInvoiceModel;
 
 namespace Lykke.Pay.Invoice.Controllers
@@ -47,7 +50,7 @@ namespace Lykke.Pay.Invoice.Controllers
         }
 
         [HttpPost("Profile")]
-        public async Task<IActionResult> Profile(NewInvoiceModel model)
+        public async Task<IActionResult> Profile(NewInvoiceModel model, IFormFile upload)
         {
             InvoiceModel invoice;
 
@@ -90,6 +93,18 @@ namespace Lykke.Pay.Invoice.Controllers
                 }
                 else
                     throw new InvalidOperationException("Unknown action");
+
+                if (upload != null)
+                {
+                    long size = upload.Length;
+                    byte[] buffer = new byte[16 * 1024];
+                    using (var ms = new MemoryStream())
+                    {
+                        await upload.CopyToAsync(ms);
+                        buffer = ms.ToArray();
+                    }
+                    await _invoicesServiceClient.UploadFileAsync(invoice.InvoiceId, buffer, upload.FileName, upload.ContentType);
+                }
             }
             catch (Exception exception)
             {
@@ -301,8 +316,8 @@ namespace Lykke.Pay.Invoice.Controllers
             }
             if (period != now)
                 orderedlist = orderedlist.Where(i => i.StartDate.GetRepoDateTime() <= period).ToList();
-            respmodel.PageCount = orderedlist.Count / 20;
-            respmodel.Data = orderedlist.ToPagedList(model.Page, 20).ToList();
+            respmodel.PageCount = Math.Ceiling((decimal)orderedlist.Count / 10);
+            respmodel.Data = orderedlist.ToPagedList(model.Page, 10).ToList();
             return Json(respmodel);
         }
 
