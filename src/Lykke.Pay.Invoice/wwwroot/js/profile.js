@@ -267,7 +267,7 @@ $(document).ready(function (e) {
     $("#upload").change(function () {
         var fileUpload = $("#upload").get(0);
         var files = fileUpload.files;
-        //debugger;
+
         var divfiles = document.createElement("div");
         divfiles.className = "invoice_files__row";
         var filesdiv = $(".invoice_files")[0];
