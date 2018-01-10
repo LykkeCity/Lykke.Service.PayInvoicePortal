@@ -132,9 +132,6 @@ function renderGridHeader(model) {
     underpaidlink.childNodes[1].innerText = model.header.underpaidCount;
     latepaidlink.childNodes[1].innerText = model.header.latePaidCount;
     overpaidlink.childNodes[1].innerText = model.header.overpaidCount;
-
-    var showmore = document.getElementsByClassName("showmore")[0];
-    showmore.style.display = (model.pageCount !== 0 && model.pageCount > pagenumber) ? "" : "none";
 }
 
 function renderStatus(model, loadmore) {
@@ -144,10 +141,11 @@ function renderStatus(model, loadmore) {
     var allstring = "";
     var template = document.getElementById("rowtemplate").innerHTML;
     var tabstatus = document.getElementById(model.filter.status.toLowerCase());
-    if (tabstatus.childNodes.length === 0) {
+    if (tabstatus.childNodes.length === 2) {
         tabdiv = document.createElement("div");
         tabdiv.className = "invoices__table";
         tabstatus.appendChild(tabdiv);
+        tabstatus.childNodes[0].appendChild(tabdiv);
     } else {
         tabdiv = tabstatus.getElementsByClassName("invoices__table")[0];
     }
@@ -212,6 +210,8 @@ function renderStatus(model, loadmore) {
         var invoiceid = $(element).attr("invoice");
         window.location.href = "/home/invoicedetail/?InvoiceId=" + invoiceid;
     });
+    var showmore = document.getElementsByClassName("showmore " + model.filter.status)[0];
+    showmore.style.display = (model.pageCount !== 0 && model.pageCount > pagenumber) ? "" : "none";
 }
 
 function showItem(invoice) {

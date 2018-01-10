@@ -301,8 +301,8 @@ namespace Lykke.Pay.Invoice.Controllers
             }
             if (period != now)
                 orderedlist = orderedlist.Where(i => i.StartDate.GetRepoDateTime() <= period).ToList();
-            respmodel.PageCount = orderedlist.Count / 20;
-            respmodel.Data = orderedlist.ToPagedList(model.Page, 20).ToList();
+            respmodel.PageCount = Math.Ceiling((decimal)orderedlist.Count / 10);
+            respmodel.Data = orderedlist.ToPagedList(model.Page, 10).ToList();
             return Json(respmodel);
         }
 
