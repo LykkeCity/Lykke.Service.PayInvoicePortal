@@ -223,7 +223,7 @@ function showItem(invoice) {
             value = "";
         var item = document.getElementById("Unpaid" + keyNames[j]);
         if (keyNames[j] === "Amount") {
-            value = currentItem[keyNames[j]] + " " + currentItem["currency"];
+            value = currentItem[keyNames[j]] + " " + currentItem["Currency"];
         }
         if (keyNames[j] === "StartDate" || keyNames[j] === "DueDate")
             value = value.substr(0, 10);
@@ -242,14 +242,15 @@ function setTooltip(message) {
         .attr('title', message);
     $('.create__item-copy').tooltip("open");
 }
+
 var _validFileExtensions = [".pdf", ".doc", ".docx", ".xls", ".xlsx"];
 $(document).ready(function (e) {
-
     updateGrid();
     updateBalance();
 
     if (generateditem) {
         if (generateditem.Status !== "Draft") {
+
             showItem(generateditem);
             $('body').addClass('body--menu_opened');
             $('.create.unpaid').addClass('create--open');

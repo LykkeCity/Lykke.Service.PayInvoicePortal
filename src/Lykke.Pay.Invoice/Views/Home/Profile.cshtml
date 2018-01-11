@@ -3,10 +3,18 @@
     ViewData["Title"] = "Profile";
 }
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
-
-<script>
-    var generateditem = eval(@Html.Raw(ViewBag.GeneratedItem));
-</script>
+@if (ViewBag.IsInvoiceCreated != null)
+{
+    <script>
+        window.location.href = "/";
+    </script>
+}
+else
+{
+    <script>
+        var generateditem = eval(@Html.Raw(ViewBag.GeneratedItem));
+    </script>
+}
 <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
 <link rel="stylesheet" type="text/css" href="~/css/jquery-confirm.css" />
 @using (Html.BeginForm("Profile", "Home", FormMethod.Post, new { name = "createform", id = "createform", enctype = "multipart/form-data" }))

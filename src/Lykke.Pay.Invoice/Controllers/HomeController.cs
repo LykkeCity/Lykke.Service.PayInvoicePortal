@@ -18,7 +18,6 @@ using Lykke.Pay.Invoice.Clients.MerchantAuth;
 using Lykke.Pay.Invoice.Clients.MerchantAuth.Models;
 using PagedList;
 using Lykke.Pay.Service.Invoces.Client.Models.Invoice;
-using Lykke.Pay.Service.Invoces.Client.Models;
 using Microsoft.AspNetCore.Http;
 using NewInvoiceModel = Lykke.Pay.Invoice.Models.NewInvoiceModel;
 
@@ -46,6 +45,9 @@ namespace Lykke.Pay.Invoice.Controllers
         [HttpGet("Profile")]
         public IActionResult Profile()
         {
+            var generateditem = TempData["GeneratedItem"];
+            if (generateditem != null)
+                ViewBag.GeneratedItem = generateditem;
             return View();
         }
 
@@ -110,9 +112,9 @@ namespace Lykke.Pay.Invoice.Controllers
                 await _log.WriteErrorAsync(nameof(HomeController), nameof(Profile), model.ToJson(), exception);
                 return BadRequest("Cannot create invoce!");
             }
-
-            ViewBag.GeneratedItem = JsonConvert.SerializeObject(invoice);
-
+            
+            ViewBag.IsInvoiceCreated = true;
+            TempData["GeneratedItem"] = JsonConvert.SerializeObject(invoice);
             return View();
         }
 
