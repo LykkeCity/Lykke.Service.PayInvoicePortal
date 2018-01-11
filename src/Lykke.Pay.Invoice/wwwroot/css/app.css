@@ -144,9 +144,162 @@
     opacity: 0;
     position: absolute;
     width: 130px;
-    top: 6px;
+    top: 0px;
     left: 332px;
+    height: 39px;
+    cursor: pointer;
 }
+.invoice_paid_files {
+    max-width: 800px;
+    position: relative;
+    margin-bottom: 75px
+}
+
+    .invoice_paid_files:after {
+        position: absolute;
+        content: '';
+        left: 0;
+        bottom: 0;
+        width: 770px;
+        height: 1px;
+        background: #EBEDEF;
+    }
+
+.invoice_paid_files__top {
+    position: relative;
+}
+
+    .invoice_paid_files__top:after {
+        position: absolute;
+        content: '';
+        left: 0;
+        bottom: 0;
+        width: 770px;
+        height: 1px;
+        background: #EBEDEF;
+    }
+
+.invoice_paid_files__title {
+    font-family: "Proxima Nova";
+    font-weight: 600;
+    font-size: 28px;
+    line-height: 40px;
+    letter-spacing: 0px;
+    color: #000000;
+    padding-bottom: 20px;
+}
+
+.invoice_paid_files__add {
+    background: #0388EF;
+    position: absolute;
+    top: 0;
+    right: 30px;
+    padding: 6px 28px;
+}
+
+.invoice_paid_files__row:before, .invoice_paid_files__row:after {
+    content: " ";
+    display: table;
+}
+
+.invoice_paid_files__row:after {
+    clear: both;
+}
+
+.invoice_paid_files__row {
+    position: relative;
+    padding-top: 20px;
+    padding-bottom: 20px;
+    padding-right: 80px;
+}
+
+.invoice_paid_files__doc {
+    float: left;
+    font-family: "Proxima Nova";
+    font-weight: 600;
+    font-size: 16px;
+    line-height: 30px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    padding: 0 12px;
+    color: #fff;
+    background: #FF3E2E;
+    border-radius: 3px;
+    margin-right: 20px;
+}
+
+.invoice_paid_files__name {
+    float: left;
+    font-family: "Proxima Nova";
+    font-weight: 600;
+    font-size: 18px;
+    line-height: 30px;
+    letter-spacing: 0px;
+    color: #000000;
+    margin-right: 10px;
+}
+
+.invoice_paid_files__size {
+    float: left;
+    font-family: "Proxima Nova";
+    font-weight: 400;
+    font-size: 16px;
+    line-height: 30px;
+    letter-spacing: 0px;
+    color: #000000;
+}
+
+.invoice_paid_files__button {
+    border: none;
+    background: transparent;
+    position: absolute;
+    top: 25px;
+    right: 40px;
+}
+
+.invoice_paid_files .icon--download {
+    color: #B2B8BF;
+}
+.invoice_paid_files__top input
+{
+    opacity: 0;
+    position: absolute;
+    width: 130px;
+    top: 0;
+    right: 30px;
+    height: 39px;
+    cursor: pointer;
+}
+.invoice_paid_delete {
+    padding-bottom: 28px;
+    position: relative
+}
+
+.invoice_paid_delete:after {
+    position: absolute;
+    content: '';
+    left: 0;
+    bottom: 0;
+    width: 770px;
+    height: 1px;
+    background: #EBEDEF;
+}
+
+.invoice_paid_delete__text {
+    font-family: "Proxima Nova";
+    font-weight: 400;
+    font-size: 16px;
+    line-height: 24px;
+    letter-spacing: 0px;
+    color: #000000;
+}
+
+.invoice_paid_delete__text .icon--trash {
+    color: #B2B8BF;
+    font-size: 16px;
+    padding-right: 5px;
+}
+
 .showmore {
     cursor: pointer
 }
@@ -176,6 +329,7 @@
     background-color: #ff3e2e;
     position: absolute;
 }
+
 /*custom section*/
 
 .container-full {
@@ -366,7 +520,7 @@
 }
 
 .invoice_paid__top {
-	margin-bottom: 127px;
+	margin-bottom: 46px;
 }
 
 .invoice_paid__title {
@@ -404,6 +558,8 @@
 	display: table;
 	width: 800px;
 	margin-bottom: 35px;
+    margin-bottom: 35px;
+    margin-top: 52px;
 }
 
 .invoice_paid__row {

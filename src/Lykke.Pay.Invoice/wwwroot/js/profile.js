@@ -242,7 +242,7 @@ function setTooltip(message) {
         .attr('title', message);
     $('.create__item-copy').tooltip("open");
 }
-
+var _validFileExtensions = [".pdf", ".doc", ".docx", ".xls", ".xlsx"];
 $(document).ready(function (e) {
 
     updateGrid();
@@ -268,6 +268,26 @@ $(document).ready(function (e) {
         var fileUpload = $("#upload").get(0);
         var files = fileUpload.files;
 
+        for (var i = 0; i < files.length; i++) {
+            var oInput = files[i];
+            var sFileName = oInput.name;
+            if (sFileName.length > 0) {
+                var blnValid = false;
+                for (var j = 0; j < _validFileExtensions.length; j++) {
+                    var sCurExtension = _validFileExtensions[j];
+                    if (sFileName.substr(sFileName.length - sCurExtension.length, sCurExtension.length).toLowerCase() == sCurExtension.toLowerCase()) {
+                        blnValid = true;
+                        break;
+                    }
+                }
+
+                if (!blnValid) {
+                    alert("Sorry, " + sFileName + " is invalid, allowed extensions are: " + _validFileExtensions.join(", "));
+                    return false;
+                }
+            }
+        }
+
         var divfiles = document.createElement("div");
         divfiles.className = "invoice_files__row";
         var filesdiv = $(".invoice_files")[0];
@@ -289,7 +309,7 @@ $(document).ready(function (e) {
 
         var filesize = document.createElement("div");
         filesize.className = "invoice_files__size";
-        filesize.innerText = (files[0].size / 1024) + " KB";
+        filesize.innerText = (files[0].size / 1024).toFixed(0) + " KB";
         divfiles.appendChild(filesize);
     });
 
@@ -384,13 +404,13 @@ $(document).ready(function (e) {
         e.stopPropagation();
         validate(true);
         $("#StartDate").datepicker({
-            beforeShow: function(input, inst) {
-                setTimeout(function() {
-                        var left = parseInt(inst.dpDiv.css('left'));
-                        inst.dpDiv.css({
-                            left: left - 30
-                        });
-                    },
+            beforeShow: function (input, inst) {
+                setTimeout(function () {
+                    var left = parseInt(inst.dpDiv.css('left'));
+                    inst.dpDiv.css({
+                        left: left - 30
+                    });
+                },
                     0);
             }
         }).datepicker("setDate", new Date());
@@ -399,7 +419,7 @@ $(document).ready(function (e) {
     });
 
     $('.icon--cal').on('click',
-        function(e) {
+        function (e) {
             e.stopPropagation();
             $("#StartDate").datepicker('show');
         });

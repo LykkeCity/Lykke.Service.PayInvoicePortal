@@ -96,7 +96,6 @@ namespace Lykke.Pay.Invoice.Controllers
 
                 if (upload != null)
                 {
-                    long size = upload.Length;
                     byte[] buffer = new byte[16 * 1024];
                     using (var ms = new MemoryStream())
                     {
@@ -150,7 +149,8 @@ namespace Lykke.Pay.Invoice.Controllers
             {
                 Data = await _invoicesServiceClient.GetInvoiceAsync(MerchantId, invoiceId)
             };
-
+            var files = await _invoicesServiceClient.GetFileInfoByInvoiceAsync(model.Data.InvoiceId);
+            model.Files = files.Select(i => new FileModel(i)).ToList();
             if (model.Data.Status != InvoiceStatus.Paid.ToString())
             {
                 model.InvoiceUrl = $"{SiteUrl.TrimEnd('/')}/invoice/{model.Data.InvoiceId}";
@@ -160,8 +160,22 @@ namespace Lykke.Pay.Invoice.Controllers
             return View(model);
         }
 
+        [HttpGet("InvoiceFile")]
+        public async Task<IActionResult> InvoiceFile(string invoiceId, string fileId, string fileName)
+        {
+            try
+            {
+                var stream = await _invoicesServiceClient.GetFileContentAsync(invoiceId, fileId);
+                var response = File(stream, "application/octet-stream", fileName);
+                return response;
+            }
+            catch (Exception e)
+            {
+                throw new InvalidOperationException("Unknown action");
+            }
+        }
         [HttpPost("InvoiceDetail")]
-        public async Task<IActionResult> InvoiceDetail(InvoiceDetailModel model, string generate, string draft, string delete)
+        public async Task<IActionResult> InvoiceDetail(InvoiceDetailModel model, IFormFile upload, string generate, string draft, string delete)
         {
             try
             {
@@ -208,6 +222,17 @@ namespace Lykke.Pay.Invoice.Controllers
                 else
                 {
                     throw new InvalidOperationException("Unknown action");
+                }
+
+                if (upload != null)
+                {
+                    byte[] buffer = new byte[16 * 1024];
+                    using (var ms = new MemoryStream())
+                    {
+                        await upload.CopyToAsync(ms);
+                        buffer = ms.ToArray();
+                    }
+                    await _invoicesServiceClient.UploadFileAsync(model.Data.InvoiceId, buffer, upload.FileName, upload.ContentType);
                 }
             }
             catch (Exception exception)
