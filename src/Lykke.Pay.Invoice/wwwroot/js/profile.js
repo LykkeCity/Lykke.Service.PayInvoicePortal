@@ -244,9 +244,25 @@ function setTooltip(message) {
 }
 
 var _validFileExtensions = [".pdf", ".doc", ".docx", ".xls", ".xlsx"];
+function setActiveTab() {
+    var currentTab = getCookie("currenttab");
+    if (currentTab) {
+        window.location = currentTab;
+        $('li[role="presentation"]').removeClass("active");
+        var currentTabA = $('li[role="presentation"] a[href="' + currentTab + '"]').tab('show');;
+
+    }
+}
+function getCookie(name) {
+    var matches = document.cookie.match(new RegExp(
+        "(?:^|; )" + name.replace(/([\.$?*|{}\(\)\[\]\\\/\+^])/g, '\\$1') + "=([^;]*)"
+    ));
+    return matches ? decodeURIComponent(matches[1]) : undefined;
+}
 $(document).ready(function (e) {
     updateGrid();
     updateBalance();
+    setActiveTab();
 
     if (generateditem) {
         if (generateditem.Status !== "Draft") {
@@ -264,7 +280,10 @@ $(document).ready(function (e) {
             $('#Currency').val("CHF");
         updateGrid();
     });
-
+    $('a[data-toggle="tab"]').on('click', function (e) {
+        window.location = e.target.getAttribute("href");
+        document.cookie = "currenttab=" + e.target.getAttribute("href");
+    });
     $("#upload").change(function () {
         var fileUpload = $("#upload").get(0);
         var files = fileUpload.files;
@@ -454,4 +473,5 @@ $(document).ready(function (e) {
         pagenumber++;
         updateGrid(true);
     });
+
 });
