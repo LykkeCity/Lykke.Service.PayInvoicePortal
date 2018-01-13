@@ -245,12 +245,16 @@ function setTooltip(message) {
 
 var _validFileExtensions = [".pdf", ".doc", ".docx", ".xls", ".xlsx"];
 function setActiveTab() {
-    var currentTab = getCookie("currenttab");
+    var currentTab = "#all";
+    if (window.location.href.indexOf("#") !== -1)
+        currentTab = window.location.href.substr(window.location.href.indexOf("#"));
+    else {
+        currentTab = getCookie("currenttab");
+    }
     if (currentTab) {
-        window.location = currentTab;
         $('li[role="presentation"]').removeClass("active");
-        var currentTabA = $('li[role="presentation"] a[href="' + currentTab + '"]').tab('show');;
-
+        $('li[role="presentation"] a[href="' + currentTab + '"]').tab('show');;
+        window.location.href = currentTab;
     }
 }
 function getCookie(name) {
