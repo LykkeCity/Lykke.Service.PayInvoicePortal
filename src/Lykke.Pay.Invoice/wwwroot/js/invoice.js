@@ -41,12 +41,12 @@ $.updateProgress = function () {
 
     if (remainMinutes > 1) {
         $('.invoice__remain-text').text('' + remainMinutes + ' min remaining…');
-        $('.invoice__value').html('The address will be invalid in ' + remainMinutes + ' minutes<br> due to inactivity');
+        $('.invoice__value').html('The exchange rate is locked for ' + remainMinutes + ' minutes<br>');
     } else if (remainMinutes === 1) {
         $('.invoice__remain-text').text('' + remainMinutes + ' min remaining…');
-        $('.invoice__value').html('The address will be invalid in ' + remainMinutes + ' minute<br> due to inactivity');
+        $('.invoice__value').html('TThe exchange rate is locked for ' + remainMinutes + ' minute<br>');
     } else {
         $('.invoice__remain-text').text('< 1 min remaining…');
-        $('.invoice__value').html('The address will be invalid in < 1 minute<br> due to inactivity');
+        $('.invoice__value').html('The exchange rate is locked for < 1 minute<br> due to inactivity');
     }
 };
