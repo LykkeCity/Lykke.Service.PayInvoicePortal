@@ -141,7 +141,7 @@ function renderStatus(model, loadmore) {
     var allstring = "";
     var template = document.getElementById("rowtemplate").innerHTML;
     var tabstatus = document.getElementById(model.filter.status.toLowerCase());
-    if (tabstatus.childNodes.length === 2) {
+    if (tabstatus.getElementsByClassName("invoices__table").length !== 1) {
         tabdiv = document.createElement("div");
         tabdiv.className = "invoices__table";
         tabstatus.appendChild(tabdiv);
@@ -472,6 +472,7 @@ $(document).ready(function (e) {
     $('#selectperiod').on('change', function (e) {
         $('._value').text($("#selectperiod option:selected").text());
         filter.period = $("#selectperiod option:selected").val();
+        updateGrid();
     });
     $('.showmore').on('click', function (e) {
         pagenumber++;

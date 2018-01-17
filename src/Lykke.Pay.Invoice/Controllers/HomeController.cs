@@ -271,20 +271,6 @@ namespace Lykke.Pay.Invoice.Controllers
                     .ToList();
             }
 
-            if (model.Filter.Status == "All")
-            {
-                respmodel.Header.AllCount = orderedlist.Count;
-                respmodel.Header.DraftCount = orderedlist.Count(i => i.Status == InvoiceStatus.Draft.ToString());
-                respmodel.Header.PaidCount = orderedlist.Count(i => i.Status == InvoiceStatus.Paid.ToString());
-                respmodel.Header.UnpaidCount = orderedlist.Count(i => i.Status == InvoiceStatus.Unpaid.ToString());
-                respmodel.Header.RemovedCount = orderedlist.Count(i => i.Status == InvoiceStatus.Removed.ToString());
-                respmodel.Header.InProgressCount =
-                    orderedlist.Count(i => i.Status == InvoiceStatus.InProgress.ToString());
-                respmodel.Header.LatePaidCount = orderedlist.Count(i => i.Status == InvoiceStatus.LatePaid.ToString());
-                respmodel.Header.UnderpaidCount =
-                    orderedlist.Count(i => i.Status == InvoiceStatus.Underpaid.ToString());
-                respmodel.Header.OverpaidCount = orderedlist.Count(i => i.Status == InvoiceStatus.Overpaid.ToString());
-            }
             respmodel.Filter.Status = model.Filter.Status;
             if (!string.IsNullOrEmpty(model.Filter.SortField))
             {
@@ -328,21 +314,44 @@ namespace Lykke.Pay.Invoice.Controllers
 
             var now = DateTime.Now;
             var period = now;
+            var day = period.Day - 1;
+            period = period.AddDays(-day).SetTime(0, 0, 0);
             switch (model.Filter.Period)
             {
-
                 case 1:
-                    period = period.AddDays(-30);
+                    orderedlist = orderedlist.Where(i => i.DueDate.GetRepoDateTime() >= period).ToList();
                     break;
                 case 2:
-                    period = period.AddDays(-60);
+                    var end = period.AddDays(-1);
+                    end = end.SetTime(23, 59, 59);
+                    var start = period.AddMonths(-1);
+                    orderedlist = orderedlist.Where(i => i.DueDate.GetRepoDateTime() <= end && i.DueDate.GetRepoDateTime() >= start).ToList();
                     break;
                 case 3:
-                    period = period.AddDays(-90);
+                    var end3 = period.AddDays(-1);
+                    end3 = end3.SetTime(23, 59, 59);
+                    var start3 = period.AddMonths(-2);
+                    orderedlist = orderedlist.Where(i => i.DueDate.GetRepoDateTime() <= end3 && i.DueDate.GetRepoDateTime() >= start3).ToList();
                     break;
             }
-            if (period != now)
-                orderedlist = orderedlist.Where(i => i.StartDate.GetRepoDateTime() <= period).ToList();
+            //if (period != now)
+            //    orderedlist = orderedlist.Where(i => i.DueDate.GetRepoDateTime() <= period).ToList();
+
+            if (model.Filter.Status == "All")
+            {
+                respmodel.Header.AllCount = orderedlist.Count;
+                respmodel.Header.DraftCount = orderedlist.Count(i => i.Status == InvoiceStatus.Draft.ToString());
+                respmodel.Header.PaidCount = orderedlist.Count(i => i.Status == InvoiceStatus.Paid.ToString());
+                respmodel.Header.UnpaidCount = orderedlist.Count(i => i.Status == InvoiceStatus.Unpaid.ToString());
+                respmodel.Header.RemovedCount = orderedlist.Count(i => i.Status == InvoiceStatus.Removed.ToString());
+                respmodel.Header.InProgressCount =
+                    orderedlist.Count(i => i.Status == InvoiceStatus.InProgress.ToString());
+                respmodel.Header.LatePaidCount = orderedlist.Count(i => i.Status == InvoiceStatus.LatePaid.ToString());
+                respmodel.Header.UnderpaidCount =
+                    orderedlist.Count(i => i.Status == InvoiceStatus.Underpaid.ToString());
+                respmodel.Header.OverpaidCount = orderedlist.Count(i => i.Status == InvoiceStatus.Overpaid.ToString());
+            }
+
             respmodel.PageCount = Math.Ceiling((decimal)orderedlist.Count / 10);
             respmodel.Data = orderedlist.ToPagedList(model.Page, 10).ToList();
             return Json(respmodel);

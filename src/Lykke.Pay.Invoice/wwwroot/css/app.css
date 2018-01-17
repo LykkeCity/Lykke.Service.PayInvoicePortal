@@ -1410,6 +1410,7 @@
 	top: 0;
 	bottom: 0;
 	width: 40px;
+    cursor: default;
 }
 
 .profile_search__button_search i {
