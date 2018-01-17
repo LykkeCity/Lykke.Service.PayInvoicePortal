@@ -123,7 +123,7 @@
                                     @if (string.IsNullOrEmpty(Model.Data.Status) || Model.Data.Status == InvoiceStatus.Draft.ToString())
                                     {
                                         @*<input type="text" id="ClientName" value="@Model.Data.ClientEmail" required placeholder="" class="form-control">*@
-                                        <input type="text" asp-for="Data.ClientEmail" required placeholder="" class="form-control noborder">
+                                        <input type="email" asp-for="Data.ClientEmail" required placeholder="" class="form-control noborder">
                                     }
                                     else
                                     {

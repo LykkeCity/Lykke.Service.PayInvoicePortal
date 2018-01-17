@@ -370,6 +370,7 @@ $(document).ready(function (e) {
     $('.invoices__row .invoices__cell').on('click', function (sender) {
         var element = sender.target;
         filter.sortField = "";
+        pagenumber = 1;
         filter.sortWay = (filter.sortWay == 0) ? 1 : 0;
         if (element.className.indexOf("number") !== -1)
             filter.sortField = "number";
