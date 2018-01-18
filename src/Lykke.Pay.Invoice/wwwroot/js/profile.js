@@ -286,7 +286,8 @@ $(document).ready(function (e) {
     });
     $('a[data-toggle="tab"]').on('click', function (e) {
         window.location = e.target.getAttribute("href");
-        document.cookie = "currenttab=" + e.target.getAttribute("href");
+        if (e.target.getAttribute("href"))
+            document.cookie = "currenttab=" + e.target.getAttribute("href");
     });
     $("#upload").change(function () {
         var fileUpload = $("#upload").get(0);
