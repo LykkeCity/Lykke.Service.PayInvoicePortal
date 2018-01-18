@@ -311,9 +311,7 @@ namespace Lykke.Pay.Invoice.Controllers
                         break;
                 }
             }
-
-            var now = DateTime.Now;
-            var period = now;
+            var period = DateTime.Now;
             var day = period.Day - 1;
             period = period.AddDays(-day).SetTime(0, 0, 0);
             switch (model.Filter.Period)
@@ -322,20 +320,16 @@ namespace Lykke.Pay.Invoice.Controllers
                     orderedlist = orderedlist.Where(i => i.DueDate.GetRepoDateTime() >= period).ToList();
                     break;
                 case 2:
-                    var end = period.AddDays(-1);
-                    end = end.SetTime(23, 59, 59);
+                    var end = period.AddDays(-1).SetTime(23, 59, 59);
                     var start = period.AddMonths(-1);
                     orderedlist = orderedlist.Where(i => i.DueDate.GetRepoDateTime() <= end && i.DueDate.GetRepoDateTime() >= start).ToList();
                     break;
                 case 3:
-                    var end3 = period.AddDays(-1);
-                    end3 = end3.SetTime(23, 59, 59);
+                    var end3 = period.AddDays(-1).SetTime(23, 59, 59);
                     var start3 = period.AddMonths(-2);
                     orderedlist = orderedlist.Where(i => i.DueDate.GetRepoDateTime() <= end3 && i.DueDate.GetRepoDateTime() >= start3).ToList();
                     break;
             }
-            //if (period != now)
-            //    orderedlist = orderedlist.Where(i => i.DueDate.GetRepoDateTime() <= period).ToList();
 
             if (model.Filter.Status == "All")
             {
