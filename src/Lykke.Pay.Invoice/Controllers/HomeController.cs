@@ -254,7 +254,7 @@ namespace Lykke.Pay.Invoice.Controllers
         {
             var respmodel = new GridModel();
             IEnumerable<InvoiceModel> invoices = await _invoicesServiceClient.GetInvoicesAsync(MerchantId);
-            var orderedlist = invoices.OrderByDescending(i => DateTime.ParseExact(i.StartDate, "MM/dd/yyyy HH:mm:ss", CultureInfo.InvariantCulture)).ToList();
+            var orderedlist = invoices.OrderByDescending(i => i.StartDate.GetRepoDateTime()).ToList();
 
             if (model.Filter.Status != "All")
             {
@@ -267,7 +267,7 @@ namespace Lykke.Pay.Invoice.Controllers
                         i.ClientEmail != null && i.ClientEmail.Contains(model.Filter.SearchValue)
                         ||
                         i.InvoiceNumber != null && i.InvoiceNumber.Contains(model.Filter.SearchValue))
-                    .OrderByDescending(i => DateTime.ParseExact(i.StartDate, "MM/dd/yyyy HH:mm:ss", CultureInfo.InvariantCulture))
+                    .OrderByDescending(i => i.StartDate.GetRepoDateTime())
                     .ToList();
             }
 
@@ -279,35 +279,35 @@ namespace Lykke.Pay.Invoice.Controllers
                     case "number":
                         orderedlist = model.Filter.SortWay == 0
                             ? orderedlist.OrderBy(i => i.InvoiceNumber).ThenByDescending(i => i.StartDate).ToList()
-                            : orderedlist.OrderByDescending(i => i.InvoiceNumber).ThenByDescending(i => DateTime.ParseExact(i.StartDate, "MM/dd/yyyy HH:mm:ss", CultureInfo.InvariantCulture))
+                            : orderedlist.OrderByDescending(i => i.InvoiceNumber).ThenByDescending(i => i.StartDate.GetRepoDateTime())
                                 .ToList();
                         break;
                     case "client":
                         orderedlist = model.Filter.SortWay == 0
-                            ? orderedlist.OrderBy(i => i.ClientName).ThenByDescending(i => DateTime.ParseExact(i.StartDate, "MM/dd/yyyy HH:mm:ss", CultureInfo.InvariantCulture)).ToList()
-                            : orderedlist.OrderByDescending(i => i.ClientName).ThenByDescending(i => DateTime.ParseExact(i.StartDate, "MM/dd/yyyy HH:mm:ss", CultureInfo.InvariantCulture))
+                            ? orderedlist.OrderBy(i => i.ClientName).ThenByDescending(i => i.StartDate.GetRepoDateTime()).ToList()
+                            : orderedlist.OrderByDescending(i => i.ClientName).ThenByDescending(i => i.StartDate.GetRepoDateTime())
                                 .ToList();
                         break;
                     case "amount":
                         orderedlist = model.Filter.SortWay == 0
-                            ? orderedlist.OrderBy(i => i.Amount).ThenByDescending(i => DateTime.ParseExact(i.StartDate, "MM/dd/yyyy HH:mm:ss", CultureInfo.InvariantCulture)).ToList()
-                            : orderedlist.OrderByDescending(i => i.Amount).ThenByDescending(i => DateTime.ParseExact(i.StartDate, "MM/dd/yyyy HH:mm:ss", CultureInfo.InvariantCulture)).ToList();
+                            ? orderedlist.OrderBy(i => i.Amount).ThenByDescending(i => i.StartDate.GetRepoDateTime()).ToList()
+                            : orderedlist.OrderByDescending(i => i.Amount).ThenByDescending(i => i.StartDate.GetRepoDateTime()).ToList();
                         break;
                     case "currency":
                         orderedlist = model.Filter.SortWay == 0
-                            ? orderedlist.OrderBy(i => i.Currency).ThenByDescending(i => DateTime.ParseExact(i.StartDate, "MM/dd/yyyy HH:mm:ss", CultureInfo.InvariantCulture)).ToList()
-                            : orderedlist.OrderByDescending(i => i.Currency).ThenByDescending(i => DateTime.ParseExact(i.StartDate, "MM/dd/yyyy HH:mm:ss", CultureInfo.InvariantCulture))
+                            ? orderedlist.OrderBy(i => i.Currency).ThenByDescending(i => i.StartDate.GetRepoDateTime()).ToList()
+                            : orderedlist.OrderByDescending(i => i.Currency).ThenByDescending(i => i.StartDate.GetRepoDateTime())
                                 .ToList();
                         break;
                     case "status":
                         orderedlist = model.Filter.SortWay == 0
-                            ? orderedlist.OrderBy(i => i.Status).ThenByDescending(i => DateTime.ParseExact(i.StartDate, "MM/dd/yyyy HH:mm:ss", CultureInfo.InvariantCulture)).ToList()
-                            : orderedlist.OrderByDescending(i => i.Status).ThenByDescending(i => DateTime.ParseExact(i.StartDate, "MM/dd/yyyy HH:mm:ss", CultureInfo.InvariantCulture)).ToList();
+                            ? orderedlist.OrderBy(i => i.Status).ThenByDescending(i => i.StartDate.GetRepoDateTime()).ToList()
+                            : orderedlist.OrderByDescending(i => i.Status).ThenByDescending(i => i.StartDate.GetRepoDateTime()).ToList();
                         break;
                     case "duedate":
                         orderedlist = model.Filter.SortWay == 0
-                            ? orderedlist.OrderBy(i => DateTime.ParseExact(i.DueDate, "MM/dd/yyyy HH:mm:ss", CultureInfo.InvariantCulture)).ToList()
-                            : orderedlist.OrderByDescending(i => DateTime.ParseExact(i.DueDate, "MM/dd/yyyy HH:mm:ss", CultureInfo.InvariantCulture)).ToList();
+                            ? orderedlist.OrderBy(i => i.DueDate.GetRepoDateTime()).ToList()
+                            : orderedlist.OrderByDescending(i => i.DueDate.GetRepoDateTime()).ToList();
                         break;
                 }
             }
@@ -325,8 +325,8 @@ namespace Lykke.Pay.Invoice.Controllers
                     orderedlist = orderedlist.Where(i => i.DueDate.GetRepoDateTime() <= end && i.DueDate.GetRepoDateTime() >= start).ToList();
                     break;
                 case 3:
-                    var end3 = period.AddDays(-1).SetTime(23, 59, 59);
-                    var start3 = period.AddMonths(-2);
+                    var start3 = period.AddMonths(-3);
+                    var end3 = start3.AddMonths(1).AddDays(-1).SetTime(23, 59, 59);
                     orderedlist = orderedlist.Where(i => i.DueDate.GetRepoDateTime() <= end3 && i.DueDate.GetRepoDateTime() >= start3).ToList();
                     break;
             }
