@@ -254,7 +254,7 @@ namespace Lykke.Pay.Invoice.Controllers
         {
             var respmodel = new GridModel();
             IEnumerable<InvoiceModel> invoices = await _invoicesServiceClient.GetInvoicesAsync(MerchantId);
-            var orderedlist = invoices.OrderByDescending(i => i.StartDate).ToList();
+            var orderedlist = invoices.OrderByDescending(i => DateTime.ParseExact(i.StartDate, "MM/dd/yyyy HH:mm:ss", CultureInfo.InvariantCulture)).ToList();
 
             if (model.Filter.Status != "All")
             {
@@ -267,7 +267,7 @@ namespace Lykke.Pay.Invoice.Controllers
                         i.ClientEmail != null && i.ClientEmail.Contains(model.Filter.SearchValue)
                         ||
                         i.InvoiceNumber != null && i.InvoiceNumber.Contains(model.Filter.SearchValue))
-                    .OrderByDescending(i => i.StartDate)
+                    .OrderByDescending(i => DateTime.ParseExact(i.StartDate, "MM/dd/yyyy HH:mm:ss", CultureInfo.InvariantCulture))
                     .ToList();
             }
 
@@ -279,35 +279,35 @@ namespace Lykke.Pay.Invoice.Controllers
                     case "number":
                         orderedlist = model.Filter.SortWay == 0
                             ? orderedlist.OrderBy(i => i.InvoiceNumber).ThenByDescending(i => i.StartDate).ToList()
-                            : orderedlist.OrderByDescending(i => i.InvoiceNumber).ThenByDescending(i => i.StartDate)
+                            : orderedlist.OrderByDescending(i => i.InvoiceNumber).ThenByDescending(i => DateTime.ParseExact(i.StartDate, "MM/dd/yyyy HH:mm:ss", CultureInfo.InvariantCulture))
                                 .ToList();
                         break;
                     case "client":
                         orderedlist = model.Filter.SortWay == 0
-                            ? orderedlist.OrderBy(i => i.ClientName).ThenByDescending(i => i.StartDate).ToList()
-                            : orderedlist.OrderByDescending(i => i.ClientName).ThenByDescending(i => i.StartDate)
+                            ? orderedlist.OrderBy(i => i.ClientName).ThenByDescending(i => DateTime.ParseExact(i.StartDate, "MM/dd/yyyy HH:mm:ss", CultureInfo.InvariantCulture)).ToList()
+                            : orderedlist.OrderByDescending(i => i.ClientName).ThenByDescending(i => DateTime.ParseExact(i.StartDate, "MM/dd/yyyy HH:mm:ss", CultureInfo.InvariantCulture))
                                 .ToList();
                         break;
                     case "amount":
                         orderedlist = model.Filter.SortWay == 0
-                            ? orderedlist.OrderBy(i => i.Amount).ThenByDescending(i => i.StartDate).ToList()
-                            : orderedlist.OrderByDescending(i => i.Amount).ThenByDescending(i => i.StartDate).ToList();
+                            ? orderedlist.OrderBy(i => i.Amount).ThenByDescending(i => DateTime.ParseExact(i.StartDate, "MM/dd/yyyy HH:mm:ss", CultureInfo.InvariantCulture)).ToList()
+                            : orderedlist.OrderByDescending(i => i.Amount).ThenByDescending(i => DateTime.ParseExact(i.StartDate, "MM/dd/yyyy HH:mm:ss", CultureInfo.InvariantCulture)).ToList();
                         break;
                     case "currency":
                         orderedlist = model.Filter.SortWay == 0
-                            ? orderedlist.OrderBy(i => i.Currency).ThenByDescending(i => i.StartDate).ToList()
-                            : orderedlist.OrderByDescending(i => i.Currency).ThenByDescending(i => i.StartDate)
+                            ? orderedlist.OrderBy(i => i.Currency).ThenByDescending(i => DateTime.ParseExact(i.StartDate, "MM/dd/yyyy HH:mm:ss", CultureInfo.InvariantCulture)).ToList()
+                            : orderedlist.OrderByDescending(i => i.Currency).ThenByDescending(i => DateTime.ParseExact(i.StartDate, "MM/dd/yyyy HH:mm:ss", CultureInfo.InvariantCulture))
                                 .ToList();
                         break;
                     case "status":
                         orderedlist = model.Filter.SortWay == 0
-                            ? orderedlist.OrderBy(i => i.Status).ThenByDescending(i => i.StartDate).ToList()
-                            : orderedlist.OrderByDescending(i => i.Status).ThenByDescending(i => i.StartDate).ToList();
+                            ? orderedlist.OrderBy(i => i.Status).ThenByDescending(i => DateTime.ParseExact(i.StartDate, "MM/dd/yyyy HH:mm:ss", CultureInfo.InvariantCulture)).ToList()
+                            : orderedlist.OrderByDescending(i => i.Status).ThenByDescending(i => DateTime.ParseExact(i.StartDate, "MM/dd/yyyy HH:mm:ss", CultureInfo.InvariantCulture)).ToList();
                         break;
                     case "duedate":
                         orderedlist = model.Filter.SortWay == 0
-                            ? orderedlist.OrderBy(i => i.DueDate).ThenByDescending(i => i.StartDate).ToList()
-                            : orderedlist.OrderByDescending(i => i.DueDate).ThenByDescending(i => i.StartDate).ToList();
+                            ? orderedlist.OrderBy(i => DateTime.ParseExact(i.DueDate, "MM/dd/yyyy HH:mm:ss", CultureInfo.InvariantCulture)).ToList()
+                            : orderedlist.OrderByDescending(i => DateTime.ParseExact(i.DueDate, "MM/dd/yyyy HH:mm:ss", CultureInfo.InvariantCulture)).ToList();
                         break;
                 }
             }
