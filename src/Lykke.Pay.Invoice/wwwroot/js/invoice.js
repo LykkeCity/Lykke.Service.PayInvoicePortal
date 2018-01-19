@@ -40,13 +40,19 @@ $.updateProgress = function () {
     }
 
     if (remainMinutes > 1) {
-        $('.invoice__remain-text').text('' + remainMinutes + ' min remaining…');
+        $('.invoice__remain-text').text('' + remainMinutes + ' mins remaining…');
         $('.invoice__value').html('The exchange rate is locked for ' + remainMinutes + ' minutes<br>');
     } else if (remainMinutes === 1) {
         $('.invoice__remain-text').text('' + remainMinutes + ' min remaining…');
-        $('.invoice__value').html('TThe exchange rate is locked for ' + remainMinutes + ' minute<br>');
+        $('.invoice__value').html('The exchange rate is locked for ' + remainMinutes + ' minute<br>');
     } else {
-        $('.invoice__remain-text').text('< 1 min remaining…');
-        $('.invoice__value').html('The exchange rate is locked for < 1 minute<br> due to inactivity');
+        var remSec = '0:';
+        if (remainSeconds < 10) {
+            remSec += '0';
+        }
+        remSec += remainSeconds;
+            
+        $('.invoice__remain-text').text('' + remSec + ' remaining…');
+        $('.invoice__value').html('The exchange rate is locked for ' + remSec);
     }
 };
