@@ -43,7 +43,11 @@ namespace Lykke.Pay.Invoice.Controllers
                     Password = model.Password
                 });
 
-
+            if (response == null)
+            {
+                ViewBag.Error = true;
+                return View();
+            }
 
             var claims = new List<Claim>
             {
