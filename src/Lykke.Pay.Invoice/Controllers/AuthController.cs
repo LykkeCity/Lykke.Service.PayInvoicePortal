@@ -24,10 +24,7 @@ namespace Lykke.Pay.Invoice.Controllers
         [HttpGet]
         public IActionResult SignIn(string returnUrl)
         {
-            return View(new SignInViewModel
-            {
-                ReturnUrl = returnUrl
-            });
+            return View(new SignInViewModel());
         }
 
         [HttpPost]
@@ -46,6 +43,8 @@ namespace Lykke.Pay.Invoice.Controllers
                     Password = model.Password
                 });
 
+
+
             var claims = new List<Claim>
             {
                 new Claim(ClaimTypes.Sid, response.MerchantStaffEmail),
@@ -57,10 +56,10 @@ namespace Lykke.Pay.Invoice.Controllers
             var claimsPrinciple = new ClaimsPrincipal(claimsIdentity);
             await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, claimsPrinciple);
 
-            if(string.IsNullOrEmpty(model.ReturnUrl) || !Url.IsLocalUrl(model.ReturnUrl))
-                return RedirectToAction("Profile", "Home");
 
-            return Redirect(model.ReturnUrl);
+            return RedirectToAction("Profile", "Home");
+
+
         }
 
         [HttpGet("SignOut")]
