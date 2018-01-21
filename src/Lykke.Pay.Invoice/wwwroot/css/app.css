@@ -210,7 +210,7 @@
     position: relative;
     padding-top: 20px;
     padding-bottom: 20px;
-    padding-right: 80px;
+    padding-right: 0px;
 }
 
 .invoice_paid_files__doc {
@@ -240,7 +240,8 @@
 }
 
 .invoice_paid_files__size {
-    float: left;
+    float: right;
+	margin-right: 80px;
     font-family: "Proxima Nova";
     font-weight: 400;
     font-size: 16px;
