@@ -57,9 +57,9 @@ namespace Lykke.Pay.Invoice.Controllers
                 InvoiceId = invoiceSummary.InvoiceId,
                 InvoiceNumber = invoiceSummary.InvoiceNumber,
                 Currency = invoiceSummary.InvoiceCurrency,
-                OrigAmount = invoiceSummary.InvoiceAmount,
+                OrigAmount = TrimDouble(invoiceSummary.InvoiceAmount, 2),
                 ClientName = invoiceSummary.ClientName,
-                Amount = amoint,
+                Amount = TrimDouble(amoint, 8),
                 Status = invoiceSummary.Status,
                 RefreshSeconds = refreshTime,
                 QRCode = $@"https://chart.googleapis.com/chart?chs=220x220&chld=L|2&cht=qr&chl=bitcoin:{invoiceSummary.WalletAddress}?amount={amoint}%26label=invoice%20#{invoiceSummary.InvoiceNumber}%26message={invoiceSummary.OrderId}",
@@ -67,6 +67,11 @@ namespace Lykke.Pay.Invoice.Controllers
             };
 
             return View(model);
+        }
+
+        public string TrimDouble(double value, int maxSigns)
+        {
+            return value.ToString($"F{maxSigns}").TrimEnd("0,.".ToCharArray());
         }
 
         [HttpPost("invoice/status")]
