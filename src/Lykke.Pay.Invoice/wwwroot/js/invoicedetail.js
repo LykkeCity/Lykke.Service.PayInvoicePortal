@@ -64,6 +64,7 @@ $(document).ready(function(e) {
 
                 if (!blnValid) {
                     alert("Sorry, " + sFileName + " is invalid, allowed extensions are: " + _validFileExtensions.join(", "));
+                    fileUpload.value = '';
                     return false;
                 }
             }
