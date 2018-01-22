@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Globalization;
 using System.Threading.Tasks;
 using Common.Log;
 using Lykke.Pay.Common;
@@ -57,9 +58,9 @@ namespace Lykke.Pay.Invoice.Controllers
                 InvoiceId = invoiceSummary.InvoiceId,
                 InvoiceNumber = invoiceSummary.InvoiceNumber,
                 Currency = invoiceSummary.InvoiceCurrency,
-                OrigAmount = invoiceSummary.InvoiceAmount.ToString(), //TrimDouble(invoiceSummary.InvoiceAmount, 2),
+                OrigAmount = TrimDouble(invoiceSummary.InvoiceAmount, 2),
                 ClientName = invoiceSummary.ClientName,
-                Amount = amoint.ToString(), //TrimDouble(amoint, 8),
+                Amount = TrimDouble(amoint, 8),
                 Status = invoiceSummary.Status,
                 RefreshSeconds = refreshTime,
                 QRCode = $@"https://chart.googleapis.com/chart?chs=220x220&chld=L|2&cht=qr&chl=bitcoin:{invoiceSummary.WalletAddress}?amount={amoint}%26label=invoice%20#{invoiceSummary.InvoiceNumber}%26message={invoiceSummary.OrderId}",
@@ -72,7 +73,12 @@ namespace Lykke.Pay.Invoice.Controllers
 
         public string TrimDouble(double value, int maxSigns)
         {
-            return value.ToString($"F{maxSigns}").TrimEnd("0,.".ToCharArray());
+            var result = value.ToString($"F{maxSigns}", CultureInfo.InvariantCulture);
+            if (result.Contains("."))
+            {
+                result = result.TrimEnd("0.".ToCharArray());
+            }
+            return result;
         }
 
         [HttpPost("invoice/status")]
