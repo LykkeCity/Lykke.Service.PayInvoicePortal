@@ -1589,8 +1589,13 @@
 	background: #fff;
 }
 
-.icon.icon--cal {
-	cursor: pointer;
+.icon.icon--cal, .invoice_files__add {
+    cursor: pointer;
+}
+
+/* Chrome */
+::-webkit-file-upload-button {
+    cursor: pointer;
 }
 /* Safari */
 @-webkit-keyframes spin {
