@@ -74,10 +74,8 @@ namespace Lykke.Pay.Invoice.Controllers
         public string TrimDouble(double value, int maxSigns)
         {
             var result = value.ToString($"F{maxSigns}", CultureInfo.InvariantCulture);
-            if (result.Contains("."))
-            {
-                result = result.TrimEnd("0.".ToCharArray());
-            }
+            result = result.TrimEnd("0".ToCharArray());
+            result = result.TrimEnd(".".ToCharArray());
             return result;
         }
 
