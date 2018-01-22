@@ -12,5 +12,6 @@
         public string Status { get; set; }
         public int RefreshSeconds { get; set; }
         public bool AutoUpdate { get; set; }
+        public string WalletAddress { get; set; }
     }
 }
