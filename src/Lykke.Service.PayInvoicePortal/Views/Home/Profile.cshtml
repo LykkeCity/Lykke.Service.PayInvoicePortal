@@ -1,0 +1,186 @@
+﻿@model Lykke.Service.PayInvoicePortal.Models.InvoiceRequest
+@{
+    ViewData["Title"] = "Profile";
+}
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@if (ViewBag.IsInvoiceCreated != null)
+{
+    <script>
+        window.location.href = "/";
+    </script>
+}
+else
+{
+    <script>
+        var generateditem = eval(@Html.Raw(ViewBag.GeneratedItem));
+    </script>
+}
+<link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+<link rel="stylesheet" type="text/css" href="~/css/jquery-confirm.css" />
+@using (Html.BeginForm("Profile", "Home", FormMethod.Post, new { name = "createform", id = "createform", enctype = "multipart/form-data" }))
+{
+    <div class="create draft">
+        <ul class="create__top">
+            <li class="create__top-item">
+                <a href="#" class="create__top-link">Profile</a>
+            </li>
+            <li class="create__top-arrow">
+                <i class="icon icon--chevron-thin-right"></i>
+            </li>
+            <li class="create__top-item"> Create new invoice </li>
+        </ul>
+        <div class="create__body">
+            <div class="create__title">Invoice</div>
+            <div class="create__form">
+                <div class="create__input-group">
+                    <label class="create__input-label">Invoice number</label>
+                    <div class="Rectangle-6" style="display: none" req-for="InvoiceNumber"></div>
+                    <input type="text" asp-for="InvoiceNumber" require placeholder="" class="form-control">
+                </div>
+                <div class="create__input-group">
+                    <label class="create__input-label">Client</label>
+                    <div class="Rectangle-6" style="display: none" req-for="ClientName"></div>
+                    <input type="text" asp-for="ClientName" require placeholder="" class="form-control">
+                </div>
+                <div class="create__input-group">
+                    <label class="create__input-label">Email</label>
+                    <div class="Rectangle-6" style="display: none" req-for="ClientEmail"></div>
+                    <input type="email" asp-for="ClientEmail" require placeholder="" class="form-control">
+                </div>
+                <div class="create__input-group">
+                    <div class="create__input-amount">
+                        <label class="create__input-label">Amount</label>
+                        <div class="input-group">
+                            <div class="Rectangle-6" style="display: none" req-for="Amount"></div>
+                            <span class="">CHF</span>
+                            <input type="number" asp-for="Amount" require placeholder="0.00" min="0.01" step="0.01" class="form-control">
+                        </div>
+                    </div>
+                    <div class="create__input-date">
+                        <label class="create__input-label">Pay due date</label>
+
+                        <div class="input-group">
+                            <div class="Rectangle-6" style="display: none" req-for="StartDate"></div>
+                            <i class="icon icon--cal"></i>
+                            <input type="text" asp-for="StartDate" require placeholder="03.12.2017" class="form-control">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <input type="hidden" asp-for="Status" class="form-control">
+            <input type="hidden" asp-for="Currency" class="form-control">
+            <input type="hidden" asp-for="InvoiceId" class="form-control">
+            <div class="create__item">
+                <div class="create__item-name">Status</div>
+                <div class="create__item-description">Not created</div>
+            </div>
+            <div class="invoice_files">
+                <div class="invoice_files__top">
+                    <div class="invoice_files__title">Files</div>
+                    <button type="button" name="button" class="btn invoice_files__add">Add file</button>
+                    <input type="file" name="upload" id="upload">
+                </div>
+            </div>
+            <div class="create__actions">
+                <button type="submit" name="button" class="btn create__button" id="generatebtn">Generate</button>
+                <button type="submit" name="button" class="btn btn--stroke create__link" id="draftbtn">Save draft</button>
+                <button type="button" name="button" class="btn btn--stroke create__link" id="closebtn">Cancel and close</button>
+            </div>
+        </div>
+    </div>
+}
+<div class="create unpaid">
+    <ul class="create__top">
+        <li class="create__top-item">
+            <a href="#" class="create__top-link">Profile</a>
+        </li>
+        <li class="create__top-arrow">
+            <i class="icon icon--chevron-thin-right"></i>
+        </li>
+        <li class="create__top-item"> Create new invoice </li>
+    </ul>
+    <div class="create__body">
+        <div class="create__title">Invoice</div>
+        <div class="create__item">
+            <div class="create__item-name">Invoice number</div>
+            <div class="create__item-description" id="UnpaidInvoiceNumber"></div>
+        </div>
+        <div class="create__item">
+            <div class="create__item-name">Client</div>
+            <div class="create__item-description" id="UnpaidClientName"></div>
+        </div>
+        <div class="create__item">
+            <div class="create__item-name">Email</div>
+            <div class="create__item-description" id="UnpaidClientEmail"></div>
+        </div>
+        <div class="create__item">
+            <div class="create__item-name">Amount</div>
+            <div class="create__item-description" id="UnpaidAmount"></div>
+        </div>
+        <div class="create__item">
+            <div class="create__item-name">Pay due date</div>
+            <div class="create__item-description" id="UnpaidDueDate"></div>
+        </div>
+        <div class="create__item">
+            <div class="create__item-name">Status</div>
+            <div class="create__item-description">Unpaid</div>
+        </div>
+        <div class="create__item">
+            <div class="create__item-name">Hyperlink</div>
+            <div class="create__item-description" id="UnpaidUrl"></div>
+            <a href="#" type="button" name="button" class="create__item-copy">
+                <i class="icon icon--copy"></i>
+            </a>
+        </div>
+        <div class="create__item">
+            <div class="create__item-name">Share</div>
+            <div class="create__item-description">Send account details to email</div>
+            <div class="form">
+                <div class="create__item-group">
+                    <div class="create__item-input">
+                        <i class="icon icon--email"></i>
+                        <input type="email" placeholder="E-mail address" class="form-control">
+                    </div>
+                    <button class="btn btn--primary btn--circle" type="button">
+                        <i class="icon icon--arrow-right-alt"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div class="create__actions">
+            <button type="button" name="button" class="btn create__button" id="closeunpaidbtn">Close</button>
+        </div>
+    </div>
+</div>
+<article class="">
+    <div class="container-full">
+        <div class="profile">
+            <div class="balance">
+                <div class="balance__title">Current balance</div>
+                <div class="balance__row">
+                    <div class="balance__left">
+                        <span class="balance__quantity"></span>
+                        <button type="button" name="button" class="btn btn_create balance__button">Create new invoice</button>
+                    </div>
+                    @*<div class="balance__export">
+                        Export XLSX file
+                        <a href="#" class="balance__download">Download</a>
+                    </div>
+                    <div class="balance__export">
+                        Export DTA file
+                        <a href="#" class="balance__download">Download</a>
+                    </div>*@
+                </div>
+            </div>
+            @Html.Partial("~/Views/Home/InvoiceGridPartial.cshtml")
+
+        </div>
+    </div>
+</article>
+@section Scripts
+    {
+    <script type="text/javascript" src="~/js/vendor/jquery-confirm.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+    <script src="/js/profile.js" type="text/javascript"></script>
+   
+}

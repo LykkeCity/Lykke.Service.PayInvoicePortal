@@ -1,0 +1,186 @@
+﻿@using Lykke.Service.PayInvoice.Client.Models.Invoice
+@model Lykke.Service.PayInvoicePortal.Models.Invoice.InvoiceViewModel
+@{
+    ViewData["Title"] = "Invoices";
+}
+<link rel="stylesheet" href="/js/vendor/pieloader/jquery-pie-loader.css" />
+<article class="content">
+    <div class="container">
+        <div class="invoice">
+            <div class="invoice__top">
+                <div class="invoice__title">Invoice #@Model.InvoiceNumber</div>
+                <div class="invoice__subtitle">@Model.ClientName</div>
+            </div>
+            <div class="invoice__body">
+                <div class="row">
+                    <div class="col-xs-12">
+                        <div class="invoice_address">
+                            <div class="invoice_address__text">
+                                <div class="invoice_address__label">Payment address</div>
+                                <div class="invoice_address__link">@Model.WalletAddress</div>
+                            </div>
+                            <div class="invoice_address__button">
+                                <a href="#" type="button" name="button" class="create__item-copy">
+                                    <i class="icon icon--copy"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    @if (Model.Status == InvoiceStatus.Unpaid)
+                    {
+                        <div class="col-xs-12 col-sm-5 col-md-6 state--pr0-sm">
+                            <div class="invoice__qr">
+                                <img src="@Model.QRCode" alt="">
+                            </div>
+                            <div class="invoice__row">
+                                <div class="invoice__remain">
+                                    <div class="invoice__remain-load ">
+                                        <figure id="my-item" class="pie-loader"></figure>
+                                    </div>
+                                    <span class="invoice__remain-text"></span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xs-12 col-sm-7 col-md-6">
+                            <div class="invoice__payment">
+                                @Model.Amount BTC
+                                <div class="invoice__info"> for payment </div>
+                            </div>
+                            <div class="invoice__original">
+                                @Model.OrigAmount @Model.Currency
+                                <div class="invoice__info"> original </div>
+                            </div>
+                            <div class="invoice__description">
+                                <div class="invoice__label">Waiting for payment </div>
+                                <div class="invoice__value"></div>
+                            </div>
+                        </div>
+                    }
+                    else if (Model.Status == InvoiceStatus.InProgress)
+                    {
+                        <div class="col-xs-12 col-sm-7 col-md-6">
+                            <div class="invoice__payment">
+                                @Model.Amount BTC
+                                <div class="invoice__info"> for payment </div>
+                            </div>
+                            <div class="invoice__original">
+                                @Model.OrigAmount @Model.Currency
+                                <div class="invoice__info"> original </div>
+                            </div>
+                            <div class="invoice__description">
+                                <div class="invoice__label">Payment detected</div>
+                                <div class="invoice__value"></div>
+                            </div>
+                        </div>
+                    }
+                    else if (Model.Status == InvoiceStatus.Paid)
+                    {
+                        <div class="col-xs-12 col-sm-7 col-md-6">
+                            <div class="invoice__payment">
+                                @Model.Amount BTC
+                                <div class="invoice__info"> for payment </div>
+                            </div>
+                            <div class="invoice__original">
+                                @Model.OrigAmount @Model.Currency
+                                <div class="invoice__info"> original </div>
+                            </div>
+                            <div class="invoice__description">
+                                <div class="invoice__label">Succesful paid</div>
+                                <div class="invoice__value"></div>
+                            </div>
+                        </div>
+                    }
+                    else if (Model.Status == InvoiceStatus.LatePaid)
+                    {
+                        <div class="col-xs-12 col-sm-7 col-md-6">
+                            <div class="invoice__payment">
+                                @Model.Amount BTC
+                                <div class="invoice__info"> for payment </div>
+                            </div>
+                            <div class="invoice__original">
+                                @Model.OrigAmount @Model.Currency
+                                <div class="invoice__info"> original </div>
+                            </div>
+                            <div class="invoice__description">
+                                <div class="invoice__label">Error. The transfer was paid to late</div>
+                                <div class="invoice__value"></div>
+                            </div>
+                        </div>
+                    }
+                    else if (Model.Status == InvoiceStatus.Overpaid)
+                    {
+                        <div class="col-xs-12 col-sm-7 col-md-6">
+                            <div class="invoice__payment">
+                                @Model.Amount BTC
+                                <div class="invoice__info"> for payment </div>
+                            </div>
+                            <div class="invoice__original">
+                                @Model.OrigAmount @Model.Currency
+                                <div class="invoice__info"> original </div>
+                            </div>
+                            <div class="invoice__description">
+                                <div class="invoice__label">Error. The transfer was paid to much</div>
+                                <div class="invoice__value"></div>
+                            </div>
+                        </div>
+                    }
+                    else if (Model.Status == InvoiceStatus.Underpaid)
+                    {
+                        <div class="col-xs-12 col-sm-7 col-md-6">
+                            <div class="invoice__payment">
+                                @Model.Amount BTC
+                                <div class="invoice__info"> for payment </div>
+                            </div>
+                            <div class="invoice__original">
+                                @Model.OrigAmount @Model.Currency
+                                <div class="invoice__info"> original </div>
+                            </div>
+                            <div class="invoice__description">
+                                <div class="invoice__label">Error. The transfer was paid to small</div>
+                                <div class="invoice__value"></div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</article>
+@section Scripts
+    {
+    <script src="~/js/vendor/clipboard.min.js" asp-append-version="true"></script>
+    <script type="text/javascript" src="/js/vendor/pieloader/jquery-pie-loader.js"></script>
+    <script src='/js/invoice.js' type="text/javascript"></script>
+
+    <script type="text/javascript">
+        $(function() {
+            $.refreshSeconds = @Model.RefreshSeconds;
+            $.invoiceId = '@Model.InvoiceId';
+            $.updateStatusUrl = '@Url.Action("Status")';
+            $.profilePageUrl = '@Url.Action("Profile", "Home")';
+            $.invoiceStatus = '@Model.Status';
+            $.needAutoUpdate = @Model.AutoUpdate.ToString().ToLower();
+
+            if ($.invoiceStatus === '@InvoiceStatus.Unpaid.ToString()') {
+                $.setUpCountDown();
+            }
+
+            if ($.needAutoUpdate) {
+                $.setUpUpdateStatus();
+            }
+
+            var clipboard = new Clipboard('.create__item-copy', {
+                text: function (trigger) {
+                    return $('.invoice_address__link')[0].innerHTML;
+                }
+            });
+
+            clipboard.on('success', function (e) {
+                e.trigger.innerHTML = '<i class="icon icon--check_thin"></i> Copied';
+                e.clearSelection();
+            });
+        });
+    </script>
+}
