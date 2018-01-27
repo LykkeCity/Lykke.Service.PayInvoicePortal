@@ -66,8 +66,8 @@ namespace Lykke.Service.PayInvoicePortal.Controllers
                         ClientName = model.ClientName,
                         ClientEmail = model.ClientEmail,
                         Amount = double.Parse(model.Amount, CultureInfo.InvariantCulture),
-                        AssetId = AssetId,
-                        ExchangeAssetId = ExchangeAssetId,
+                        SettlementAssetId = AssetId,
+                        PaymentAssetId = ExchangeAssetId,
                         DueDate = DateTime.Parse(model.StartDate, CultureInfo.InvariantCulture)
                             .Add(Startup.OrderLiveTime)
                     });
@@ -81,8 +81,8 @@ namespace Lykke.Service.PayInvoicePortal.Controllers
                         ClientName = model.ClientName,
                         ClientEmail = model.ClientEmail,
                         Amount = double.Parse(model.Amount, CultureInfo.InvariantCulture),
-                        AssetId = AssetId,
-                        ExchangeAssetId = ExchangeAssetId,
+                        SettlementAssetId = AssetId,
+                        PaymentAssetId = ExchangeAssetId,
                         DueDate = DateTime.Parse(model.StartDate, CultureInfo.InvariantCulture)
                             .Add(Startup.OrderLiveTime)
                     });
@@ -186,8 +186,8 @@ namespace Lykke.Service.PayInvoicePortal.Controllers
                         ClientName = model.Data.ClientName,
                         ClientEmail = model.Data.ClientEmail,
                         Amount = model.Data.Amount,
-                        AssetId = AssetId,
-                        ExchangeAssetId = ExchangeAssetId,
+                        SettlementAssetId = AssetId,
+                        PaymentAssetId = ExchangeAssetId,
                         DueDate = model.Data.DueDate
                     });
                 } else if (model.Data.Status == InvoiceStatus.Draft)
@@ -198,8 +198,8 @@ namespace Lykke.Service.PayInvoicePortal.Controllers
                         ClientName = model.Data.ClientName,
                         ClientEmail = model.Data.ClientEmail,
                         Amount = model.Data.Amount,
-                        AssetId = AssetId,
-                        ExchangeAssetId = ExchangeAssetId,
+                        SettlementAssetId = AssetId,
+                        PaymentAssetId = ExchangeAssetId,
                         DueDate = model.Data.DueDate
                     });
                 }
@@ -284,8 +284,8 @@ namespace Lykke.Service.PayInvoicePortal.Controllers
                         break;
                     case "currency":
                         orderedlist = model.Filter.SortWay == 0
-                            ? orderedlist.OrderBy(i => i.AssetId).ThenByDescending(i => i.CreatedDate).ToList()
-                            : orderedlist.OrderByDescending(i => i.AssetId).ThenByDescending(i => i.CreatedDate)
+                            ? orderedlist.OrderBy(i => i.SettlementAssetId).ThenByDescending(i => i.CreatedDate).ToList()
+                            : orderedlist.OrderByDescending(i => i.SettlementAssetId).ThenByDescending(i => i.CreatedDate)
                                 .ToList();
                         break;
                     case "status":

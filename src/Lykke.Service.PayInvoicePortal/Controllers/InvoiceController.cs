@@ -42,15 +42,15 @@ namespace Lykke.Service.PayInvoicePortal.Controllers
                 return NotFound();
             }
 
-            int refreshTime = (int)Math.Round((invoiceDetails.OrderDueDate - DateTime.Now).TotalSeconds);
+            int refreshTime = (int)Math.Round((invoiceDetails.OrderDueDate - DateTime.UtcNow).TotalSeconds);
 
-            double amoint = Math.Round(invoiceDetails.ExchangeAmount, 8);
+            double amoint = Math.Round(invoiceDetails.PaymentAmount, 8);
 
             var model = new InvoiceViewModel
             {
                 InvoiceId = invoiceDetails.Id,
                 InvoiceNumber = invoiceDetails.Number,
-                Currency = invoiceDetails.AssetId,
+                Currency = invoiceDetails.SettlementAssetId,
                 OrigAmount = TrimDouble(invoiceDetails.Amount, 2),
                 ClientName = invoiceDetails.ClientName,
                 Amount = TrimDouble(amoint, 8),

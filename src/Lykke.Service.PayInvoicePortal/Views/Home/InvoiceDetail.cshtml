@@ -89,11 +89,11 @@
                                     @if (Model.Data.Status == InvoiceStatus.Draft)
                                     {
                                         @*<input type="text" id="Currency" value="@Model.Data.Currency" required placeholder="" class="form-control">*@
-                                        <input type="text" asp-for="Data.AssetId" required placeholder="" class="form-control noborder">
+                                        <input type="text" asp-for="Data.SettlementAssetId" required placeholder="" class="form-control noborder">
                                     }
                                     else
                                     {
-                                        <div class="invoice_paid__desc">@Model.Data.AssetId</div>
+                                        <div class="invoice_paid__desc">@Model.Data.SettlementAssetId</div>
                                     }
                                 </div>
                             </div>
