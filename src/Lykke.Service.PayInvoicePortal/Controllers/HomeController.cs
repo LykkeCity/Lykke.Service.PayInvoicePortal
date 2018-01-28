@@ -13,6 +13,7 @@ using Common.Log;
 using Lykke.Service.PayInvoice.Client;
 using Lykke.Service.PayInvoice.Client.Models.Balances;
 using Lykke.Service.PayInvoice.Client.Models.Invoice;
+using Lykke.Service.PayInvoicePortal.Models.Home;
 using Microsoft.AspNetCore.Http;
 using NewInvoiceModel = Lykke.Service.PayInvoicePortal.Models.NewInvoiceModel;
 
@@ -65,7 +66,7 @@ namespace Lykke.Service.PayInvoicePortal.Controllers
                         Number = model.InvoiceNumber,
                         ClientName = model.ClientName,
                         ClientEmail = model.ClientEmail,
-                        Amount = double.Parse(model.Amount, CultureInfo.InvariantCulture),
+                        Amount = decimal.Parse(model.Amount, CultureInfo.InvariantCulture),
                         SettlementAssetId = AssetId,
                         PaymentAssetId = ExchangeAssetId,
                         DueDate = DateTime.Parse(model.StartDate, CultureInfo.InvariantCulture)
@@ -80,7 +81,7 @@ namespace Lykke.Service.PayInvoicePortal.Controllers
                         Number = model.InvoiceNumber,
                         ClientName = model.ClientName,
                         ClientEmail = model.ClientEmail,
-                        Amount = double.Parse(model.Amount, CultureInfo.InvariantCulture),
+                        Amount = decimal.Parse(model.Amount, CultureInfo.InvariantCulture),
                         SettlementAssetId = AssetId,
                         PaymentAssetId = ExchangeAssetId,
                         DueDate = DateTime.Parse(model.StartDate, CultureInfo.InvariantCulture)
@@ -174,7 +175,7 @@ namespace Lykke.Service.PayInvoicePortal.Controllers
             {
                 if (model.Data.Status == InvoiceStatus.Unpaid)
                 {
-                    if (string.IsNullOrEmpty(model.Data.Number) || string.IsNullOrEmpty(model.Data.ClientEmail) || model.Data.Amount < .1)
+                    if (string.IsNullOrEmpty(model.Data.Number) || string.IsNullOrEmpty(model.Data.ClientEmail) || model.Data.Amount < .1m)
                     {
                         // TODO: Need to change invoice process model
                         return RedirectToAction("Profile");
@@ -337,7 +338,21 @@ namespace Lykke.Service.PayInvoicePortal.Controllers
 
             const int pageSize = 10;
             respmodel.PageCount = (int)Math.Ceiling(orderedlist.Count / (double) pageSize);
-            respmodel.Data = orderedlist.Skip((model.Page - 1) * pageSize).Take(pageSize).ToList();
+            respmodel.Data = orderedlist.Skip((model.Page - 1) * pageSize).Take(pageSize)
+                .Select(o=> new GridRowItem
+                {
+                    Id = o.Id,
+                    Number = o.Number,
+                    ClientEmail = o.ClientEmail,
+                    ClientName = o.ClientName,
+                    Amount = o.Amount,
+                    DueDate = o.DueDate,
+                    Status = o.Status.ToString(),
+                    SettlementAssetId = o.SettlementAssetId,
+                    CreatedDate = o.CreatedDate.ToLocalTime()
+                })
+                .ToList();
+            
             return Json(respmodel);
         }
 
