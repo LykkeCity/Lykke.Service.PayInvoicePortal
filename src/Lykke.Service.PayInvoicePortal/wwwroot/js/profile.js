@@ -34,6 +34,7 @@ function validate(clearvalidate) {
     }
     return errors;
 }
+
 function editItem(invoiceId) {
     var currentItem = null;
     for (var i = 0; i < invoices.length; i++) {
@@ -272,7 +273,6 @@ $(document).ready(function (e) {
 
     if (generateditem) {
         if (generateditem.Status !== "Draft") {
-
             showItem(generateditem);
             $('body').addClass('body--menu_opened');
             $('.create.unpaid').addClass('create--open');
@@ -287,9 +287,11 @@ $(document).ready(function (e) {
         updateGrid();
     });
     $('a[data-toggle="tab"]').on('click', function (e) {
-        window.location = e.target.getAttribute("href");
-        if (e.target.getAttribute("href"))
-            document.cookie = "currenttab=" + e.target.getAttribute("href");
+        var href = e.currentTarget.getAttribute("href");
+        if (href) {
+            document.cookie = "currenttab=" + href;
+            window.location = href;
+        }
     });
     $("#upload").change(function () {
         $('.new_file').remove();
@@ -396,7 +398,18 @@ $(document).ready(function (e) {
             if ($('#ClientName').val() !== "")
                 return true;
         }
-        return (errors == 0);
+
+        if (errors === 0) {
+            $('#createform').submit(function () {
+                return false;
+            });
+            disableButtons();
+            return true;
+        }
+
+        enableButtons();
+
+        return false;
     });
 
     $('.create__item-copy').tooltip({
@@ -422,6 +435,7 @@ $(document).ready(function (e) {
         }).datepicker("setDate", new Date());
         $('body').addClass('body--menu_opened');
         $('.create.draft').addClass('create--open');
+        enableButtons();
     });
 
     $('.icon--cal').on('click',
@@ -462,6 +476,16 @@ $(document).ready(function (e) {
     });
 
 });
+
+function disableButtons() {
+    $('#generatebtn').attr('disabled', 'disabled');
+    $('#draftbtn').attr('disabled', 'disabled');
+}
+
+function enableButtons() {
+    $('#generatebtn').removeAttr('disabled');
+    $('#draftbtn').removeAttr('disabled');
+}
 
 function getFileSize(value) {
     if (value < 1024) {
