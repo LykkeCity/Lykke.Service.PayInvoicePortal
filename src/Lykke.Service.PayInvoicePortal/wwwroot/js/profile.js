@@ -237,13 +237,13 @@ function showItem(invoice) {
     }
     //$('#UnpaidInvoiceNumberHeader').text(" Invoice #" + invoice.InvoiceNumber);
 }
+
 function setTooltip(message) {
     $('.create__item-copy')
         .attr('title', message);
     $('.create__item-copy').tooltip("open");
 }
 
-var _validFileExtensions = [".pdf", ".doc", ".docx", ".xls", ".xlsx"];
 function setActiveTab() {
     var currentTab = "#all";
     if (window.location.href.indexOf("#") !== -1)
@@ -257,12 +257,14 @@ function setActiveTab() {
         window.location.href = currentTab;
     }
 }
+
 function getCookie(name) {
     var matches = document.cookie.match(new RegExp(
         "(?:^|; )" + name.replace(/([\.$?*|{}\(\)\[\]\\\/\+^])/g, '\\$1') + "=([^;]*)"
     ));
     return matches ? decodeURIComponent(matches[1]) : undefined;
 }
+
 $(document).ready(function (e) {
     updateGrid();
     updateBalance();
@@ -290,53 +292,30 @@ $(document).ready(function (e) {
             document.cookie = "currenttab=" + e.target.getAttribute("href");
     });
     $("#upload").change(function () {
-        var fileUpload = $("#upload").get(0);
-        var files = fileUpload.files;
+        $('.new_file').remove();
 
-        for (var i = 0; i < files.length; i++) {
-            var oInput = files[i];
-            var sFileName = oInput.name;
-            if (sFileName.length > 0) {
-                var blnValid = false;
-                for (var j = 0; j < _validFileExtensions.length; j++) {
-                    var sCurExtension = _validFileExtensions[j];
-                    if (sFileName.substr(sFileName.length - sCurExtension.length, sCurExtension.length).toLowerCase() == sCurExtension.toLowerCase()) {
-                        blnValid = true;
-                        break;
-                    }
-                }
+        var allowedFiles = /(\.pdf|\.doc|\.docx|\.xls|\.xlsx)$/i;
 
-                if (!blnValid) {
-                    alert("Sorry, " + sFileName + " is invalid, allowed extensions are: " + _validFileExtensions.join(", "));
-                    fileUpload.value = '';
-                    return false;
-                }
+        for (var i = 0; i < this.files.length; i++) {
+            if (!allowedFiles.exec(this.files[i].name)) {
+                alert("The file '" + this.files[i].name + "' is invalid, allowed extensions are: .pdf; .doc; .docx; .xls; .xlsx.");
+                this.value = '';
+                return false;
             }
         }
 
-        var divfiles = document.createElement("div");
-        divfiles.className = "invoice_files__row";
-        var filesdiv = $(".invoice_files")[0];
-        filesdiv.appendChild(divfiles);
+        for (var j = 0; j < this.files.length; j++) {
+            var fileRow = $('<div>').addClass('invoice_files__row').addClass('new_file');
+            $('<div>').addClass('invoice_files__doc').text(this.files[j].name.split('.').pop()).appendTo(fileRow);
 
-        var filetype = document.createElement("div");
-        filetype.className = "invoice_files__doc";
-        filetype.innerText = files[0].name.split('.').pop();
-        divfiles.appendChild(filetype);
+            var nameBlock = $('<div>').addClass('invoice_files__block').appendTo(fileRow);
+            $('<div>').addClass('invoice_files__name').text(this.files[j].name).appendTo(nameBlock);
 
-        var nameblock = document.createElement("div");
-        nameblock.className = "invoice_files__block";
-        divfiles.appendChild(nameblock);
+            $('<div>').addClass('invoice_files__size').text(getFileSize(this.files[j].size)).appendTo(fileRow);
+            $("#invoice_files").append(fileRow);
+        }
 
-        var namefile = document.createElement("div");
-        namefile.className = "invoice_files__name";
-        namefile.innerText = files[0].name;
-        nameblock.appendChild(namefile);
-
-        var filesize = document.createElement("div");
-        filesize.className = "invoice_files__size";
-        filesize.innerText = (files[0].size / 1024).toFixed(0) + " KB";
-        divfiles.appendChild(filesize);
+        return true;
     });
 
     $('.icon.icon--copy').on('click', function (e) {
@@ -483,3 +462,13 @@ $(document).ready(function (e) {
     });
 
 });
+
+function getFileSize(value) {
+    if (value < 1024) {
+        return value + ' bytes';
+    } else if (value > 1024 && value < 1048576) {
+        return (value / 1024).toFixed(0) + ' KB';
+    } else {
+        return (value / 1048576).toFixed(0) + ' MB';
+    }
+}

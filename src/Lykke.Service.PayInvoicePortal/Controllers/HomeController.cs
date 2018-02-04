@@ -12,10 +12,10 @@ using Common;
 using Common.Log;
 using Lykke.Service.PayInvoice.Client;
 using Lykke.Service.PayInvoice.Client.Models.Balances;
+using Lykke.Service.PayInvoice.Client.Models.File;
 using Lykke.Service.PayInvoice.Client.Models.Invoice;
 using Lykke.Service.PayInvoicePortal.Models.Home;
 using Microsoft.AspNetCore.Http;
-using NewInvoiceModel = Lykke.Service.PayInvoicePortal.Models.NewInvoiceModel;
 
 namespace Lykke.Service.PayInvoicePortal.Controllers
 {
@@ -47,7 +47,7 @@ namespace Lykke.Service.PayInvoicePortal.Controllers
         }
 
         [HttpPost("Profile")]
-        public async Task<IActionResult> Profile(NewInvoiceModel model, IFormFile upload)
+        public async Task<IActionResult> Profile(NewInvoiceModel model, IFormFileCollection upload)
         {
             InvoiceModel invoice;
 
@@ -90,28 +90,44 @@ namespace Lykke.Service.PayInvoicePortal.Controllers
                 }
                 else
                     throw new InvalidOperationException("Unknown action");
-
-                if (upload != null)
-                {
-                    byte[] content;
-
-                    using (var ms = new MemoryStream())
-                    {
-                        upload.CopyTo(ms);
-                        content = ms.ToArray();
-                    }
-                    
-                    await _payInvoiceClient.UploadFileAsync(invoice.Id, content, upload.FileName, upload.ContentType);
-                }
             }
             catch (Exception exception)
             {
                 await _log.WriteErrorAsync(nameof(HomeController), nameof(Profile), model.ToJson(), exception);
                 return BadRequest("Cannot create invoce!");
             }
-            
+
+            if (upload != null)
+            {
+                foreach (IFormFile formFile in upload)
+                {
+                    byte[] content;
+
+                    using (var ms = new MemoryStream())
+                    {
+                        formFile.CopyTo(ms);
+                        content = ms.ToArray();
+                    }
+
+                    await _payInvoiceClient.UploadFileAsync(invoice.Id, content, formFile.FileName, formFile.ContentType);
+                }
+            }
+
+            var viewModel = new InvoiceViewModel
+            {
+                Id = invoice.Id,
+                Number = invoice.Number,
+                ClientName = invoice.ClientName,
+                ClientEmail = invoice.ClientEmail,
+                Amount = $"{invoice.Amount:N2}  {AssetId}",
+                DueDate = invoice.DueDate.ToString("MM/dd/yyyy"),
+                Status = invoice.Status.ToString(),
+                SettlementAssetId = invoice.SettlementAssetId,
+                CreatedDate = invoice.CreatedDate.ToString("MM/dd/yyyy")
+            };
+
             ViewBag.IsInvoiceCreated = true;
-            TempData["GeneratedItem"] = JsonConvert.SerializeObject(invoice);
+            TempData["GeneratedItem"] = JsonConvert.SerializeObject(viewModel);
             return View();
         }
 
@@ -142,8 +158,29 @@ namespace Lykke.Service.PayInvoicePortal.Controllers
             {
                 Data = await _payInvoiceClient.GetInvoiceAsync(MerchantId, invoiceId)
             };
-            var files = await _payInvoiceClient.GetFilesAsync(model.Data.Id);
-            model.Files = files.Select(i => new FileModel(i)).ToList();
+
+            IEnumerable<FileInfoModel> files = await _payInvoiceClient.GetFilesAsync(model.Data.Id);
+
+            model.Files = files
+                .Select(o => new FileModel
+                {
+                    FileName = o.Name,
+                    FileExtension = Path.GetFileNameWithoutExtension(o.Name),
+                    FileUrl = Url.Action("InvoiceFile", new
+                    {
+                        invoiceId,
+                        o.Id,
+                        o.Name,
+                        o.Type
+                    }),
+                    FileSize = o.Size < 1024
+                        ? $"{o.Size} bytes"
+                        : o.Size > 1024 && o.Size < 1048576
+                            ? $"{o.Size / 1024:N0} KB"
+                            : $"{o.Size / 1048576:N0} MB"
+                })
+                .ToList();
+
             if (model.Data.Status != InvoiceStatus.Paid)
             {
                 model.InvoiceUrl = $"{SiteUrl.TrimEnd('/')}/invoice/{model.Data.Id}";
@@ -154,22 +191,14 @@ namespace Lykke.Service.PayInvoicePortal.Controllers
         }
 
         [HttpGet("InvoiceFile")]
-        public async Task<IActionResult> InvoiceFile(string invoiceId, string fileId, string fileName)
+        public async Task<IActionResult> InvoiceFile(string invoiceId, string id, string name, string type)
         {
-            try
-            {
-                var stream = await _payInvoiceClient.GetFileAsync(invoiceId, fileId);
-                var response = File(stream, "application/octet-stream", fileName);
-                return response;
-            }
-            catch (Exception e)
-            {
-                // TODO: Loging
-                throw new InvalidOperationException("Unknown action");
-            }
+            var stream = await _payInvoiceClient.GetFileAsync(invoiceId, id);
+            return File(stream, type, name);
         }
+
         [HttpPost("InvoiceDetail")]
-        public async Task<IActionResult> InvoiceDetail(InvoiceDetailModel model, IFormFile upload)
+        public async Task<IActionResult> InvoiceDetail(InvoiceDetailModel model, IFormFileCollection upload)
         {
             try
             {
@@ -213,24 +242,27 @@ namespace Lykke.Service.PayInvoicePortal.Controllers
                 {
                     throw new InvalidOperationException("Unknown action");
                 }
-
-                if (upload != null)
-                {
-                    byte[] content;
-
-                    using (var ms = new MemoryStream())
-                    {
-                        upload.CopyTo(ms);
-                        content = ms.ToArray();
-                    }
-                    
-                    await _payInvoiceClient.UploadFileAsync(model.Data.Id, content, upload.FileName, upload.ContentType);
-                }
             }
             catch (Exception exception)
             {
                 await _log.WriteErrorAsync(nameof(HomeController), nameof(InvoiceDetail), model.ToJson(), exception);
                 return BadRequest("Error processing invoce!");
+            }
+
+            if (upload != null)
+            {
+                foreach (IFormFile formFile in upload)
+                {
+                    byte[] content;
+
+                    using (var ms = new MemoryStream())
+                    {
+                        formFile.CopyTo(ms);
+                        content = ms.ToArray();
+                    }
+
+                    await _payInvoiceClient.UploadFileAsync(model.Data.Id, content, formFile.FileName, formFile.ContentType);
+                }
             }
 
             return RedirectToAction("InvoiceDetail", new
