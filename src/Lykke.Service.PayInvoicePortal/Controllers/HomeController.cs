@@ -165,7 +165,7 @@ namespace Lykke.Service.PayInvoicePortal.Controllers
                 .Select(o => new FileModel
                 {
                     FileName = o.Name,
-                    FileExtension = Path.GetFileNameWithoutExtension(o.Name),
+                    FileExtension = Path.GetExtension(o.Name).TrimStart('.'),
                     FileUrl = Url.Action("InvoiceFile", new
                     {
                         invoiceId,
