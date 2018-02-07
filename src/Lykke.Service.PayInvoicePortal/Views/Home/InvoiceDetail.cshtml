@@ -89,11 +89,11 @@
                                     @if (Model.Data.Status == InvoiceStatus.Draft)
                                     {
                                         @*<input type="text" id="Currency" value="@Model.Data.Currency" required placeholder="" class="form-control">*@
-                                        <input type="text" asp-for="Data.AssetId" required placeholder="" class="form-control noborder">
+                                        <input type="text" asp-for="Data.SettlementAssetId" required placeholder="" class="form-control noborder">
                                     }
                                     else
                                     {
-                                        <div class="invoice_paid__desc">@Model.Data.AssetId</div>
+                                        <div class="invoice_paid__desc">@Model.Data.SettlementAssetId</div>
                                     }
                                 </div>
                             </div>
@@ -146,10 +146,10 @@
                             <div class="invoice_paid_files">
                                 <div class="invoice_paid_files__top">
                                     <div class="invoice_paid_files__title">Files</div>
-                                    <button type="button" name="button" class="btn invoice_paid_files__add">Add file</button>
-                                    <input type="file" name="upload" id="upload">
+                                    <button type="button" name="button" class="btn invoice_paid_files__add">Add files</button>
+                                    <input type="file" name="upload" id="upload" accept=".pdf, .doc, .docx, .xls, .xlsx" multiple>
                                 </div>
-                                <div class="invoice_paid_files__row">
+                                <div id="files_container" class="invoice_paid_files__row">
                                     @if (Model.Files.Count != 0)
                                     {
                                         foreach (var file in Model.Files)

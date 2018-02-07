@@ -34,18 +34,17 @@ namespace Lykke.Service.PayInvoicePortal.Controllers
         [HttpGet]
         public IActionResult SignIn(string returnUrl)
         {
+            if (User.Identity.IsAuthenticated)
+                return RedirectToAction("Profile", "Home");
+
             return View(new SignInViewModel());
         }
 
-        // TODO: Remove redundant code
         [HttpPost]
         public async Task<IActionResult> SignIn(SignInViewModel model)
         {
             if (!ModelState.IsValid)
-            {
-                ViewBag.Error = true;
                 return View();
-            }
 
             ValidateResultModel response;
 
@@ -57,14 +56,14 @@ namespace Lykke.Service.PayInvoicePortal.Controllers
             {
                 await _log.WriteErrorAsync(nameof(AuthController), nameof(SignIn),
                     $"Can not authenticate user '{model.Login}'", exception);
-                
-                ViewBag.Error = true;
+
+                ModelState.AddModelError(string.Empty, "An error occurred during authentication.");
                 return View();
             }
 
             if (!response.Success)
             {
-                ViewBag.Error = true;
+                ModelState.AddModelError(string.Empty, "The username or password you entered incorrect.");
                 return View();
             }
 
@@ -79,8 +78,8 @@ namespace Lykke.Service.PayInvoicePortal.Controllers
                 await _log.WriteErrorAsync(nameof(AuthController), nameof(SignIn),
                     $"Can not get employee. {nameof(response.MerchantId)}: '{response.MerchantId}'. {nameof(response.EmployeeId)}: '{response.EmployeeId}'",
                     exception);
-                
-                ViewBag.Error = true;
+
+                ModelState.AddModelError(string.Empty, "User profile not found.");
                 return View();
             }
             

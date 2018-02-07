@@ -31,14 +31,11 @@ $('#deletebtn').on('click', function (e) {
                     });
                 }
             },
-            cancel: function () {
-
-            }
+            cancel: function () {}
         }
     });
-    
 });
-var _validFileExtensions = [".pdf", ".doc", ".docx", ".xls", ".xlsx"];
+
 $(document).ready(function(e) {
     var duedate = $("#Data_DueDate").val();
     var startdate = $('#Data_StartDate').text();
@@ -46,57 +43,40 @@ $(document).ready(function(e) {
     initClipboard();
 
     $("#upload").change(function () {
-        var fileUpload = $("#upload").get(0);
-        var files = fileUpload.files;
+        $('.new_file').remove();
 
-        for (var i = 0; i < files.length; i++) {
-            var oInput = files[i];
-            var sFileName = oInput.name;
-            if (sFileName.length > 0) {
-                var blnValid = false;
-                for (var j = 0; j < _validFileExtensions.length; j++) {
-                    var sCurExtension = _validFileExtensions[j];
-                    if (sFileName.substr(sFileName.length - sCurExtension.length, sCurExtension.length).toLowerCase() == sCurExtension.toLowerCase()) {
-                        blnValid = true;
-                        break;
-                    }
-                }
+        if ($('.invoice_paid_files__doc').length === 0)
+            $(".invoice_paid_files__row span").show();
 
-                if (!blnValid) {
-                    alert("Sorry, " + sFileName + " is invalid, allowed extensions are: " + _validFileExtensions.join(", "));
-                    fileUpload.value = '';
-                    return false;
-                }
+        if (this.files.length === 0)
+            return true;
+
+        var allowedFiles = /(\.pdf|\.doc|\.docx|\.xls|\.xlsx)$/i;
+
+        for (var i = 0; i < this.files.length; i++) {
+            if (!allowedFiles.exec(this.files[i].name)) {
+                alert("The file '" + this.files[i].name + "' is invalid, allowed extensions are: .pdf; .doc; .docx; .xls; .xlsx.");
+                this.value = '';
+                return false;
             }
         }
 
-        var divfiles = document.createElement("div");
-        divfiles.className = "invoice_files__row";
-        if ($(".invoice_paid_files__row span")[0])
-            $(".invoice_paid_files__row span")[0].style.display = "none";
-        var filesdiv = $(".invoice_paid_files__row")[0];
-        filesdiv.appendChild(divfiles);
+        $(".invoice_paid_files__row span").hide();
 
-        var filetype = document.createElement("div");
-        filetype.className = "invoice_paid_files__doc";
-        filetype.innerText = files[0].name.split('.').pop();
-        divfiles.appendChild(filetype);
+        for (var j = 0; j < this.files.length; j++) {
+            var fileRow = $('<div>').addClass('invoice_files__row').addClass('new_file');
+            $('<div>').addClass('invoice_paid_files__doc').text(this.files[j].name.split('.').pop()).appendTo(fileRow);
+            $('<div>').addClass('invoice_paid_files__name').text(this.files[j].name).appendTo(fileRow);
+            $('<div>').addClass('invoice_paid_files__size').text(getFileSize(this.files[j].size)).appendTo(fileRow);
+            $("#files_container").append(fileRow);
+        }
 
-        var namefile = document.createElement("div");
-        namefile.className = "invoice_paid_files__name";
-        namefile.innerText = files[0].name;
-        divfiles.appendChild(namefile);
-
-        var filesize = document.createElement("div");
-        filesize.className = "invoice_paid_files__size";
-        filesize.innerText = (files[0].size / 1024).toFixed(0) + " KB";
-        divfiles.appendChild(filesize);
+        return true;
     });
 });
 function initClipboard() {
     var clipboard = new Clipboard('.create__item-copy', {
         text: function (trigger) {
-            debugger;
             return trigger.previousElementSibling.innerHTML;
         }
     });
@@ -105,4 +85,14 @@ function initClipboard() {
         e.trigger.innerHTML = '<i class="icon icon--check_thin"></i> Copied';
         e.clearSelection();
     });
+}
+
+function getFileSize(value) {
+    if (value < 1024) {
+        return value + ' bytes';
+    } else if (value > 1024 && value < 1048576) {
+        return (value / 1024).toFixed(0) + ' KB';
+    } else {
+        return (value / 1048576).toFixed(0) + ' MB';
+    }
 }

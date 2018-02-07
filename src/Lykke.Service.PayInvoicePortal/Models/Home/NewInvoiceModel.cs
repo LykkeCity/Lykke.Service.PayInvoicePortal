@@ -1,4 +1,4 @@
-﻿namespace Lykke.Service.PayInvoicePortal.Models
+﻿namespace Lykke.Service.PayInvoicePortal.Models.Home
 {
     public class NewInvoiceModel
     {

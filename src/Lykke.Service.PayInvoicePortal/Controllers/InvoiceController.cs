@@ -34,7 +34,7 @@ namespace Lykke.Service.PayInvoicePortal.Controllers
 
             try
             {
-                invoiceDetails = await _payInvoiceClient.GetInvoiceDetailsAsync(invoiceId);
+                invoiceDetails = await _payInvoiceClient.CheckoutInvoiceAsync(invoiceId);
             }
             catch (Exception exception)
             {
@@ -42,21 +42,21 @@ namespace Lykke.Service.PayInvoicePortal.Controllers
                 return NotFound();
             }
 
-            int refreshTime = (int)Math.Round((invoiceDetails.OrderDueDate - DateTime.Now).TotalSeconds);
+            int refreshTime = (int)Math.Round((invoiceDetails.OrderDueDate - DateTime.UtcNow).TotalSeconds);
 
-            double amoint = Math.Round(invoiceDetails.ExchangeAmount, 8);
+            decimal amoint = Math.Round(invoiceDetails.PaymentAmount, 8);
 
             var model = new InvoiceViewModel
             {
                 InvoiceId = invoiceDetails.Id,
                 InvoiceNumber = invoiceDetails.Number,
-                Currency = invoiceDetails.AssetId,
+                Currency = invoiceDetails.SettlementAssetId,
                 OrigAmount = TrimDouble(invoiceDetails.Amount, 2),
                 ClientName = invoiceDetails.ClientName,
                 Amount = TrimDouble(amoint, 8),
                 Status = invoiceDetails.Status,
                 RefreshSeconds = refreshTime,
-                QRCode = $@"https://chart.googleapis.com/chart?chs=220x220&chld=L|2&cht=qr&chl=bitcoin:{invoiceDetails.WalletAddress}?amount={amoint}%26label=invoice%20#{invoiceDetails.Number}%26message={invoiceDetails.OrderId}",
+                QRCode = $@"https://chart.googleapis.com/chart?chs=220x220&chld=L|2&cht=qr&chl=bitcoin:{invoiceDetails.WalletAddress}?amount={amoint}%26label=invoice%20#{invoiceDetails.Number}%26message={invoiceDetails.PaymentRequestId}",
                 AutoUpdate = invoiceDetails.Status == InvoiceStatus.InProgress || invoiceDetails.Status == InvoiceStatus.Unpaid,
                 WalletAddress = invoiceDetails.WalletAddress
             };
@@ -64,7 +64,7 @@ namespace Lykke.Service.PayInvoicePortal.Controllers
             return View(model);
         }
 
-        public string TrimDouble(double value, int maxSigns)
+        public string TrimDouble(decimal value, int maxSigns)
         {
             var result = value.ToString($"F{maxSigns}", CultureInfo.InvariantCulture);
             result = result.TrimEnd("0".ToCharArray());
@@ -75,11 +75,11 @@ namespace Lykke.Service.PayInvoicePortal.Controllers
         [HttpPost("invoice/status")]
         public async Task<IActionResult> Status(string invoiceId)
         {
-            InvoiceDetailsModel invoiceSummary;
+            InvoiceModel invoice;
 
             try
             {
-                invoiceSummary = await _payInvoiceClient.GetInvoiceDetailsAsync(invoiceId);
+                invoice = await _payInvoiceClient.GetInvoiceAsync(invoiceId);
             }
             catch (Exception exception)
             {
@@ -89,7 +89,7 @@ namespace Lykke.Service.PayInvoicePortal.Controllers
 
             return Json(new
             {
-                status = invoiceSummary.Status
+                status = invoice.Status.ToString()
             });
         }
     }

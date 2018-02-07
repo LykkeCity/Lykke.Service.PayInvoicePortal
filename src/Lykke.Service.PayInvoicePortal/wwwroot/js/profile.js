@@ -34,6 +34,7 @@ function validate(clearvalidate) {
     }
     return errors;
 }
+
 function editItem(invoiceId) {
     var currentItem = null;
     for (var i = 0; i < invoices.length; i++) {
@@ -223,7 +224,7 @@ function showItem(invoice) {
             value = "";
         var item = document.getElementById("Unpaid" + keyNames[j]);
         if (keyNames[j] === "Amount") {
-            value = currentItem[keyNames[j]] + " " + currentItem["AssetId"];
+            value = currentItem[keyNames[j]];
         }
         if (keyNames[j] === "CreatedDate" || keyNames[j] === "DueDate")
             value = value.substr(0, 10);
@@ -237,13 +238,13 @@ function showItem(invoice) {
     }
     //$('#UnpaidInvoiceNumberHeader').text(" Invoice #" + invoice.InvoiceNumber);
 }
+
 function setTooltip(message) {
     $('.create__item-copy')
         .attr('title', message);
     $('.create__item-copy').tooltip("open");
 }
 
-var _validFileExtensions = [".pdf", ".doc", ".docx", ".xls", ".xlsx"];
 function setActiveTab() {
     var currentTab = "#all";
     if (window.location.href.indexOf("#") !== -1)
@@ -257,12 +258,14 @@ function setActiveTab() {
         window.location.href = currentTab;
     }
 }
+
 function getCookie(name) {
     var matches = document.cookie.match(new RegExp(
         "(?:^|; )" + name.replace(/([\.$?*|{}\(\)\[\]\\\/\+^])/g, '\\$1') + "=([^;]*)"
     ));
     return matches ? decodeURIComponent(matches[1]) : undefined;
 }
+
 $(document).ready(function (e) {
     updateGrid();
     updateBalance();
@@ -270,7 +273,6 @@ $(document).ready(function (e) {
 
     if (generateditem) {
         if (generateditem.Status !== "Draft") {
-
             showItem(generateditem);
             $('body').addClass('body--menu_opened');
             $('.create.unpaid').addClass('create--open');
@@ -285,58 +287,37 @@ $(document).ready(function (e) {
         updateGrid();
     });
     $('a[data-toggle="tab"]').on('click', function (e) {
-        window.location = e.target.getAttribute("href");
-        if (e.target.getAttribute("href"))
-            document.cookie = "currenttab=" + e.target.getAttribute("href");
+        var href = e.currentTarget.getAttribute("href");
+        if (href) {
+            document.cookie = "currenttab=" + href;
+            window.location = href;
+        }
     });
     $("#upload").change(function () {
-        var fileUpload = $("#upload").get(0);
-        var files = fileUpload.files;
+        $('.new_file').remove();
 
-        for (var i = 0; i < files.length; i++) {
-            var oInput = files[i];
-            var sFileName = oInput.name;
-            if (sFileName.length > 0) {
-                var blnValid = false;
-                for (var j = 0; j < _validFileExtensions.length; j++) {
-                    var sCurExtension = _validFileExtensions[j];
-                    if (sFileName.substr(sFileName.length - sCurExtension.length, sCurExtension.length).toLowerCase() == sCurExtension.toLowerCase()) {
-                        blnValid = true;
-                        break;
-                    }
-                }
+        var allowedFiles = /(\.pdf|\.doc|\.docx|\.xls|\.xlsx)$/i;
 
-                if (!blnValid) {
-                    alert("Sorry, " + sFileName + " is invalid, allowed extensions are: " + _validFileExtensions.join(", "));
-                    fileUpload.value = '';
-                    return false;
-                }
+        for (var i = 0; i < this.files.length; i++) {
+            if (!allowedFiles.exec(this.files[i].name)) {
+                alert("The file '" + this.files[i].name + "' is invalid, allowed extensions are: .pdf; .doc; .docx; .xls; .xlsx.");
+                this.value = '';
+                return false;
             }
         }
 
-        var divfiles = document.createElement("div");
-        divfiles.className = "invoice_files__row";
-        var filesdiv = $(".invoice_files")[0];
-        filesdiv.appendChild(divfiles);
+        for (var j = 0; j < this.files.length; j++) {
+            var fileRow = $('<div>').addClass('invoice_files__row').addClass('new_file');
+            $('<div>').addClass('invoice_files__doc').text(this.files[j].name.split('.').pop()).appendTo(fileRow);
 
-        var filetype = document.createElement("div");
-        filetype.className = "invoice_files__doc";
-        filetype.innerText = files[0].name.split('.').pop();
-        divfiles.appendChild(filetype);
+            var nameBlock = $('<div>').addClass('invoice_files__block').appendTo(fileRow);
+            $('<div>').addClass('invoice_files__name').text(this.files[j].name).appendTo(nameBlock);
 
-        var nameblock = document.createElement("div");
-        nameblock.className = "invoice_files__block";
-        divfiles.appendChild(nameblock);
+            $('<div>').addClass('invoice_files__size').text(getFileSize(this.files[j].size)).appendTo(fileRow);
+            $("#invoice_files").append(fileRow);
+        }
 
-        var namefile = document.createElement("div");
-        namefile.className = "invoice_files__name";
-        namefile.innerText = files[0].name;
-        nameblock.appendChild(namefile);
-
-        var filesize = document.createElement("div");
-        filesize.className = "invoice_files__size";
-        filesize.innerText = (files[0].size / 1024).toFixed(0) + " KB";
-        divfiles.appendChild(filesize);
+        return true;
     });
 
     $('.icon.icon--copy').on('click', function (e) {
@@ -417,7 +398,18 @@ $(document).ready(function (e) {
             if ($('#ClientName').val() !== "")
                 return true;
         }
-        return (errors == 0);
+
+        if (errors === 0) {
+            $('#createform').submit(function () {
+                return false;
+            });
+            disableButtons();
+            return true;
+        }
+
+        enableButtons();
+
+        return false;
     });
 
     $('.create__item-copy').tooltip({
@@ -443,6 +435,7 @@ $(document).ready(function (e) {
         }).datepicker("setDate", new Date());
         $('body').addClass('body--menu_opened');
         $('.create.draft').addClass('create--open');
+        enableButtons();
     });
 
     $('.icon--cal').on('click',
@@ -483,3 +476,23 @@ $(document).ready(function (e) {
     });
 
 });
+
+function disableButtons() {
+    $('#generatebtn').attr('disabled', 'disabled');
+    $('#draftbtn').attr('disabled', 'disabled');
+}
+
+function enableButtons() {
+    $('#generatebtn').removeAttr('disabled');
+    $('#draftbtn').removeAttr('disabled');
+}
+
+function getFileSize(value) {
+    if (value < 1024) {
+        return value + ' bytes';
+    } else if (value > 1024 && value < 1048576) {
+        return (value / 1024).toFixed(0) + ' KB';
+    } else {
+        return (value / 1048576).toFixed(0) + ' MB';
+    }
+}

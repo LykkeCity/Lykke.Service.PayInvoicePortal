@@ -9,6 +9,6 @@
     <ProjectReference Include="..\Lykke.Service.PayInvoicePortal.Core\Lykke.Service.PayInvoicePortal.Core.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Lykke.Common" Version="4.2.0" />
+    <PackageReference Include="Lykke.Common" Version="4.4.0" />
   </ItemGroup>
 </Project>
