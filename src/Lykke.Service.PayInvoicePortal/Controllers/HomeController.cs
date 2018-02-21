@@ -187,6 +187,11 @@ namespace Lykke.Service.PayInvoicePortal.Controllers
                 model.QRCode = $@"https://chart.googleapis.com/chart?chs=220x220&chld=L|2&cht=qr&chl={model.InvoiceUrl}";
             }
 
+            if (model.Data.Status == InvoiceStatus.Paid)
+            {
+                model.BlockchainExplorerUrl = $"{BlockchainExplorerUrl.TrimEnd('/')}/address/{model.Data.WalletAddress}";
+            }
+
             return View(model);
         }
 

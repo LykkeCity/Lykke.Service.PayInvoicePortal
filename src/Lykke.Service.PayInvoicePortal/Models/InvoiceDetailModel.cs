@@ -7,6 +7,7 @@ namespace Lykke.Service.PayInvoicePortal.Models
     {
         public string QRCode { get; set; }
         public string InvoiceUrl { get; set; }
+        public string BlockchainExplorerUrl { get; set; }
         public InvoiceModel Data { get; set; }
         public List<FileModel> Files { get; set; }
     }

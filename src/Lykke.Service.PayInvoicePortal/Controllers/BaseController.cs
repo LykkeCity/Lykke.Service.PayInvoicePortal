@@ -11,7 +11,10 @@ namespace Lykke.Service.PayInvoicePortal.Controllers
 
         protected string SiteUrl
             => Startup.SiteUrl;
-        
+
+        protected string BlockchainExplorerUrl
+            => Startup.BlockchainExplorerUrl;
+
         protected string EmployeeId
             => _employeeId ?? (_employeeId = User.Claims.First(u => u.Type == ClaimTypes.Sid).Value);
 
