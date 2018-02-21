@@ -3,7 +3,6 @@ using System.Threading.Tasks;
 using Autofac;
 using Autofac.Extensions.DependencyInjection;
 using AzureStorage.Tables;
-using Common;
 using Common.Log;
 using Lykke.Common.ApiLibrary.Middleware;
 using Lykke.Logs;
@@ -29,6 +28,7 @@ namespace Lykke.Service.PayInvoicePortal
         public ILog Log { get; private set; }
 
         internal static string SiteUrl;
+        internal static string BlockchainExplorerUrl;
         internal static TimeSpan OrderLiveTime;
         
         public Startup(IHostingEnvironment env)
@@ -72,6 +72,7 @@ namespace Lykke.Service.PayInvoicePortal
                 var builder = new ContainerBuilder();
                 Log = CreateLogWithSlack(services, appSettings);
                 SiteUrl = appSettings.CurrentValue.PayInvoicePortal.SiteUrl;
+                BlockchainExplorerUrl = appSettings.CurrentValue.PayInvoicePortal.BlockchainExplorerUrl;
                 OrderLiveTime = appSettings.CurrentValue.PayInvoicePortal.OrderLiveTime;
                 
                 builder.RegisterModule(new Services.AutofacModule());

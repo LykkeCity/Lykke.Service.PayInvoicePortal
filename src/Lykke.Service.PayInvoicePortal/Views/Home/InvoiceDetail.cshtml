@@ -183,7 +183,7 @@
                         }
                         @if (Model.Data.Status == InvoiceStatus.Paid)
                         {
-                            <a href="https://private-bcn-explorer-test.lykkex.net/address/@Model.Data.WalletAddress" class="invoice_paid__bottom">Blockchain Settlement</a>
+                            <a href="@Model.BlockchainExplorerUrl" class="invoice_paid__bottom">Blockchain Settlement</a>
                         }
                     </div>
                 </div>
