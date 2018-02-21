@@ -63,7 +63,7 @@ namespace Lykke.Service.PayInvoicePortal.Controllers
 
             if (!response.Success)
             {
-                ModelState.AddModelError(string.Empty, "The username or password you entered incorrect.");
+                ModelState.AddModelError(string.Empty, "The e-mail or password you entered incorrect.");
                 return View();
             }
 
