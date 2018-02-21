@@ -6,6 +6,7 @@ using Lykke.Service.PayInvoicePortal.Models.Invoice;
 using Lykke.Service.PayInvoice.Client;
 using Lykke.Service.PayInvoice.Client.Models.Invoice;
 using Microsoft.AspNetCore.Mvc;
+using System.Net;
 
 namespace Lykke.Service.PayInvoicePortal.Controllers
 {
@@ -45,7 +46,9 @@ namespace Lykke.Service.PayInvoicePortal.Controllers
             int refreshTime = (int)Math.Round((invoiceDetails.OrderDueDate - DateTime.UtcNow).TotalSeconds);
 
             decimal amoint = Math.Round(invoiceDetails.PaymentAmount, 8);
-
+            var callback = string.Empty;
+            if (!string.IsNullOrEmpty(Request.Query["callback"]))
+                callback = WebUtility.UrlDecode(Request.Query["callback"]);
             var model = new InvoiceViewModel
             {
                 InvoiceId = invoiceDetails.Id,
@@ -58,7 +61,8 @@ namespace Lykke.Service.PayInvoicePortal.Controllers
                 RefreshSeconds = refreshTime,
                 QRCode = $@"https://chart.googleapis.com/chart?chs=220x220&chld=L|2&cht=qr&chl=bitcoin:{invoiceDetails.WalletAddress}?amount={amoint}%26label=invoice%20#{invoiceDetails.Number}%26message={invoiceDetails.PaymentRequestId}",
                 AutoUpdate = invoiceDetails.Status == InvoiceStatus.InProgress || invoiceDetails.Status == InvoiceStatus.Unpaid,
-                WalletAddress = invoiceDetails.WalletAddress
+                WalletAddress = invoiceDetails.WalletAddress,
+                CallbackURL = callback
             };
 
             return View(model);
