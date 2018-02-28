@@ -1,6 +1,7 @@
 ﻿using Autofac;
 using Common.Log;
 using Lykke.Service.PayAuth.Client;
+using Lykke.Service.PayInternal.Client;
 using Lykke.Service.PayInvoice.Client;
 using Lykke.Service.PayInvoicePortal.Settings;
 using Lykke.SettingsReader;
@@ -26,9 +27,13 @@ namespace Lykke.Service.PayInvoicePortal
             builder.RegisterInstance(new PayInvoiceClient(_settings.CurrentValue.PayInvoiceServiceClient))
                 .As<IPayInvoiceClient>()
                 .SingleInstance();
-
+            
             builder.RegisterInstance(new PayAuthClient(_settings.CurrentValue.PayAuthServiceClient, _log))
                 .As<IPayAuthClient>()
+                .SingleInstance();
+
+            builder.RegisterInstance(new PayInternalClient(_settings.CurrentValue.PayInternalServiceClient))
+                .As<IPayInternalClient>()
                 .SingleInstance();
         }
     }

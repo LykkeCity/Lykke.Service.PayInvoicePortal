@@ -16,6 +16,8 @@ using Lykke.Service.PayInvoice.Client.Models.File;
 using Lykke.Service.PayInvoice.Client.Models.Invoice;
 using Lykke.Service.PayInvoicePortal.Models.Home;
 using Microsoft.AspNetCore.Http;
+using Lykke.Service.PayInternal.Client;
+using Lykke.Service.PayInternal.Client.Models.Asset;
 
 namespace Lykke.Service.PayInvoicePortal.Controllers
 {
@@ -28,21 +30,27 @@ namespace Lykke.Service.PayInvoicePortal.Controllers
         
         private readonly IPayInvoiceClient _payInvoiceClient;
         private readonly ILog _log;
+        private readonly IPayInternalClient _payInternalClient;
 
         public HomeController(
             IPayInvoiceClient payInvoiceClient,
-            ILog log)
+            ILog log,
+            IPayInternalClient payInternalClient)
         {
             _payInvoiceClient = payInvoiceClient;
             _log = log;
+            _payInternalClient = payInternalClient;
         }
 
         [HttpGet("Profile")]
-        public IActionResult Profile()
+        public async Task<IActionResult> Profile()
         {
             var generateditem = TempData["GeneratedItem"];
             if (generateditem != null)
                 ViewBag.GeneratedItem = generateditem;
+
+            var assetsResponce = await _payInternalClient.GetAvailableAsync(AssetAvailabilityType.Settlement);
+            ViewBag.Assets  = assetsResponce.Assets;
             return View();
         }
 
@@ -67,7 +75,7 @@ namespace Lykke.Service.PayInvoicePortal.Controllers
                         ClientName = model.ClientName,
                         ClientEmail = model.ClientEmail,
                         Amount = decimal.Parse(model.Amount, CultureInfo.InvariantCulture),
-                        SettlementAssetId = AssetId,
+                        SettlementAssetId = model.Currency,
                         PaymentAssetId = ExchangeAssetId,
                         DueDate = DateTime.Parse(model.StartDate, CultureInfo.InvariantCulture)
                             .Add(Startup.OrderLiveTime)
@@ -82,7 +90,7 @@ namespace Lykke.Service.PayInvoicePortal.Controllers
                         ClientName = model.ClientName,
                         ClientEmail = model.ClientEmail,
                         Amount = decimal.Parse(model.Amount, CultureInfo.InvariantCulture),
-                        SettlementAssetId = AssetId,
+                        SettlementAssetId = model.Currency,
                         PaymentAssetId = ExchangeAssetId,
                         DueDate = DateTime.Parse(model.StartDate, CultureInfo.InvariantCulture)
                             .Add(Startup.OrderLiveTime)
@@ -119,13 +127,15 @@ namespace Lykke.Service.PayInvoicePortal.Controllers
                 Number = invoice.Number,
                 ClientName = invoice.ClientName,
                 ClientEmail = invoice.ClientEmail,
-                Amount = $"{invoice.Amount:N2}  {AssetId}",
+                Amount = $"{invoice.Amount:N2}  {invoice.SettlementAssetId}",
                 DueDate = invoice.DueDate.ToString("MM/dd/yyyy"),
                 Status = invoice.Status.ToString(),
                 SettlementAssetId = invoice.SettlementAssetId,
                 CreatedDate = invoice.CreatedDate.ToString("MM/dd/yyyy")
             };
 
+            var assetsResponce = await _payInternalClient.GetAvailableAsync(AssetAvailabilityType.Settlement);
+            ViewBag.Assets  = assetsResponce.Assets;
             ViewBag.IsInvoiceCreated = true;
             TempData["GeneratedItem"] = JsonConvert.SerializeObject(viewModel);
             return View();
@@ -221,7 +231,7 @@ namespace Lykke.Service.PayInvoicePortal.Controllers
                         ClientName = model.Data.ClientName,
                         ClientEmail = model.Data.ClientEmail,
                         Amount = model.Data.Amount,
-                        SettlementAssetId = AssetId,
+                        SettlementAssetId = model.Data.SettlementAssetId,
                         PaymentAssetId = ExchangeAssetId,
                         DueDate = model.Data.DueDate
                     });
@@ -233,7 +243,7 @@ namespace Lykke.Service.PayInvoicePortal.Controllers
                         ClientName = model.Data.ClientName,
                         ClientEmail = model.Data.ClientEmail,
                         Amount = model.Data.Amount,
-                        SettlementAssetId = AssetId,
+                        SettlementAssetId = model.Data.SettlementAssetId,
                         PaymentAssetId = ExchangeAssetId,
                         DueDate = model.Data.DueDate
                     });

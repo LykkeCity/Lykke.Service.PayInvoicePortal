@@ -986,14 +986,20 @@
 	clear: both;
 }
 
+.create__input-currency {
+    float: left;
+    width: 120px;
+    margin-right: 23px;
+}
+
 .create__input-amount {
 	float: left;
-	width: 265px;
+	width: 145px;
 }
 
 .create__input-date {
 	float: right;
-	width: 175px;
+	width: 145px;
 }
 
 .create__input-label {
@@ -1008,10 +1014,6 @@
 
 .create__input-amount .input-group {
 	position: relative;
-}
-
-.create__input-amount input {
-	padding-right: 60px;
 }
 
 .create__input-amount span {

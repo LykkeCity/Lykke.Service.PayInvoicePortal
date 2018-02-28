@@ -48,17 +48,26 @@ else
                     <input type="email" asp-for="ClientEmail" require placeholder="" class="form-control">
                 </div>
                 <div class="create__input-group">
+                    <div class="create__input-currency">
+                        <label class="create__input-label">Currency</label>
+                        <div class="input-group">
+
+                            <select asp-for="Currency" require class="form-control">
+                                @foreach (var asset in (IReadOnlyList<string>)ViewBag.Assets)
+                                {
+                                    <option value="@asset">@asset</option>
+                                }
+                            </select>
+                        </div>
+                    </div>
                     <div class="create__input-amount">
                         <label class="create__input-label">Amount</label>
                         <div class="input-group">
-                            <div class="Rectangle-6" style="display: none" req-for="Amount"></div>
-                            <span class="">CHF</span>
                             <input type="number" asp-for="Amount" require placeholder="0.00" min="0.01" step="0.01" class="form-control">
                         </div>
                     </div>
                     <div class="create__input-date">
                         <label class="create__input-label">Pay due date</label>
-
                         <div class="input-group">
                             <div class="Rectangle-6" style="display: none" req-for="StartDate"></div>
                             <i class="icon icon--cal"></i>
