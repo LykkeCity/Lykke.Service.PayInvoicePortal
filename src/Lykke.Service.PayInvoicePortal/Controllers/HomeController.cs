@@ -11,13 +11,12 @@ using System.Linq;
 using Common;
 using Common.Log;
 using Lykke.Service.PayInvoice.Client;
+using Lykke.Service.PayInvoice.Client.Models.Assets;
 using Lykke.Service.PayInvoice.Client.Models.Balances;
 using Lykke.Service.PayInvoice.Client.Models.File;
 using Lykke.Service.PayInvoice.Client.Models.Invoice;
 using Lykke.Service.PayInvoicePortal.Models.Home;
 using Microsoft.AspNetCore.Http;
-using Lykke.Service.PayInternal.Client;
-using Lykke.Service.PayInternal.Client.Models.Asset;
 
 namespace Lykke.Service.PayInvoicePortal.Controllers
 {
@@ -30,16 +29,13 @@ namespace Lykke.Service.PayInvoicePortal.Controllers
         
         private readonly IPayInvoiceClient _payInvoiceClient;
         private readonly ILog _log;
-        private readonly IPayInternalClient _payInternalClient;
 
         public HomeController(
             IPayInvoiceClient payInvoiceClient,
-            ILog log,
-            IPayInternalClient payInternalClient)
+            ILog log)
         {
             _payInvoiceClient = payInvoiceClient;
             _log = log;
-            _payInternalClient = payInternalClient;
         }
 
         [HttpGet("Profile")]
@@ -49,8 +45,12 @@ namespace Lykke.Service.PayInvoicePortal.Controllers
             if (generateditem != null)
                 ViewBag.GeneratedItem = generateditem;
 
-            var assetsResponce = await _payInternalClient.GetAvailableAsync(AssetAvailabilityType.Settlement);
-            ViewBag.Assets  = assetsResponce.Assets;
+            IReadOnlyList<AssetModel> assets = await _payInvoiceClient.GetSettlementAssetsAsync();
+
+            ViewBag.Assets = assets
+                .Select(o => new ItemViewModel(o.Id, o.Name))
+                .ToList();
+
             return View();
         }
 
@@ -134,8 +134,12 @@ namespace Lykke.Service.PayInvoicePortal.Controllers
                 CreatedDate = invoice.CreatedDate.ToString("MM/dd/yyyy")
             };
 
-            var assetsResponce = await _payInternalClient.GetAvailableAsync(AssetAvailabilityType.Settlement);
-            ViewBag.Assets  = assetsResponce.Assets;
+            IReadOnlyList<AssetModel> assets = await _payInvoiceClient.GetSettlementAssetsAsync();
+
+            ViewBag.Assets  = assets
+                .Select(o => new ItemViewModel(o.Id, o.Name))
+                .ToList();
+
             ViewBag.IsInvoiceCreated = true;
             TempData["GeneratedItem"] = JsonConvert.SerializeObject(viewModel);
             return View();
