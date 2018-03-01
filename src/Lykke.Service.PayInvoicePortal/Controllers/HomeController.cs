@@ -206,6 +206,12 @@ namespace Lykke.Service.PayInvoicePortal.Controllers
                 model.BlockchainExplorerUrl = $"{BlockchainExplorerUrl.TrimEnd('/')}/address/{model.Data.WalletAddress}";
             }
 
+            IReadOnlyList<AssetModel> assets = await _payInvoiceClient.GetSettlementAssetsAsync();
+
+            ViewBag.Assets  = assets
+                .Select(o => new ItemViewModel(o.Id, o.Name))
+                .ToList();
+
             return View(model);
         }
 

@@ -52,7 +52,6 @@ else
                     <div class="create__input-currency">
                         <label class="create__input-label">Currency</label>
                         <div class="input-group">
-
                             <select asp-for="Currency" require class="form-control">
                                 @foreach (ItemViewModel item in (IReadOnlyList<ItemViewModel>)ViewBag.Assets)
                                 {

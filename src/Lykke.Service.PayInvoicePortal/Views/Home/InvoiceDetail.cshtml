@@ -1,4 +1,5 @@
 ﻿@using Lykke.Service.PayInvoice.Client.Models.Invoice
+@using Lykke.Service.PayInvoicePortal.Models
 @model Lykke.Service.PayInvoicePortal.Models.InvoiceDetailModel
 @{
     ViewData["Title"] = "Invoice Detail";
@@ -47,7 +48,8 @@
                                     </div>
                                     <div class="col-xs-5 state--pl-70">
                                         <a href="#" class="invoice_paid_delete__text" id="deletebtn">
-                                            <i class="icon icon--trash"></i> Delete invoice </a>
+                                            <i class="icon icon--trash"></i> Delete invoice
+                                        </a>
                                     </div>
                                 </div>
                             </div>
@@ -56,7 +58,7 @@
                             <div class="invoice_paid__row">
                                 <div class="invoice_paid__cell">
                                     <div class="invoice_paid__name">Invoice number</div>
-                                    @if ( Model.Data.Status == InvoiceStatus.Draft)
+                                    @if (Model.Data.Status == InvoiceStatus.Draft)
                                     {
                                         @*<input type="text" id="InvoiceNumber" value="@Model.Data.InvoiceNumber" required placeholder="" class="form-control">*@
                                         <input type="text" asp-for="Data.Number" required placeholder="" class="form-control  noborder">
@@ -89,7 +91,14 @@
                                     @if (Model.Data.Status == InvoiceStatus.Draft)
                                     {
                                         @*<input type="text" id="Currency" value="@Model.Data.Currency" required placeholder="" class="form-control">*@
-                                        <input type="text" asp-for="Data.SettlementAssetId" required placeholder="" class="form-control noborder">
+                                        <select asp-for="Data.SettlementAssetId" require class="form-control noborder">
+                                            @foreach (ItemViewModel item in (IReadOnlyList<ItemViewModel>)ViewBag.Assets)
+                                            {
+                                                var selected = Model.Data.SettlementAssetId == item.Id ? "selected" : "";
+
+                                                <option value="@item.Id" @selected>@item.Title</option>
+                                            }
+                                        </select>
                                     }
                                     else
                                     {
@@ -166,7 +175,7 @@
                                     }
                                     else
                                     {
-                                        <span>No file selected</span>    
+                                        <span>No file selected</span>
                                     }
                                 </div>
                             </div>
