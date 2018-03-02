@@ -25,9 +25,9 @@ function validate(clearvalidate) {
     for (var i = 0; i < inputs.length; i++) {
         if (clearvalidate)
             $(inputs[i]).val("");
+            $(inputs[i]).removeClass("error");
         if ($(inputs[i]).val() == "") {
-            var req = $("[req-for='" + $(inputs[i]).attr("id") + "']");
-            $(req).css('display', style);
+            $(inputs[i]).addClass("error");
             if (!clearvalidate)
                 errors++;
         }
@@ -166,33 +166,31 @@ function renderStatus(model, loadmore) {
         }
         switch (invoices[i].status) {
             case "Paid":
-                tempstr = tempstr.replace("{{cssClass}}", "paid");
-                tempstr = tempstr.replace("{{disCssClass}}", "btn--disabled");
-                tempstr = tempstr.replace("{{disoption}}", "disabled");
+                tempstr = tempstr.replace("{{cssClass}}", "green");
                 break;
             case "Unpaid":
-                tempstr = tempstr.replace("{{cssClass}}", "unpaid");
+                tempstr = tempstr.replace("{{cssClass}}", "yellow");
                 tempstr = tempstr.replace("{{disCssClass}}", "");
                 tempstr = tempstr.replace("{{disoption}}", "");
                 break;
             case "Draft":
                 tempstr = tempstr.replace("{{disoption}}", "");
                 tempstr = tempstr.replace("{{disCssClass}}", "");
-                tempstr = tempstr.replace("{{cssClass}}", "draft");
+                tempstr = tempstr.replace("{{cssClass}}", "gray");
                 break;
             case "Removed":
-                tempstr = tempstr.replace("{{cssClass}}", "draft");
-                tempstr = tempstr.replace("{{disCssClass}}", "btn--disabled");
-                tempstr = tempstr.replace("{{disoption}}", "disabled");
-            case "LatePaid":
-            case "OverPaid":
+                tempstr = tempstr.replace("{{cssClass}}", "");
+                break;
             case "UnderPaid":
-            default:
-                tempstr = tempstr.replace("{{cssClass}}", "red");
-                tempstr = tempstr.replace("{{disCssClass}}", "btn--disabled");
-                tempstr = tempstr.replace("{{disoption}}", "disabled");
+            case "OverPaid":
+                tempstr = tempstr.replace("{{cssClass}}", "violet");
                 break;
         }
+
+        tempstr = tempstr.replace("{{cssClass}}", "red");
+        tempstr = tempstr.replace("{{disCssClass}}", "btn--disabled");
+        tempstr = tempstr.replace("{{disoption}}", "disabled");
+
         allstring += tempstr;
     }
     if (loadmore)
@@ -275,7 +273,7 @@ $(document).ready(function (e) {
         if (generateditem.Status !== "Draft") {
             showItem(generateditem);
             $('body').addClass('body--menu_opened');
-            $('.create.unpaid').addClass('create--open');
+            $('.create.unpaid').addClass('sidebar_menu--open');
             generateditem = null;
         }
     }
@@ -307,14 +305,12 @@ $(document).ready(function (e) {
         }
 
         for (var j = 0; j < this.files.length; j++) {
-            var fileRow = $('<div>').addClass('invoice_files__row').addClass('new_file');
-            $('<div>').addClass('invoice_files__doc').text(this.files[j].name.split('.').pop()).appendTo(fileRow);
-
-            var nameBlock = $('<div>').addClass('invoice_files__block').appendTo(fileRow);
-            $('<div>').addClass('invoice_files__name').text(this.files[j].name).appendTo(nameBlock);
-
-            $('<div>').addClass('invoice_files__size').text(getFileSize(this.files[j].size)).appendTo(fileRow);
-            $("#invoice_files").append(fileRow);
+            $('.invoice_files_hint').hide();
+            var assetLink = $('.invoice_files');
+            assetLink.show();
+            $('.asset_icon', assetLink).text(this.files[j].name.split('.').pop());
+            $('.asset_link__title', assetLink).text(this.files[j].name);
+            $('.asset_link__desc', assetLink).text(getFileSize(this.files[j].size));
         }
 
         return true;
@@ -340,11 +336,11 @@ $(document).ready(function (e) {
 
     $('#closebtn').on('click', function (e) {
         $('body').removeClass('body--menu_opened');
-        $('.create').removeClass('create--open');
+        $('.create').removeClass('sidebar_menu--open');
     });
     $('#closeunpaidbtn').on('click', function (e) {
         $('body').removeClass('body--menu_opened');
-        $('.create').removeClass('create--open');
+        $('.create').removeClass('sidebar_menu--open');
     });
 
     $('.invoices__search').on('click', function () {
@@ -422,33 +418,18 @@ $(document).ready(function (e) {
     $('.btn_create').on('click', function (e) {
         e.stopPropagation();
         validate(true);
-        $("#StartDate").datepicker({
-            beforeShow: function (input, inst) {
-                setTimeout(function () {
-                    var left = parseInt(inst.dpDiv.css('left'));
-                    inst.dpDiv.css({
-                        left: left - 30
-                    });
-                },
-                    0);
-            }
-        }).datepicker("setDate", new Date());
+        $("#StartDate").val(moment().format("DD.MM.YYYY"));
         $('body').addClass('body--menu_opened');
-        $('.create.draft').addClass('create--open');
+        $('.create.draft').addClass('sidebar_menu--open');
         enableButtons();
     });
-
-    $('.icon--cal').on('click',
-        function (e) {
-            e.stopPropagation();
-            $("#StartDate").datepicker('show');
-        });
+    
 
     $('body').on('click', function (e) {
         if (e.target.className === "menu_overlay") {
             $('body').removeClass('body--menu_opened');
-            $('.create.draft').removeClass('create--open');
-            $('.create.unpaid').removeClass('create--open');
+            $('.create.draft').removeClass('sidebar_menu--open');
+            $('.create.unpaid').removeClass('sidebar_menu--open');
         }
         else if (e.target.className === "ui-icon ui-icon-circle-triangle-w" ||
             e.target.className === "ui-icon ui-icon-circle-triangle-e" ||
@@ -496,3 +477,32 @@ function getFileSize(value) {
         return (value / 1048576).toFixed(0) + ' MB';
     }
 }
+
+$('.datetimepicker').datetimepicker({
+    //    debug: true,
+    format: 'DD.MM.YYYY',
+    icons: {
+        time: "icon--clock",
+        date: "icon--cal",
+        up: "icon--chevron-thin-up",
+        down: "icon--chevron-thin-down",
+        previous: "icon--chevron-thin-left",
+        next: "icon--chevron-thin-right"
+    }
+});
+
+var searchBlock = $('.search_filter'),
+    searchActiveClass = 'search_filter--show';
+
+function showSearch(e) {
+    e.preventDefault();
+    searchBlock.toggleClass(searchActiveClass);
+}
+
+function hideSearch(e) {
+    e.preventDefault();
+    searchBlock.removeClass(searchActiveClass);
+}
+
+$('._show_search_block').on('click', showSearch);
+$('._hide_search_block').on('click', hideSearch);

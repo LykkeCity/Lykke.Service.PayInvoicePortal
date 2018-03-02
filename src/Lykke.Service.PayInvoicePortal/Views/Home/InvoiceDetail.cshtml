@@ -5,205 +5,261 @@
     ViewData["Title"] = "Invoice Detail";
 }
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
-<link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
 <link rel="stylesheet" type="text/css" href="~/css/jquery-confirm.css" />
-<article class="">
+
+<article class="content">
     @using (Html.BeginForm(null, null, FormMethod.Post, new { name = "createform", id = "createform", enctype = "multipart/form-data" }))
     {
-        <div class="container-full">
-            <div class="invoice_paid">
+        <section class="section section--padding">
+            <div class="container">
+
+                <div class="relative hidden-xs hidden-sm">
+                    <a href="#" onclick="javascript:;" class="btn_back invoice_paid__back">
+                        <img src="/img/back_icn.svg" width="30" height="12" alt="back">
+                    </a>
+                </div>
+
                 <div class="row">
-                    <div class="col-xs-2">
-                        <button type="button" name="button" class="invoice_paid__back"></button>
-                    </div>
-                    <div class="col-xs-10">
-                        <div class="invoice_paid__top">
-                            <div class="row">
-                                <div class="col-xs-7">
-                                    <div class="invoice_paid__title">Invoice #@Model.Data.Number</div>
+                    <div class="col-md-8 automargin">
+
+                        <div class="invoice_page">
+                            <div class="invoice_header">
+                                <div class="row">
+                                    <div class="col-md-8">
+                                        <h1 class="page__title">Invoice #@Model.Data.Number</h1>
+                                        @if (Model.Data.Status == InvoiceStatus.Unpaid)
+                                        {
+                                            <div class="invoice_header__link">
+                                                <a href="@Model.InvoiceUrl">@Model.InvoiceUrl</a>
+                                                <button class="btn btn--icon _copy create__item-copy" type="button"><i class="icon icon--copy_thin"></i></button>
+                                            </div>
+                                        }
+                                    </div>
                                     @if (Model.Data.Status == InvoiceStatus.Unpaid)
                                     {
-                                        <a href="@Model.InvoiceUrl" class="invoice_paid__link">@Model.InvoiceUrl</a>
-                                        <a href="#" type="button" name="button" class="create__item-copy" style="position: relative">
-                                            <i class="icon icon--copy"></i>
-                                        </a>
+                                        <div class="col-md-4">
+                                            <div class="invoice_info__qr">
+                                                <img src="@Model.QRCode" alt="qr" width="130" height="130">
+                                            </div>
+                                        </div>
                                     }
                                 </div>
-                                @if (Model.Data.Status == InvoiceStatus.Unpaid)
-                                {
-                                    <div class="col-xs-5">
-                                        <div class="invoice_paid__qr">
-                                            <img src="@Model.QRCode" alt="">
+
+                                <div class="invoice_header__desc">
+                                    <div class="row">
+                                        <div class="col-md-8">
+                                            <div class="invoice_header__data" id="Data_StartDate">@Model.Data.CreatedDate.ToString("dddd, MMMM d, yyyy h:m:s tt")</div>
+                                        </div>
+                                        @if (Model.Data.Status == InvoiceStatus.Draft || Model.Data.Status == InvoiceStatus.Unpaid)
+                                        {
+                                            <div class="col-md-4">
+                                                <button class="btn btn--flat btn--default btn-sm pull-right" id="deletebtn" type="button"><i class="icon icon--delete"></i> Delete invoice</button>
+                                            </div>
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="asset_link_list asset_link_list--thin">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="asset_link">
+                                            <div class="asset_link__info">
+                                                <div class="asset_link__title">Client</div>
+                                                @if (Model.Data.Status == InvoiceStatus.Draft)
+                                                {
+                                                    <input type="text" asp-for="Data.ClientName" required placeholder="" class="form-control noborder">
+                                                }
+                                                else
+                                                {
+                                                    <div class="asset_link__desc">@Model.Data.ClientName</div>
+                                                }
+
+                                            </div>
+                                        </div>
+                                        <div class="asset_link">
+                                            <div class="asset_link__info">
+                                                <div class="asset_link__title">Email</div>
+
+                                                @if (Model.Data.Status == InvoiceStatus.Draft)
+                                                {
+                                                    <input type="email" asp-for="Data.ClientEmail" required placeholder="" class="form-control noborder">
+                                                }
+                                                else
+                                                {
+                                                    <div class="asset_link__desc">@Model.Data.ClientEmail</div>
+                                                }
+                                            </div>
+                                        </div>
+                                        <div class="asset_link">
+                                            <div class="asset_link__info">
+                                                <div class="asset_link__title">Status</div>
+                                                <div class="asset_link__desc">@Model.Data.Status</div>
+                                            </div>
                                         </div>
                                     </div>
-                                }
-                            </div>
-                        </div>
-                        @if (Model.Data.Status == InvoiceStatus.Draft || Model.Data.Status == InvoiceStatus.Unpaid)
-                        {
-                            <div class="invoice_paid_delete">
-                                <div class="row">
-                                    <div class="col-xs-7">
-                                        <div class="invoice_paid_delete__text"></div>
-                                    </div>
-                                    <div class="col-xs-5 state--pl-70">
-                                        <a href="#" class="invoice_paid_delete__text" id="deletebtn">
-                                            <i class="icon icon--trash"></i> Delete invoice
-                                        </a>
-                                    </div>
-                                </div>
-                            </div>
-                        }
-                        <div class="invoice_paid__table">
-                            <div class="invoice_paid__row">
-                                <div class="invoice_paid__cell">
-                                    <div class="invoice_paid__name">Invoice number</div>
-                                    @if (Model.Data.Status == InvoiceStatus.Draft)
-                                    {
-                                        @*<input type="text" id="InvoiceNumber" value="@Model.Data.InvoiceNumber" required placeholder="" class="form-control">*@
-                                        <input type="text" asp-for="Data.Number" required placeholder="" class="form-control  noborder">
-                                    }
-                                    else
-                                    {
-                                        <div class="invoice_paid__desc">@Model.Data.Number</div>
-                                    }
-                                </div>
-                                <div class="invoice_paid__cell">
-                                    <div class="invoice_paid__name">Amount</div>
-                                    @if (Model.Data.Status == InvoiceStatus.Draft)
-                                    {
-                                        @*<input type="text" id="Amount" value="@Model.Data.Amount" required placeholder="" class="form-control">*@
-                                        <input type="number" asp-for="Data.Amount" required placeholder="0.00" min="0.01" step="0.01" class="form-control noborder">
-                                    }
-                                    else
-                                    {
-                                        <div class="invoice_paid__desc">@Model.Data.Amount</div>
-                                    }
-                                </div>
-                            </div>
-                            <div class="invoice_paid__row">
-                                <div class="invoice_paid__cell">
-                                    <div class="invoice_paid__name">Date</div>
-                                    <div class="invoice_paid__desc" id="Data_StartDate">@Model.Data.CreatedDate.ToString("MM/dd/yyyy")</div>
-                                </div>
-                                <div class="invoice_paid__cell">
-                                    <div class="invoice_paid__name">Currency</div>
-                                    @if (Model.Data.Status == InvoiceStatus.Draft)
-                                    {
-                                        @*<input type="text" id="Currency" value="@Model.Data.Currency" required placeholder="" class="form-control">*@
-                                        <select asp-for="Data.SettlementAssetId" require class="form-control noborder">
-                                            @foreach (ItemViewModel item in (IReadOnlyList<ItemViewModel>)ViewBag.Assets)
-                                            {
-                                                var selected = Model.Data.SettlementAssetId == item.Id ? "selected" : "";
+                                    <div class="col-md-6">
+                                        <div class="asset_link">
+                                            <div class="asset_link__info">
+                                                <div class="asset_link__title">Amount</div>
+                                                @if (Model.Data.Status == InvoiceStatus.Draft)
+                                                {
+                                                    <input type="number" asp-for="Data.Amount" required placeholder="0.00" min="0.01" step="0.01" class="form-control noborder">
+                                                }
+                                                else
+                                                {
+                                                    <div class="asset_link__desc">@Model.Data.Amount</div>
+                                                }
+                                            </div>
+                                        </div>
+                                        <div class="asset_link">
+                                            <div class="asset_link__info">
+                                                <div class="asset_link__title">Currency</div>
+                                                @if (Model.Data.Status == InvoiceStatus.Draft)
+                                                {
+                                                    <div class="select">
+                                                        <select asp-for="Data.SettlementAssetId" require class="form-control noborder">
+                                                            @foreach (ItemViewModel item in (IReadOnlyList<ItemViewModel>)ViewBag.Assets)
+                                                            {
+                                                                var selected = Model.Data.SettlementAssetId == item.Id ? "selected" : "";
 
-                                                <option value="@item.Id" @selected>@item.Title</option>
-                                            }
-                                        </select>
-                                    }
-                                    else
-                                    {
-                                        <div class="invoice_paid__desc">@Model.Data.SettlementAssetId</div>
-                                    }
+                                                                <option value="@item.Id" @selected>@item.Title</option>
+                                                            }
+                                                        </select>
+                                                    </div>
+                                                }
+                                                else
+                                                {
+                                                    <div class="asset_link__desc">@Model.Data.SettlementAssetId</div>
+                                                }
+                                            </div>
+                                        </div>
+                                        <div class="asset_link">
+                                            <div class="asset_link__info">
+                                                <div class="asset_link__title">Pay due date</div>
+
+                                                @if (Model.Data.Status == InvoiceStatus.Draft)
+                                                {
+                                                    <input type="text" asp-for="Data.DueDate" required placeholder="" class="form-control noborder">
+                                                }
+                                                else
+                                                {
+                                                    <div class="asset_link__desc">@Model.Data.DueDate.ToString("dddd, MMMM d, yyyy h:m:s tt")</div>
+                                                }
+                                            </div>
+                                        </div>
+                                    </div>
+                                    @*<div class="col-md-12">
+                                            <div class="asset_link">
+                                                <div class="asset_link__info">
+                                                    <div class="asset_link__title">Note</div>
+                                                    <div class="asset_link__desc">
+                                                        <input type="text" class="form-control form-control--content" placeholder="Enter note here...">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>*@
                                 </div>
                             </div>
-                            <div class="invoice_paid__row">
-                                <div class="invoice_paid__cell">
-                                    <div class="invoice_paid__name">Client</div>
-                                    @if (Model.Data.Status == InvoiceStatus.Draft)
-                                    {
-                                        @*<input type="text" id="ClientName" value="@Model.Data.ClientName" required placeholder="" class="form-control">*@
-                                        <input type="text" asp-for="Data.ClientName" required placeholder="" class="form-control noborder">
-                                    }
-                                    else
-                                    {
-                                        <div class="invoice_paid__desc">@Model.Data.ClientName</div>
-                                    }
+                            @if (Model.Data.Status == InvoiceStatus.Draft)
+                            {
+                                <div class="form_header" style="position: relative;">
+                                    <button type="button" name="button" class="btn btn-sm btn-primary pull-right">Add File</button>
+                                    <input type="file" name="upload" id="upload" accept=".pdf, .doc, .docx, .xls, .xlsx" multiple class="invoice_files_input">
+                                    <h3>Attachment</h3>
                                 </div>
-                                <div class="invoice_paid__cell">
-                                    <div class="invoice_paid__name">Status</div>
-                                    <div class="invoice_paid__desc">@Model.Data.Status</div>
-                                </div>
-                            </div>
-                            <div class="invoice_paid__row">
-                                <div class="invoice_paid__cell">
-                                    <div class="invoice_paid__name">Email of the client</div>
-                                    @if (Model.Data.Status == InvoiceStatus.Draft)
-                                    {
-                                        @*<input type="text" id="ClientName" value="@Model.Data.ClientEmail" required placeholder="" class="form-control">*@
-                                        <input type="email" asp-for="Data.ClientEmail" required placeholder="" class="form-control noborder">
-                                    }
-                                    else
-                                    {
-                                        <div class="invoice_paid__desc">@Model.Data.ClientEmail</div>
-                                    }
-                                </div>
-                                <div class="invoice_paid__cell">
-                                    <div class="invoice_paid__name">Pay due date</div>
-                                    @if (Model.Data.Status == InvoiceStatus.Draft)
-                                    {
-                                        <input type="text" asp-for="Data.DueDate" required placeholder="" class="form-control noborder">
-                                    }
-                                    else
-                                    {
-                                        <div class="invoice_paid__desc">@Model.Data.DueDate.ToString("MM/dd/yyyy")</div>
-                                    }
-                                </div>
-                            </div>
-                        </div>
-                        @if (Model.Data.Status == InvoiceStatus.Draft)
-                        {
-                            <div class="invoice_paid_files">
-                                <div class="invoice_paid_files__top">
-                                    <div class="invoice_paid_files__title">Files</div>
-                                    <button type="button" name="button" class="btn invoice_paid_files__add">Add files</button>
-                                    <input type="file" name="upload" id="upload" accept=".pdf, .doc, .docx, .xls, .xlsx" multiple>
-                                </div>
-                                <div id="files_container" class="invoice_paid_files__row">
+
+                                <div class="attachment_list">
                                     @if (Model.Files.Count != 0)
                                     {
                                         foreach (var file in Model.Files)
                                         {
-                                            <div class="invoice_paid_files__row">
-                                                <div class="invoice_paid_files__doc">@file.FileExtension</div>
-                                                <div class="invoice_paid_files__name">@file.FileName</div>
-                                                <div class="invoice_paid_files__size">@file.FileSize</div>
-                                                <a href="@file.FileUrl" name="button" class="invoice_paid_files__button">
-                                                    <i class="icon icon--download"></i>
-                                                </a>
+                                            <div class="asset_link_list invoice_files">
+                                                <div class="asset_link asset_link--alt">
+                                                    <div class="asset_link__icon">
+                                                        <div class="asset_icon asset_icon--red">@file.FileExtension</div>
+                                                    </div>
+                                                    @*<div class="asset_link__action">
+                                                            <button class="btn btn--icon _delete_asset"><i class="icon icon--delete"></i></button>
+                                                        </div>*@
+                                                    <div class="asset_link__info">
+                                                        <div class="asset_link__title">@file.FileName</div>
+                                                        <div class="asset_link__desc">@file.FileSize</div>
+                                                    </div>
+                                                </div>
                                             </div>
                                         }
                                     }
                                     else
                                     {
-                                        <span>No file selected</span>
+                                        <div class="asset_link_list invoice_files" style="display: none;">
+                                            <div class="asset_link asset_link--alt">
+                                                <div class="asset_link__icon">
+                                                    <div class="asset_icon asset_icon--red"></div>
+                                                </div>
+                                                <div class="asset_link__info">
+                                                    <div class="asset_link__title"></div>
+                                                    <div class="asset_link__desc"></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="invoice_files_hint hint">No file selected</div>
                                     }
                                 </div>
-                            </div>
-                        }
-                        @if (Model.Data.Status == InvoiceStatus.Draft)
-                        {
-                            <input type="hidden" asp-for="Data.Id" class="form-control">
-                            <input type="hidden" asp-for="Data.Status" class="form-control">
-                            <input type="hidden" asp-for="Data.CreatedDate" class="form-control">
-                            <input type="hidden" asp-for="Data.DueDate" class="form-control">
-                            <input type="hidden" asp-for="Data.WalletAddress" class="form-control">
-                            <button type="submit" name="button" class="btn invoice_paid__button" id="generatebtn">Generate</button>
-                            <button type="submit" name="button" class="btn invoice_paid__button btn--stroke" id="draftbtn">Save draft</button>
-                        }
-                        @if (Model.Data.Status == InvoiceStatus.Paid)
-                        {
-                            <a href="@Model.BlockchainExplorerUrl" class="invoice_paid__bottom">Blockchain Settlement</a>
-                        }
+                            }
+                            @*<div class="form_header">
+                                    <h3>History</h3>
+                                </div>
+
+                                <div class="history_list">
+                                    <div class="history_item">
+                                        <div class="history_item__img">
+                                            <div class="_circle">DJ</div>
+                                        </div>
+                                        <div class="history_item__content">
+                                            <div class="pull-right label label--gray">Draft</div>
+                                            <div class="history_item__title">
+                                                Dustin James
+                                                <span class="middot">&middot;</span>
+                                                <div class="history_item__date">08:22 AM January 10, 2018</div>
+                                            </div>
+                                            <div class="history_item__text">Draft created</div>
+                                        </div>
+                                    </div>
+                                </div>*@
+
+
+                            @if (Model.Data.Status == InvoiceStatus.Draft)
+                            {
+                                <input type="hidden" asp-for="Data.Id" class="form-control">
+                                <input type="hidden" asp-for="Data.Status" class="form-control">
+                                <input type="hidden" asp-for="Data.CreatedDate" class="form-control">
+                                <input type="hidden" asp-for="Data.DueDate" class="form-control">
+                                <input type="hidden" asp-for="Data.WalletAddress" class="form-control">
+                                <div class="invoice_buttons">
+                                    <button name="button" class="btn" type="submit" id="generatebtn">Generate</button>
+                                    <button name="button" class="btn btn--flat" type="submit" id="draftbtn">Save as draft</button>
+                                </div>
+                            }
+                            @if (Model.Data.Status == InvoiceStatus.Paid)
+                            {
+                                <div class="blockchain_settlement_btn">
+                                    <a href="@Model.BlockchainExplorerUrl" class="btn btn--flat">
+                                        <img src="/img/bl_explorer_logo.svg" width="40" alt="bl_explorer_logo">
+                                        <span>Blockchain Settlement</span>
+                                    </a>
+                                </div>
+                            }
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
+        </section>
     }
 </article>
-@section Scripts
-    {
+
+@section Scripts {
     <script type="text/javascript" src="~/js/vendor/jquery-confirm.js"></script>
-    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
     <script src="~/js/vendor/clipboard.min.js" asp-append-version="true"></script>
-    <script src="/js/invoicedetail.js" type="text/javascript"></script>
+    <script src="/js/invoicedetail.js" type="text/javascript" asp-append-version="true"></script>
 }

@@ -1,114 +1,224 @@
 ﻿
 <script>var invoices = eval(@Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(ViewBag.Result)))</script>
-<div class="invoices">
-    <div class="invoices__title">Invoices</div>
-    <div class="invoices__head">
-        <ul class="nav nav-tabs" role="tablist">
-            <li>
-                <button class="invoices__search" type="button">
-                    <i class="icon icon--search"></i>
-                </button>
-            </li>
-            <li role="presentation" class="active">
-                <a href="#all" aria-controls="all" role="tab" data-toggle="tab" id="alllink">All ⋅ <span></span></a>
-            </li>
-            <li role="presentation">
-                <a href="#paid" aria-controls="paid" role="tab" data-toggle="tab" id="paidlink">Paid ⋅ <span></span></a>
-            </li>
-            <li role="presentation">
-                <a href="#unpaid" aria-controls="unpaid" role="tab" data-toggle="tab" id="unpaidlink">Unpaid ⋅ <span></span></a>
-            </li>
-            <li role="presentation">
-                <a href="#draft" aria-controls="draft" role="tab" data-toggle="tab" id="draftlink">Draft ⋅ <span></span></a>
-            </li>
-            <li role="presentation">
-                <a href="#inprogress" aria-controls="inprogress" role="tab" data-toggle="tab" id="inprogresslink">In progress ⋅ <span></span></a>
-            </li>
-            <li role="presentation">
-                <a href="#latepaid" aria-controls="latepaid" role="tab" data-toggle="tab" id="latepaidlink">Late paid ⋅ <span></span></a>
-            </li>
-            <li role="presentation">
-                <a href="#overpaid" aria-controls="overpaid" role="tab" data-toggle="tab" id="overpaidlink">Overpaid ⋅ <span></span></a>
-            </li>
-            <li role="presentation">
-                <a href="#removed" aria-controls="removed" role="tab" data-toggle="tab" id="removedlink">Removed ⋅ <span></span></a>
-            </li>
-            <li role="presentation">
-                <a href="#underpaid" aria-controls="underpaid" role="tab" data-toggle="tab" id="underpaidlink">Underpaid ⋅ <span></span></a>
-            </li>
-        </ul>
-    </div>
-    <div class="profile_search">
-        <div class="select profile_search__select" data-control="select">
-            <div class="select__value">
-                <span class="_value">All time</span>
-            </div>
-            <select id="selectperiod" class="form-control select__elem">
-                <option value="0">All time</option>
-                <option value="1">Current month</option>
-                <option value="2">Last month</option>
-                <option value="3">Three month ago</option>
-            </select>
-        </div>
-        <div class="profile_search__input_group">
-            <button type="button" name="button" class="profile_search__button_search">
-                <i class="icon icon--search"></i>
-            </button>
-            <input type="text" name="i1" placeholder="Invoice number or  email…" class="form-control profile_search__input" id="searchvalue">
-            <button type="button" name="button" class="profile_search__button_close"> </button>
-        </div>
-        <button type="button" name="button" class="profile_search__button">Cancel</button>
-    </div>
-    <div class="tab-content">
-        <div class="invoices__table">
-            <div class="invoices__row">
-                <div class="invoices__cell invoices__cell--number">Invoice number, date</div>
-                <div class="invoices__cell invoices__cell--client">Client</div>
-                <div class="invoices__cell invoices__cell--amount">Amount</div>
-                <div class="invoices__cell invoices__cell--currency">Currency</div>
-                <div class="invoices__cell invoices__cell--status">Status</div>
-                <div class="invoices__cell invoices__cell--date">Pay due date</div>
-                <div class="invoices__cell invoices__cell--delete"></div>
+<h3>Invoices</h3>
+
+<ul class="nav nav-tabs" role="tablist">
+    <li><button class="btn btn--icon _show_search_block"><i class="icon icon--search"></i></button></li>
+    <li role="presentation" class="active"><a href="#all" aria-controls="all" role="tab" data-toggle="tab" id="alllink">All &middot; <span></span></a></li>
+    <li role="presentation"><a href="#paid" aria-controls="paid" role="tab" data-toggle="tab" id="paidlink">Paid &middot; <span></span></a></li>
+    <li role="presentation"><a href="#unpaid" aria-controls="unpaid" role="tab" data-toggle="tab" id="unpaidlink">Unpaid &middot; <span></span></a></li>
+    <li role="presentation"><a href="#draft" aria-controls="draft" role="tab" data-toggle="tab" id="draftlink">Draft &middot; <span></span></a></li>
+    <li role="presentation"><a href="#inprogress" aria-controls="inprogress" role="tab" data-toggle="tab" id="inprogresslink">In progress &middot; <span></span></a></li>
+    <li role="presentation"><a href="#latepaid" aria-controls="latepaid" role="tab" data-toggle="tab" id="latepaidlink">Late paid &middot; <span></span></a></li>
+    <li role="presentation"><a href="#overpaid" aria-controls="overpaid" role="tab" data-toggle="tab" id="overpaidlink">Overpaid &middot; <span></span></a></li>
+    <li role="presentation"><a href="#removed" aria-controls="removed" role="tab" data-toggle="tab" id="removedlink">Removed &middot; <span></span></a></li>
+    <li role="presentation"><a href="#underpaid" aria-controls="underpaid" role="tab" data-toggle="tab" id="underpaidlink">Underpaid &middot; <span></span></a></li>
+</ul>
+
+<div class="search_filter">
+
+    <div class="row">
+        <div class="col-xs-6 col-sm-3">
+            <div class="form-group select">
+                <select id="selectperiod" class="form-control">
+                    <option value="0">All time</option>
+                    <option value="1">Current month</option>
+                    <option value="2">Last month</option>
+                    <option value="3">Three month ago</option>
+                </select>
             </div>
         </div>
-        <div role="tabpanel" class="tab-pane active" id="all"><div></div><div class="showmore All">Show more</div></div>
-        <div role="tabpanel" class="tab-pane" id="paid"><div></div><div class="showmore Paid">Show more</div></div>
-        <div role="tabpanel" class="tab-pane" id="unpaid"><div></div><div class="showmore Unpaid">Show more</div></div>
-        <div role="tabpanel" class="tab-pane" id="draft"><div></div><div class="showmore Draft">Show more</div></div>
-        <div role="tabpanel" class="tab-pane" id="removed"><div></div><div class="showmore Removed">Show more</div></div>
-        <div role="tabpanel" class="tab-pane" id="underpaid"><div></div><div class="showmore Underpaid">Show more</div></div>
-        <div role="tabpanel" class="tab-pane" id="overpaid"><div></div><div class="showmore Overpaid">Show more</div></div>
-        <div role="tabpanel" class="tab-pane" id="latepaid"><div></div><div class="showmore LatePaid">Show more</div></div>
-        <div role="tabpanel" class="tab-pane" id="inprogress"><div></div><div class="showmore InProgress">Show more</div></div>
+        <div class="col-xs-9 col-sm-8">
+            <div class="input-search input-search--index">
+                <button type="button" name="button" class="btn btn--icon profile_search__button_search"><i class="icon icon--search"></i></button>
+                <input type="text" class="form-control form-control--search profile_search__input" placeholder="Invoice number or  email…" id="searchvalue" />
+                <button type="button" name="button" class="btn btn--icon"><i class="icon icon--cancel_round"></i></button>
+            </div>
+        </div>
+        <div class="col-xs-3 col-sm-1">
+            <button type="button" class="btn btn--link _hide_search_block profile_search__button">Cancel</button>
+        </div>
     </div>
 </div>
 
-<div id="rowtemplate" style="display: none">
-    <div class="invoices_item" invoice="{{id}}">
-        <div class="invoices_item__cell invoices_item__cell--number">
-            <a href="#" class="invoices_item__text">#{{number}}</a>
-            <div class="invoices_item__text invoices_item__text--light">{{createdDate}}</div>
+<div class="tab-content">
+    <div role="tabpanel" class="tab-pane active" id="all">
+        <div class="table-responsive">
+            <table class="table table_invoices">
+                <tr class="invoices__row">
+                    <th class="_number">Invoice number, date</th>
+                    <th class="_client">Client</th>
+                    <th class="_amount">Amount</th>
+                    <th class="_currency">Currency</th>
+                    <th class="_status">Status</th>
+                    <th class="_pay">Pay due date</th>
+                    <th class="_action"></th>
+                </tr>
+                <tbody class="invoices__table"></tbody>
+            </table>
         </div>
-        <div class="invoices_item__cell invoices_item__cell--client">
-            <div class="invoices_item__text">{{clientName}}</div>
-            <div class="invoices_item__text invoices_item__text--light">{{clientEmail}}</div>
+        <div class="showmore All">Show more</div>
+    </div>
+    <div role="tabpanel" class="tab-pane" id="paid">
+        <div class="table-responsive">
+            <table class="table table_invoices">
+                <tr class="invoices__row">
+                    <th class="_number">Invoice number, date</th>
+                    <th class="_client">Client</th>
+                    <th class="_amount">Amount</th>
+                    <th class="_currency">Currency</th>
+                    <th class="_status">Status</th>
+                    <th class="_pay">Pay due date</th>
+                    <th class="_action"></th>
+                </tr>
+                <tbody class="invoices__table"></tbody>
+            </table>
         </div>
-        <div class="invoices_item__cell  invoices_item__cell--amount">
-            <div class="invoices_item__text invoices_item__text--small">{{amount}}</div>
+        <div class="showmore Paid">Show more</div>
+    </div>
+    <div role="tabpanel" class="tab-pane" id="unpaid">
+        <div class="table-responsive">
+            <table class="table table_invoices">
+                <tr class="invoices__row">
+                    <th class="_number">Invoice number, date</th>
+                    <th class="_client">Client</th>
+                    <th class="_amount">Amount</th>
+                    <th class="_currency">Currency</th>
+                    <th class="_status">Status</th>
+                    <th class="_pay">Pay due date</th>
+                    <th class="_action"></th>
+                </tr>
+                <tbody class="invoices__table"></tbody>
+            </table>
         </div>
-        <div class="invoices_item__cell invoices_item__cell--currency">
-            <div class="invoices_item__text invoices_item__text--small">{{settlementAssetId}}</div>
+        <div class="showmore Unpaid">Show more</div>
+    </div>
+    <div role="tabpanel" class="tab-pane" id="draft">
+        <div class="table-responsive">
+            <table class="table table_invoices">
+                <tr class="invoices__row">
+                    <th class="_number">Invoice number, date</th>
+                    <th class="_client">Client</th>
+                    <th class="_amount">Amount</th>
+                    <th class="_currency">Currency</th>
+                    <th class="_status">Status</th>
+                    <th class="_pay">Pay due date</th>
+                    <th class="_action"></th>
+                </tr>
+                <tbody class="invoices__table"></tbody>
+            </table>
         </div>
-        <div class="invoices_item__cell invoices_item__cell--status">
-            <div class="invoices_item__status invoices_item__status--{{cssClass}}"> {{status}} </div>
+        <div class="showmore Draft">Show more</div>
+    </div>
+    <div role="tabpanel" class="tab-pane" id="removed">
+        <div class="table-responsive">
+            <table class="table table_invoices">
+                <tr class="invoices__row">
+                    <th class="_number">Invoice number, date</th>
+                    <th class="_client">Client</th>
+                    <th class="_amount">Amount</th>
+                    <th class="_currency">Currency</th>
+                    <th class="_status">Status</th>
+                    <th class="_pay">Pay due date</th>
+                    <th class="_action"></th>
+                </tr>
+                <tbody class="invoices__table"></tbody>
+            </table>
         </div>
-        <div class="invoices_item__cell invoices_item__cell--date">
-            <div class="invoices_item__text invoices_item__text--small">{{dueDate}}</div>
+        <div class="showmore Removed">Show more</div>
+    </div>
+    <div role="tabpanel" class="tab-pane" id="underpaid">
+        <div class="table-responsive">
+            <table class="table table_invoices">
+                <tr class="invoices__row">
+                    <th class="_number">Invoice number, date</th>
+                    <th class="_client">Client</th>
+                    <th class="_amount">Amount</th>
+                    <th class="_currency">Currency</th>
+                    <th class="_status">Status</th>
+                    <th class="_pay">Pay due date</th>
+                    <th class="_action"></th>
+                </tr>
+                <tbody class="invoices__table"></tbody>
+            </table>
         </div>
-        <div class="invoices_item__cell invoices_item__cell--delete">
-            <button class="btn btn--icon delete {{disCssClass}} " type="button" {{disoption}}>
-                <i class="icon icon--trash"></i>
-            </button>
+        <div class="showmore Underpaid">Show more</div>
+    </div>
+    <div role="tabpanel" class="tab-pane" id="overpaid">
+        <div class="table-responsive">
+            <table class="table table_invoices">
+                <tr class="invoices__row">
+                    <th class="_number">Invoice number, date</th>
+                    <th class="_client">Client</th>
+                    <th class="_amount">Amount</th>
+                    <th class="_currency">Currency</th>
+                    <th class="_status">Status</th>
+                    <th class="_pay">Pay due date</th>
+                    <th class="_action"></th>
+                </tr>
+                <tbody class="invoices__table"></tbody>
+            </table>
         </div>
+        <div class="showmore Overpaid">Show more</div>
+    </div>
+    <div role="tabpanel" class="tab-pane" id="latepaid">
+        <div class="table-responsive">
+            <table class="table table_invoices">
+                <tr class="invoices__row">
+                    <th class="_number">Invoice number, date</th>
+                    <th class="_client">Client</th>
+                    <th class="_amount">Amount</th>
+                    <th class="_currency">Currency</th>
+                    <th class="_status">Status</th>
+                    <th class="_pay">Pay due date</th>
+                    <th class="_action"></th>
+                </tr>
+                <tbody class="invoices__table"></tbody>
+            </table>
+        </div>
+        <div class="showmore LatePaid">Show more</div>
+    </div>
+    <div role="tabpanel" class="tab-pane" id="inprogress">
+        <div class="table-responsive">
+            <table class="table table_invoices">
+                <tr class="invoices__row">
+                    <th class="_number">Invoice number, date</th>
+                    <th class="_client">Client</th>
+                    <th class="_amount">Amount</th>
+                    <th class="_currency">Currency</th>
+                    <th class="_status">Status</th>
+                    <th class="_pay">Pay due date</th>
+                    <th class="_action"></th>
+                </tr>
+                <tbody class="invoices__table"></tbody>
+            </table>
+        </div>
+        <div class="showmore InProgress">Show more</div>
     </div>
 </div>
+
+<table class="table table_invoices" style="display: none">
+    <tbody id="rowtemplate" style="display: none">
+        <tr class="invoices_item" invoice="{{id}}">
+            <td class="_number">
+                <span class="_title">#{{number}}</span>
+                <span class="_hint">{{createdDate}}</span>
+            </td>
+            <td class="_client">
+                <span class="_title">{{clientName}}</span>
+                <span class="_hint">{{clientEmail}}</span>
+            </td>
+            <td class="_amount">{{amount}}</td>
+            <td class="_currency">{{settlementAssetId}}</td>
+            <td class="_status">
+                <span class="label label--{{cssClass}}">{{status}}</span>
+            </td>
+            <td class="_pay">{{dueDate}}</td>
+            <td class="_action">
+                <button class="btn btn--icon {{disCssClass}}" {{disoption}} type="button">
+                    <i class="icon icon--delete"></i>
+                </button>
+            </td>
+        </tr>
+    </tbody>
+</table>

@@ -2,15 +2,28 @@
     ViewData["Title"] = "Error";
 }
 
-<article class="">
-    <div class="container-full">
-        <div class="error">
-            <img src="~/img/404.svg" alt="" class="error__image">
-            @*<div class="error__title">Account successfully created</div>*@
-            <div class="error__subtitle">This content has been moved or is no longer available. If you have any other problem contact ous support:
-                <a href="mailto:support@lykke.com">support@lykke.com</a>
+<article class="content">
+    <section class="section section--lead">
+        <div class="container">
+            <div class="row">
+                <div class="col-sm-8 col-md-6 automargin">
+                    <div class="form_status">
+                        <div class="error_page">
+                            4<span class="status_icon status_icon--warning"></span>4
+                        </div>
+                        <h2 class="h3">Page not found</h2>
+
+                        <p>
+                            This content has been moved or is no longer available.  If you have any other problem contact ous support:
+                            <a href="mailto:support@lykke.com">support@lykke.com</a>
+                        </p>
+
+                        <div class="form_status__button text-center">
+                            <a href="@Url.Action("Profile", "Home")" class="btn">Go Home</a>
+                        </div>
+                    </div>
+                </div>
             </div>
-            <button type="button" name="button" class="btn error__button" onclick="location.href='@Url.Action("Profile", "Home")'">Go home</button>
         </div>
-    </div>
+    </section>
 </article>

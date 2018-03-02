@@ -43,11 +43,6 @@ $(document).ready(function(e) {
     initClipboard();
 
     $("#upload").change(function () {
-        $('.new_file').remove();
-
-        if ($('.invoice_paid_files__doc').length === 0)
-            $(".invoice_paid_files__row span").show();
-
         if (this.files.length === 0)
             return true;
 
@@ -60,15 +55,14 @@ $(document).ready(function(e) {
                 return false;
             }
         }
-
-        $(".invoice_paid_files__row span").hide();
-
+        
         for (var j = 0; j < this.files.length; j++) {
-            var fileRow = $('<div>').addClass('invoice_files__row').addClass('new_file');
-            $('<div>').addClass('invoice_paid_files__doc').text(this.files[j].name.split('.').pop()).appendTo(fileRow);
-            $('<div>').addClass('invoice_paid_files__name').text(this.files[j].name).appendTo(fileRow);
-            $('<div>').addClass('invoice_paid_files__size').text(getFileSize(this.files[j].size)).appendTo(fileRow);
-            $("#files_container").append(fileRow);
+            $('.invoice_files_hint').hide();
+            var assetLink = $('.invoice_files');
+            assetLink.show();
+            $('.asset_icon', assetLink).text(this.files[j].name.split('.').pop());
+            $('.asset_link__title', assetLink).text(this.files[j].name);
+            $('.asset_link__desc', assetLink).text(getFileSize(this.files[j].size));
         }
 
         return true;
