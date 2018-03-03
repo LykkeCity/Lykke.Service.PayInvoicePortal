@@ -16,6 +16,8 @@ else
         var generateditem = eval(@Html.Raw(ViewBag.GeneratedItem));
     </script>
 }
+
+<link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
 <link rel="stylesheet" type="text/css" href="~/css/jquery-confirm.css" />
 <div class="_invoice_sidebar sidebar_menu sidebar_menu--right create draft">
     @using (Html.BeginForm("Profile", "Home", FormMethod.Post, new { name = "createform", id = "createform", enctype = "multipart/form-data", @class = "invoice_form sidebar_menu__inner" }))
@@ -183,7 +185,9 @@ else
                 </div>*@
             <div class="asset_link">
                 <div class="asset_link__action">
-                    <button class="btn btn--icon _copy create__item-copy" type="button"><i class="icon icon--copy_thin"></i></button>
+                    <button class="btn btn--icon _copy create__item-copy" type="button">
+                        <i class="icon icon--copy_thin"></i>
+                    </button>
                 </div>
                 <div class="asset_link__info">
                     <div class="asset_link__title">Hyperlink</div>
@@ -264,6 +268,7 @@ else
 </article>
 @section Scripts
     {
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
     <script src="/js/vendor/moment.min.js"></script>
     <script src="/js/vendor/bootstrap-datetimepicker.min.js"></script>
 

@@ -316,7 +316,7 @@ $(document).ready(function (e) {
         return true;
     });
 
-    $('.icon.icon--copy').on('click', function (e) {
+    $('.icon.icon--copy_thin').on('click', function (e) {
         e.stopPropagation();
         var $temp = $("<input>");
         $("body").append($temp);
@@ -415,16 +415,7 @@ $(document).ready(function (e) {
         }
     });
 
-    $('.btn_create').on('click', function (e) {
-        e.stopPropagation();
-        validate(true);
-        $("#StartDate").val(moment().format("DD.MM.YYYY"));
-        $('body').addClass('body--menu_opened');
-        $('.create.draft').addClass('sidebar_menu--open');
-        enableButtons();
-    });
     
-
     $('body').on('click', function (e) {
         if (e.target.className === "menu_overlay") {
             $('body').removeClass('body--menu_opened');

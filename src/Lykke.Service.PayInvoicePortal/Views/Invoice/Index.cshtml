@@ -35,10 +35,10 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <span class="invoice__remain-text">10 min remaining…</span>
+                                    <span class="invoice__remain-text"></span>
                                 </div>
 
-                                <div class="hint visible-xs">The address will be invalid in 10 minutes due to inactivity</div>
+                                <div class="hint visible-xs"></div>
                             </div>
                             <div class="invoice_info__right">
                                 <div class="invoice_info__row">
@@ -59,7 +59,7 @@
 
                                 <hr class="hidden-xs">
 
-                                <div class="hint hidden-xs invoice__value">The address will be invalid in 10 minutes due to inactivity</div>
+                                <div class="hint hidden-xs invoice__value"></div>
                             </div>
                         </div>
                     }
@@ -103,13 +103,10 @@
 </article>
 @section Scripts
     {
-    <script src="/js/vendor/jquery.min.js"></script>
-    <script src="/js/vendor/bootstrap.min.js"></script>
     <script src="/js/vendor/bootstrap-select.min.js"></script>
-    <script src="/js/vendor/fastclick.min.js"></script>
     <script src="~/js/vendor/clipboard.min.js" asp-append-version="true"></script>
     <script type="text/javascript" src="/js/vendor/pieloader/jquery-pie-loader.js"></script>
-    <script src='/js/invoice.js' type="text/javascript"></script>
+    <script src='/js/invoice.js' type="text/javascript" asp-append-version="true"></script>
     <script type="text/javascript">
         $(function() {
             $.refreshSeconds = @Model.RefreshSeconds;

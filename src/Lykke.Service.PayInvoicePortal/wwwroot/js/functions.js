@@ -319,6 +319,7 @@ function openCreateInvoice() {
         e.preventDefault();
         e.stopPropagation();
 
+        $("#StartDate").val(moment().format("DD.MM.YYYY"));
         $('body').addClass('body--menu_opened');
         $('._invoice_sidebar').addClass('sidebar_menu--open')
     })
