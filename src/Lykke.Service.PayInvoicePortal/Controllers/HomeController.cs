@@ -77,7 +77,7 @@ namespace Lykke.Service.PayInvoicePortal.Controllers
                         Amount = decimal.Parse(model.Amount, CultureInfo.InvariantCulture),
                         SettlementAssetId = model.Currency,
                         PaymentAssetId = ExchangeAssetId,
-                        DueDate = DateTime.Parse(model.StartDate, CultureInfo.InvariantCulture)
+                        DueDate = DateTime.ParseExact(model.StartDate, "dd.MM.yyyy", CultureInfo.InvariantCulture)
                             .Add(Startup.OrderLiveTime)
                     });
                 }
@@ -92,7 +92,7 @@ namespace Lykke.Service.PayInvoicePortal.Controllers
                         Amount = decimal.Parse(model.Amount, CultureInfo.InvariantCulture),
                         SettlementAssetId = model.Currency,
                         PaymentAssetId = ExchangeAssetId,
-                        DueDate = DateTime.Parse(model.StartDate, CultureInfo.InvariantCulture)
+                        DueDate = DateTime.ParseExact(model.StartDate, "dd.MM.yyyy", CultureInfo.InvariantCulture)
                             .Add(Startup.OrderLiveTime)
                     });
                 }

@@ -56,3 +56,15 @@ $.updateProgress = function () {
         $('.invoice__value').html('The address will be invalid in ' + remSec + ' due to inactivity');
     }
 };
+
+$.updateInvoice = function (inoiceId, paymentAssetId) {
+    $.post($.updateInvoiceUrl,
+        {
+            'invoiceId': inoiceId,
+            'paymentAssetId': paymentAssetId
+        },
+        function (data) {
+            $(".payment_amount").text(data.paymentAmount);
+        }
+    );
+}

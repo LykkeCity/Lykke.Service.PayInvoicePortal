@@ -26,12 +26,47 @@
     "inputFiles": [
       "wwwroot/js/profile.js"
     ],
-    // Optionally specify minification options
     "minify": {
       "enabled": true,
       "renameLocals": true
     },
-    // Optionally generate .map file
+    "sourceMap": false
+  },
+  {
+    "outputFileName": "wwwroot/js/invoice.min.js",
+    "inputFiles": [
+      "wwwroot/js/invoice.js"
+    ],
+    "minify": {
+      "enabled": true,
+      "renameLocals": true
+    },
+    "sourceMap": false
+  },
+  {
+    "outputFileName": "wwwroot/js/vendor/vendors.js",
+    "inputFiles": [
+      "wwwroot/js/vendor/jquery.min.js",
+      "wwwroot/js/vendor/bootstrap.min.js",
+      "wwwroot/js/vendor/fastclick.min.js"
+    ],
+    "minify": {
+      "enabled": true,
+      "renameLocals": true
+    },
+    "sourceMap": false
+  },
+  {
+    "outputFileName": "wwwroot/js/vendor/invoice_vendors.js",
+    "inputFiles": [
+      "wwwroot/js/vendor/bootstrap-select.min.js",
+      "wwwroot/js/vendor/clipboard.min.js",
+      "wwwroot/js/vendor/pieloader/jquery-pie-loader.js"
+    ],
+    "minify": {
+      "enabled": true,
+      "renameLocals": true
+    },
     "sourceMap": false
   }
 ]

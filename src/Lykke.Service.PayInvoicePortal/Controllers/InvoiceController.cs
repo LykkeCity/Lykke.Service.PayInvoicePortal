@@ -6,6 +6,8 @@ using Lykke.Service.PayInvoicePortal.Models.Invoice;
 using Lykke.Service.PayInvoice.Client;
 using Lykke.Service.PayInvoice.Client.Models.Invoice;
 using Microsoft.AspNetCore.Mvc;
+using System.Linq;
+using Lykke.Service.PayInvoicePortal.Models;
 
 namespace Lykke.Service.PayInvoicePortal.Controllers
 {
@@ -44,7 +46,7 @@ namespace Lykke.Service.PayInvoicePortal.Controllers
 
             int refreshTime = (int)Math.Round((invoiceDetails.OrderDueDate - DateTime.UtcNow).TotalSeconds);
 
-            decimal amoint = Math.Round(invoiceDetails.PaymentAmount, 8);
+            decimal amount = Math.Round(invoiceDetails.PaymentAmount, 8);
 
             var model = new InvoiceViewModel
             {
@@ -53,13 +55,19 @@ namespace Lykke.Service.PayInvoicePortal.Controllers
                 Currency = invoiceDetails.SettlementAssetId,
                 OrigAmount = TrimDouble(invoiceDetails.Amount, 2),
                 ClientName = invoiceDetails.ClientName,
-                Amount = TrimDouble(amoint, 8),
+                Amount = TrimDouble(amount, 8),
+                PaymentAssetId = invoiceDetails.PaymentAssetId,
                 Status = invoiceDetails.Status,
                 RefreshSeconds = refreshTime,
-                QRCode = $@"https://chart.googleapis.com/chart?chs=220x220&chld=L|2&cht=qr&chl=bitcoin:{invoiceDetails.WalletAddress}?amount={amoint}%26label=invoice%20#{invoiceDetails.Number}%26message={invoiceDetails.PaymentRequestId}",
+                QRCode = $@"https://chart.googleapis.com/chart?chs=220x220&chld=L|2&cht=qr&chl=bitcoin:{invoiceDetails.WalletAddress}?amount={amount}%26label=invoice%20#{invoiceDetails.Number}%26message={invoiceDetails.PaymentRequestId}",
                 AutoUpdate = invoiceDetails.Status == InvoiceStatus.InProgress || invoiceDetails.Status == InvoiceStatus.Unpaid,
                 WalletAddress = invoiceDetails.WalletAddress
             };
+
+            var paymentAssets = await _payInvoiceClient.GetPaymentAssetsAsync();
+            ViewBag.PaymentAssets = paymentAssets
+                .Select(o => new ItemViewModel(o.Id, o.Name))
+                .ToList();
 
             return View(model);
         }
@@ -91,6 +99,14 @@ namespace Lykke.Service.PayInvoicePortal.Controllers
             {
                 status = invoice.Status.ToString()
             });
+        }
+
+        [HttpPost("invoice/update")]
+        public IActionResult Update(string invoiceId, string paymentAssetId)
+        {
+            var rand = new Random();
+            
+            return Json(new { PaymentAmount = Math.Round(rand.NextDouble(), 8) });
         }
     }
 }
