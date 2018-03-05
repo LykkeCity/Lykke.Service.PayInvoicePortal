@@ -272,10 +272,10 @@ else
     <script src="/js/vendor/moment.min.js"></script>
     <script src="/js/vendor/bootstrap-datetimepicker.min.js"></script>
 
-    <environment names="Development">
+    <environment include="Development">
         <script src="/js/profile.js" asp-append-version="true"></script>
     </environment>
-    <environment names="Staging,Production">
+    <environment include="Staging,Production">
         <script src="/js/profile.min.js" asp-append-version="true"></script>
     </environment>
 }

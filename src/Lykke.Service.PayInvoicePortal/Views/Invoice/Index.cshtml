@@ -111,10 +111,10 @@
 @section Scripts
     {
     <script src="/js/vendor/invoice_vendors.min.js"></script>
-    <environment names="Development">
+    <environment include="Development">
         <script src='/js/invoice.js' asp-append-version="true"></script>
     </environment>
-    <environment names="Staging,Production">
+    <environment include="Staging,Production">
         <script src="/js/invoice.min.js" asp-append-version="true"></script>
     </environment>
     <script type="text/javascript">

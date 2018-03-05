@@ -16,10 +16,10 @@
     <link rel="icon" type="image/png" href="/img/favicon-32x32.png" sizes="32x32">
     <link rel="icon" type="image/png" href="/img/favicon-16x16.png" sizes="16x16">
     <link rel="stylesheet" href="~/css/bootstrap-custom.min.css">
-    <environment names="Development">
+    <environment include="Development">
         <link rel="stylesheet" media="all" href="~/css/style.css" asp-append-version="true">
     </environment>
-    <environment names="Staging,Production">
+    <environment include="Staging,Production">
         <link rel="stylesheet" media="all" href="~/css/style.min.css" asp-append-version="true">
     </environment>
     @Html.Raw(JavaScriptSnippet.FullScript)
@@ -274,10 +274,10 @@
         </div>
     </footer>
     <script src="/js/vendor/vendors.min.js"></script>
-    <environment names="Development">
+    <environment include="Development">
         <script src="/js/functions.js" asp-append-version="true"></script>
     </environment>
-    <environment names="Staging,Production">
+    <environment include="Staging,Production">
         <script src="/js/functions.min.js" asp-append-version="true"></script>
     </environment>
     @RenderSection("Scripts", required: false)
