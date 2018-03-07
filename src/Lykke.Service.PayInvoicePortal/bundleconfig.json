@@ -68,5 +68,18 @@
       "renameLocals": true
     },
     "sourceMap": false
+  },
+  {
+    "outputFileName": "wwwroot/js/vendor/profile_vendors.js",
+    "inputFiles": [
+      "wwwroot/js/vendor/jquery-ui.js",
+      "wwwroot/js/vendor/moment.min.js",
+      "wwwroot/js/vendor/bootstrap-datetimepicker.min.js"
+    ],
+    "minify": {
+      "enabled": true,
+      "renameLocals": true
+    },
+    "sourceMap": false
   }
 ]

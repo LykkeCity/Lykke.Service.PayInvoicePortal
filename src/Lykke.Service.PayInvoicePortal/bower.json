@@ -6,6 +6,7 @@
     "jquery": "2.2.0",
     "jquery-validation": "1.14.0",
     "jquery-validation-unobtrusive": "3.2.6",
+    "jqueri-ui": "1.12.1",
     "fastclick": "1.0.6"
   }
 }
