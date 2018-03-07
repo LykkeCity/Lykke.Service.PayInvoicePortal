@@ -1615,6 +1615,7 @@ figcaption {
 .header_actions {
     margin-bottom: -3px;
     margin-bottom: -0.1875rem;
+    min-width: 190px;
 }
 
 .header_actions__search, .header_actions__notifications, .header_actions__location, .header_actions__notifications, .header_actions__services, .header_actions__login, .header_actions__logout {

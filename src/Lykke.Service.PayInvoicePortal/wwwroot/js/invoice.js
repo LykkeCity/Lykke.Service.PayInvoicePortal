@@ -64,7 +64,7 @@ $.updateInvoice = function (inoiceId, paymentAssetId) {
             'paymentAssetId': paymentAssetId
         },
         function (data) {
-            $(".payment_amount").text(data.paymentAmount);
+            //$(".payment_amount").text(data.paymentAmount);
         }
     );
 }
