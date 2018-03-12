@@ -64,11 +64,6 @@ namespace Lykke.Service.PayInvoicePortal.Controllers
                 WalletAddress = invoiceDetails.WalletAddress
             };
 
-            var paymentAssets = await _payInvoiceClient.GetPaymentAssetsAsync();
-            ViewBag.PaymentAssets = paymentAssets
-                .Select(o => new ItemViewModel(o.Id, o.Name))
-                .ToList();
-
             return View(model);
         }
 

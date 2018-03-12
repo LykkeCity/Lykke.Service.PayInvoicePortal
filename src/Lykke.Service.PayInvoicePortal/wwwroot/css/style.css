@@ -1691,6 +1691,10 @@ figcaption {
 }
 
 @media all and (max-width: 767px) {
+    .header_actions {
+        min-width: 20px;
+    }
+
     .header_actions__search, .header_actions__notifications, .header_actions__location, .header_actions__notifications, .header_actions__services, .header_actions__login, .header_actions__logout {
         margin-left: 8px;
     }
@@ -8954,6 +8958,7 @@ ol.list_styled {
 
     .table_invoices tr:hover td, .table_invoices tr:hover th {
         background-color: transparent;
+        cursor: pointer;
     }
 
     .table_invoices tr th {
@@ -8992,8 +8997,7 @@ ol.list_styled {
 }
 
     .table_invoices ._action .btn .icon {
-        font-size: 16px;
-        font-size: 1rem;
+        font-size: 24px;
     }
 
 .btn--icon[disabled] {
@@ -11021,5 +11025,9 @@ tbody.collapse.in {
     top: -7px;
     right: 0;
     height: 40px;
+    cursor: pointer;
+}
+
+.showmore {
     cursor: pointer;
 }

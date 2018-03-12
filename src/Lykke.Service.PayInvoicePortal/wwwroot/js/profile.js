@@ -469,19 +469,6 @@ function getFileSize(value) {
     }
 }
 
-$('.datetimepicker').datetimepicker({
-    //    debug: true,
-    format: 'DD.MM.YYYY',
-    icons: {
-        time: "icon--clock",
-        date: "icon--cal",
-        up: "icon--chevron-thin-up",
-        down: "icon--chevron-thin-down",
-        previous: "icon--chevron-thin-left",
-        next: "icon--chevron-thin-right"
-    }
-});
-
 var searchBlock = $('.search_filter'),
     searchActiveClass = 'search_filter--show';
 

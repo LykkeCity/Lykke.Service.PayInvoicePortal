@@ -48,7 +48,9 @@
     "inputFiles": [
       "wwwroot/js/vendor/jquery.min.js",
       "wwwroot/js/vendor/bootstrap.min.js",
-      "wwwroot/js/vendor/fastclick.min.js"
+      "wwwroot/js/vendor/fastclick.min.js",
+      "wwwroot/js/vendor/moment.min.js",
+      "wwwroot/js/vendor/bootstrap-datetimepicker.min.js"
     ],
     "minify": {
       "enabled": true,
@@ -73,8 +75,7 @@
     "outputFileName": "wwwroot/js/vendor/profile_vendors.js",
     "inputFiles": [
       "wwwroot/js/vendor/jquery-ui.js",
-      "wwwroot/js/vendor/moment.min.js",
-      "wwwroot/js/vendor/bootstrap-datetimepicker.min.js"
+      "wwwroot/js/vendor/jquery-confirm.js"
     ],
     "minify": {
       "enabled": true,

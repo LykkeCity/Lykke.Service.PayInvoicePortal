@@ -325,6 +325,21 @@ function openCreateInvoice() {
     })
 }
 
+function openDatePicker() {
+    $('.datetimepicker').datetimepicker({
+        //    debug: true,
+        format: 'DD.MM.YYYY',
+        icons: {
+            time: "icon--clock",
+            date: "icon--cal",
+            up: "icon--chevron-thin-up",
+            down: "icon--chevron-thin-down",
+            previous: "icon--chevron-thin-left",
+            next: "icon--chevron-thin-right"
+        }
+    });
+}
+
 
 // Init
 
@@ -339,5 +354,6 @@ $(document).ready(function () {
     initFileupload();
     pie();
     openCreateInvoice();
+    openDatePicker();
 });
 

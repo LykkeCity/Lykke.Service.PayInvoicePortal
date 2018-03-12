@@ -46,12 +46,7 @@
                                         <span class="payment_amount">@Model.Amount</span>
                                         <div class="invoice_info__select custom_dropdown">
                                             <select class="selectpicker inline_select payment_asset" data-size="10">
-                                                @foreach (ItemViewModel item in ViewBag.PaymentAssets)
-                                                {
-                                                    var selected = Model.PaymentAssetId == item.Id ? "selected" : "";
-
-                                                    <option value="@item.Id" @selected>@item.Title</option>
-                                                }
+                                                <option value="BTC" selected>BTC</option>
                                             </select>
                                         </div>
                                     </div>
@@ -71,17 +66,7 @@
                         <div class="invoice_info__right">
                             <div class="invoice_info__row">
                                 <div class="invoice_info__value">
-                                    <span class="payment_amount">@Model.Amount</span>
-                                    <div class="invoice_info__select custom_dropdown">
-                                        <select class="selectpicker inline_select payment_asset" data-size="10">
-                                            @foreach (ItemViewModel item in ViewBag.PaymentAssets)
-                                            {
-                                                var selected = Model.PaymentAssetId == item.Id ? "selected" : "";
-
-                                                <option value="@item.Id" @selected>@item.Title</option>
-                                            }
-                                        </select>
-                                    </div>
+                                    <span class="payment_amount">@Model.Amount</span> BTC
                                 </div>
                                 <span class="invoice_info__title">FOR PAYMENT</span>
                             </div>

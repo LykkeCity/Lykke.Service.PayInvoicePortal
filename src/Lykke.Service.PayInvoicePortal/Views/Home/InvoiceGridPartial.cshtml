@@ -46,12 +46,12 @@
         <div class="table-responsive">
             <table class="table table_invoices">
                 <tr class="invoices__row">
-                    <th class="_number">Invoice number, date</th>
-                    <th class="_client">Client</th>
-                    <th class="_amount">Amount</th>
-                    <th class="_currency">Currency</th>
-                    <th class="_status">Status</th>
-                    <th class="_pay">Pay due date</th>
+                    <th class="_number invoices__cell">Invoice number, date</th>
+                    <th class="_client invoices__cell">Client</th>
+                    <th class="_amount invoices__cell">Amount</th>
+                    <th class="_currency invoices__cell">Currency</th>
+                    <th class="_status invoices__cell">Status</th>
+                    <th class="_pay invoices__cell">Pay due date</th>
                     <th class="_action"></th>
                 </tr>
                 <tbody class="invoices__table"></tbody>
@@ -215,7 +215,7 @@
             </td>
             <td class="_pay">{{dueDate}}</td>
             <td class="_action">
-                <button class="btn btn--icon {{disCssClass}}" {{disoption}} type="button">
+                <button class="btn btn--icon delete {{disCssClass}}" {{disoption}} type="button">
                     <i class="icon icon--delete"></i>
                 </button>
             </td>

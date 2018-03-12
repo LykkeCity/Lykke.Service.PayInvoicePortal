@@ -31,15 +31,13 @@ $('#deletebtn').on('click', function (e) {
                     });
                 }
             },
-            cancel: function () {}
+            cancel: function () { }
         }
     });
 });
 
-$(document).ready(function(e) {
-    var duedate = $("#Data_DueDate").val();
-    var startdate = $('#Data_StartDate').text();
-    $("#Data_DueDate").datepicker('option', 'minDate', new Date(startdate)).datepicker("setDate", new Date(duedate));
+$(document).ready(function (e) {
+    var startdate = moment($('#Data_StartDate').text(), 'dddd, MMMM d, yyyy h:m:s tt');
     initClipboard();
 
     $("#upload").change(function () {
@@ -55,7 +53,7 @@ $(document).ready(function(e) {
                 return false;
             }
         }
-        
+
         for (var j = 0; j < this.files.length; j++) {
             $('.invoice_files_hint').hide();
             var assetLink = $('.invoice_files');
