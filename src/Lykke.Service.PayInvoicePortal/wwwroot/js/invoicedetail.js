@@ -37,7 +37,6 @@ $('#deletebtn').on('click', function (e) {
 });
 
 $(document).ready(function (e) {
-    var startdate = moment($('#Data_StartDate').text(), 'dddd, MMMM d, yyyy h:m:s tt');
     initClipboard();
 
     $("#upload").change(function () {
