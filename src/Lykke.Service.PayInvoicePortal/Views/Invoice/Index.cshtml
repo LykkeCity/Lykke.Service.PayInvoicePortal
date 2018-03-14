@@ -162,6 +162,7 @@
             $.profilePageUrl = '@Url.Action("Profile", "Home")';
             $.invoiceStatus = '@Model.Status';
             $.needAutoUpdate = @Model.AutoUpdate.ToString().ToLower();
+            $.callbackUrl = '@Model.CallbackURL';
 
             if ($.invoiceStatus === '@InvoiceStatus.Unpaid.ToString()') {
                 $.setUpCountDown();
@@ -169,6 +170,12 @@
 
             if ($.needAutoUpdate) {
                 $.setUpUpdateStatus();
+            }
+
+            if ($.invoiceStatus === '@InvoiceStatus.Paid.ToString()' && $.callbackUrl) {
+                setTimeout(function () {
+                    window.location.href = $.callbackUrl.replace(/amp;/g,"");
+                }, 5000);
             }
 
             var clipboard = new Clipboard('.create__item-copy', {

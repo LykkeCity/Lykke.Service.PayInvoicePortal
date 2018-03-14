@@ -15,5 +15,6 @@ namespace Lykke.Service.PayInvoicePortal.Models.Invoice
         public bool AutoUpdate { get; set; }
         public string WalletAddress { get; set; }
         public InvoiceStatus Status { get; set; }
+        public string CallbackURL { get; set; }
     }
 }
