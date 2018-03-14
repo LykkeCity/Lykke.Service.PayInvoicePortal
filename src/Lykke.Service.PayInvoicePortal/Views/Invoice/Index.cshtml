@@ -172,7 +172,7 @@
                 $.setUpUpdateStatus();
             }
 
-            if ($.invoiceStatus === '@InvoiceStatus.Paid.ToString()') {
+            if ($.invoiceStatus === '@InvoiceStatus.Paid.ToString()' && $.callbackUrl) {
                 setTimeout(function () {
                     window.location.href = $.callbackUrl.replace(/amp;/g,"");
                 }, 5000);
