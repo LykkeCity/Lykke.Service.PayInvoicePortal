@@ -38,6 +38,12 @@ namespace Lykke.Service.PayInvoicePortal.Controllers
             _log = log;
         }
 
+        [HttpGet]
+        public IActionResult Index()
+        {
+            return View();
+        }
+
         [HttpGet("Profile")]
         public async Task<IActionResult> Profile()
         {

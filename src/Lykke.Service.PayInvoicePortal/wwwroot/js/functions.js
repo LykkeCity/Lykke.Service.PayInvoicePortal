@@ -104,12 +104,13 @@ function initHeader() {
         hideSubMenu();
     }
 
-    $('._open_submenu').on('click', function (e) {
-        e.preventDefault();
+    $('._open_submenu').on('click',
+        function(e) {
+            e.preventDefault();
 
-        $(this).toggleClass('active').siblings('.submenu').toggleClass('open');
-        $('body, html').toggleClass('submenu_opened')
-    })
+            $(this).toggleClass('active').siblings('.submenu').toggleClass('open');
+            $('body, html').toggleClass('submenu_opened');
+        });
 
     $('.btn_menu').on('click', function (e) {
         e.preventDefault();

@@ -8,18 +8,25 @@
 <!--<![endif]-->
 <head>
     <meta charset="utf-8">
-    <title>@ViewData["Title"]</title>
     <meta http-equiv="X-UA-Compatible" content="IE=Edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    
+    <title>@ViewData["Title"]</title>
+    
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+
+    <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
+    <link rel="icon" type="image/png" href="favicon-32x32.png" sizes="32x32">
+    <link rel="icon" type="image/png" href="favicon-16x16.png" sizes="16x16">
+    <link rel="manifest" href="manifest.json">
+    <link rel="mask-icon" href="safari-pinned-tab.svg" color="#5bbad5">
     <meta name="theme-color" content="#ffffff">
-    <meta name="format-detection" content="telephone=no">
-    <link rel="icon" type="image/png" href="/img/favicon-32x32.png" sizes="32x32">
-    <link rel="icon" type="image/png" href="/img/favicon-16x16.png" sizes="16x16">
-    <link rel="stylesheet" href="~/css/bootstrap-custom.min.css">
+    
     <environment include="Development">
+        <link rel="stylesheet" href="~/css/bootstrap-custom.min.css">
         <link rel="stylesheet" media="all" href="~/css/style.css" asp-append-version="true">
     </environment>
     <environment include="Staging,Production">
+        <link rel="stylesheet" href="~/css/bootstrap-custom.min.css">
         <link rel="stylesheet" media="all" href="~/css/style.min.css" asp-append-version="true">
     </environment>
     @Html.Raw(JavaScriptSnippet.FullScript)
@@ -39,6 +46,7 @@
     </script>
 </head>
 <body class="footer_in_view" style="padding-bottom: 414.384px;">
+    <aside class="menu_overlay"></aside>
     <div class="header_container">
         <header class="header">
             <div class="container">
@@ -191,9 +199,9 @@
                                 <div class="form-group">
                                     <div class="input-group">
                                         <i class="icon icon--email"></i>
-                                        <input type="email" placeholder="E-mail address" id="subscribe-email" class="form-control" pattern="[a-z0-9._%+-]+@@[a-z0-9.-]+\.[a-z]{2,3}$" title="Wrong email format">
+                                        <input type="email" placeholder="E-mail address" id="subscribe-email" class="form-control" pattern="[A-z0-9._%+-]+@@[A-z0-9.-]+\.[a-z]{2,3}$" title="Wrong email format">
                                     </div>
-                                    <div id="subscribe-message" class="hint" style="display:none"></div>
+                                    <div id="subscribe-message" class="hint" style="display: none"></div>
                                     <button class="btn btn-sm btn--primary btn--circle" type="button" id="subscribe-button"><i class="icon icon--arrow-right-alt"></i></button>
                                 </div>
                             </form>
