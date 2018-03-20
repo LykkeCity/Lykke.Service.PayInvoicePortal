@@ -10,6 +10,9 @@
     <None Include="Views\Auth\SignIn.cshtml" />
   </ItemGroup>
   <ItemGroup>
+	  <PackageReference Include="BuildBundlerMinifier" Version="2.6.362" />
+	  <PackageReference Include="BundlerMinifier.Core" Version="2.6.362" />
+	  <PackageReference Include="CsvHelper" Version="7.0.1" />
     <PackageReference Include="Lykke.Common" Version="5.0.0" />
     <PackageReference Include="Lykke.Common.ApiLibrary" Version="1.4.0" />
     <PackageReference Include="Lykke.Logs" Version="3.6.0" />
@@ -41,15 +44,6 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Update="bundleconfig.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Update="wwwroot\css\style.css">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Update="wwwroot\css\bootstrap-custom.min.css">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Update="wwwroot\css\site.css">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Update="wwwroot\favicon.ico">
@@ -143,18 +137,6 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Update="wwwroot\fonts\ProximaNovaThin.woff">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Update="wwwroot\images\banner1.svg">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Update="wwwroot\images\banner2.svg">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Update="wwwroot\images\banner3.svg">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Update="wwwroot\images\banner4.svg">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Update="wwwroot\img\404.svg">
@@ -313,9 +295,6 @@
     <Content Update="wwwroot\img\publication_platform_logo.svg">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Update="wwwroot\img\qr.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
     <Content Update="wwwroot\img\refund.svg">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -331,19 +310,10 @@
     <Content Update="wwwroot\img\user_default.svg">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Update="wwwroot\js\functions.js">
+    <Content Update="wwwroot\src\js\invoice.js">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Update="wwwroot\js\invoice.js">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Update="wwwroot\js\vendor\bootstrap.min.js">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Update="wwwroot\js\vendor\html5shiv.js">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Update="wwwroot\js\vendor\jquery.min.js">
+    <Content Update="wwwroot\vendors\html5shiv.js">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Update="wwwroot\lib\bootstrap\.bower.json">
@@ -419,4 +389,11 @@
     <ProjectReference Include="..\Lykke.Service.PayInvoicePortal.Core\Lykke.Service.PayInvoicePortal.Core.csproj" />
     <ProjectReference Include="..\Lykke.Service.PayInvoicePortal.Services\Lykke.Service.PayInvoicePortal.Services.csproj" />
   </ItemGroup>
+	<Target Name="PrepublishScript" BeforeTargets="PrepareForPublish">
+		<Exec Command="bower install --allow-root" />
+		<Exec Command="dotnet bundle" />
+	</Target>
+	<ItemGroup>
+		<DotNetCliToolReference Include="BundlerMinifier.Core" Version="2.6.362" />
+	</ItemGroup>
 </Project>

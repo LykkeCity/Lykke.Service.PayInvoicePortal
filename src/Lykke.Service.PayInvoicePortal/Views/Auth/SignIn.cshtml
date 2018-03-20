@@ -17,7 +17,7 @@
                                 <p>Invoice your customers over the world in Crypto<br /> and FIAT currencies and receive payments in<br /> asset of choice.</p>
                             </div>
 
-                            @using (Html.BeginForm(FormMethod.Post, htmlAttributes: new { @class = "form form_register" }))
+                            @using (Html.BeginForm(null, null, new { Model.ReturnUrl }, FormMethod.Post, true, new { @class = "form form_register" }))
                             {
                                 <h4>Sign in</h4>
 

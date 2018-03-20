@@ -16,6 +16,9 @@ namespace Lykke.Service.PayInvoicePortal.Services
 
             builder.RegisterType<ShutdownManager>()
                 .As<IShutdownManager>();
+
+            builder.RegisterType<InvoiceService>()
+                .As<IInvoiceService>();
         }
     }
 }

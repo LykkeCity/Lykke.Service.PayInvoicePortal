@@ -35,9 +35,12 @@ namespace Lykke.Service.PayInvoicePortal.Controllers
         public IActionResult SignIn(string returnUrl)
         {
             if (User.Identity.IsAuthenticated)
-                return RedirectToAction("Profile", "Home");
+               return RedirectToAction(nameof(HomeController.Index), "Home");
 
-            return View(new SignInViewModel());
+            return View(new SignInViewModel
+            {
+                ReturnUrl = returnUrl
+            });
         }
 
         [HttpPost]
@@ -95,7 +98,10 @@ namespace Lykke.Service.PayInvoicePortal.Controllers
 
             await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, claimsPrinciple);
 
-            return RedirectToAction("Profile", "Home");
+            if (!string.IsNullOrEmpty(model.ReturnUrl) && Url.IsLocalUrl(model.ReturnUrl))
+                return Redirect(model.ReturnUrl);
+
+            return RedirectToAction("Index", "Home");
         }
 
         [HttpGet("SignOut")]

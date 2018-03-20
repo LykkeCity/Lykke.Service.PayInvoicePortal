@@ -58,7 +58,7 @@ namespace Lykke.Service.PayInvoicePortal
                     .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme, o =>
 
                     {
-                        o.LoginPath = new PathString("/Welcome");
+                        o.LoginPath = new PathString("/welcome");
                         o.ExpireTimeSpan = appSettings.CurrentValue.PayInvoicePortal.UserLoginTime;
                     });
                 
@@ -110,9 +110,7 @@ namespace Lykke.Service.PayInvoicePortal
                 app.UseAuthentication();
                 app.UseMvc(routes =>
                 {
-                    routes.MapRoute(
-                        name: "default",
-                        template: "{controller=Invoice}/{action=Index}");
+                    routes.MapRoute("default", "{controller=Home}/{action=Index}/{id?}");
                 });
 
                 appLifetime.ApplicationStarted.Register(() => StartApplication().GetAwaiter().GetResult());

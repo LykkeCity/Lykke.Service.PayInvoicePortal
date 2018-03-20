@@ -1,85 +1,140 @@
-﻿// Configure bundling and minification for the project.
-// More info at https://go.microsoft.com/fwlink/?LinkId=808241
-[
+﻿[
+  {
+    "outputFileName": "wwwroot/css/style.css",
+    "inputFiles": [
+      "wwwroot/src/css/bootstrap-custom.min.css",
+      "wwwroot/src/css/style.css",
+      "wwwroot/src/vendors/jquery-confirm/jquery-confirm.css"
+    ],
+    "minify": {
+      "enabled": false,
+      "renameLocals": false,
+      "adjustRelativePaths": false
+    },
+    "sourceMap": false
+  },
   {
     "outputFileName": "wwwroot/css/style.min.css",
-    // An array of relative input file paths. Globbing patterns supported
     "inputFiles": [
-      "wwwroot/css/style.css"
-    ]
-  },
-  {
-    "outputFileName": "wwwroot/js/functions.min.js",
-    "inputFiles": [
-      "wwwroot/js/functions.js"
-    ],
-    // Optionally specify minification options
-    "minify": {
-      "enabled": true,
-      "renameLocals": true
-    },
-    // Optionally generate .map file
-    "sourceMap": false
-  },
-  {
-    "outputFileName": "wwwroot/js/profile.min.js",
-    "inputFiles": [
-      "wwwroot/js/profile.js"
+      "wwwroot/src/css/bootstrap-custom.min.css",
+      "wwwroot/src/css/style.css",
+      "wwwroot/src/vendors/jquery-confirm/jquery-confirm.css"
     ],
     "minify": {
       "enabled": true,
-      "renameLocals": true
+      "renameLocals": false,
+      "adjustRelativePaths": false
     },
     "sourceMap": false
   },
+
   {
-    "outputFileName": "wwwroot/js/invoice.min.js",
+    "outputFileName": "wwwroot/js/vendors.js",
     "inputFiles": [
-      "wwwroot/js/invoice.js"
+      "wwwroot/lib/jquery/dist/jquery.js",
+      "wwwroot/lib/fastclick/lib/fastclick.js",
+      "wwwroot/src/jquery-confirm/jquery-confirm.js",
+      "wwwroot/lib/moment/moment.js",
+      "wwwroot/lib/bootstrap/dist/js/bootstrap.js",
+      "wwwroot/lib/angular/angular.js",
+      "wwwroot/lib/ng-file-upload/ng-file-upload.js",
+      "wwwroot/lib/eonasdan-bootstrap-datetimepicker/src/js/bootstrap-datetimepicker.js"
     ],
     "minify": {
-      "enabled": true,
-      "renameLocals": true
+      "enabled": false,
+      "renameLocals": false,
+      "adjustRelativePaths": false
     },
     "sourceMap": false
   },
   {
-    "outputFileName": "wwwroot/js/vendor/vendors.js",
+    "outputFileName": "wwwroot/js/vendors.min.js",
     "inputFiles": [
-      "wwwroot/js/vendor/jquery.min.js",
-      "wwwroot/js/vendor/bootstrap.min.js",
-      "wwwroot/js/vendor/fastclick.min.js",
-      "wwwroot/js/vendor/moment.min.js",
-      "wwwroot/js/vendor/bootstrap-datetimepicker.min.js"
+      "wwwroot/lib/jquery/dist/jquery.min.js",
+      "wwwroot/lib/fastclick/lib/fastclick.js",
+      "wwwroot/src/jquery-confirm/jquery-confirm.js",
+      "wwwroot/lib/moment/min/moment.min.js",
+      "wwwroot/lib/bootstrap/dist/js/bootstrap.min.js",
+      "wwwroot/lib/angular/angular.min.js",
+      "wwwroot/lib/ng-file-upload/ng-file-upload.min.js",
+      "wwwroot/lib/eonasdan-bootstrap-datetimepicker/build/js/bootstrap-datetimepicker.min.js"
     ],
     "minify": {
-      "enabled": true,
-      "renameLocals": true
+      "enabled": false,
+      "renameLocals": false,
+      "adjustRelativePaths": false
+    },
+    "sourceMap": false
+  },
+
+  {
+    "outputFileName": "wwwroot/js/app.js",
+    "inputFiles": [
+      "wwwroot/src/app/app.js",
+      "wwwroot/src/app/directives/mtNavigate.js",
+      "wwwroot/src/app/directives/dateTimePicker.js",
+      "wwwroot/src/app/directives/clickOutside.js",
+      "wwwroot/src/app/directives/copy.js",
+      "wwwroot/src/app/controllers/invoicesCtrl.js",
+      "wwwroot/src/app/controllers/invoiceCtrl.js",
+      "wwwroot/src/app/controllers/invoiceInfoCtrl.js",
+      "wwwroot/src/app/controllers/balanceCtrl.js",
+      "wwwroot/src/app/services/apiSvc.js",
+      "wwwroot/src/app/services/statusSvc.js",
+      "wwwroot/src/app/services/fileSvc.js"
+    ],
+    "minify": {
+      "enabled": false,
+      "renameLocals": false,
+      "adjustRelativePaths": false
     },
     "sourceMap": false
   },
   {
-    "outputFileName": "wwwroot/js/vendor/invoice_vendors.js",
+    "outputFileName": "wwwroot/js/app.min.js",
     "inputFiles": [
-      "wwwroot/js/vendor/bootstrap-select.min.js",
-      "wwwroot/js/vendor/clipboard.min.js",
-      "wwwroot/js/vendor/pieloader/jquery-pie-loader.js"
+      "wwwroot/src/app/app.js",
+      "wwwroot/src/app/directives/mtNavigate.js",
+      "wwwroot/src/app/directives/dateTimePicker.js",
+      "wwwroot/src/app/directives/clickOutside.js",
+      "wwwroot/src/app/directives/copy.js",
+      "wwwroot/src/app/controllers/invoicesCtrl.js",
+      "wwwroot/src/app/controllers/invoiceCtrl.js",
+      "wwwroot/src/app/controllers/invoiceInfoCtrl.js",
+      "wwwroot/src/app/controllers/balanceCtrl.js",
+      "wwwroot/src/app/services/apiSvc.js",
+      "wwwroot/src/app/services/statusSvc.js",
+      "wwwroot/src/app/services/fileSvc.js"
     ],
     "minify": {
       "enabled": true,
-      "renameLocals": true
+      "renameLocals": false,
+      "adjustRelativePaths": false
+    },
+    "sourceMap": false
+  },
+
+  {
+    "outputFileName": "wwwroot/js/html5shiv.js",
+    "inputFiles": [
+      "wwwroot/src/vendors/html5shiv.js"
+    ],
+    "minify": {
+      "enabled": false,
+      "renameLocals": false,
+      "adjustRelativePaths": false
     },
     "sourceMap": false
   },
   {
-    "outputFileName": "wwwroot/js/vendor/profile_vendors.js",
+    "outputFileName": "wwwroot/js/functions.js",
     "inputFiles": [
-      "wwwroot/js/vendor/jquery-ui.js",
-      "wwwroot/js/vendor/jquery-confirm.js"
+      "wwwroot/src/js/functions.js"
     ],
     "minify": {
-      "enabled": true,
-      "renameLocals": true
+      "enabled": false,
+      "renameLocals": false,
+      "adjustRelativePaths": false
     },
     "sourceMap": false
   }

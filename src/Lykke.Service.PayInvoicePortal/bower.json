@@ -1,14 +1,13 @@
 {
-  "name": "asp.net",
+  "name": "LykkePayPortal",
   "private": true,
   "dependencies": {
     "bootstrap": "3.3.7",
     "jquery": "2.2.0",
-    "jquery-validation": "1.14.0",
-    "jquery-validation-unobtrusive": "3.2.6",
-    "jqueri-ui": "1.12.1",
     "fastclick": "1.0.6",
+    "eonasdan-bootstrap-datetimepicker": "4.17.47",
     "angular": "1.4.8",
-    "ng-file-upload": "4.1.4"
+    "ng-file-upload": "4.1.4",
+    "moment": "2.15.1"
   }
 }
