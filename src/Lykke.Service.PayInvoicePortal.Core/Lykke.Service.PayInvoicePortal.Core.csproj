@@ -6,6 +6,6 @@
     <Version>1.0.0</Version>
   </PropertyGroup>
   <ItemGroup>
-		<PackageReference Include="Lykke.Service.PayInvoice.Client" Version="2.2.0" />
+		<PackageReference Include="Lykke.Service.PayInvoice.Client" Version="2.3.0" />
 	</ItemGroup>
 </Project>

@@ -14,5 +14,7 @@ namespace Lykke.Service.PayInvoicePortal.Settings.ServiceSettings
         public TimeSpan OrderLiveTime { get; set; }
         
         public DbSettings Db { get; set; }
+
+        public TimeSpan AssetsCacheExpirationPeriod { get; set; }
     }
 }

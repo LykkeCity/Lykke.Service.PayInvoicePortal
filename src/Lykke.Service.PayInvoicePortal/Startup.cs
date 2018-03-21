@@ -76,7 +76,7 @@ namespace Lykke.Service.PayInvoicePortal
                 OrderLiveTime = appSettings.CurrentValue.PayInvoicePortal.OrderLiveTime;
                 
                 builder.RegisterModule(new Services.AutofacModule());
-                builder.RegisterModule(new AutofacModule(appSettings, Log));
+                builder.RegisterModule(new AutofacModule(appSettings, services, Log));
                 builder.Populate(services);
                 ApplicationContainer = builder.Build();
 
