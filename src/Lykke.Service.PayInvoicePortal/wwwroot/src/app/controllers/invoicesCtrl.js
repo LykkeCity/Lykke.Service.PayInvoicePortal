@@ -106,6 +106,14 @@
                 }
             );
 
+            $scope.$on('invoiceGenerated', function (evt, data) {
+                loadInvocies();
+            });
+
+            $scope.$on('invoiceDraftCreated', function (evt, data) {
+                loadInvocies();
+            });
+
             $interval(loadInvocies, 5 * 60 * 1000);
 
             loadInvocies();

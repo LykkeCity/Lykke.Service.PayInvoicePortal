@@ -16,7 +16,10 @@
             removeInvoice: removeInvoice,
             exportToCsv: exportToCsv,
             getBalance: getBalance,
-            getAssets: getAssets
+            getAssets: getAssets,
+            getPaymentDetails: getPaymentDetails,
+            getInvoiceStatus: getInvoiceStatus,
+            getFile: getFile
         };
 
         return service;
@@ -66,13 +69,25 @@
             return get('assets', {});
         }
 
-        function get(action, params) {
+        function getPaymentDetails(invoiceId) {
+            return get(null, {}, '/invoice/' + invoiceId + '/details');
+        }
+
+        function getInvoiceStatus(invoiceId) {
+            return get(null, {}, '/invoice/' + invoiceId + '/status');
+        }
+
+        function getFile(invoiceId, fileId) {
+            $window.open(getUrl('invoices') + '/' + invoiceId + '/files/' + fileId);
+        }
+
+        function get(action, params, explicitPath) {
             var deferred = $q.defer();
 
             params = params || {};
             params['c'] = new Date().getTime();
 
-            $http.get(getUrl(action), { params: params })
+            $http.get(explicitPath || getUrl(action), { params: params })
                 .success(function (data, status, headers, config) {
                     deferred.resolve(data);
                 })

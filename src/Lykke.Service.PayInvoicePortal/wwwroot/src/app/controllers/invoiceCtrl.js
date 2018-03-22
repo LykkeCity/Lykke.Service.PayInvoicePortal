@@ -116,11 +116,12 @@
 
             var model =
             {
-                draft: false,
+                isDraft: false,
                 number: vm.model.number,
                 client: vm.model.client,
                 email: vm.model.email,
                 amount: vm.model.amount,
+                currency: vm.model.currency,
                 dueDate: vm.model.dueDate.toDate(),
                 note: vm.model.note
             };
@@ -142,11 +143,12 @@
 
             var model =
             {
-                draft: true,
+                isDraft: true,
                 number: vm.model.number,
                 client: vm.model.client,
                 email: vm.model.email,
                 amount: vm.model.amount,
+                currency: vm.model.currency,
                 dueDate: vm.model.dueDate.toDate(),
                 note: vm.model.note
             };
@@ -155,6 +157,7 @@
                 .then(
                     function (data) {
                         close();
+                        $rootScope.$broadcast('invoiceDraftCreated', data);
                     },
                     function (error) {
                         $log.error(error);

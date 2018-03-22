@@ -171,40 +171,40 @@
 
                                 <div class="attachment_list">
                                     @if (Model.Files.Count != 0)
-                                    {
-                                        foreach (var file in Model.Files)
-                                        {
-                                            <div class="asset_link_list invoice_files">
-                                                <div class="asset_link asset_link--alt">
-                                                    <div class="asset_link__icon">
-                                                        <div class="asset_icon asset_icon--red">@file.FileExtension</div>
-                                                    </div>
-                                                    @*<div class="asset_link__action">
-                                                            <button class="btn btn--icon _delete_asset"><i class="icon icon--delete"></i></button>
-                                                        </div>*@
-                                                    <div class="asset_link__info">
-                                                        <div class="asset_link__title">@file.FileName</div>
-                                                        <div class="asset_link__desc">@file.FileSize</div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        }
-                                    }
-                                    else
-                                    {
-                                        <div class="asset_link_list invoice_files" style="display: none;">
-                                            <div class="asset_link asset_link--alt">
-                                                <div class="asset_link__icon">
-                                                    <div class="asset_icon asset_icon--red"></div>
-                                                </div>
-                                                <div class="asset_link__info">
-                                                    <div class="asset_link__title"></div>
-                                                    <div class="asset_link__desc"></div>
-                                                </div>
-                                            </div>
+    {
+        foreach (var file in Model.Files)
+        {@*
+    <div class="asset_link_list invoice_files">
+        <div class="asset_link asset_link--alt">
+            <div class="asset_link__icon">
+                <div class="asset_icon asset_icon--red">@file.FileExtension</div>
+            </div>
+            <div class="asset_link__action">
+                    <button class="btn btn--icon _delete_asset"><i class="icon icon--delete"></i></button>
+                </div>
+                                <div class="asset_link__info">
+                                    <div class="asset_link__title">@file.FileName</div>
+                                    <div class="asset_link__desc">@file.FileSize</div>
+                                </div>
+                                </div>
+                                            </div>*@
+}
+}
+else
+{
+                                <div class="asset_link_list invoice_files" style="display: none;">
+                                    <div class="asset_link asset_link--alt">
+                                        <div class="asset_link__icon">
+                                            <div class="asset_icon asset_icon--red"></div>
                                         </div>
-                                        <div class="invoice_files_hint hint">No file selected</div>
-                                    }
+                                        <div class="asset_link__info">
+                                            <div class="asset_link__title"></div>
+                                            <div class="asset_link__desc"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="invoice_files_hint hint">No file selected</div>
+}
                                 </div>
                             }
                             @*<div class="form_header">

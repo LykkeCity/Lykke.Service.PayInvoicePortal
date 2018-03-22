@@ -9,26 +9,18 @@
         var directive = {
             restrict: 'A',
             scope: {
-                value: '=copy',
-                title: '@copyTitle'
+                value: '=copy'
             },
             link: function (scope, element, attributes) {
-                $(element).tooltip({
-                    show: {
-                        effect: "slideDown",
-                        delay: 250
+                var clipboard = new Clipboard(element[0], {
+                    text: function () {
+                        return scope.value;
                     }
                 });
 
-                element.bind('click', function (event) {
-                    event.stopPropagation();
-                    var $temp = $("<input>");
-                    $("body").append($temp);
-                    $temp.val(scope.value).select();
-                    document.execCommand("copy");
-                    $temp.remove();
-
-                    $(element).tooltip('hide').attr('data-original-title', scope.title).tooltip('show');
+                clipboard.on('success', function (e) {
+                    e.trigger.innerHTML = '<i class="icon icon--check_thin"></i> Copied';
+                    e.clearSelection();
                 });
             }
         };
