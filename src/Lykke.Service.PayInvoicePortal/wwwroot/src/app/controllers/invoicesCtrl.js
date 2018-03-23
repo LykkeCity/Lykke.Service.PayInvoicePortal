@@ -259,7 +259,7 @@
         }
 
         function openDetails(invoice) {
-            $window.location.href = '/home/invoicedetail/?InvoiceId='+invoice.id;
+            $window.location.href = '/invoices/'+invoice.id;
         }
 
         function create() {

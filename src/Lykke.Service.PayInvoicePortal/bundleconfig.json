@@ -82,6 +82,7 @@
       "wwwroot/src/app/controllers/invoiceInfoCtrl.js",
       "wwwroot/src/app/controllers/balanceCtrl.js",
       "wwwroot/src/app/controllers/checkoutCtrl.js",
+      "wwwroot/src/app/controllers/invoiceDetailsCtrl.js",
       "wwwroot/src/app/services/apiSvc.js",
       "wwwroot/src/app/services/statusSvc.js",
       "wwwroot/src/app/services/fileSvc.js"
@@ -106,6 +107,7 @@
       "wwwroot/src/app/controllers/invoiceInfoCtrl.js",
       "wwwroot/src/app/controllers/balanceCtrl.js",
       "wwwroot/src/app/controllers/checkoutCtrl.js",
+      "wwwroot/src/app/controllers/invoiceDetailsCtrl.js",
       "wwwroot/src/app/services/apiSvc.js",
       "wwwroot/src/app/services/statusSvc.js",
       "wwwroot/src/app/services/fileSvc.js"
