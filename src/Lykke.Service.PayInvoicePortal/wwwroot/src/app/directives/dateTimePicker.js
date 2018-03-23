@@ -50,9 +50,10 @@
                         return ngModelCtrl.$modelValue;
                     },
                     function (newValue) {
+                        if (newValue)
                         $element
                             .data('DateTimePicker')
-                            .date(newValue);
+                            .date(newValue.toDate());
                     });
             }
         };

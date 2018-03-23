@@ -16,7 +16,8 @@
             number: '',
             client: '',
             email: '',
-            currency: null,
+            settlementAsset: null,
+            settlementAssetAccuracy: 0,
             amount: 0,
             dueDate: null,
             note: '',
@@ -26,6 +27,7 @@
         };
 
         vm.handlers = {
+            canEdit: canEdit,
             edit: edit,
             canRemove: canRemove,
             remove: remove,
@@ -47,11 +49,31 @@
             apply(data);
         }
         
-        function canRemove() {
-            return vm.model.status === 'Draft' || vm.model.status === 'Unpaid';
+        function canEdit() {
+            return vm.model.status === 'Draft';
         }
 
         function edit() {
+            if (!canEdit())
+                return;
+
+            $rootScope.$broadcast('invoiceDraftEdit',
+                {
+                    id: vm.model.id,
+                    status: vm.model.status,
+                    number: vm.model.number,
+                    client: vm.model.client,
+                    email: vm.model.email,
+                    settlementAsset: vm.model.settlementAsset,
+                    amount: vm.model.amount,
+                    dueDate: vm.model.dueDate,
+                    note: vm.model.note,
+                    files: vm.model.files
+                });
+        }
+
+        function canRemove() {
+            return vm.model.status === 'Draft' || vm.model.status === 'Unpaid';
         }
 
         function remove() {
@@ -92,7 +114,8 @@
             vm.model.number = data.number;
             vm.model.client = data.clientName;
             vm.model.email = data.clientEmail;
-            vm.model.currency = data.currency;
+            vm.model.settlementAsset = data.settlementAsset;
+            vm.model.settlementAssetAccuracy = data.settlementAssetAccuracy;
             vm.model.amount = data.amount;
             vm.model.dueDate = $window.moment(data.dueDate);
             vm.model.note = data.note;

@@ -42,6 +42,40 @@ namespace Lykke.Service.PayInvoicePortal.Controllers.Api
         }
 
         [HttpGet]
+        [Route("{invoiceId}")]
+        public async Task<IActionResult> Index(string invoiceId)
+        {
+            PayInvoice.Client.Models.Invoice.InvoiceModel invoice =
+                await _payInvoiceClient.GetInvoiceAsync(invoiceId);
+            IEnumerable<FileInfoModel> invoiceFiles = await _payInvoiceClient.GetFilesAsync(invoice.Id);
+            Asset settlementAsset = await _assetsService.TryGetAssetAsync(invoice.SettlementAssetId);
+
+            var result = new InvoiceModel
+            {
+                Id = invoice.Id,
+                Number = invoice.Number,
+                ClientEmail = invoice.ClientEmail,
+                ClientName = invoice.ClientName,
+                Amount = (double)invoice.Amount,
+                DueDate = invoice.DueDate,
+                Status = invoice.Status.ToString(),
+                SettlementAsset = settlementAsset.DisplayId,
+                SettlementAssetAccuracy = settlementAsset.Accuracy,
+                CreatedDate = invoice.CreatedDate,
+                Files = invoiceFiles
+                    .Select(o => new FileModel
+                    {
+                        Id = o.Id,
+                        Name = o.Name,
+                        Size = o.Size
+                    })
+                    .ToList()
+            };
+
+            return Json(result);
+        }
+
+        [HttpGet]
         public async Task<IActionResult> GetInvociesAsync(
             string searchValue,
             Period period,
@@ -169,12 +203,58 @@ namespace Lykke.Service.PayInvoicePortal.Controllers.Api
             return Json(result);
         }
 
-        [HttpPut]
-        public async Task<IActionResult> UpdateAsync(CreateInvoiceModel model, IFormFileCollection files)
+        [HttpPost]
+        [Route("update")]
+        public async Task<IActionResult> UpdateAsync(UpdateInvoiceModel model, IFormFileCollection files)
         {
-            var result = new InvoiceModel();
+            if (model.IsDraft)
+            {
+                await _payInvoiceClient.UpdateDraftInvoiceAsync(MerchantId, model.Id, new PayInvoice.Client.Models.Invoice.CreateDraftInvoiceModel
+                {
+                    EmployeeId = EmployeeId,
+                    Number = model.Number,
+                    ClientName = model.Client,
+                    ClientEmail = model.Email,
+                    Amount = decimal.Parse(model.Amount, CultureInfo.InvariantCulture),
+                    SettlementAssetId = model.SettlementAsset,
+                    PaymentAssetId = PaymentAssetId,
+                    DueDate = model.DueDate
+                    // TODO: NOTE
+                });
+            }
+            else
+            {
+                await _payInvoiceClient.CreateInvoiceFromDraftAsync(MerchantId, model.Id, new PayInvoice.Client.Models.Invoice.CreateInvoiceModel
+                {
+                    EmployeeId = EmployeeId,
+                    Number = model.Number,
+                    ClientName = model.Client,
+                    ClientEmail = model.Email,
+                    Amount = decimal.Parse(model.Amount, CultureInfo.InvariantCulture),
+                    SettlementAssetId = model.SettlementAsset,
+                    PaymentAssetId = PaymentAssetId,
+                    DueDate = model.DueDate
+                    // TODO: NOTE
+                });
+            }
 
-            return Json(result);
+            if (files != null)
+            {
+                foreach (IFormFile formFile in files)
+                {
+                    byte[] content;
+
+                    using (var ms = new MemoryStream())
+                    {
+                        formFile.CopyTo(ms);
+                        content = ms.ToArray();
+                    }
+
+                    await _payInvoiceClient.UploadFileAsync(model.Id, content, formFile.FileName, formFile.ContentType);
+                }
+            }
+
+            return NoContent();
         }
 
         [HttpDelete]
@@ -184,6 +264,7 @@ namespace Lykke.Service.PayInvoicePortal.Controllers.Api
             return NoContent();
         }
 
+        [HttpGet]
         [Route("{invoiceId}/files/{fileId}")]
         public async Task<IActionResult> GetFileSync(string invoiceId, string fileId)
         {
@@ -193,6 +274,15 @@ namespace Lykke.Service.PayInvoicePortal.Controllers.Api
             FileInfoModel file = files.FirstOrDefault(o => o.Id == fileId);
 
             return File(content, file.Type, file.Name);
+        }
+
+        [HttpDelete]
+        [Route("{invoiceId}/files/{fileId}")]
+        public async Task<IActionResult> DeleteFile(string invoiceId, string fileId)
+        {
+            // TODO:
+            //await _payInvoiceClient.d(MerchantId, invoiceId);
+            return NoContent();
         }
     }
 }

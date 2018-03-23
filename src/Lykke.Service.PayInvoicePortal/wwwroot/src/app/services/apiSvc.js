@@ -11,18 +11,25 @@
         var minDate = '0001-01-01T00:00:00';
 
         var service = {
+            getInvoice: getInvoice,
             getInvoices: getInvoices,
             saveInvoice: saveInvoice,
+            updateInvoice: updateInvoice,
             removeInvoice: removeInvoice,
             exportToCsv: exportToCsv,
             getBalance: getBalance,
             getAssets: getAssets,
             getPaymentDetails: getPaymentDetails,
             getInvoiceStatus: getInvoiceStatus,
-            getFile: getFile
+            getFile: getFile,
+            removeFile: removeFile
         };
 
         return service;
+
+        function getInvoice(invoiceId) {
+            return get('invoices/' + invoiceId);
+        }
 
         function getInvoices(searchValue, period, status, sortField, sortAscending, skip, take) {
             return get('invoices',
@@ -40,7 +47,11 @@
         function saveInvoice(model, files) {
             return upload('invoices', model, files);
         }
-        
+
+        function updateInvoice(model, files) {
+            return upload('invoices/update', model, files);
+        }
+
         function removeInvoice(invoiceId) {
             return remove('invoices', { invoiceId: invoiceId });
         }
@@ -79,6 +90,10 @@
 
         function getFile(invoiceId, fileId) {
             $window.open(getUrl('invoices') + '/' + invoiceId + '/files/' + fileId);
+        }
+
+        function removeFile(invoiceId, fileId) {
+            return remove('invoices', { invoiceId: invoiceId, fileId: fileId });
         }
 
         function get(action, params, explicitPath) {
