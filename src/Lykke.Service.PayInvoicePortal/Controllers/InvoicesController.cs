@@ -7,6 +7,7 @@ using Lykke.Service.Assets.Client;
 using Lykke.Service.Assets.Client.Models;
 using Lykke.Service.PayInvoice.Client;
 using Lykke.Service.PayInvoice.Client.Models.File;
+using Lykke.Service.PayInvoicePortal.Models;
 using Lykke.Service.PayInvoicePortal.Models.Invoices;
 using Microsoft.AspNetCore.Mvc;
 
@@ -47,7 +48,8 @@ namespace Lykke.Service.PayInvoicePortal.Controllers
                 Amount = (double)invoice.Amount,
                 DueDate = invoice.DueDate,
                 Status = invoice.Status.ToString(),
-                Currency = settlementAsset.DisplayId,
+                SettlementAsset = settlementAsset.DisplayId,
+                SettlementAssetAccuracy = settlementAsset.Accuracy,
                 CreatedDate = invoice.CreatedDate,
                 Files = invoiceFiles
                     .Select(o => new FileModel

@@ -2,7 +2,7 @@
 
 namespace Lykke.Service.PayInvoicePortal.Models.Invoices
 {
-    public class InvoiceListItemModel
+    public class ListItemModel
     {
         public string Id { get; set; }
         public string Number { get; set; }
@@ -11,7 +11,8 @@ namespace Lykke.Service.PayInvoicePortal.Models.Invoices
         public double Amount { get; set; }
         public DateTime DueDate { get; set; }
         public string Status { get; set; }
-        public string Currency { get; set; }
+        public string SettlementAsset { get; set; }
+        public int SettlementAssetAccuracy { get; set; }
         public DateTime CreatedDate { get; set; }
     }
 }

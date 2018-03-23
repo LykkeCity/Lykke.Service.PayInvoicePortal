@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -11,6 +10,7 @@ using Lykke.Service.PayInvoice.Client;
 using Lykke.Service.PayInvoice.Client.Models.File;
 using Lykke.Service.PayInvoicePortal.Core.Domain;
 using Lykke.Service.PayInvoicePortal.Core.Services;
+using Lykke.Service.PayInvoicePortal.Models;
 using Lykke.Service.PayInvoicePortal.Models.Invoices;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -61,24 +61,30 @@ namespace Lykke.Service.PayInvoicePortal.Controllers.Api
                 skip,
                 take);
 
-            var model = new InvoiceListModel
+            var model = new ListModel
             {
                 Total = source.Total,
-                CountPerStatus = source.CountPerStatus.ToDictionary(o => o.Key.ToString(), o => o.Value),
-                Items = source.Items.Select(o => new InvoiceListItemModel
-                    {
-                        Id = o.Id,
-                        Number = o.Number,
-                        ClientEmail = o.ClientEmail,
-                        ClientName = o.ClientName,
-                        Amount = (double)o.Amount,
-                        DueDate = o.DueDate,
-                        Status = o.Status.ToString(),
-                        Currency = o.SettlementAssetId,
-                        CreatedDate = o.CreatedDate
-                    })
-                    .ToList()
+                CountPerStatus = source.CountPerStatus.ToDictionary(o => o.Key.ToString(), o => o.Value)
             };
+
+            foreach (PayInvoice.Client.Models.Invoice.InvoiceModel item in source.Items)
+            {
+                Asset settlementAsset = await _assetsService.TryGetAssetAsync(item.SettlementAssetId);
+
+                model.Items.Add(new ListItemModel
+                {
+                    Id = item.Id,
+                    Number = item.Number,
+                    ClientEmail = item.ClientEmail,
+                    ClientName = item.ClientName,
+                    Amount = (double)item.Amount,
+                    DueDate = item.DueDate,
+                    Status = item.Status.ToString(),
+                    SettlementAsset = settlementAsset.DisplayId,
+                    SettlementAssetAccuracy = settlementAsset.Accuracy,
+                    CreatedDate = item.CreatedDate
+                });
+            }
 
             return Json(model);
         }
@@ -97,7 +103,7 @@ namespace Lykke.Service.PayInvoicePortal.Controllers.Api
                     ClientName = model.Client,
                     ClientEmail = model.Email,
                     Amount = decimal.Parse(model.Amount, CultureInfo.InvariantCulture),
-                    SettlementAssetId = model.Currency,
+                    SettlementAssetId = model.SettlementAsset,
                     PaymentAssetId = PaymentAssetId,
                     DueDate = model.DueDate
                     // TODO: NOTE
@@ -112,9 +118,10 @@ namespace Lykke.Service.PayInvoicePortal.Controllers.Api
                     ClientName = model.Client,
                     ClientEmail = model.Email,
                     Amount = decimal.Parse(model.Amount, CultureInfo.InvariantCulture),
-                    SettlementAssetId = model.Currency,
+                    SettlementAssetId = model.SettlementAsset,
                     PaymentAssetId = PaymentAssetId,
                     DueDate = model.DueDate
+                    // TODO: NOTE
                 });
             }
 
@@ -146,7 +153,8 @@ namespace Lykke.Service.PayInvoicePortal.Controllers.Api
                 Amount = (double) invoice.Amount,
                 DueDate = invoice.DueDate,
                 Status = invoice.Status.ToString(),
-                Currency = settlementAsset.DisplayId,
+                SettlementAsset = settlementAsset.DisplayId,
+                SettlementAssetAccuracy = settlementAsset.Accuracy,
                 CreatedDate = invoice.CreatedDate,
                 Files = invoiceFiles
                     .Select(o => new FileModel

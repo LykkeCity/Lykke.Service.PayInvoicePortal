@@ -20,7 +20,7 @@
             number: '',
             client: '',
             email: '',
-            currency: null,
+            settlementAsset: null,
             amount: 0,
             dueDate: $window.moment(),
             note: '',
@@ -50,7 +50,7 @@
                         vm.model.assets = data || [];
 
                         if (vm.model.assets.length > 0)
-                            vm.model.currency = vm.model.assets[0].id;
+                            vm.model.settlementAsset = vm.model.assets[0].id;
                     },
                     function (error) {
                         $log.error(error);
@@ -70,9 +70,9 @@
             vm.model.email = '';
 
             if (vm.model.assets.length > 0)
-                vm.model.currency = vm.model.assets[0].id;
+                vm.model.settlementAsset = vm.model.assets[0].id;
             else
-                vm.model.currency = null;
+                vm.model.settlementAsset = null;
 
             vm.model.amount = 0;
             vm.model.dueDate = $window.moment();
@@ -96,7 +96,7 @@
             vm.form.errors['number'] = !vm.model.number;
             vm.form.errors['client'] = !vm.model.client;
             vm.form.errors['email'] = !vm.model.email;
-            vm.form.errors['currency'] = !vm.model.currency;
+            vm.form.errors['settlementAsset'] = !vm.model.settlementAsset;
             vm.form.errors['amount'] = !vm.model.amount || vm.amount <= 0.01;
             vm.form.errors['dueDate'] = !vm.model.dueDate || vm.model.dueDate.diff(new Date(), "days") < 0;
 
@@ -121,7 +121,7 @@
                 client: vm.model.client,
                 email: vm.model.email,
                 amount: vm.model.amount,
-                currency: vm.model.currency,
+                settlementAsset: vm.model.settlementAsset,
                 dueDate: vm.model.dueDate.toDate(),
                 note: vm.model.note
             };
@@ -148,7 +148,7 @@
                 client: vm.model.client,
                 email: vm.model.email,
                 amount: vm.model.amount,
-                currency: vm.model.currency,
+                settlementAsset: vm.model.settlementAsset,
                 dueDate: vm.model.dueDate.toDate(),
                 note: vm.model.note
             };

@@ -71,7 +71,6 @@ namespace Lykke.Service.PayInvoicePortal
                 
                 var builder = new ContainerBuilder();
                 Log = CreateLogWithSlack(services, appSettings);
-                SiteUrl = appSettings.CurrentValue.PayInvoicePortal.SiteUrl;
                 BlockchainExplorerUrl = appSettings.CurrentValue.PayInvoicePortal.BlockchainExplorerUrl;
                 OrderLiveTime = appSettings.CurrentValue.PayInvoicePortal.OrderLiveTime;
                 

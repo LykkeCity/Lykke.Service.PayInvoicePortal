@@ -5,8 +5,6 @@ namespace Lykke.Service.PayInvoicePortal.Settings.ServiceSettings
 {
     public class PayInvoicePortalSettings
     {
-        public string SiteUrl { get; set; }
-
         public string BlockchainExplorerUrl { get; set; }
 
         public TimeSpan UserLoginTime { get; set; }

@@ -1,9 +1,103 @@
-﻿<div class="_invoice_sidebar sidebar_menu sidebar_menu--right create draft"
-     data-ng-controller="invoiceCtrl as vm"
-     data-ng-class="{'sidebar_menu--open': vm.form.open}"
-     data-click-outside="vm.handlers.close()"
-     data-exclude="_create_invoice_btn">
-    <form action="" enctype="multipart/form-data" method="post" class="invoice_form sidebar_menu__inner" onsubmit="event.preventDefault();">
+﻿<div data-ng-controller="invoiceCtrl as vm">
+    <div class="_invoice_sidebar sidebar_menu sidebar_menu--right create draft sidebar_menu--open"
+         data-ng-if="vm.form.open"
+         data-click-outside="vm.handlers.close()"
+         data-exclude="_create_invoice_btn">
+        <form action="" enctype="multipart/form-data" method="post" class="invoice_form sidebar_menu__inner" onsubmit="event.preventDefault();">
+            <div class="sidebar_breadcrumbs">
+                <button class="btn btn--icon btn_close_menu visible-xs" type="button" data-ng-click="vm.handlers.close()">
+                    <i class="icon icon--close"></i>
+                </button>
+                <div class="breadcrumbs_item">
+                    <a href="javascript:;" data-ng-click="vm.handlers.close()">Profile</a>
+                </div>
+                <i class="icon icon--chevron-thin-right"></i>
+                <div class="breadcrumbs_item breadcrumbs_item--current">Create new invoice</div>
+            </div>
+            <div class="sidebar_menu__body">
+                <div class="sidebar_menu__header">
+                    <div class="invoice_form__title">Invoice</div>
+                    <div class="invoice_form__status">Not created</div>
+                </div>
+                <h3>Details</h3>
+                <div class="form-group">
+                    <label class="control-label" for="number">Invoice number</label>
+                    <input id="number" type="text" require placeholder="" class="form-control" data-ng-model="vm.model.number" data-ng-class="{'error': vm.form.errors.number}">
+                </div>
+                <div class="form-group">
+                    <label class="control-label" for="name">Client</label>
+                    <input id="clientName" type="text" require placeholder="" class="form-control" data-ng-model="vm.model.client" data-ng-class="{'error': vm.form.errors.client}">
+                </div>
+                <div class="form-group">
+                    <label class="control-label" for="email">Email</label>
+                    <input id="email" type="email" require placeholder="" class="form-control" data-ng-model="vm.model.email" data-ng-class="{'error': vm.form.errors.email}">
+                </div>
+                <div class="row">
+                    <div class="col-sm-4">
+                        <div class="form-group">
+                            <label class="control-label" for="currency">Currency</label>
+                            <div class="select">
+                                <select id="currency" class="form-control" data-ng-model="vm.model.settlementAsset" ng-options="asset.id as asset.title for asset in vm.model.assets" data-ng-class="{'error': vm.form.errors.settlementAsset}"></select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-4">
+                        <div class="form-group">
+                            <label class="control-label" for="amount">Amount</label>
+                            <input id="amount" type="number" require placeholder="0.00" min="0.01" step="0.01" class="form-control" data-ng-model="vm.model.amount" data-ng-class="{'error': vm.form.errors.amount}">
+                        </div>
+                    </div>
+                    <div class="col-sm-4">
+                        <div class="form-group">
+                            <label class="control-label" for="dueDate">Pay due date</label>
+                            <div class="input-group date datetimepicker">
+                                <input id="dueDate" type="text" require placeholder="" class="form-control datetimepicker" data-ng-model="vm.model.dueDate" datetimepicker data-ng-class="{'error': vm.form.errors.dueDate}">
+                                <span class="input-group-addon">
+                                    <span class="icon icon--cal"></span>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="control-label" for="note">Note</label>
+                    <textarea name="note" id="note" class="form-control" data-ng-model="vm.model.note"></textarea>
+                </div>
+                <div class="form_header">
+                    <button type="button" class="btn btn-sm btn-primary pull-right" ngf-select accept=".pdf,.doc,.docx,.xls,.xlsx" ngf-multiple="true" data-ng-model="vm.model.files">Add File</button>
+                    <h3>Attachment</h3>
+                </div>
+                <div class="attachment_list">
+                    <div class="asset_link_list invoice_files" data-ng-show="vm.model.files && vm.model.files.length > 0">
+                        <div class="asset_link asset_link--alt" data-ng-repeat="file in vm.model.files">
+                            <div class="asset_link__icon">
+                                <div class="asset_icon asset_icon--red" data-ng-bind="vm.handlers.getFileExtension(file.name)"></div>
+                            </div>
+                            <div class="asset_link__info">
+                                <div class="asset_link__title" data-ng-bind="file.name"></div>
+                                <div class="asset_link__desc" data-ng-bind="vm.handlers.getFileSize(file.size)"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="hint invoice_files_hint" data-ng-show="!vm.model.files || vm.model.files.length === 0">No file selected</div>
+                </div>
+                <div class="sidebar_menu__footer">
+                    <div class="form-group">
+                        <button class="btn btn-block create__button" name="button" type="submit" data-ng-click="vm.handlers.save()">Generate</button>
+                    </div>
+                    <button class="btn btn--flat btn-block" type="submit" name="button" data-ng-click="vm.handlers.draft()">Safe draft</button>
+                    <button class="btn btn--flat btn-block btn_close_menu" type="button" name="button" data-ng-click="vm.handlers.close()">Cancel and close</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div data-ng-controller="invoiceInfoCtrl as vm">
+    <div class="invoice_sidebar sidebar_menu sidebar_menu--right create unpaid sidebar_menu--open"
+         data-ng-if="vm.form.open"
+         data-click-outside="vm.handlers.close()"
+         data-exclude="create__item-copy,icon--check_thin,icon--copy_thin">
         <div class="sidebar_breadcrumbs">
             <button class="btn btn--icon btn_close_menu visible-xs" type="button" data-ng-click="vm.handlers.close()">
                 <i class="icon icon--close"></i>
@@ -12,180 +106,89 @@
                 <a href="javascript:;" data-ng-click="vm.handlers.close()">Profile</a>
             </div>
             <i class="icon icon--chevron-thin-right"></i>
-            <div class="breadcrumbs_item breadcrumbs_item--current">Create new invoice</div>
+            <div class="breadcrumbs_item breadcrumbs_item--current">{{vm.model.number}}</div>
         </div>
         <div class="sidebar_menu__body">
             <div class="sidebar_menu__header">
                 <div class="invoice_form__title">Invoice</div>
-                <div class="invoice_form__status">Not created</div>
+                <div class="invoice_form__status">{{vm.model.status}}</div>
             </div>
-            <h3>Details</h3>
-            <div class="form-group">
-                <label class="control-label" for="number">Invoice number</label>
-                <input id="number" type="text" require placeholder="" class="form-control" data-ng-model="vm.model.number" data-ng-class="{'error': vm.form.errors.number}">
-            </div>
-            <div class="form-group">
-                <label class="control-label" for="name">Client</label>
-                <input id="clientName" type="text" require placeholder="" class="form-control" data-ng-model="vm.model.client" data-ng-class="{'error': vm.form.errors.client}">
-            </div>
-            <div class="form-group">
-                <label class="control-label" for="email">Email</label>
-                <input id="email" type="email" require placeholder="" class="form-control" data-ng-model="vm.model.email" data-ng-class="{'error': vm.form.errors.email}">
-            </div>
-            <div class="row">
-                <div class="col-sm-4">
-                    <div class="form-group">
-                        <label class="control-label" for="currency">Currency</label>
-                        <div class="select">
-                            <select id="currency" class="form-control" data-ng-model="vm.model.currency" ng-options="asset.id as asset.title for asset in vm.model.assets" data-ng-class="{'error': vm.form.errors.currency}"></select>
-                        </div>
+            <div class="asset_link_list asset_link_list--thin">
+                <div class="asset_link">
+                    <div class="asset_link__info">
+                        <div class="asset_link__title">Invoice number</div>
+                        <div class="asset_link__desc">{{vm.model.number}}</div>
                     </div>
                 </div>
-                <div class="col-sm-4">
-                    <div class="form-group">
-                        <label class="control-label" for="amount">Amount</label>
-                        <input id="amount" type="number" require placeholder="0.00" min="0.01" step="0.01" class="form-control" data-ng-model="vm.model.amount" data-ng-class="{'error': vm.form.errors.amount}">
+                <div class="asset_link">
+                    <div class="asset_link__info">
+                        <div class="asset_link__title">Client</div>
+                        <div class="asset_link__desc">{{vm.model.client}}</div>
                     </div>
                 </div>
-                <div class="col-sm-4">
-                    <div class="form-group">
-                        <label class="control-label" for="dueDate">Pay due date</label>
-                        <div class="input-group date datetimepicker">
-                            <input id="dueDate" type="text" require placeholder="" class="form-control datetimepicker" data-ng-model="vm.model.dueDate" datetimepicker data-ng-class="{'error': vm.form.errors.dueDate}">
-                            <span class="input-group-addon">
-                                <span class="icon icon--cal"></span>
-                            </span>
-                        </div>
+                <div class="asset_link">
+                    <div class="asset_link__info">
+                        <div class="asset_link__title">Email</div>
+                        <div class="asset_link__desc">{{vm.model.email}}</div>
                     </div>
                 </div>
-            </div>
-            <div class="form-group">
-                <label class="control-label" for="note">Note</label>
-                <textarea name="note" id="note" class="form-control" data-ng-model="vm.model.note"></textarea>
-            </div>
-            <div class="form_header">
-                <button type="button" class="btn btn-sm btn-primary pull-right" ngf-select accept=".pdf,.doc,.docx,.xls,.xlsx" ngf-multiple="true" data-ng-model="vm.model.files">Add File</button>
-                <h3>Attachment</h3>
-            </div>
-            <div class="attachment_list">
-                <div class="asset_link_list invoice_files" data-ng-show="vm.model.files && vm.model.files.length > 0">
-                    <div class="asset_link asset_link--alt" data-ng-repeat="file in vm.model.files">
-                        <div class="asset_link__icon">
-                            <div class="asset_icon asset_icon--red" data-ng-bind="vm.handlers.getFileExtension(file.name)"></div>
-                        </div>
-                        <div class="asset_link__info">
-                            <div class="asset_link__title" data-ng-bind="file.name"></div>
-                            <div class="asset_link__desc" data-ng-bind="vm.handlers.getFileSize(file.size)"></div>
-                        </div>
+                <div class="asset_link">
+                    <div class="asset_link__info">
+                        <div class="asset_link__title">Amount</div>
+                        <div class="asset_link__desc">{{vm.model.amount | currency : '' : vm.model.settlementAssetAccuracy}} {{vm.model.settlementAsset}}</div>
                     </div>
                 </div>
-                <div class="hint invoice_files_hint" data-ng-show="!vm.model.files || vm.model.files.length === 0">No file selected</div>
-            </div>
-            <div class="sidebar_menu__footer">
-                <div class="form-group">
-                    <button class="btn btn-block create__button" name="button" type="submit" data-ng-click="vm.handlers.save()">Generate</button>
+                <div class="asset_link">
+                    <div class="asset_link__info">
+                        <div class="asset_link__title">Pay due date</div>
+                        <div class="asset_link__desc">{{vm.model.dueDate.format('l')}}</div>
+                    </div>
                 </div>
-                <button class="btn btn--flat btn-block" type="submit" name="button" data-ng-click="vm.handlers.draft()">Safe draft</button>
-                <button class="btn btn--flat btn-block btn_close_menu" type="button" name="button" data-ng-click="vm.handlers.close()">Cancel and close</button>
-            </div>
-        </div>
-    </form>
-</div>
-
-<div class="invoice_sidebar sidebar_menu sidebar_menu--right create unpaid"
-     data-ng-controller="invoiceInfoCtrl as vm"
-     data-ng-class="{'sidebar_menu--open': vm.form.open}"
-     data-click-outside="vm.handlers.close()">
-    <div class="sidebar_breadcrumbs">
-        <button class="btn btn--icon btn_close_menu visible-xs" type="button" data-ng-click="vm.handlers.close()">
-            <i class="icon icon--close"></i>
-        </button>
-        <div class="breadcrumbs_item">
-            <a href="javascript:;" data-ng-click="vm.handlers.close()">Profile</a>
-        </div>
-        <i class="icon icon--chevron-thin-right"></i>
-        <div class="breadcrumbs_item breadcrumbs_item--current">{{vm.model.number}}</div>
-    </div>
-    <div class="sidebar_menu__body">
-        <div class="sidebar_menu__header">
-            <div class="invoice_form__title">Invoice</div>
-            <div class="invoice_form__status">{{vm.model.status}}</div>
-        </div>
-        <div class="asset_link_list asset_link_list--thin">
-            <div class="asset_link">
-                <div class="asset_link__info">
-                    <div class="asset_link__title">Invoice number</div>
-                    <div class="asset_link__desc">{{vm.model.number}}</div>
+                <div class="asset_link" data-ng-show="vm.model.note">
+                    <div class="asset_link__info">
+                        <div class="asset_link__title">Note</div>
+                        <div class="asset_link__desc">{{vm.model.note}}</div>
+                    </div>
                 </div>
-            </div>
-            <div class="asset_link">
-                <div class="asset_link__info">
-                    <div class="asset_link__title">Client</div>
-                    <div class="asset_link__desc">{{vm.model.client}}</div>
+                <div class="asset_link" data-ng-show="vm.model.files && vm.model.files.length > 0">
+                    <div class="asset_link__info">
+                        <div class="asset_link__title">Files</div>
+                        <div class="asset_link__desc" data-ng-repeat="file in vm.model.files">{{file.name}}</div>
+                    </div>
                 </div>
-            </div>
-            <div class="asset_link">
-                <div class="asset_link__info">
-                    <div class="asset_link__title">Email</div>
-                    <div class="asset_link__desc">{{vm.model.email}}</div>
+                <div class="asset_link">
+                    <div class="asset_link__action">
+                        <button class="btn btn--icon _copy create__item-copy" type="button" data-copy="vm.model.url">
+                            <i class="icon icon--copy_thin"></i>
+                        </button>
+                    </div>
+                    <div class="asset_link__info">
+                        <div class="asset_link__title">Hyperlink</div>
+                        <div class="asset_link__desc">{{vm.model.url}}</div>
+                    </div>
                 </div>
-            </div>
-            <div class="asset_link">
-                <div class="asset_link__info">
-                    <div class="asset_link__title">Amount</div>
-                    <div class="asset_link__desc">{{vm.model.amount.toLocaleString(undefined, {minimumFractionDigits: 2})}} {{vm.model.currency}}</div>
-                </div>
-            </div>
-            <div class="asset_link">
-                <div class="asset_link__info">
-                    <div class="asset_link__title">Pay due date</div>
-                    <div class="asset_link__desc">{{vm.model.dueDate.format('l')}}</div>
-                </div>
-            </div>
-            <div class="asset_link" data-ng-show="vm.model.note">
-                <div class="asset_link__info">
-                    <div class="asset_link__title">Note</div>
-                    <div class="asset_link__desc">{{vm.model.note}}</div>
-                </div>
-            </div>
-            <div class="asset_link" data-ng-show="vm.model.files && vm.model.files.length > 0">
-                <div class="asset_link__info">
-                    <div class="asset_link__title">Files</div>
-                    <div class="asset_link__desc" data-ng-repeat="file in vm.model.files">{{file.name}}</div>
-                </div>
-            </div>
-            <div class="asset_link">
-                <div class="asset_link__action">
-                    <button class="btn btn--icon _copy create__item-copy" type="button" data-copy="vm.model.url" data-copy-title="Copied!">
-                        <i class="icon icon--copy_thin"></i>
-                    </button>
-                </div>
-                <div class="asset_link__info">
-                    <div class="asset_link__title">Hyperlink</div>
-                    <div class="asset_link__desc">{{vm.model.url}}</div>
-                </div>
-            </div>
-            <div class="asset_link">
-                <div class="asset_link__info">
-                    <div class="asset_link__title">Share</div>
-                    <div class="asset_link__desc">Send account details to email</div>
-                    <div class="block_subscribe">
-                        <div class="form" id="share-form">
-                            <div class="form-group">
-                                <div class="input-group">
-                                    <i class="icon icon--email"></i>
-                                    <input type="email" placeholder="E-mail address" class="form-control" pattern="[a-z0-9._%+-]+@@[a-z0-9.-]+\.[a-z]{2,3}$" title="Wrong email format">
+                <div class="asset_link">
+                    <div class="asset_link__info">
+                        <div class="asset_link__title">Share</div>
+                        <div class="asset_link__desc">Send account details to email</div>
+                        <div class="block_subscribe">
+                            <div class="form" id="share-form">
+                                <div class="form-group">
+                                    <div class="input-group">
+                                        <i class="icon icon--email"></i>
+                                        <input type="email" placeholder="E-mail address" class="form-control" pattern="[a-z0-9._%+-]+@@[a-z0-9.-]+\.[a-z]{2,3}$" title="Wrong email format">
+                                    </div>
+                                    <button class="btn btn-sm btn--primary btn--circle" type="button" data-ng-click="vm.handlers.share(window.location.origin + '/invoice/' + vm.model.id)"><i class="icon icon--arrow-right-alt"></i></button>
                                 </div>
-                                <button class="btn btn-sm btn--primary btn--circle" type="button" data-ng-click="vm.handlers.share(window.location.origin + '/invoice/' + vm.model.id)"><i class="icon icon--arrow-right-alt"></i></button>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
-        <div class="sidebar_menu__footer">
-            <div class="form-group">
-                <button class="btn btn-block btn_close_menu" name="button" type="button" data-ng-click="vm.handlers.close()">Close</button>
+            <div class="sidebar_menu__footer">
+                <div class="form-group">
+                    <button class="btn btn-block btn_close_menu" name="button" type="button" data-ng-click="vm.handlers.close()">Close</button>
+                </div>
             </div>
         </div>
     </div>
@@ -225,13 +228,11 @@
                 </div>
             </div>
             <h3>Invoices</h3>
-
             <ul class="nav nav-tabs">
                 <li><button class="btn btn--icon" data-ng-click="vm.filter.handlers.toggle()"><i class="icon icon--search"></i></button></li>
                 <li class="active" data-ng-class="{'active': !vm.filter.status}"><a href="javascript:;" data-ng-click="vm.filter.handlers.clearStatus()">All &middot; <span data-ng-bind="vm.filter.total"></span></a></li>
                 <li data-ng-repeat="status in vm.filter.statuses" data-ng-class="{'active': vm.filter.status == status.id}" data-ng-if="status.count > 0"><a href="javascript:;" data-ng-click="vm.filter.handlers.selectStatus(status)">{{status.title}} &middot; <span data-ng-bind="status.count"></span></a></li>
             </ul>
-
             <div class="search_filter" data-ng-class="{'search_filter--show': vm.filter.show}">
                 <div class="row">
                     <div class="col-xs-6 col-sm-3">
@@ -251,7 +252,6 @@
                     </div>
                 </div>
             </div>
-
             <div class="tab-content">
                 <div class="tab-pane active">
                     <div class="table-responsive">
@@ -275,8 +275,8 @@
                                         <span class="_title">{{invoice.clientName}}</span>
                                         <span class="_hint">{{invoice.clientEmail}}</span>
                                     </td>
-                                    <td class="_amount">{{invoice.amount.toLocaleString(undefined, {minimumFractionDigits: 2})}}</td>
-                                    <td class="_currency">{{invoice.currency}}</td>
+                                    <td class="_amount">{{invoice.amount | currency : '' : invoice.settlementAssetAccuracy}}</td>
+                                    <td class="_currency">{{invoice.settlementAsset}}</td>
                                     <td class="_status">
                                         <span class="label" data-ng-class="vm.handlers.getStatusRowCss(invoice.status)">{{invoice.status}}</span>
                                     </td>

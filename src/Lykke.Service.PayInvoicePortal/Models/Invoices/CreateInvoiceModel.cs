@@ -9,7 +9,7 @@ namespace Lykke.Service.PayInvoicePortal.Models.Invoices
         public string Client { get; set; }
         public string Email { get; set; }
         public string Amount { get; set; }
-        public string Currency { get; set; }
+        public string SettlementAsset { get; set; }
         public DateTime DueDate { get; set; }
         public string Note { get; set; }
     }
