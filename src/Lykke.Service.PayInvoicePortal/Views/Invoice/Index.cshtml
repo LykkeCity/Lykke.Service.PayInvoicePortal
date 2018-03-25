@@ -6,7 +6,10 @@
 @{
     ViewData["Title"] = "Invoices";
 }
-<article class="content" data-ng-controller="checkoutCtrl as vm" data-ng-init="vm.handlers.init(@JsonConvert.SerializeObject(Model.PaymentDetails, new JsonSerializerSettings { ContractResolver = new DefaultContractResolver{NamingStrategy = new CamelCaseNamingStrategy()} }))">
+<article class="content"
+         data-ng-controller="checkoutCtrl as vm"
+         data-ng-init="vm.handlers.init(@JsonConvert.SerializeObject(Model.PaymentDetails, new JsonSerializerSettings { ContractResolver = new DefaultContractResolver{NamingStrategy = new CamelCaseNamingStrategy()} }))"
+         ng-cloak>
     <section class="section section--padding">
         <div class="container">
             <div class="row">

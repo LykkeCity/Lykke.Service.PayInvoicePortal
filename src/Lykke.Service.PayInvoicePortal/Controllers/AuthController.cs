@@ -108,7 +108,7 @@ namespace Lykke.Service.PayInvoicePortal.Controllers
         public async Task<IActionResult> SignOut()
         {
             await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
-            return RedirectToAction("Profile", "Home");
+            return RedirectToAction("SignIn", "Auth");
         }
     }
 }

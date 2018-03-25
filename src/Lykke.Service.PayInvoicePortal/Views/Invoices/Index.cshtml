@@ -113,7 +113,10 @@
     </div>
 </div>
 
-<article class="content" data-ng-controller="invoiceDetailsCtrl as vm" data-ng-init="vm.handlers.init(@JsonConvert.SerializeObject(Model.Invoice, new JsonSerializerSettings { ContractResolver = new DefaultContractResolver{NamingStrategy = new CamelCaseNamingStrategy()} }))">
+<article class="content"
+         data-ng-controller="invoiceDetailsCtrl as vm"
+         data-ng-init="vm.handlers.init(@JsonConvert.SerializeObject(Model.Invoice, new JsonSerializerSettings { ContractResolver = new DefaultContractResolver{NamingStrategy = new CamelCaseNamingStrategy()} }))"
+         ng-cloak>
     <section class="section section--padding">
         <div class="container">
             <div class="relative hidden-xs hidden-sm">
