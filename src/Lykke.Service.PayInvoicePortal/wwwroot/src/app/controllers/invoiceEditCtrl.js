@@ -13,7 +13,8 @@
         vm.form = {
             open: false,
             submited: false,
-            errors: []
+            errors: [],
+            blocked: false
         };
 
         vm.model = {
@@ -125,8 +126,13 @@
         }
 
         function save() {
+            if (vm.form.blocked)
+                return;
+
             if (!validate())
                 return;
+
+            vm.form.blocked = true;
 
             var model =
                 {
@@ -146,15 +152,22 @@
                 function (data) {
                     close();
                     $rootScope.$broadcast('invoiceDraftUpdated', data);
+                    vm.form.blocked = false;
                 },
                 function (error) {
                     $log.error(error);
+                    vm.form.blocked = false;
                 });
         }
 
         function draft() {
+            if (vm.form.blocked)
+                return;
+
             if (!validate())
                 return;
+
+            vm.form.blocked = true;
 
             var model =
                 {
@@ -174,14 +187,16 @@
                 function (data) {
                     close();
                     $rootScope.$broadcast('invoiceDraftUpdated', data);
+                    vm.form.blocked = false;
                 },
                 function (error) {
                     $log.error(error);
+                    vm.form.blocked = false;
                 });
         }
 
         function removeFile(file) {
-            apiSvc.removeFile(vm.model.id, file.id)
+            apiSvc.deleteFile(vm.model.id, file.id)
                 .then(
                     function () {
                         var deletedFile = vm.model.files.filter(function (item) { return item.id === file.id })[0];

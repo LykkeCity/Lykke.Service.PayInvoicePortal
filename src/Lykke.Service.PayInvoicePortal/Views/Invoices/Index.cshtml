@@ -1,9 +1,9 @@
 ﻿@using Newtonsoft.Json
 @using Newtonsoft.Json.Serialization
 
-@model Lykke.Service.PayInvoicePortal.Models.Invoices.InvoiceModel
+@model Lykke.Service.PayInvoicePortal.Models.Invoices.IndexViewModel
 @{
-    ViewData["Title"] = "Invoice - " + Model.Number;
+    ViewData["Title"] = "Invoice - " + Model.Invoice.Number;
 }
 
 <div data-ng-controller="invoiceEditCtrl as vm">
@@ -103,9 +103,9 @@
                 </div>
                 <div class="sidebar_menu__footer">
                     <div class="form-group">
-                        <button class="btn btn-block create__button" name="button" type="submit" data-ng-click="vm.handlers.save()">Generate</button>
+                        <button class="btn btn-block create__button" name="button" type="submit" data-ng-click="vm.handlers.save()" data-ng-disabled="vm.form.blocked">Generate</button>
                     </div>
-                    <button class="btn btn--flat btn-block" type="submit" name="button" data-ng-click="vm.handlers.draft()">Safe draft</button>
+                    <button class="btn btn--flat btn-block" type="submit" name="button" data-ng-click="vm.handlers.draft()" data-ng-disabled="vm.form.blocked">Safe draft</button>
                     <button class="btn btn--flat btn-block btn_close_menu" type="button" name="button" data-ng-click="vm.handlers.close()">Cancel and close</button>
                 </div>
             </div>
@@ -113,7 +113,7 @@
     </div>
 </div>
 
-<article class="content" data-ng-controller="invoiceDetailsCtrl as vm" data-ng-init="vm.handlers.init(@JsonConvert.SerializeObject(Model, new JsonSerializerSettings { ContractResolver = new DefaultContractResolver{NamingStrategy = new CamelCaseNamingStrategy()} }))">
+<article class="content" data-ng-controller="invoiceDetailsCtrl as vm" data-ng-init="vm.handlers.init(@JsonConvert.SerializeObject(Model.Invoice, new JsonSerializerSettings { ContractResolver = new DefaultContractResolver{NamingStrategy = new CamelCaseNamingStrategy()} }))">
     <section class="section section--padding">
         <div class="container">
             <div class="relative hidden-xs hidden-sm">
@@ -194,6 +194,14 @@
                                         <div class="asset_link__info">
                                             <div class="asset_link__title">Pay due date</div>
                                             <div class="asset_link__desc" data-ng-bind="vm.model.dueDate.format('LL')"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-12" data-ng-if="vm.model.note">
+                                    <div class="asset_link">
+                                        <div class="asset_link__info">
+                                            <div class="asset_link__title">Note</div>
+                                            <div class="asset_link__desc" data-ng-bind="vm.model.note"></div>
                                         </div>
                                     </div>
                                 </div>

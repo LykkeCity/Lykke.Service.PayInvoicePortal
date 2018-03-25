@@ -4,7 +4,8 @@ using System.Threading.Tasks;
 using Common.Log;
 using Lykke.Service.Assets.Client;
 using Lykke.Service.Assets.Client.Models;
-using Lykke.Service.PayInvoice.Client;
+using Lykke.Service.PayInternal.Client;
+using Lykke.Service.PayInternal.Client.Models.Asset;
 using Lykke.Service.PayInvoicePortal.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -15,16 +16,16 @@ namespace Lykke.Service.PayInvoicePortal.Controllers.Api
     [Route("/api/assets")]
     public class AssetsController : BaseController
     {
-        private readonly IPayInvoiceClient _payInvoiceClient;
+        private readonly IPayInternalClient _payInternalClient;
         private readonly IAssetsServiceWithCache _assetsServiceWithCache;
         private readonly ILog _log;
 
         public AssetsController(
-            IPayInvoiceClient payInvoiceClient,
+            IPayInternalClient payInternalClient,
             IAssetsServiceWithCache assetsServiceWithCache,
             ILog log)
         {
-            _payInvoiceClient = payInvoiceClient;
+            _payInternalClient = payInternalClient;
             _assetsServiceWithCache = assetsServiceWithCache;
             _log = log;
         }
@@ -36,9 +37,10 @@ namespace Lykke.Service.PayInvoicePortal.Controllers.Api
 
             try
             {
-                IReadOnlyList<string> assets = await _payInvoiceClient.GetSettlementAssetsAsync(MerchantId);
+                AvailableAssetsResponse response =
+                    await _payInternalClient.ResolveAvailableAssetsAsync(MerchantId, AssetAvailabilityType.Settlement);
 
-                foreach (string assetId in assets)
+                foreach (string assetId in response.Assets)
                 {
                     Asset asset = await _assetsServiceWithCache.TryGetAssetAsync(assetId);
                     model.Add(new ItemViewModel(assetId, asset.DisplayId));

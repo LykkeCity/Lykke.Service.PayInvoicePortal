@@ -13,7 +13,8 @@
         vm.form = {
             open: false,
             submited: false,
-            errors: []
+            errors: [],
+            blocked: false
         };
 
         vm.model = {
@@ -111,8 +112,13 @@
         }
 
         function save() {
+            if (vm.form.blocked)
+                return;
+
             if (!validate())
                 return;
+            
+            vm.form.blocked = true;
 
             var model =
             {
@@ -131,15 +137,22 @@
                     function (data) {
                         close();
                         $rootScope.$broadcast('invoiceGenerated', data);
+                        vm.form.blocked = false;
                     },
                     function (error) {
                         $log.error(error);
+                        vm.form.blocked = false;
                     });
         }
 
         function draft() {
+            if (vm.form.blocked)
+                return;
+
             if (!validate())
                 return;
+
+            vm.form.blocked = true;
 
             var model =
             {
@@ -155,12 +168,14 @@
 
             apiSvc.saveInvoice(model, vm.model.files)
                 .then(
-                    function (data) {
+                function (data) {
                         close();
                         $rootScope.$broadcast('invoiceDraftCreated', data);
+                        vm.form.blocked = false;
                     },
                     function (error) {
                         $log.error(error);
+                        vm.form.blocked = false;
                     });
         }
     }

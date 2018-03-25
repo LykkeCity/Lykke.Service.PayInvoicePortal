@@ -92,7 +92,7 @@
                         text: 'Yes',
                         btnClass: 'btn-blue',
                         action: function () {
-                            apiSvc.removeInvoice(vm.model.id)
+                            apiSvc.deleteInvoice(vm.model.id)
                                 .then(
                                     function () {
                                         $window.history.back();

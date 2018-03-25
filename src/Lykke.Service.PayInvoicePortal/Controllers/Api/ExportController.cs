@@ -35,7 +35,7 @@ namespace Lykke.Service.PayInvoicePortal.Controllers.Api
             string sortField,
             bool sortAscending)
         {
-            IEnumerable<PayInvoice.Client.Models.Invoice.InvoiceModel> invoices = await _invoiceService.GetAsync(
+            IEnumerable<InvoiceModel> invoices = await _invoiceService.GetAsync(
                 MerchantId,
                 status,
                 period,

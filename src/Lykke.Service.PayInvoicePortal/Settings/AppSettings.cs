@@ -1,4 +1,5 @@
 ﻿using Lykke.Service.PayAuth.Client;
+using Lykke.Service.PayInternal.Client;
 using Lykke.Service.PayInvoicePortal.Settings.ServiceSettings;
 using Lykke.Service.PayInvoicePortal.Settings.SlackNotifications;
 using Lykke.Service.PayInvoice.Client;
@@ -13,5 +14,6 @@ namespace Lykke.Service.PayInvoicePortal.Settings
         public PayInvoiceServiceClientSettings PayInvoiceServiceClient { get; set; }
         public PayAuthServiceClientSettings PayAuthServiceClient { get; set; }
         public AssetsServiceClientSettings AssetsServiceClient { get; set; }
+        public PayInternalServiceClientSettings PayInternalServiceClient { get; set; }
     }
 }

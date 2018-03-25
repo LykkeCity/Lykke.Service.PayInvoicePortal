@@ -83,9 +83,9 @@
                 </div>
                 <div class="sidebar_menu__footer">
                     <div class="form-group">
-                        <button class="btn btn-block create__button" name="button" type="submit" data-ng-click="vm.handlers.save()">Generate</button>
+                        <button class="btn btn-block create__button" name="button" type="submit" data-ng-click="vm.handlers.save()" data-ng-disabled="vm.form.blocked">Generate</button>
                     </div>
-                    <button class="btn btn--flat btn-block" type="submit" name="button" data-ng-click="vm.handlers.draft()">Safe draft</button>
+                    <button class="btn btn--flat btn-block" type="submit" name="button" data-ng-click="vm.handlers.draft()" data-ng-disabled="vm.form.blocked">Safe draft</button>
                     <button class="btn btn--flat btn-block btn_close_menu" type="button" name="button" data-ng-click="vm.handlers.close()">Cancel and close</button>
                 </div>
             </div>

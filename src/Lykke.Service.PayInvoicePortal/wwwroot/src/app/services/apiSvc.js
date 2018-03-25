@@ -11,22 +11,69 @@
         var minDate = '0001-01-01T00:00:00';
 
         var service = {
+            getAssets: getAssets,
+
+            getBalance: getBalance,
+
+            exportToCsv: exportToCsv,
+
+            getFile: getFile,
+            deleteFile: deleteFile,
+
             getInvoice: getInvoice,
             getInvoices: getInvoices,
             saveInvoice: saveInvoice,
             updateInvoice: updateInvoice,
-            removeInvoice: removeInvoice,
-            exportToCsv: exportToCsv,
-            getBalance: getBalance,
-            getAssets: getAssets,
+            deleteInvoice: deleteInvoice,
+            
             getPaymentDetails: getPaymentDetails,
-            getInvoiceStatus: getInvoiceStatus,
-            getFile: getFile,
-            removeFile: removeFile
+            getPaymentStatus: getPaymentStatus
         };
 
         return service;
 
+        // Assets
+
+        function getAssets() {
+            return get('assets', {});
+        }
+
+        // Balances
+
+        function getBalance() {
+            return get('balances', {});
+        }
+        
+        // Export
+
+        function exportToCsv(searchValue, period, status, sortField, sortAscending) {
+            var url = getUrl('export');
+
+            url = url + "?searchValue=" + (searchValue || '');
+            url = url + "&period=" + period;
+
+            for (var i = 0; i < status.length; i++) {
+                url = url + "&status=" + status[i];
+            }
+
+            url = url + "&sortField=" + (sortField || '');
+            url = url + "&sortAscending=" + sortAscending;
+
+            $window.open(url);
+        }
+
+        // Files
+        
+        function getFile(invoiceId, fileId) {
+            $window.open(getUrl('files') + '/' + fileId + '?invoiceId=' + invoiceId);
+        }
+
+        function deleteFile(invoiceId, fileId) {
+            return remove('files/' + fileId, { invoiceId: invoiceId });
+        }
+
+        // Invoices
+        
         function getInvoice(invoiceId) {
             return get('invoices/' + invoiceId);
         }
@@ -52,57 +99,29 @@
             return upload('invoices/update', model, files);
         }
 
-        function removeInvoice(invoiceId) {
-            return remove('invoices', { invoiceId: invoiceId });
+        function deleteInvoice(invoiceId) {
+            return remove('invoices/' + invoiceId, {});
         }
 
-        function exportToCsv(searchValue, period, status, sortField, sortAscending) {
-            var url = getUrl('export');
-
-            url = url + "?searchValue=" + (searchValue || '');
-            url = url + "&period=" + period;
-
-            for (var i = 0; i < status.length; i++) {
-                url = url + "&status=" + status[i];
-            }
-
-            url = url + "&sortField=" + (sortField || '');
-            url = url + "&sortAscending=" + sortAscending;
-
-            $window.open(url);
-        }
-
-        function getBalance() {
-            return get('balances', {});
-        }
-
-        function getAssets() {
-            return get('assets', {});
-        }
+        // Paymnets
 
         function getPaymentDetails(invoiceId) {
-            return get(null, {}, '/invoice/' + invoiceId + '/details');
+            return get('payments/' + invoiceId, {});
         }
 
-        function getInvoiceStatus(invoiceId) {
-            return get(null, {}, '/invoice/' + invoiceId + '/status');
+        function getPaymentStatus(invoiceId) {
+            return get('payments/' + invoiceId + '/status', {});
         }
 
-        function getFile(invoiceId, fileId) {
-            $window.open(getUrl('invoices') + '/' + invoiceId + '/files/' + fileId);
-        }
+        // Private
 
-        function removeFile(invoiceId, fileId) {
-            return remove('invoices', { invoiceId: invoiceId, fileId: fileId });
-        }
-
-        function get(action, params, explicitPath) {
+        function get(action, params) {
             var deferred = $q.defer();
 
             params = params || {};
             params['c'] = new Date().getTime();
 
-            $http.get(explicitPath || getUrl(action), { params: params })
+            $http.get(getUrl(action), { params: params })
                 .success(function (data, status, headers, config) {
                     deferred.resolve(data);
                 })

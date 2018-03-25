@@ -242,7 +242,7 @@
                         text: 'Yes',
                         btnClass: 'btn-blue',
                         action: function () {
-                            apiSvc.removeInvoice(invoice.id)
+                            apiSvc.deleteInvoice(invoice.id)
                                 .then(
                                     function() {
                                         loadInvocies();
