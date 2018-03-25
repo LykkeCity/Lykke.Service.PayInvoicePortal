@@ -36,7 +36,7 @@
                     values: ['InProgress', 'RefundInProgress', 'SettlementInProgress'],
                     count: 0
                 },
-                { id: 'paid', title: 'Paid', value: ['Paid'], count: 0 },
+                { id: 'paid', title: 'Paid', values: ['Paid'], count: 0 },
                 { id: 'underpaid', title: 'Underpaid', values: ['Underpaid'], count: 0 },
                 { id: 'overpaid', title: 'Overpaid', values: ['Overpaid'], count: 0 },
                 { id: 'latePaid', title: 'LatePaid', values: ['LatePaid'], count: 0 },

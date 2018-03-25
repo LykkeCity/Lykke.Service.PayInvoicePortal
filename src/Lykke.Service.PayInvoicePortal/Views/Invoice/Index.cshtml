@@ -134,7 +134,7 @@
                                     <div class="asset_link__desc" data-ng-bind="vm.model.dueDate.format('LL')"></div>
                                 </div>
                             </div>
-                            <div class="asset_link">
+                            <div class="asset_link" data-ng-if="vm.model.note">
                                 <div class="asset_link__info">
                                     <div class="asset_link__title">Note</div>
                                     <div class="asset_link__desc" data-ng-bind="vm.model.note"></div>
