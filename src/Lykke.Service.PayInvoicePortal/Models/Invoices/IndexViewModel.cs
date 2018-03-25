@@ -3,5 +3,7 @@
     public class IndexViewModel
     {
         public InvoiceModel Invoice { get; set; }
+
+        public string BlockchainExplorerUrl { get; set; }
     }
 }

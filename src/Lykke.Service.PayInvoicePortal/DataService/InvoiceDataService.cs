@@ -60,6 +60,7 @@ namespace Lykke.Service.PayInvoicePortal.DataService
                 Status = invoice.Status.ToString(),
                 SettlementAsset = settlementAsset.DisplayId,
                 SettlementAssetAccuracy = settlementAsset.Accuracy,
+                WalletAddress = invoice.WalletAddress,
                 CreatedDate = invoice.CreatedDate,
                 Note = invoice.Note,
                 Files = invoiceFiles
@@ -79,7 +80,7 @@ namespace Lykke.Service.PayInvoicePortal.DataService
             string merchantId,
             string searchValue,
             Period period,
-            List<PayInvoice.Client.Models.Invoice.InvoiceStatus> status,
+            List<InvoiceStatus> status,
             string sortField,
             bool sortAscending,
             int skip,

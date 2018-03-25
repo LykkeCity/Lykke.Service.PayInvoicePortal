@@ -9,9 +9,6 @@ namespace Lykke.Service.PayInvoicePortal.Controllers
         private string _merchantId;
         private string _employeeId;
 
-        protected string SiteUrl
-            => Startup.SiteUrl;
-
         protected string BlockchainExplorerUrl
             => Startup.BlockchainExplorerUrl;
 
