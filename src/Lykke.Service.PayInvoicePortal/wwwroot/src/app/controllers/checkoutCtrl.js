@@ -5,14 +5,25 @@
         .module('app')
         .controller('checkoutCtrl', checkoutCtrl);
 
-    checkoutCtrl.$inject = ['$window', '$scope', '$log', '$interval', '$timeout', 'apiSvc', 'fileSvc'];
+    checkoutCtrl.$inject = ['$window', '$location', '$scope', '$log', '$interval', '$timeout', 'apiSvc', 'fileSvc'];
 
-    function checkoutCtrl($window, $scope, $log, $interval, $timeout, apiSvc, fileSvc) {
+    function checkoutCtrl($window, $location, $scope, $log, $interval, $timeout, apiSvc, fileSvc) {
         var vm = this;
+
+        vm.callback = {
+            url: ''
+        };
 
         vm.pie = {
             transform1: '',
             transform2: ''
+        };
+
+        vm.header = {
+            title: '',
+            messages: '',
+            color: '',
+            icon: ''
         };
 
         vm.timer = {
@@ -40,6 +51,8 @@
             spreadPercent: 0,
             feePercent: 0,
             dueDate: $window.moment(),
+            paidAmount: 0,
+            paidDate: null,
             note: '',
             qrCode: '',
             walletAddress: '',
@@ -57,6 +70,8 @@
         activate();
 
         function activate() {
+            vm.callback.url = getParameterByName('callback', $window.location.href);
+
             $scope.$on('$destroy',
                 function() {
                     stopTimer();
@@ -84,11 +99,13 @@
             vm.model.spreadPercent = data.spreadPercent;
             vm.model.feePercent = data.feePercent;
             vm.model.dueDate = $window.moment(data.dueDate);
+            vm.model.paidAmount = data.paidAmount;
+            vm.model.paidDate = data.paidDate ? $window.moment(data.paidDate) : null;
             vm.model.note = data.note;
             vm.model.walletAddress = data.walletAddress;
             vm.model.files = data.files;
 
-            if (data.status === 'Unpaid' && !data.expired) {
+            if (data.status === 'Unpaid') {
                 vm.model.qrCode = 'https://chart.googleapis.com/chart?chs=220x220&chld=L|2&cht=qr&chl=bitcoin:' +
                     data.walletAddress +
                     '?amount=' +
@@ -109,6 +126,109 @@
                 vm.timer.total = 0;
                 vm.timer.seconds = 0;
                 vm.model.waiting = false;
+
+                updateHeader();
+            }
+        }
+
+        function updateHeader() {
+            switch (vm.model.status) {
+                case 'InProgress':
+                    vm.header.title = 'Paid';
+                    vm.header.message = 'Payment in progress';
+                    vm.header.icon = 'icon--check_circle';
+                    vm.header.color = 'alert--green';
+                    break;
+                case 'Paid':
+                    vm.header.title = 'Paid';
+                    vm.header.message = 'Invoice has been paid on ' + vm.model.paidDate.format('l');
+                    vm.header.icon = 'icon--check_circle';
+                    vm.header.color = 'alert--green';
+                    break;
+                case 'SettlementInProgress':
+                    vm.header.title = 'Settlement';
+                    vm.header.message = 'Settlement in progress';
+                    vm.header.icon = '';
+                    vm.header.color = 'alert--green';
+                    break;
+                case 'Settled':
+                    vm.header.title = 'Settlement';
+                    vm.header.message = 'Invoice has been settled';
+                    vm.header.icon = '';
+                    vm.header.color = 'alert--green';
+                    break;
+                case 'RefundInProgress':
+                    vm.header.title = 'Refund';
+                    vm.header.message = 'Refund in progress';
+                    vm.header.icon = '';
+                    vm.header.color = 'alert--violet';
+                    break;
+                case 'Refunded':
+                    vm.header.title = 'Refund';
+                    vm.header.message = 'Invoice has been refunded';
+                    vm.header.icon = '';
+                    vm.header.color = 'alert--violet';
+                    break;
+                case 'Underpaid':
+                    vm.header.title = 'Error';
+                    vm.header.message =
+                        vm.model.paidAmount.toLocaleString(undefined,
+                            { minimumFractionDigits: vm.model.paymentAssetAccuracy }) +
+                        ' ' +
+                        vm.model.paymentAsset +
+                        ' received on ' +
+                        vm.model.paidDate.format('l');
+                    vm.header.icon = 'icon--remove_circle';
+                    vm.header.color = 'alert--violet';
+                    break;
+                case 'Overpaid':
+                    vm.header.title = 'Error';
+                    vm.header.message =
+                        vm.model.paidAmount.toLocaleString(undefined,
+                            { minimumFractionDigits: vm.model.paymentAssetAccuracy }) +
+                        ' ' +
+                        vm.model.paymentAsset +
+                        ' received on ' +
+                        vm.model.paidDate.format('l');
+                    vm.header.icon = 'icon--add_circle';
+                    vm.header.color = 'alert--violet';
+                    break;
+                case 'LatePaid':
+                    vm.header.title = 'Error';
+                    vm.header.message =
+                        vm.model.paidAmount.toLocaleString(undefined,
+                            { minimumFractionDigits: vm.model.paymentAssetAccuracy }) +
+                        ' ' +
+                        vm.model.paymentAsset +
+                        ' received on ' +
+                        vm.model.paidDate.format('l');
+                    vm.header.icon = '';
+                    vm.header.color = 'alert--violet';
+                    break;
+                case 'NotConfirmed':
+                    vm.header.title = 'Error';
+                    vm.header.message = 'Transfer hasn\'t been confirmed';
+                    vm.header.icon = '';
+                    vm.header.color = 'alert--red';
+                    break;
+                case 'InvalidAddress':
+                    vm.header.title = 'Error';
+                    vm.header.message = 'Invalid address';
+                    vm.header.icon = '';
+                    vm.header.color = 'alert--red';
+                    break;
+                case 'InternalError':
+                    vm.header.title = 'Error';
+                    vm.header.message = 'Internal error occurred';
+                    vm.header.icon = '';
+                    vm.header.color = 'alert--red';
+                    break;
+                default:
+                    vm.header.title = 'Error';
+                    vm.header.message = 'Unknown status';
+                    vm.header.icon = '';
+                    vm.header.color = 'alert--red';
+                    break;
             }
         }
 
@@ -124,12 +244,17 @@
         }
 
         function updateStatus() {
-            apiSvc.getInvoiceStatus(vm.model.id)
+            apiSvc.getPaymentStatus(vm.model.id)
                 .then(
                     function (data) {
                         if (data.status !== vm.model.status) {
                             stopTimer();
-                            updateDetails();
+
+                            if (data.status === 'Paid' && vm.callback.url) {
+                                $window.location.href = vm.callback.url;
+                            } else {
+                                updateDetails();
+                            }
                         }
                         startStatusTimeout();
                     },
@@ -186,6 +311,16 @@
 
         function getFile(file) {
             apiSvc.getFile(vm.model.id, file.id);
+        }
+
+        function getParameterByName(name, url) {
+            if (!url) url = window.location.href;
+            name = name.replace(/[\[\]]/g, "\\$&");
+            var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
+                results = regex.exec(url);
+            if (!results) return null;
+            if (!results[2]) return '';
+            return decodeURIComponent(results[2].replace(/\+/g, " "));
         }
     }
 })();

@@ -179,6 +179,8 @@ namespace Lykke.Service.PayInvoicePortal.DataService
                 TotalSeconds = totalSeconds,
                 RemainingSeconds = remainingSeconds,
                 Expired = expired,
+                PaidAmount = (double)invoiceDetails.PaidAmount,
+                PaidDate = invoiceDetails.PaidDate,
                 Files = invoiceFiles
                     .Select(o => new FileModel
                     {

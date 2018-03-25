@@ -45,6 +45,10 @@ namespace Lykke.Service.PayInvoicePortal.Models.Invoice
 
         public bool Expired { get; set; }
 
+        public DateTime? PaidDate { get; set; }
+
+        public double PaidAmount { get; set; }
+
         public List<FileModel> Files { get; set; }
     }
 }

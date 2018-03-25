@@ -92,19 +92,20 @@
                     </div>
 
                     <div data-ng-if="!vm.model.waiting">
-                        <div class="alert alert--green" role="alert">
+                        <div class="alert" data-ng-class="vm.header.color" role="alert">
                             <table>
                                 <tr>
                                     <td>
-                                        <span class="label label--text label--white">Paid</span>
+                                        <span class="label label--text label--white" data-ng-bind="vm.header.title"></span>
                                     </td>
                                     <td class="text-right">
-                                        <i class="icon icon--check_circle hidden-xs"></i>
-                                        Invoice has been paid <span class="hidden-xs"> on 15.05.2016</span>
+                                        <i class="icon hidden-xs" data-ng-show="vm.header.icon" data-ng-class="vm.header.icon"></i>
+                                        {{vm.header.message}}
                                     </td>
                                 </tr>
                             </table>
                         </div>
+
                         <div class="asset_link_list">
                             <div class="asset_link">
                                 <div class="asset_link__info">
