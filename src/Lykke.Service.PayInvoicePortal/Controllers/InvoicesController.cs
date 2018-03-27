@@ -1,10 +1,12 @@
 ﻿using System.Threading.Tasks;
 using Lykke.Service.PayInvoicePortal.DataService;
 using Lykke.Service.PayInvoicePortal.Models.Invoices;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Lykke.Service.PayInvoicePortal.Controllers
 {
+    [Authorize]
     [Route("/invoices")]
     public class InvoicesController : BaseController
     {

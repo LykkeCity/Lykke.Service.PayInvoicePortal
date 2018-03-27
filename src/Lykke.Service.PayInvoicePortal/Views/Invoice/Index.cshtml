@@ -148,13 +148,13 @@
                         <div class="asset_link_list">
                             <div class="asset_link asset_link--alt" data-ng-repeat="file in vm.model.files">
                                 <div class="asset_link__icon">
-                                    <div class="asset_icon asset_icon--red" data-ng-bind="vm.handlers.getFileExtension(file.name)"></div>
+                                    <div class="asset_icon asset_icon--red" data-ng-bind="vm.handlers.getFileExtension(file.name)" data-ng-click="vm.handlers.getFile(file)"></div>
                                 </div>
                                 <div class="asset_link__action">
-                                    <button class="btn btn--icon _delete_asset" data-ng-click="vm.handlers.getFile(file)"><i class="icon icon--download"></i></button>
+                                    <button class="btn btn--icon" data-ng-click="vm.handlers.getFile(file)"><i class="icon icon--download"></i></button>
                                 </div>
                                 <div class="asset_link__info">
-                                    <div class="asset_link__title" data-ng-bind="file.name"></div>
+                                    <div class="asset_link__title" data-ng-bind="file.name" data-ng-click="vm.handlers.getFile(file)"></div>
                                     <div class="asset_link__desc" data-ng-bind="vm.handlers.getFileSize(file.size)"></div>
                                 </div>
                             </div>

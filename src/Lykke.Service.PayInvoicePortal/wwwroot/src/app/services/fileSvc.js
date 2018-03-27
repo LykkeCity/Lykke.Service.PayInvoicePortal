@@ -10,7 +10,8 @@
     function fileSvc() {
         var service = {
             getExtension: getExtension,
-            getSize: getSize
+            getSize: getSize,
+            validate: validate
         };
 
         return service;
@@ -30,6 +31,18 @@
             } else {
                 return (value / 1048576).toFixed(0) + ' MB';
             }
+        }
+
+        function validate(file) {
+            if (!file)
+                return false;
+
+            var extension = getExtension(file.name);
+
+            if (!extension)
+                return false;
+
+            return ['pdf', 'doc', 'docx', 'xls', 'xlsx'].indexOf(extension) >= 0;
         }
     }
 })();

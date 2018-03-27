@@ -28,17 +28,17 @@
             dueDate: $window.moment(),
             note: '',
             files: [],
-            assets: [],
-            newFiles: []
+            assets: []
         };
 
         vm.handlers = {
             close: close,
             save: save,
-            draft: draft,
             getFileExtension: fileSvc.getExtension,
             getFileSize: fileSvc.getSize,
-            removeFile: removeFile
+            getFile: getFile,
+            upload: upload,
+            deleteFile: deleteFile
         };
 
         activate();
@@ -76,7 +76,22 @@
             vm.model.amount = data.amount;
             vm.model.dueDate = $window.moment(data.dueDate);
             vm.model.note = data.note;
-            vm.model.files = data.files;
+            vm.model.files = [];
+
+            angular.forEach(data.files, function (file, key) {
+                vm.model.files.push(file);
+            });
+        }
+
+        function updateFiles() {
+            apiSvc.getInvoice(vm.model.id)
+                .then(
+                    function (data) {
+                        vm.model.files = data.files;
+                    },
+                    function (error) {
+                        $log.error(error);
+                    });
         }
 
         function reset() {
@@ -125,7 +140,7 @@
             return true;
         }
 
-        function save() {
+        function save(draft) {
             if (vm.form.blocked)
                 return;
 
@@ -136,7 +151,7 @@
 
             var model =
                 {
-                    isDraft: false,
+                    isDraft: draft === true,
                     id: vm.model.id,
                     number: vm.model.number,
                     client: vm.model.client,
@@ -147,11 +162,11 @@
                     note: vm.model.note
                 };
 
-            apiSvc.updateInvoice(model, vm.model.newFiles)
+            apiSvc.updateInvoice(model)
                 .then(
-                function (data) {
+                function () {
                     close();
-                    $rootScope.$broadcast('invoiceDraftUpdated', data);
+                    onChanged();
                     vm.form.blocked = false;
                 },
                 function (error) {
@@ -160,54 +175,84 @@
                 });
         }
 
-        function draft() {
-            if (vm.form.blocked)
+        function upload(files) {
+            if (!files || files.length === 0)
                 return;
 
-            if (!validate())
-                return;
+            var valid = true;
+            angular.forEach(files, function (file, key) {
+                valid = valid && fileSvc.validate(file);
+            });
 
-            vm.form.blocked = true;
-
-            var model =
-                {
-                    isDraft: true,
-                    id: vm.model.id,
-                    number: vm.model.number,
-                    client: vm.model.client,
-                    email: vm.model.email,
-                    amount: vm.model.amount,
-                    settlementAsset: vm.model.settlementAsset,
-                    dueDate: vm.model.dueDate.toDate(),
-                    note: vm.model.note
-                };
-
-            apiSvc.updateInvoice(model, vm.model.newFiles)
-                .then(
-                function (data) {
-                    close();
-                    $rootScope.$broadcast('invoiceDraftUpdated', data);
-                    vm.form.blocked = false;
-                },
-                function (error) {
-                    $log.error(error);
-                    vm.form.blocked = false;
+            if (!valid) {
+                $.confirm({
+                    title: 'Invalid file',
+                    content: 'One or more files are is invalid, allowed extensions are: .pdf; .doc; .docx; .xls; .xlsx.',
+                    icon: 'fa fa-question-circle',
+                    animation: 'scale',
+                    closeAnimation: 'scale',
+                    opacity: 0.5,
+                    buttons: {
+                        'ok': {
+                            text: 'OK',
+                            btnClass: 'btn-blue'
+                        }
+                    }
                 });
-        }
 
-        function removeFile(file) {
-            apiSvc.deleteFile(vm.model.id, file.id)
+                return;
+            }
+
+            apiSvc.uploadFile(vm.model.id, files)
                 .then(
                     function () {
-                        var deletedFile = vm.model.files.filter(function (item) { return item.id === file.id })[0];
-                        var index = vm.model.files.indexOf(deletedFile);
-                        if (index > -1) {
-                            vm.model.files.splice(index, 1);
-                        }
+                        updateFiles();
+                        onChanged();
                     },
                     function (error) {
                         $log.error(error);
                     });
+        }
+
+        function getFile(file) {
+            apiSvc.getFile(vm.model.id, file.id);
+        }
+
+        function deleteFile(file) {
+            if (!file)
+                return;
+
+            $.confirm({
+                title: 'Are you sure?',
+                content: 'Do you really want to delete "' + file.name + '"?',
+                icon: 'fa fa-question-circle',
+                animation: 'scale',
+                closeAnimation: 'scale',
+                opacity: 0.5,
+                buttons: {
+                    'confirm': {
+                        text: 'Yes',
+                        btnClass: 'btn-blue',
+                        action: function () {
+                            apiSvc.deleteFile(vm.model.id, file.id)
+                                .then(
+                                    function () {
+                                        updateFiles();
+                                        onChanged();
+                                    },
+                                    function (error) {
+                                        $log.error(error);
+                                    });
+                        }
+                    },
+                    cancel: function () {
+                    }
+                }
+            });
+        }
+
+        function onChanged() {
+            $rootScope.$broadcast('invoiceDraftUpdated', {});
         }
     }
 })();

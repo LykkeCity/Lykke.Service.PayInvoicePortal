@@ -46,8 +46,13 @@ namespace Lykke.Service.PayInvoicePortal.Controllers
         [HttpPost]
         public async Task<IActionResult> SignIn(SignInViewModel model)
         {
+            var vm = new SignInViewModel
+            {
+                ReturnUrl = model.ReturnUrl
+            };
+
             if (!ModelState.IsValid)
-                return View();
+                return View(vm);
 
             ValidateResultModel response;
 
@@ -61,13 +66,13 @@ namespace Lykke.Service.PayInvoicePortal.Controllers
                     $"Can not authenticate user '{model.Login}'", exception);
 
                 ModelState.AddModelError(string.Empty, "An error occurred during authentication.");
-                return View();
+                return View(vm);
             }
 
             if (!response.Success)
             {
                 ModelState.AddModelError(string.Empty, "The e-mail or password you entered incorrect.");
-                return View();
+                return View(vm);
             }
 
             EmployeeModel employee;
@@ -83,7 +88,7 @@ namespace Lykke.Service.PayInvoicePortal.Controllers
                     exception);
 
                 ModelState.AddModelError(string.Empty, "User profile not found.");
-                return View();
+                return View(vm);
             }
             
             var claims = new List<Claim>

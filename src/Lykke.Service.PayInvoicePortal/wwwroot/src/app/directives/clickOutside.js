@@ -33,7 +33,7 @@
                             return;
                         }
 
-                        if (e.target.type === 'file')
+                        if (e.target.type === 'file' || e.target.type === 'button')
                             return;
 
                         for (element = e.target; element; element = element.parentNode) {

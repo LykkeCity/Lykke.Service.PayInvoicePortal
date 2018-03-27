@@ -53,7 +53,7 @@ namespace Lykke.Service.PayInvoicePortal.Controllers.Api
 
             return Json(result);
         }
-
+        
         [HttpGet]
         public async Task<IActionResult> GetInvociesAsync(
             string searchValue,
@@ -157,9 +157,8 @@ namespace Lykke.Service.PayInvoicePortal.Controllers.Api
             return Json(result);
         }
 
-        [HttpPost]
-        [Route("update")]
-        public async Task<IActionResult> UpdateAsync(UpdateInvoiceModel model, IFormFileCollection files)
+        [HttpPut]
+        public async Task<IActionResult> UpdateAsync([FromBody]UpdateInvoiceModel model)
         {
             if (model.IsDraft)
             {
@@ -191,23 +190,7 @@ namespace Lykke.Service.PayInvoicePortal.Controllers.Api
                     Note = model.Note
                 });
             }
-
-            if (files != null)
-            {
-                foreach (IFormFile formFile in files)
-                {
-                    byte[] content;
-
-                    using (var ms = new MemoryStream())
-                    {
-                        formFile.CopyTo(ms);
-                        content = ms.ToArray();
-                    }
-
-                    await _payInvoiceClient.UploadFileAsync(model.Id, content, formFile.FileName, formFile.ContentType);
-                }
-            }
-
+            
             return NoContent();
         }
 

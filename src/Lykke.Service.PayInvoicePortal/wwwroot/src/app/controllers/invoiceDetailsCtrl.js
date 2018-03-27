@@ -10,6 +10,12 @@
     function invoiceDetailsCtrl($scope, $window, $log, $rootScope, apiSvc, statusSvc, fileSvc) {
         var vm = this;
 
+        vm.form = {
+            allowDelete: false,
+            allowEdit: false,
+            allowPay: false
+        };
+
         vm.model = {
             id: '',
             status: '',
@@ -22,8 +28,7 @@
             dueDate: null,
             note: '',
             url: '',
-            files: [],
-            allowPay: false
+            files: []
         };
 
         vm.handlers = {
@@ -34,7 +39,9 @@
             init: init,
             getFileExtension: fileSvc.getExtension,
             getFileSize: fileSvc.getSize,
-            getFile: getFile
+            getFile: getFile,
+            upload: upload,
+            deleteFile: deleteFile
         };
 
         activate();
@@ -98,7 +105,7 @@
                                         $window.history.back();
                                     },
                                     function (error) {
-                                        alert(error);
+                                        $log.error(error);
                                     });
                         }
                     },
@@ -122,7 +129,9 @@
             vm.model.url = $window.location.origin + '/invoice/' + vm.model.id;
             vm.model.files = data.files;
 
-            vm.model.allowPay = data.status === 'Unpaid';
+            vm.form.allowPay = data.status === 'Unpaid';
+            vm.form.allowEdit = data.status === 'Draft';
+            vm.form.allowDelete = data.status === 'Draft' || data.status === 'Unpaid';
         }
 
         function update() {
@@ -132,12 +141,82 @@
                         apply(data);
                     },
                     function (error) {
-                        alert(error);
+                        $log.error(error);
                     });
         }
 
         function getFile(file) {
             apiSvc.getFile(vm.model.id, file.id);
+        }
+
+        function upload(files) {
+            if (!files || files.length === 0)
+                return;
+
+            var valid = true;
+            angular.forEach(files, function (file, key) {
+                valid = valid && fileSvc.validate(file);
+            });
+
+            if (!valid) {
+                $.confirm({
+                    title: 'Invalid file',
+                    content: 'One or more files are is invalid, allowed extensions are: .pdf; .doc; .docx; .xls; .xlsx.',
+                    icon: 'fa fa-question-circle',
+                    animation: 'scale',
+                    closeAnimation: 'scale',
+                    opacity: 0.5,
+                    buttons: {
+                        'ok': {
+                            text: 'OK',
+                            btnClass: 'btn-blue'
+                        }
+                    }
+                });
+
+                return;
+            }
+
+            apiSvc.uploadFile(vm.model.id, files)
+                .then(
+                    function(data) {
+                        update(data);
+                    },
+                    function(error) {
+                          $log.error(error);
+                    });
+        }
+
+        function deleteFile(file) {
+            if (!file)
+                return;
+
+            $.confirm({
+                title: 'Are you sure?',
+                content: 'Do you really want to delete "' + file.name + '"?',
+                icon: 'fa fa-question-circle',
+                animation: 'scale',
+                closeAnimation: 'scale',
+                opacity: 0.5,
+                buttons: {
+                    'confirm': {
+                        text: 'Yes',
+                        btnClass: 'btn-blue',
+                        action: function () {
+                            apiSvc.deleteFile(vm.model.id, file.id)
+                                .then(
+                                    function () {
+                                        update();
+                                    },
+                                    function (error) {
+                                        $log.error(error);
+                                    });
+                        }
+                    },
+                    cancel: function () {
+                    }
+                }
+            });
         }
     }
 })();

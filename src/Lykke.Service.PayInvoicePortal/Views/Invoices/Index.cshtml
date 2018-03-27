@@ -72,40 +72,31 @@
                     <textarea name="note" id="note" class="form-control" data-ng-model="vm.model.note"></textarea>
                 </div>
                 <div class="form_header">
-                    <button type="button" class="btn btn-sm btn-primary pull-right" ngf-select accept=".pdf,.doc,.docx,.xls,.xlsx" ngf-multiple="true" data-ng-model="vm.model.newFiles">Add File</button>
+                    <button type="button" class="btn btn-sm btn-primary pull-right" ngf-select="vm.handlers.upload($files)" accept=".pdf,.doc,.docx,.xls,.xlsx" ngf-multiple="true">Add File</button>
                     <h3>Attachment</h3>
                 </div>
                 <div class="attachment_list">
-                    <div class="asset_link_list invoice_files" data-ng-show="vm.model.files && vm.model.files.length > 0">
+                    <div class="asset_link_list" data-ng-show="vm.model.files && vm.model.files.length > 0">
                         <div class="asset_link asset_link--alt" data-ng-repeat="file in vm.model.files">
                             <div class="asset_link__icon">
-                                <div class="asset_icon asset_icon--red" data-ng-bind="vm.handlers.getFileExtension(file.name)"></div>
+                                <div class="asset_icon asset_icon--red" data-ng-bind="vm.handlers.getFileExtension(file.name)" data-ng-click="vm.handlers.getFile(file)"></div>
                             </div>
                             <div class="asset_link__action">
-                                <button class="btn btn--icon _delete_asset" data-ng-click="vm.handlers.removeFile(file)"><i class="icon icon--delete"></i></button>
+                                <button class="btn btn--icon" data-ng-click="vm.handlers.deleteFile(file)"><i class="icon icon--delete"></i></button>
                             </div>
                             <div class="asset_link__info">
-                                <div class="asset_link__title" data-ng-bind="file.name"></div>
-                                <div class="asset_link__desc" data-ng-bind="vm.handlers.getFileSize(file.size)"></div>
-                            </div>
-                        </div>
-                        <div class="asset_link asset_link--alt" data-ng-repeat="file in vm.model.newFiles">
-                            <div class="asset_link__icon">
-                                <div class="asset_icon asset_icon--red" data-ng-bind="vm.handlers.getFileExtension(file.name)"></div>
-                            </div>
-                            <div class="asset_link__info">
-                                <div class="asset_link__title" data-ng-bind="file.name"></div>
+                                <div class="asset_link__title" data-ng-bind="file.name" data-ng-click="vm.handlers.getFile(file)"></div>
                                 <div class="asset_link__desc" data-ng-bind="vm.handlers.getFileSize(file.size)"></div>
                             </div>
                         </div>
                     </div>
-                    <div class="hint invoice_files_hint" data-ng-show="!vm.model.files || vm.model.files.length === 0">No file selected</div>
+                    <div class="hint" data-ng-show="!vm.model.files || vm.model.files.length === 0">No file selected</div>
                 </div>
                 <div class="sidebar_menu__footer">
                     <div class="form-group">
-                        <button class="btn btn-block create__button" name="button" type="submit" data-ng-click="vm.handlers.save()" data-ng-disabled="vm.form.blocked">Generate</button>
+                        <button class="btn btn-block" name="button" type="submit" data-ng-click="vm.handlers.save(false)" data-ng-disabled="vm.form.blocked">Generate</button>
                     </div>
-                    <button class="btn btn--flat btn-block" type="submit" name="button" data-ng-click="vm.handlers.draft()" data-ng-disabled="vm.form.blocked">Safe draft</button>
+                    <button class="btn btn--flat btn-block" type="submit" name="button" data-ng-click="vm.handlers.save(true)" data-ng-disabled="vm.form.blocked">Safe draft</button>
                     <button class="btn btn--flat btn-block btn_close_menu" type="button" name="button" data-ng-click="vm.handlers.close()">Cancel and close</button>
                 </div>
             </div>
@@ -131,12 +122,12 @@
                             <div class="row">
                                 <div class="col-md-8">
                                     <h1 class="page__title">Invoice #{{vm.model.number}}</h1>
-                                    <div class="invoice_header__link" data-ng-if="vm.model.allowPay">
+                                    <div class="invoice_header__link" data-ng-if="vm.form.allowPay">
                                         <a data-ng-href="{{vm.model.url}}" data-ng-bind="vm.model.url"></a>
                                         <button class="btn btn--icon _copy" type="button" data-copy="vm.model.url"><i class="icon icon--copy_thin"></i></button>
                                     </div>
                                 </div>
-                                <div class="col-md-4" data-ng-if="vm.model.allowPay">
+                                <div class="col-md-4" data-ng-if="vm.form.allowPay">
                                     <div class="invoice_info__qr">
                                         <img data-ng-src="https://chart.googleapis.com/chart?chs=220x220&chld=L|2&cht=qr&chl={{vm.model.url}}" alt="qr" width="130" height="130">
                                     </div>
@@ -147,11 +138,11 @@
                                     <div class="col-md-8">
                                         <div class="invoice_header__data" data-ng-bind="vm.model.dueDate.format('LL')"></div>
                                     </div>
-                                    <div class="col-md-2" data-ng-if="vm.handlers.canEdit()">
-                                        <button class="btn btn--flat btn--default btn-sm pull-right" type="button" data-ng-click="vm.handlers.edit()"><i class="icon icon--edit"></i> Edit invoice</button>
+                                    <div class="col-md-2 pull-right" data-ng-if="vm.form.allowDelete">
+                                        <button class="btn btn--flat btn--default btn-sm pull-right" type="button" data-ng-click="vm.handlers.remove()"><i class="icon icon--delete"></i> Delete</button>
                                     </div>
-                                    <div class="col-md-2" data-ng-if="vm.handlers.canRemove()">
-                                        <button class="btn btn--flat btn--default btn-sm pull-right" type="button" data-ng-click="vm.handlers.remove()"><i class="icon icon--delete"></i> Delete invoice</button>
+                                    <div class="col-md-2 pull-right" data-ng-if="vm.form.allowEdit">
+                                        <button class="btn btn--flat btn--default btn-sm pull-right" type="button" data-ng-click="vm.handlers.edit()"><i class="icon icon--edit"></i> Edit</button>
                                     </div>
                                 </div>
                             </div>
@@ -208,27 +199,51 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="form_header" data-ng-if="vm.model.files && vm.model.files.length > 0">
-                            <h3>Attachment</h3>
+                        <div data-ng-if="vm.form.allowEdit">
+                            <div class="form_header">
+                                <button type="button" class="btn btn-sm btn-primary pull-right" accept=".pdf,.doc,.docx,.xls,.xlsx" ngf-multiple="true" data-ngf-select="vm.handlers.upload($files)">Add File</button>
+                                <h3>Attachment</h3>
+                            </div>
+                            <div class="attachment_list" data-ng-show="vm.model.files && vm.model.files.length > 0">
+                                <div class="asset_link_list">
+                                    <div class="asset_link asset_link--alt" data-ng-repeat="file in vm.model.files">
+                                        <div class="asset_link__icon">
+                                            <div class="asset_icon asset_icon--red" data-ng-bind="vm.handlers.getFileExtension(file.name)" data-ng-click="vm.handlers.getFile(file)"></div>
+                                        </div>
+                                        <div class="asset_link__action">
+                                            <button class="btn btn--icon" data-ng-click="vm.handlers.deleteFile(file)"><i class="icon icon--delete"></i></button>
+                                        </div>
+                                        <div class="asset_link__info">
+                                            <div class="asset_link__title" data-ng-bind="file.name" data-ng-click="vm.handlers.getFile(file)"></div>
+                                            <div class="asset_link__desc" data-ng-bind="vm.handlers.getFileSize(file.size)"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="hint" data-ng-show="!vm.model.files || vm.model.files.length === 0">No files</div>
                         </div>
-                        <div class="attachment_list" data-ng-if="vm.model.files && vm.model.files.length > 0">
-                            <div class="asset_link_list">
-                                <div class="asset_link asset_link--alt" data-ng-repeat="file in vm.model.files">
-                                    <div class="asset_link__icon">
-                                        <div class="asset_icon asset_icon--red" data-ng-bind="vm.handlers.getFileExtension(file.name)"></div>
-                                    </div>
-                                    <div class="asset_link__action">
-                                        <button class="btn btn--icon _delete_asset" data-ng-click="vm.handlers.getFile(file)"><i class="icon icon--download"></i></button>
-                                    </div>
-                                    <div class="asset_link__info">
-                                        <div class="asset_link__title" data-ng-bind="file.name"></div>
-                                        <div class="asset_link__desc" data-ng-bind="vm.handlers.getFileSize(file.size)"></div>
+                        <div data-ng-if="!vm.form.allowEdit && vm.model.files && vm.model.files.length > 0">
+                            <div class="form_header">
+                                <h3>Attachment</h3>
+                            </div>
+                            <div class="attachment_list">
+                                <div class="asset_link_list">
+                                    <div class="asset_link asset_link--alt" data-ng-repeat="file in vm.model.files">
+                                        <div class="asset_link__icon">
+                                            <div class="asset_icon asset_icon--red" data-ng-bind="vm.handlers.getFileExtension(file.name)" data-ng-click="vm.handlers.getFile(file)"></div>
+                                        </div>
+                                        <div class="asset_link__action">
+                                            <button class="btn btn--icon" data-ng-click="vm.handlers.getFile(file)"><i class="icon icon--download"></i></button>
+                                        </div>
+                                        <div class="asset_link__info">
+                                            <div class="asset_link__title" data-ng-bind="file.name" data-ng-click="vm.handlers.getFile(file)"></div>
+                                            <div class="asset_link__desc" data-ng-bind="vm.handlers.getFileSize(file.size)"></div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
-
-                        <a href="@Model.BlockchainExplorerUrl" class="invoice_paid__bottom" data-ng-if="vm.model.status === 'Paid'">Blockchain Settlement</a>
+                        <a href="@Model.BlockchainExplorerUrl" data-ng-if="vm.model.status === 'Paid'">Blockchain Settlement</a>
                     </div>
                 </div>
             </div>

@@ -17,6 +17,7 @@
 
             exportToCsv: exportToCsv,
 
+            uploadFile: uploadFile,
             getFile: getFile,
             deleteFile: deleteFile,
 
@@ -63,7 +64,11 @@
         }
 
         // Files
-        
+
+        function uploadFile(invoiceId, files) {
+            return upload('files', { invoiceId: invoiceId }, files);
+        }
+
         function getFile(invoiceId, fileId) {
             $window.open(getUrl('files') + '/' + fileId + '?invoiceId=' + invoiceId);
         }
@@ -95,8 +100,8 @@
             return upload('invoices', model, files);
         }
 
-        function updateInvoice(model, files) {
-            return upload('invoices/update', model, files);
+        function updateInvoice(model) {
+            return put('invoices', model);
         }
 
         function deleteInvoice(invoiceId) {
@@ -142,6 +147,20 @@
                     } else {
                         deferred.reject(data.ErrorMessage);
                     }
+                })
+                .error(function (data, status, headers, config) {
+                    deferred.reject('Error: ' + status);
+                });
+
+            return deferred.promise;
+        }
+
+        function put(action, model) {
+            var deferred = $q.defer();
+
+            $http.put(getUrl(action), model)
+                .success(function (data, status, headers, config) {
+                    deferred.resolve(data);
                 })
                 .error(function (data, status, headers, config) {
                     deferred.reject('Error: ' + status);
