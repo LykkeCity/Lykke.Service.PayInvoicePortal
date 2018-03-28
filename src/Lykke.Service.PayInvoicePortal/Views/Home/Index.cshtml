@@ -29,7 +29,7 @@
                     <input id="clientName" type="text" require placeholder="" class="form-control" data-ng-model="vm.model.client" data-ng-class="{'error': vm.form.errors.client}">
                 </div>
                 <div class="form-group">
-                    <label class="control-label" for="email">Email</label>
+                    <label class="control-label" for="email">Client's Email</label>
                     <input id="email" type="email" require placeholder="" class="form-control" data-ng-model="vm.model.email" data-ng-class="{'error': vm.form.errors.email}">
                 </div>
                 <div class="row">
@@ -64,7 +64,7 @@
                     <textarea name="note" id="note" class="form-control" data-ng-model="vm.model.note"></textarea>
                 </div>
                 <div class="form_header">
-                    <button type="button" class="btn btn-sm btn-primary pull-right" ngf-select accept=".pdf,.doc,.docx,.xls,.xlsx" ngf-multiple="true" data-ng-model="vm.model.files">Add File</button>
+                    <button type="button" class="btn btn-sm btn-primary pull-right" ngf-select accept=".jpg,.jpeg,.png,.pdf,.doc,.docx,.xls,.xlsx,.rtf" ngf-multiple="true" data-ng-model="vm.model.files">Add File</button>
                     <h3>Attachment</h3>
                 </div>
                 <div class="attachment_list">
@@ -128,7 +128,7 @@
                 </div>
                 <div class="asset_link">
                     <div class="asset_link__info">
-                        <div class="asset_link__title">Email</div>
+                        <div class="asset_link__title">Client's Email</div>
                         <div class="asset_link__desc">{{vm.model.email}}</div>
                     </div>
                 </div>
@@ -170,15 +170,17 @@
                 <div class="asset_link">
                     <div class="asset_link__info">
                         <div class="asset_link__title">Share</div>
-                        <div class="asset_link__desc">Send account details to email</div>
+                        <div class="asset_link__desc">Send invoice to</div>
                         <div class="block_subscribe">
                             <div class="form" id="share-form">
                                 <div class="form-group">
                                     <div class="input-group">
                                         <i class="icon icon--email"></i>
-                                        <input type="email" placeholder="E-mail address" class="form-control" pattern="[a-z0-9._%+-]+@@[a-z0-9.-]+\.[a-z]{2,3}$" title="Wrong email format">
+                                        <input type="text" placeholder="E-mail address" class="form-control" data-ng-model="vm.share.email" data-ng-class="{'error': vm.form.errors.email}">
                                     </div>
-                                    <button class="btn btn-sm btn--primary btn--circle" type="button" data-ng-click="vm.handlers.share(window.location.origin + '/invoice/' + vm.model.id)"><i class="icon icon--arrow-right-alt"></i></button>
+                                    <button class="btn btn-sm btn--circle" type="button" data-ng-click="vm.handlers.share()" data-ng-class="{'btn--green': vm.share.sent, 'btn--primary': !vm.share.sent}"  data-ng-disabled="vm.share.blocked">
+                                        <i class="icon icon--arrow-right-alt" data-ng-class="{'icon--check': vm.share.sent, 'icon--arrow-right-alt': !vm.share.sent}"></i>
+                                    </button>
                                 </div>
                             </div>
                         </div>

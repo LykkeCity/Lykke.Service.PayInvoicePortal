@@ -37,7 +37,7 @@
                     <input id="clientName" type="text" require placeholder="" class="form-control" data-ng-model="vm.model.client" data-ng-class="{'error': vm.form.errors.client}">
                 </div>
                 <div class="form-group">
-                    <label class="control-label" for="email">Email</label>
+                    <label class="control-label" for="email">Client's Email</label>
                     <input id="email" type="email" require placeholder="" class="form-control" data-ng-model="vm.model.email" data-ng-class="{'error': vm.form.errors.email}">
                 </div>
                 <div class="row">
@@ -72,7 +72,7 @@
                     <textarea name="note" id="note" class="form-control" data-ng-model="vm.model.note"></textarea>
                 </div>
                 <div class="form_header">
-                    <button type="button" class="btn btn-sm btn-primary pull-right" ngf-select="vm.handlers.upload($files)" accept=".pdf,.doc,.docx,.xls,.xlsx" ngf-multiple="true">Add File</button>
+                    <button type="button" class="btn btn-sm btn-primary pull-right" ngf-select="vm.handlers.upload($files)" accept=".jpg,.jpeg,.png,.pdf,.doc,.docx,.xls,.xlsx,.rtf" ngf-multiple="true">Add File</button>
                     <h3>Attachment</h3>
                 </div>
                 <div class="attachment_list">
@@ -158,7 +158,7 @@
                                     </div>
                                     <div class="asset_link">
                                         <div class="asset_link__info">
-                                            <div class="asset_link__title">Email</div>
+                                            <div class="asset_link__title">Client's Email</div>
                                             <div class="asset_link__desc" data-ng-bind="vm.model.email"></div>
                                         </div>
                                     </div>
@@ -201,7 +201,7 @@
                         </div>
                         <div data-ng-if="vm.form.allowEdit">
                             <div class="form_header">
-                                <button type="button" class="btn btn-sm btn-primary pull-right" accept=".pdf,.doc,.docx,.xls,.xlsx" ngf-multiple="true" data-ngf-select="vm.handlers.upload($files)">Add File</button>
+                                <button type="button" class="btn btn-sm btn-primary pull-right" accept=".jpg,.jpeg,.png,.pdf,.doc,.docx,.xls,.xlsx,.rtf" ngf-multiple="true" data-ngf-select="vm.handlers.upload($files)">Add File</button>
                                 <h3>Attachment</h3>
                             </div>
                             <div class="attachment_list" data-ng-show="vm.model.files && vm.model.files.length > 0">

@@ -312,9 +312,6 @@
     <Content Update="wwwroot\img\user_default.svg">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Update="wwwroot\src\js\invoice.js">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
     <Content Update="wwwroot\vendors\html5shiv.js">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

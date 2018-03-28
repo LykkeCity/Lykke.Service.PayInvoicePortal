@@ -11,6 +11,8 @@
         var minDate = '0001-01-01T00:00:00';
 
         var service = {
+            sendEmail: sendEmail,
+
             getAssets: getAssets,
 
             getBalance: getBalance,
@@ -32,6 +34,12 @@
         };
 
         return service;
+
+        // Email
+
+        function sendEmail(model) {
+            return post('email', model);
+        }
 
         // Assets
 
@@ -142,11 +150,7 @@
 
             $http.post(getUrl(action), model)
                 .success(function (data, status, headers, config) {
-                    if (data.HasErrors === false) {
-                        deferred.resolve(data.Value);
-                    } else {
-                        deferred.reject(data.ErrorMessage);
-                    }
+                    deferred.resolve(data);
                 })
                 .error(function (data, status, headers, config) {
                     deferred.reject('Error: ' + status);

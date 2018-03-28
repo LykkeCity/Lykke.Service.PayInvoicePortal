@@ -42,7 +42,7 @@
             if (!extension)
                 return false;
 
-            return ['pdf', 'doc', 'docx', 'xls', 'xlsx'].indexOf(extension) >= 0;
+            return ['jpg', 'jpeg', 'png','pdf', 'doc', 'docx', 'xls', 'xlsx', 'rtf'].indexOf(extension.toLowerCase()) >= 0;
         }
     }
 })();
