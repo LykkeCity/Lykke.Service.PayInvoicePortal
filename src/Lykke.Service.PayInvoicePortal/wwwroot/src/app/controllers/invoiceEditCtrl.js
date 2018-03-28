@@ -158,7 +158,7 @@
                     email: vm.model.email,
                     amount: vm.model.amount,
                     settlementAsset: vm.model.settlementAsset,
-                    dueDate: vm.model.dueDate.toDate(),
+                    dueDate: vm.model.dueDate.endOf('day').toDate(),
                     note: vm.model.note
                 };
 

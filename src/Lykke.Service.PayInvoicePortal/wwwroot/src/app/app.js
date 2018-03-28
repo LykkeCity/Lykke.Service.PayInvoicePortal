@@ -9,7 +9,7 @@
         $compileProvider.debugInfoEnabled(false);
 
         datetimepickerProvider.setOptions({
-            format: 'DD.MM.YYYY',
+            format: 'l',
             minDate: moment().startOf("day"),
             icons: {
                 time: 'icon--clock',

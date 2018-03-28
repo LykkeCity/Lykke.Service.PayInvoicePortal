@@ -50,8 +50,8 @@
                     <div class="col-sm-4">
                         <div class="form-group">
                             <label class="control-label" for="dueDate">Pay due date</label>
-                            <div class="input-group date datetimepicker">
-                                <input id="dueDate" type="text" require placeholder="" class="form-control datetimepicker" data-ng-model="vm.model.dueDate" datetimepicker data-ng-class="{'error': vm.form.errors.dueDate}">
+                            <div class="input-group date datetimepicker" datetimepicker data-ng-model="vm.model.dueDate">
+                                <input id="dueDate" type="text" require placeholder="" class="form-control datetimepicker" data-ng-class="{'error': vm.form.errors.dueDate}">
                                 <span class="input-group-addon">
                                     <span class="icon icon--cal"></span>
                                 </span>
