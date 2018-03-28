@@ -134,43 +134,38 @@
         function updateHeader() {
             switch (vm.model.status) {
                 case 'InProgress':
-                    vm.header.title = 'Paid';
+                    vm.header.title = 'InProgress';
                     vm.header.message = 'Payment in progress';
                     vm.header.icon = 'icon--check_circle';
                     vm.header.color = 'alert--green';
                     break;
                 case 'Paid':
+                case 'Settled':
+                case 'SettlementInProgress':
                     vm.header.title = 'Paid';
                     vm.header.message = 'Invoice has been paid on ' + vm.model.paidDate.format('l');
                     vm.header.icon = 'icon--check_circle';
                     vm.header.color = 'alert--green';
                     break;
-                case 'SettlementInProgress':
-                    vm.header.title = 'Settlement';
-                    vm.header.message = 'Settlement in progress';
-                    vm.header.icon = '';
-                    vm.header.color = 'alert--green';
-                    break;
-                case 'Settled':
-                    vm.header.title = 'Settlement';
-                    vm.header.message = 'Invoice has been settled';
-                    vm.header.icon = '';
-                    vm.header.color = 'alert--green';
-                    break;
                 case 'RefundInProgress':
-                    vm.header.title = 'Refund';
+                    vm.header.title = 'InProgress';
                     vm.header.message = 'Refund in progress';
                     vm.header.icon = '';
                     vm.header.color = 'alert--violet';
                     break;
                 case 'Refunded':
                     vm.header.title = 'Refund';
-                    vm.header.message = 'Invoice has been refunded';
+                    vm.header.message =
+                        vm.model.amount.toLocaleString(undefined,
+                            { minimumFractionDigits: vm.model.settlementAssetAccuracy }) +
+                        ' ' +
+                        vm.model.paymentAsset +
+                        ' have been refunded';
                     vm.header.icon = '';
                     vm.header.color = 'alert--violet';
                     break;
                 case 'Underpaid':
-                    vm.header.title = 'Error';
+                    vm.header.title = 'Underpaid';
                     vm.header.message =
                         vm.model.paidAmount.toLocaleString(undefined,
                             { minimumFractionDigits: vm.model.paymentAssetAccuracy }) +
@@ -182,7 +177,7 @@
                     vm.header.color = 'alert--violet';
                     break;
                 case 'Overpaid':
-                    vm.header.title = 'Error';
+                    vm.header.title = 'Overpaid';
                     vm.header.message =
                         vm.model.paidAmount.toLocaleString(undefined,
                             { minimumFractionDigits: vm.model.paymentAssetAccuracy }) +
@@ -194,7 +189,7 @@
                     vm.header.color = 'alert--violet';
                     break;
                 case 'LatePaid':
-                    vm.header.title = 'Error';
+                    vm.header.title = 'LatePaid';
                     vm.header.message =
                         vm.model.paidAmount.toLocaleString(undefined,
                             { minimumFractionDigits: vm.model.paymentAssetAccuracy }) +
@@ -202,31 +197,31 @@
                         vm.model.paymentAsset +
                         ' received on ' +
                         vm.model.paidDate.format('l');
-                    vm.header.icon = '';
-                    vm.header.color = 'alert--violet';
+                    vm.header.icon = 'icon--warning_icn';
+                    vm.header.color = 'alert--red';
                     break;
                 case 'NotConfirmed':
                     vm.header.title = 'Error';
                     vm.header.message = 'Transfer hasn\'t been confirmed';
-                    vm.header.icon = '';
+                    vm.header.icon = 'icon--warning_icn';
                     vm.header.color = 'alert--red';
                     break;
                 case 'InvalidAddress':
                     vm.header.title = 'Error';
-                    vm.header.message = 'Invalid address';
-                    vm.header.icon = '';
+                    vm.header.message = 'Invalid address has been provided';
+                    vm.header.icon = 'icon--warning_icn';
                     vm.header.color = 'alert--red';
                     break;
                 case 'InternalError':
                     vm.header.title = 'Error';
                     vm.header.message = 'Internal error occurred';
-                    vm.header.icon = '';
+                    vm.header.icon = 'icon--warning_icn';
                     vm.header.color = 'alert--red';
                     break;
                 default:
                     vm.header.title = 'Error';
                     vm.header.message = 'Unknown status';
-                    vm.header.icon = '';
+                    vm.header.icon = 'icon--warning_icn';
                     vm.header.color = 'alert--red';
                     break;
             }

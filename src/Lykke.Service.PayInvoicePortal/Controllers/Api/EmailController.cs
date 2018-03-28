@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Common.Log;
+using Lykke.Service.EmailPartnerRouter.Client;
+using Lykke.Service.EmailPartnerRouter.Contracts;
 using Lykke.Service.PayInternal.Client;
 using Lykke.Service.PayInternal.Client.Models.Merchant;
 using Lykke.Service.PayInvoicePortal.DataService;
@@ -18,15 +20,18 @@ namespace Lykke.Service.PayInvoicePortal.Controllers.Api
     {
         private readonly InvoiceDataService _invoiceDataService;
         private readonly IPayInternalClient _payInternalClient;
+        private readonly IEmailPartnerRouterClient _emailPartnerRouterClient;
         private readonly ILog _log;
 
         public EmailController(
             InvoiceDataService invoiceDataService,
             IPayInternalClient payInternalClient,
+            IEmailPartnerRouterClient emailPartnerRouterClient,
             ILog log)
         {
             _invoiceDataService = invoiceDataService;
             _payInternalClient = payInternalClient;
+            _emailPartnerRouterClient = emailPartnerRouterClient;
             _log = log;
         }
 
@@ -34,6 +39,7 @@ namespace Lykke.Service.PayInvoicePortal.Controllers.Api
         public async Task<IActionResult> SendAsync([FromBody] EmailSendModel model)
         {
             InvoiceModel invoice = await _invoiceDataService.GetById(model.InvoiceId);
+
             MerchantModel merchant = await _payInternalClient.GetMerchantByIdAsync(MerchantId);
 
             var payload = new Dictionary<string, string>
@@ -49,7 +55,13 @@ namespace Lykke.Service.PayInvoicePortal.Controllers.Api
                 {"Year", DateTime.Today.Year.ToString()}
             };
 
-            await Task.Delay(2000);
+            await _emailPartnerRouterClient.Send(new SendEmailCommand
+            {
+                EmailAddresses = model.Emails.ToArray(),
+                Template = "PaymentRequestedTemplate",
+                Payload = payload
+            });
+
             return NoContent();
         }
     }

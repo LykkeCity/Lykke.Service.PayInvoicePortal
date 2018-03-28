@@ -15,5 +15,6 @@ namespace Lykke.Service.PayInvoicePortal.Settings
         public PayAuthServiceClientSettings PayAuthServiceClient { get; set; }
         public AssetsServiceClientSettings AssetsServiceClient { get; set; }
         public PayInternalServiceClientSettings PayInternalServiceClient { get; set; }
+        public EmailPartnerRouterServiceClientSettings EmailPartnerRouterServiceClient { get; set; }
     }
 }

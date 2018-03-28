@@ -102,7 +102,8 @@
                                         <span class="label label--text label--white" data-ng-bind="vm.header.title"></span>
                                     </td>
                                     <td class="text-right">
-                                        <i class="icon hidden-xs" data-ng-show="vm.header.icon" data-ng-class="vm.header.icon"></i>
+                                        <i data-ng-if="vm.header.icon !== 'icon--warning_icn'" class="icon hidden-xs" data-ng-show="vm.header.icon" data-ng-class="vm.header.icon"></i>
+                                        <i data-ng-if="vm.header.icon === 'icon--warning_icn'" class="icon--warning_icn hidden-xs"><span class="path1"></span><span class="path2"></span><span class="path3"></span></i>
                                         {{vm.header.message}}
                                     </td>
                                 </tr>

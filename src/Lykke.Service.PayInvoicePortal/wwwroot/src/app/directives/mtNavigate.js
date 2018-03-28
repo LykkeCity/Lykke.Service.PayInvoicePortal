@@ -12,9 +12,14 @@
                 action: '&mtNavigate'
             },
             link: function (scope, element, attributes) {
-                element.attr('style', 'cursor: pointer;');
                 element.bind('click', function (event) {
-                    if (event.target.nodeName === 'TD' && $(event.target).find(':input').length === 0) {
+                    var target = event.target;
+
+                    while (target.nodeName !== 'TD') {
+                        target = target.parentElement;
+                    }
+
+                    if ($(target).find(':button').length === 0) {
                         scope.action();
                     }
                 });

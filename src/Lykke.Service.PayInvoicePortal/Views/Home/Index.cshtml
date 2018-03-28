@@ -269,20 +269,20 @@
                             </tr>
                             <tbody>
                                 <tr data-ng-repeat="invoice in vm.model.invoices" data-mt-navigate="vm.handlers.openDetails(invoice)">
-                                    <td class="_number">
+                                    <td class="_number" style="cursor: pointer;">
                                         <span class="_title">#{{invoice.number}}</span>
                                         <span class="_hint">{{invoice.createdDate.format('l')}}</span>
                                     </td>
-                                    <td class="_client">
+                                    <td class="_client" style="cursor: pointer;">
                                         <span class="_title">{{invoice.clientName}}</span>
                                         <span class="_hint">{{invoice.clientEmail}}</span>
                                     </td>
-                                    <td class="_amount">{{invoice.amount | currency : '' : invoice.settlementAssetAccuracy}}</td>
-                                    <td class="_currency">{{invoice.settlementAsset}}</td>
-                                    <td class="_status">
+                                    <td class="_amount" style="cursor: pointer;">{{invoice.amount | currency : '' : invoice.settlementAssetAccuracy}}</td>
+                                    <td class="_currency" style="cursor: pointer;">{{invoice.settlementAsset}}</td>
+                                    <td class="_status" style="cursor: pointer;">
                                         <span class="label" data-ng-class="vm.handlers.getStatusRowCss(invoice.status)">{{invoice.status}}</span>
                                     </td>
-                                    <td class="_pay">{{invoice.dueDate.format('l')}}</td>
+                                    <td class="_pay" style="cursor: pointer;">{{invoice.dueDate.format('l')}}</td>
                                     <td class="_action">
                                         <button class="btn btn--icon delete" data-ng-class="{'btn--disabled': !vm.handlers.canRemove(invoice)}" data-ng-disabled="!vm.handlers.canRemove(invoice)" data-ng-click="vm.handlers.remove(invoice)" type="button">
                                             <i class="icon icon--delete"></i>
