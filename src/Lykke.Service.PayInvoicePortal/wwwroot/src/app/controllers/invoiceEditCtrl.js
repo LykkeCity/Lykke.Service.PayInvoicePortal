@@ -187,7 +187,7 @@
             if (!valid) {
                 $.confirm({
                     title: 'Invalid file',
-                    content: 'One or more files are is invalid, allowed extensions are: .pdf; .doc; .docx; .xls; .xlsx.',
+                    content: fileSvc.getError(),
                     icon: 'fa fa-question-circle',
                     animation: 'scale',
                     closeAnimation: 'scale',

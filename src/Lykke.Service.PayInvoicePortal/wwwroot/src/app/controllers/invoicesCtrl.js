@@ -5,9 +5,9 @@
         .module('app')
         .controller('invoicesCtrl', invoicesCtrl);
 
-    invoicesCtrl.$inject = ['$scope', '$window', '$rootScope', '$interval', 'apiSvc', 'statusSvc'];
+    invoicesCtrl.$inject = ['$scope', '$window', '$rootScope', '$interval', '$log', 'apiSvc', 'statusSvc'];
 
-    function invoicesCtrl($scope, $window, $rootScope, $interval, apiSvc, statusSvc) {
+    function invoicesCtrl($scope, $window, $rootScope, $interval, $log, apiSvc, statusSvc) {
         var vm = this;
 
         vm.intervals = {
@@ -160,7 +160,7 @@
                         }
                     },
                     function(error) {
-                        alert(error);
+                        $log.error(error);
                     });
         }
 
@@ -248,7 +248,7 @@
                                         loadInvocies();
                                     },
                                     function(error) {
-                                        alert(error);
+                                        $log.error(error);
                                     });
                         }
                     },

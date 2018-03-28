@@ -64,7 +64,7 @@
                     <textarea name="note" id="note" class="form-control" data-ng-model="vm.model.note"></textarea>
                 </div>
                 <div class="form_header">
-                    <button type="button" class="btn btn-sm btn-primary pull-right" ngf-select accept=".jpg,.jpeg,.png,.pdf,.doc,.docx,.xls,.xlsx,.rtf" ngf-multiple="true" data-ng-model="vm.model.files">Add File</button>
+                    <button type="button" class="btn btn-sm btn-primary pull-right" ngf-select="vm.handlers.upload($files)" accept=".jpg,.jpeg,.png,.pdf,.doc,.docx,.xls,.xlsx,.rtf" ngf-multiple="true">Add File</button>
                     <h3>Attachment</h3>
                 </div>
                 <div class="attachment_list">

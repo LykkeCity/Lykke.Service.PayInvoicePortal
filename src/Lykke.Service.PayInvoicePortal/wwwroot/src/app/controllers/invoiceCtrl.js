@@ -35,7 +35,8 @@
             save: save,
             draft: draft,
             getFileExtension: fileSvc.getExtension,
-            getFileSize: fileSvc.getSize
+            getFileSize: fileSvc.getSize,
+            upload: upload
         };
 
         $scope.$on('createInvoice', function (evt, data) {
@@ -177,6 +178,39 @@
                         $log.error(error);
                         vm.form.blocked = false;
                     });
+        }
+
+        function upload(files) {
+            vm.model.files = [];
+
+            if (!files || files.length === 0)
+                return;
+
+            var valid = true;
+            angular.forEach(files, function (file, key) {
+                valid = valid && fileSvc.validate(file);
+            });
+
+            if (!valid) {
+                $.confirm({
+                    title: 'Invalid file',
+                    content: fileSvc.getError(),
+                    icon: 'fa fa-question-circle',
+                    animation: 'scale',
+                    closeAnimation: 'scale',
+                    opacity: 0.5,
+                    buttons: {
+                        'ok': {
+                            text: 'OK',
+                            btnClass: 'btn-blue'
+                        }
+                    }
+                });
+
+                return;
+            }
+
+            vm.model.files = files;
         }
     }
 })();

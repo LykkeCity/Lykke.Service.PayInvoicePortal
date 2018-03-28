@@ -11,7 +11,8 @@
         var service = {
             getExtension: getExtension,
             getSize: getSize,
-            validate: validate
+            validate: validate,
+            getError: getError
         };
 
         return service;
@@ -37,12 +38,19 @@
             if (!file)
                 return false;
 
+            if (file.length > 5242880)
+                return false;
+
             var extension = getExtension(file.name);
 
             if (!extension)
                 return false;
 
             return ['jpg', 'jpeg', 'png','pdf', 'doc', 'docx', 'xls', 'xlsx', 'rtf'].indexOf(extension.toLowerCase()) >= 0;
+        }
+
+        function getError() {
+            return 'One or more files are invalid. Please check the requirements: <ul><li>• the maximum file size is 5 MB</li><li>• allowed types: .jpg; .jpeg; .pdf; .doc; .docx; .xls; .xlsx.; .rtf</li></ul>';
         }
     }
 })();
