@@ -10,6 +10,10 @@
     function invoiceCtrl($scope, $window, $log, $rootScope, $interval, apiSvc, statusSvc, fileSvc) {
         var vm = this;
 
+        vm.events = {
+            createInvoice: undefined
+        };
+
         vm.form = {
             open: false,
             submited: false,
@@ -40,13 +44,18 @@
             deleteFile: deleteFile
         };
 
-        $scope.$on('createInvoice', function (evt, data) {
-            vm.handlers.openNewForm(data);
-        });
-
         activate();
         
         function activate() {
+            $scope.$on('$destroy',
+                function () {
+                    destroy();
+                });
+
+            vm.events.createInvoice = $scope.$on('createInvoice', function (evt, data) {
+                vm.handlers.openNewForm(data);
+            });
+
             apiSvc.getAssets()
                 .then(
                     function (data) {
@@ -58,6 +67,11 @@
                     function (error) {
                         $log.error(error);
                     });
+        }
+
+        function destroy() {
+            if (vm.events.createInvoice)
+                vm.events.createInvoice();
         }
 
         function openNewForm(data) {

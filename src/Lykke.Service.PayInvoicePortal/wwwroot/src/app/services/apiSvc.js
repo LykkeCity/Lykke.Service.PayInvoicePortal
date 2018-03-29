@@ -11,6 +11,8 @@
         var minDate = '0001-01-01T00:00:00';
 
         var service = {
+            subscribe: subscribe,
+
             sendEmail: sendEmail,
 
             getAssets: getAssets,
@@ -34,6 +36,12 @@
         };
 
         return service;
+
+        // Subscribe
+
+        function subscribe(model) {
+            return post('subscriber', model);
+        }
 
         // Email
 

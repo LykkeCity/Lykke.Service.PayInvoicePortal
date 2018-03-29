@@ -1,19 +1,23 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.26730.10
+VisualStudioVersion = 15.0.27130.2024
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lykke.Service.PayInvoicePortal", "src\Lykke.Service.PayInvoicePortal\Lykke.Service.PayInvoicePortal.csproj", "{BD89CF13-5DBE-44ED-B222-C7876CF78D88}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lykke.Service.PayInvoicePortal.Services", "src\Lykke.Service.PayInvoicePortal.Services\Lykke.Service.PayInvoicePortal.Services.csproj", "{BAB81555-0CF0-4D4C-B196-20AA512C8E0F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lykke.Service.PayInvoicePortal.Services", "src\Lykke.Service.PayInvoicePortal.Services\Lykke.Service.PayInvoicePortal.Services.csproj", "{BAB81555-0CF0-4D4C-B196-20AA512C8E0F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lykke.Service.PayInvoicePortal.Core", "src\Lykke.Service.PayInvoicePortal.Core\Lykke.Service.PayInvoicePortal.Core.csproj", "{6D89960D-6A5F-4BFC-8043-747ABC04EDEB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lykke.Service.PayInvoicePortal.Core", "src\Lykke.Service.PayInvoicePortal.Core\Lykke.Service.PayInvoicePortal.Core.csproj", "{6D89960D-6A5F-4BFC-8043-747ABC04EDEB}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "1. Core", "1. Core", "{53A96691-E7B7-4F4C-AA48-76752322F9F8}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "3. Tests", "3. Tests", "{034B9378-E9A2-4EC5-B90C-6C89AED34ADC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lykke.Service.PayInvoicePortal.Tests", "tests\Lykke.Service.PayInvoicePortal.Tests\Lykke.Service.PayInvoicePortal.Tests.csproj", "{0F6F5A4A-9AD8-4E3D-B4F2-ABD985ED34D8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lykke.Service.PayInvoicePortal.Tests", "tests\Lykke.Service.PayInvoicePortal.Tests\Lykke.Service.PayInvoicePortal.Tests.csproj", "{0F6F5A4A-9AD8-4E3D-B4F2-ABD985ED34D8}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "2. Repositories", "2. Repositories", "{8F82FBD3-ACDE-4336-B8DD-327512D1124A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lykke.Service.PayInvoicePortal.Repositories", "src\Lykke.Service.PayInvoicePortal.Repositories\Lykke.Service.PayInvoicePortal.Repositories.csproj", "{89C34484-D638-4FF8-BF03-581558558631}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -37,16 +41,21 @@ Global
 		{0F6F5A4A-9AD8-4E3D-B4F2-ABD985ED34D8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0F6F5A4A-9AD8-4E3D-B4F2-ABD985ED34D8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0F6F5A4A-9AD8-4E3D-B4F2-ABD985ED34D8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{89C34484-D638-4FF8-BF03-581558558631}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{89C34484-D638-4FF8-BF03-581558558631}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{89C34484-D638-4FF8-BF03-581558558631}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{89C34484-D638-4FF8-BF03-581558558631}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{BAB81555-0CF0-4D4C-B196-20AA512C8E0F} = {53A96691-E7B7-4F4C-AA48-76752322F9F8}
+		{6D89960D-6A5F-4BFC-8043-747ABC04EDEB} = {53A96691-E7B7-4F4C-AA48-76752322F9F8}
+		{0F6F5A4A-9AD8-4E3D-B4F2-ABD985ED34D8} = {034B9378-E9A2-4EC5-B90C-6C89AED34ADC}
+		{89C34484-D638-4FF8-BF03-581558558631} = {8F82FBD3-ACDE-4336-B8DD-327512D1124A}
+	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {6CDC1E48-DE60-49E4-BF37-D315BB699CFC}
-	EndGlobalSection
-	GlobalSection(NestedProjects) = preSolution
-		{6D89960D-6A5F-4BFC-8043-747ABC04EDEB} = {53A96691-E7B7-4F4C-AA48-76752322F9F8}
-		{BAB81555-0CF0-4D4C-B196-20AA512C8E0F} = {53A96691-E7B7-4F4C-AA48-76752322F9F8}
-		{0F6F5A4A-9AD8-4E3D-B4F2-ABD985ED34D8} = {034B9378-E9A2-4EC5-B90C-6C89AED34ADC}
 	EndGlobalSection
 EndGlobal

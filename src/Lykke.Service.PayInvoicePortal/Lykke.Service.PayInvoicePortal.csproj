@@ -328,6 +328,7 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Lykke.Service.PayInvoicePortal.Core\Lykke.Service.PayInvoicePortal.Core.csproj" />
+    <ProjectReference Include="..\Lykke.Service.PayInvoicePortal.Repositories\Lykke.Service.PayInvoicePortal.Repositories.csproj" />
     <ProjectReference Include="..\Lykke.Service.PayInvoicePortal.Services\Lykke.Service.PayInvoicePortal.Services.csproj" />
   </ItemGroup>
 	<Target Name="PrepublishScript" BeforeTargets="PrepareForPublish">

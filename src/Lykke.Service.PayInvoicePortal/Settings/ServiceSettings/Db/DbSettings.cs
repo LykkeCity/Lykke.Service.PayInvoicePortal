@@ -2,6 +2,7 @@
 {
     public class DbSettings
     {
+        public string SubscriptionConnectionString { get; set; }
         public string LogsConnectionString { get; set; }
     }
 }

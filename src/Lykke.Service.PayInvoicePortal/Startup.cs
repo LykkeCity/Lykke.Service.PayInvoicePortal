@@ -73,7 +73,9 @@ namespace Lykke.Service.PayInvoicePortal
                 Log = CreateLogWithSlack(services, appSettings);
                 BlockchainExplorerUrl = appSettings.CurrentValue.PayInvoicePortal.BlockchainExplorerUrl;
                 OrderLiveTime = appSettings.CurrentValue.PayInvoicePortal.OrderLiveTime;
-                
+
+                builder.RegisterModule(new Repositories.AutofacModule(
+                    appSettings.Nested(o => o.PayInvoicePortal.Db.SubscriptionConnectionString), Log));
                 builder.RegisterModule(new Services.AutofacModule());
                 builder.RegisterModule(new AutofacModule(appSettings, services, Log));
                 builder.Populate(services);

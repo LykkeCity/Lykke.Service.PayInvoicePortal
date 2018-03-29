@@ -10,6 +10,10 @@
     function invoiceInfoCtrl($scope, $window, $log, $rootScope, apiSvc, statusSvc, fileSvc) {
         var vm = this;
 
+        vm.events = {
+            invoiceGenerated: undefined
+        };
+
         vm.form = {
             open: false,
             submited: false,
@@ -43,9 +47,23 @@
             share: share
         };
 
-        $scope.$on('invoiceGenerated', function (evt, data) {
-            vm.handlers.openForm(data);
-        });
+        activate();
+
+        function activate() {
+            $scope.$on('$destroy',
+                function() {
+                    destroy();
+                });
+
+            vm.events.invoiceGenerated = $scope.$on('invoiceGenerated', function (evt, data) {
+                vm.handlers.openForm(data);
+            });
+        }
+
+        function destroy() {
+            if (vm.events.invoiceGenerated)
+                vm.events.invoiceGenerated();
+        }
 
         function close() {
             if (vm.form.open) {
@@ -86,7 +104,7 @@
             } else {
                 var emails = vm.share.email.split(',');
 
-                var exp = /[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,3}$/i;
+                var exp = /[A-z0-9._%+-]+@[A-z0-9.-]+\.[A-z]{2,3}$/i;
 
                 var valid = true;
                 angular.forEach(emails, function (email, key) {

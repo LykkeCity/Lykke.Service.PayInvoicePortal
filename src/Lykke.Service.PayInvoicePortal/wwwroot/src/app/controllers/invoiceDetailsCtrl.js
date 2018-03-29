@@ -10,6 +10,10 @@
     function invoiceDetailsCtrl($scope, $window, $log, $rootScope, apiSvc, statusSvc, fileSvc) {
         var vm = this;
 
+        vm.events = {
+            invoiceDraftUpdated: undefined
+        };
+
         vm.form = {
             allowDelete: false,
             allowEdit: false,
@@ -47,9 +51,19 @@
         activate();
 
         function activate() {
-            $scope.$on('invoiceDraftUpdated', function (evt, data) {
+            $scope.$on('$destroy',
+                function () {
+                    destroy();
+                });
+
+            vm.events.invoiceDraftUpdated = $scope.$on('invoiceDraftUpdated', function (evt, data) {
                 update();
             });
+        }
+
+        function destroy() {
+            if (vm.events.invoiceDraftUpdated)
+                vm.events.invoiceDraftUpdated();
         }
 
         function init(data) {

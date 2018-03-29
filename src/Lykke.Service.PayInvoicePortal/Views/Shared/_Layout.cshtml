@@ -194,17 +194,20 @@
                                 </a>
                             </div>
                         </div>
-                        <div class="block_subscribe">
+                        <div class="block_subscribe" data-ng-controller="subscriptionCtrl as vm">
                             <div class="h5 block_subscribe__title">Newsletter</div>
                             <p class="hint">Get our latest news right in your mailbox</p>
-                            <form class="form" id="subscribe-form">
+                            <form class="form" id="subscribe_form">
                                 <div class="form-group">
                                     <div class="input-group">
                                         <i class="icon icon--email"></i>
-                                        <input type="email" placeholder="E-mail address" id="subscribe-email" class="form-control" pattern="[A-z0-9._%+-]+@@[A-z0-9.-]+\.[a-z]{2,3}$" title="Wrong email format">
+                                        <input type="email" placeholder="E-mail address" required id="subscribe-email" class="form-control" data-ng-model="vm.model.email">
                                     </div>
-                                    <div id="subscribe-message" class="hint" style="display: none"></div>
-                                    <button class="btn btn-sm btn--primary btn--circle" type="button" id="subscribe-button"><i class="icon icon--arrow-right-alt"></i></button>
+                                    <div data-ng-if="vm.model.error" class="hint" style="color: #a94442;" data-ng-bind="vm.model.error"></div>
+                                    <div data-ng-if="vm.model.sent" class="hint" style="color: #3c763d;">Thank you for signing up for the newsletter</div>
+                                    <button class="btn btn-sm btn--primary btn--circle" type="submit" id="subscribe-button" data-ng-click="vm.handlers.subscribe()" data-ng-disabled="vm.model.blocked">
+                                        <i class="icon icon--arrow-right-alt"></i>
+                                    </button>
                                 </div>
                             </form>
                         </div>

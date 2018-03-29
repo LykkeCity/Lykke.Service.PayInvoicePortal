@@ -41,12 +41,22 @@
             deleteFile: deleteFile
         };
 
+        vm.events = {
+            invoiceDraftEdit: undefined
+        };
+
         activate();
 
         function activate() {
-            $scope.$on('invoiceDraftEdit', function (evt, data) {
-                open(data);
-            });
+            $scope.$on('$destroy',
+                function () {
+                    destroy();
+                });
+
+            vm.events.invoiceDraftEdit = $scope.$on('invoiceDraftEdit',
+                function(evt, data) {
+                    open(data);
+                });
 
             apiSvc.getAssets()
                 .then(
@@ -59,6 +69,11 @@
                 function (error) {
                     $log.error(error);
                 });
+        }
+
+        function destroy() {
+            if (vm.events.invoiceDraftEdit)
+                vm.events.invoiceDraftEdit();
         }
 
         function open(data) {

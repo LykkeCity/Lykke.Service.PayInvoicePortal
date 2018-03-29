@@ -243,7 +243,12 @@
                                 </div>
                             </div>
                         </div>
-                        <a href="@Model.BlockchainExplorerUrl" data-ng-if="vm.model.status === 'Paid'">Blockchain Settlement</a>
+                        <div class="blockchain_settlement_btn" data-ng-if="vm.model.status === 'Paid'">
+                            <a href="@Model.BlockchainExplorerUrl" class="btn btn--flat">
+                                <img src="/img/bl_explorer_logo.svg" width="40" alt="bl_explorer_logo">
+                                <span>Blockchain Settlement</span>
+                            </a>
+                        </div>
                     </div>
                 </div>
             </div>

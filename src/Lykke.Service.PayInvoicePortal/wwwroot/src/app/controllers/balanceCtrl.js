@@ -5,9 +5,9 @@
         .module('app')
         .controller('balanceCtrl', balanceCtrl);
 
-    balanceCtrl.$inject = ['$log', '$interval', 'apiSvc'];
+    balanceCtrl.$inject = ['$scope', '$log', '$interval', 'apiSvc'];
 
-    function balanceCtrl($log, $interval, apiSvc) {
+    function balanceCtrl($scope, $log, $interval, apiSvc) {
         var vm = this;
 
         vm.intervals = {
@@ -22,8 +22,20 @@
         activate();
 
         function activate() {
+            $scope.$on('$destroy',
+                function () {
+                    destroy();
+                });
+
             vm.intervals.balance = $interval(update, 3 * 60 * 1000);
             update();
+        }
+
+        function destroy() {
+            if (angular.isDefined(vm.intervals.balance)) {
+                $interval.cancel(vm.intervals.balance);
+                vm.intervals.balance = undefined;
+            }
         }
 
         function update() {

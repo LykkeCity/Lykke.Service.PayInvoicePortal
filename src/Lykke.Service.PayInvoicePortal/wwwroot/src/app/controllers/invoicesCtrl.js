@@ -10,8 +10,9 @@
     function invoicesCtrl($scope, $window, $rootScope, $interval, $log, apiSvc, statusSvc) {
         var vm = this;
 
-        vm.intervals = {
-            balance: null
+        vm.events = {
+            invoiceGenerated: undefined,
+            invoiceDraftCreated: undefined
         };
 
         vm.model = {
@@ -106,17 +107,30 @@
                 }
             );
 
-            $scope.$on('invoiceGenerated', function (evt, data) {
+            $scope.$on('$destroy',
+                function () {
+                    destroy();
+                });
+
+            vm.events.invoiceGenerated = $scope.$on('invoiceGenerated', function (evt, data) {
                 loadInvocies();
             });
 
-            $scope.$on('invoiceDraftCreated', function (evt, data) {
+            vm.events.invoiceDraftCreated = $scope.$on('invoiceDraftCreated', function (evt, data) {
                 loadInvocies();
             });
 
             $interval(loadInvocies, 5 * 60 * 1000);
 
             loadInvocies();
+        }
+
+        function destroy() {
+            if (vm.events.invoiceGenerated)
+                vm.events.invoiceGenerated();
+
+            if (vm.events.invoiceDraftCreated)
+                vm.events.invoiceDraftCreated();
         }
 
         function loadInvocies() {
