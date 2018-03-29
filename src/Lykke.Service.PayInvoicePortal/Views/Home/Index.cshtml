@@ -2,7 +2,7 @@
     <div class="_invoice_sidebar sidebar_menu sidebar_menu--right create draft sidebar_menu--open"
          data-ng-if="vm.form.open"
          data-click-outside="vm.handlers.close()"
-         data-exclude="_create_invoice_btn">
+         data-exclude="_create_invoice_btn,btn--icon">
         <form action="" enctype="multipart/form-data" method="post" class="invoice_form sidebar_menu__inner" onsubmit="event.preventDefault();">
             <div class="sidebar_breadcrumbs">
                 <button class="btn btn--icon btn_close_menu visible-xs" type="button" data-ng-click="vm.handlers.close()">
@@ -64,7 +64,7 @@
                     <textarea name="note" id="note" class="form-control" data-ng-model="vm.model.note"></textarea>
                 </div>
                 <div class="form_header">
-                    <button type="button" class="btn btn-sm btn-primary pull-right" ngf-select="vm.handlers.upload($files)" accept=".jpg,.jpeg,.png,.pdf,.doc,.docx,.xls,.xlsx,.rtf" ngf-multiple="true">Add File</button>
+                    <button type="button" class="btn btn-sm btn-primary pull-right" ngf-select="vm.handlers.addFiles($files)" accept=".jpg,.jpeg,.png,.pdf,.doc,.docx,.xls,.xlsx,.rtf" ngf-multiple="true">Add File</button>
                     <h3>Attachment</h3>
                 </div>
                 <div class="attachment_list">
@@ -73,8 +73,11 @@
                             <div class="asset_link__icon">
                                 <div class="asset_icon asset_icon--red" data-ng-bind="vm.handlers.getFileExtension(file.name)"></div>
                             </div>
+                            <div class="asset_link__action">
+                                <button class="btn btn--icon" data-ng-click="vm.handlers.deleteFile(file)"><i class="icon icon--delete"></i></button>
+                            </div>
                             <div class="asset_link__info">
-                                <div class="asset_link__title" data-ng-bind="file.name" style="max-width: 300px; min-width: 300px;"></div>
+                                <div class="asset_link__title" data-ng-bind="file.name"></div>
                                 <div class="asset_link__desc" data-ng-bind="vm.handlers.getFileSize(file.size)"></div>
                             </div>
                         </div>
@@ -245,7 +248,7 @@
                     <div class="col-xs-9 col-sm-8">
                         <div class="input-search input-search--index">
                             <button class="btn btn--icon"><i class="icon icon--search"></i></button>
-                            <input type="text" class="form-control" placeholder="Asset or address..." data-ng-model="vm.filter.search" data-ng-model-options="{ debounce: 500 }">
+                            <input type="text" class="form-control" placeholder="Number or client email..." data-ng-model="vm.filter.search" data-ng-model-options="{ debounce: 500 }">
                             <button class="btn btn--icon" data-ng-click="vm.filter.handlers.clear()"><i class="icon icon--cancel_round"></i></button>
                         </div>
                     </div>

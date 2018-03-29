@@ -36,7 +36,8 @@
             draft: draft,
             getFileExtension: fileSvc.getExtension,
             getFileSize: fileSvc.getSize,
-            upload: upload
+            addFiles: addFiles,
+            deleteFile: deleteFile
         };
 
         $scope.$on('createInvoice', function (evt, data) {
@@ -180,9 +181,7 @@
                     });
         }
 
-        function upload(files) {
-            vm.model.files = [];
-
+        function addFiles(files) {
             if (!files || files.length === 0)
                 return;
 
@@ -210,7 +209,17 @@
                 return;
             }
 
-            vm.model.files = files;
+            angular.forEach(files, function (file, key) {
+                vm.model.files.push(file);
+            });
+        }
+
+        function deleteFile(file) {
+            var index = vm.model.files.indexOf(file);
+
+            if (index >= 0) {
+                vm.model.files.splice(index, 1);
+            }
         }
     }
 })();

@@ -50,7 +50,7 @@
         }
 
         function getError() {
-            return 'One or more files are invalid. Please check the requirements: <ul><li>• the maximum file size is 5 MB</li><li>• allowed types: .jpg; .jpeg; .pdf; .doc; .docx; .xls; .xlsx.; .rtf</li></ul>';
+            return 'One or more files are invalid. Please check the requirements: <ul><li>• the maximum file size is 5 MB</li><li>• allowed types: .jpg, .jpeg, .png, .pdf, .doc, .docx, .xls, .xlsx, .rtf</li></ul>';
         }
     }
 })();
