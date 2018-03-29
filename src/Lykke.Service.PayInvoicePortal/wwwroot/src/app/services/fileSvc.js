@@ -38,7 +38,7 @@
             if (!file)
                 return false;
 
-            if (file.length > 5242880)
+            if (file.size > 5242880)
                 return false;
 
             var extension = getExtension(file.name);
