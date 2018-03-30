@@ -171,7 +171,7 @@ namespace Lykke.Service.PayInvoicePortal.DataService
                 PaymentAssetAccuracy = paymentAsset.Accuracy,
                 SettlementAssetAccuracy = settlementAsset.Accuracy,
                 ExchangeRate = (double)invoiceDetails.ExchangeRate,
-                Fee = (invoiceDetails.DeltaSpread + invoiceDetails.MarkupPercent) / 100,
+                Fee = (invoiceDetails.DeltaSpread + invoiceDetails.MarkupPercent + merchant.LpMarkupPercent) / 100,
                 DueDate = invoiceDetails.DueDate,
                 Note = invoiceDetails.Note,
                 WalletAddress = invoiceDetails.WalletAddress,
