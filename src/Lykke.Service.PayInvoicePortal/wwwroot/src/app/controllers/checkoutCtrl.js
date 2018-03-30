@@ -80,6 +80,8 @@
         }
 
         function init(data) {
+            if (gotoCallbackUrl(data.status))
+                return;
             apply(data);
             startStatusTimeout();
         }
@@ -245,9 +247,7 @@
                         if (data.status !== vm.model.status) {
                             stopTimer();
 
-                            if (data.status === 'Paid' && vm.callback.url) {
-                                $window.location.href = vm.callback.url;
-                            } else {
+                            if (!gotoCallbackUrl(data.status)) {
                                 updateDetails();
                             }
                         }
@@ -306,6 +306,14 @@
 
         function getFile(file) {
             apiSvc.getFile(vm.model.id, file.id);
+        }
+
+        function gotoCallbackUrl(status) {
+            if (status === 'Paid' && vm.callback.url) {
+                $window.location.href = vm.callback.url;
+                return true;
+            }
+            return false;
         }
 
         function getParameterByName(name, url) {
