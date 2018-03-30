@@ -27,9 +27,7 @@ namespace Lykke.Service.PayInvoicePortal.Models.Invoice
 
         public double ExchangeRate { get; set; }
 
-        public double SpreadPercent { get; set; }
-
-        public double FeePercent { get; set; }
+        public double Fee { get; set; }
 
         public DateTime DueDate { get; set; }
 

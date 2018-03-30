@@ -55,7 +55,7 @@
                                 <div class="invoice_info__row">
                                     <div class="invoice_info__value invoice_info__value--thin">1 {{vm.model.paymentAsset}} = {{vm.model.exchangeRate.toLocaleString(undefined, {minimumFractionDigits: vm.model.settlementAssetAccuracy})}} {{vm.model.settlementAsset}}</div>
                                     <span class="invoice_info__title">Exchange rate</span>
-                                    <div class="invoice_info__hint">Includes {{vm.model.spreadPercent.toLocaleString(undefined, {style: 'percent', minimumFractionDigits: 1})}} uplift for covering the exchange risk and the {{vm.model.feePercent.toLocaleString(undefined, {style: 'percent', minimumFractionDigits: 1})}} fee</div>
+                                    <div class="invoice_info__hint">Includes {{vm.model.fee.toLocaleString(undefined, {style: 'percent', minimumFractionDigits: 1})}} uplift for covering the exchange risk and the fee of processing payment.</div>
                                 </div>
                                 <div class="invoice_info__row">
                                     <div class="invoice_info__value">{{vm.model.settlementAmount.toLocaleString(undefined, {minimumFractionDigits: vm.model.settlementAssetAccuracy})}} {{vm.model.settlementAsset}}</div>
@@ -64,8 +64,8 @@
 
                                 <hr class="hidden-xs">
 
-                                <div class="hint hidden-xs" data-ng-if="vm.timer.seconds > 60">The address will be invalid in {{vm.timer.mins}} {{vm.timer.mins === 1 ? 'minute' : 'minutes'}} due to inactivity</div>
-                                <div class="hint hidden-xs" data-ng-if="vm.timer.seconds > 0 && vm.timer.seconds <= 60">The address will be invalid in {{vm.timer.seconds}} seconds due to inactivity</div>
+                                <div class="hint hidden-xs" data-ng-if="vm.timer.seconds > 60">The exchange rate is locked for {{vm.timer.mins}} {{vm.timer.mins === 1 ? 'minute' : 'minutes'}}</div>
+                                <div class="hint hidden-xs" data-ng-if="vm.timer.seconds > 0 && vm.timer.seconds <= 60">The exchange rate is locked for {{vm.timer.seconds}} seconds</div>
                                 <div class="hint hidden-xs" data-ng-if="vm.timer.seconds === 0">Updating…</div>
                             </div>
                         </div>

@@ -48,8 +48,7 @@
             paymentAssetAccuracy: 0,
             settlementAssetAccuracy: 0,
             exchangeRate: 0,
-            spreadPercent: 0,
-            feePercent: 0,
+            fee: 0,
             dueDate: $window.moment(),
             paidAmount: 0,
             paidDate: null,
@@ -98,8 +97,7 @@
             vm.model.paymentAssetAccuracy = data.paymentAssetAccuracy;
             vm.model.settlementAssetAccuracy = data.settlementAssetAccuracy;
             vm.model.exchangeRate = data.exchangeRate;
-            vm.model.spreadPercent = data.spreadPercent;
-            vm.model.feePercent = data.feePercent;
+            vm.model.fee = data.fee;
             vm.model.dueDate = $window.moment(data.dueDate);
             vm.model.paidAmount = data.paidAmount;
             vm.model.paidDate = data.paidDate ? $window.moment(data.paidDate) : null;
