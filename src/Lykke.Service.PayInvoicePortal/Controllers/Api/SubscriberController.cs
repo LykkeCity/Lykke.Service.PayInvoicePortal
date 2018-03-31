@@ -1,4 +1,5 @@
 ﻿using System.Threading.Tasks;
+using Lykke.Service.PayInvoicePortal.Core.Domain;
 using Lykke.Service.PayInvoicePortal.Core.Repositories;
 using Lykke.Service.PayInvoicePortal.Models.Subscriber;
 using Microsoft.AspNetCore.Mvc;
@@ -23,15 +24,19 @@ namespace Lykke.Service.PayInvoicePortal.Controllers.Api
                 return Json(new SubscriberResultModel("Wrong email format"));
             }
 
-            var subscriber = await _subscriberRepository.GetAsync(model.Email);
+            Subscriber subscriber = await _subscriberRepository.GetAsync(model.Email);
 
-            if (subscriber == null)
+            if (subscriber != null)
             {
-                await _subscriberRepository.CreateAsync(model);
-                return Json(new SubscriberResultModel());
+                return Json(new SubscriberResultModel("You are already subscribed"));
             }
 
-            return Json(new SubscriberResultModel("You are already subscribed"));
+            await _subscriberRepository.InsertAsync(new Subscriber
+            {
+                Email = model.Email
+            });
+
+            return Json(new SubscriberResultModel());
         }
     }
 }

@@ -1,7 +1,7 @@
 ﻿namespace Lykke.Service.PayInvoicePortal.Core.Domain
 {
-    public interface ISubscriber
+    public class Subscriber
     {
-        string Email { get; }
+        public string Email { get; set; }
     }
 }

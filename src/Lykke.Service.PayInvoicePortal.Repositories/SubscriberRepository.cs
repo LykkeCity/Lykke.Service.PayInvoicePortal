@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using AzureStorage;
 using Lykke.Service.PayInvoicePortal.Core.Domain;
 using Lykke.Service.PayInvoicePortal.Core.Repositories;
@@ -16,42 +14,28 @@ namespace Lykke.Service.PayInvoicePortal.Repositories
             _tableStorage = tableStorage;
         }
 
-        public async Task<ISubscriber> GetAsync(string email)
+        public async Task<Subscriber> GetAsync(string email)
         {
-            var partitionKey = SubscriberEntity.GeneratePartitionKey();
-            var rowKey = email;
+            SubscriberEntity entity = await _tableStorage.GetDataAsync(GetPartitionKey(), GetRowKey(email));
 
-            return await _tableStorage.GetDataAsync(partitionKey, rowKey);
+            if (entity == null)
+                return null;
+
+            return new Subscriber
+            {
+                Email = entity.RowKey
+            };
         }
 
-        public async Task<IEnumerable<ISubscriber>> GetAllAsync()
+        public async Task InsertAsync(Subscriber subscriber)
         {
-            var partitionKey = SubscriberEntity.GeneratePartitionKey();
-            return await _tableStorage.GetDataAsync(partitionKey);
+            await _tableStorage.InsertAsync(new SubscriberEntity(GetPartitionKey(), GetRowKey(subscriber.Email)));
         }
 
-        public async Task<ISubscriber> CreateAsync(ISubscriber subscriber)
-        {
-            var partitionKey = SubscriberEntity.GeneratePartitionKey();
-            var rowKey = SubscriberEntity.GenerateRowKey(subscriber.Email);
+        private static string GetPartitionKey()
+            => "Subscriber";
 
-            var entity = await _tableStorage.GetDataAsync(partitionKey, rowKey);
-
-            if (entity != null) throw new Exception("Email exists: " + subscriber.Email);
-
-            var newEntity = SubscriberEntity.Create(subscriber);
-            await _tableStorage.InsertAsync(newEntity);
-
-            return newEntity;
-        }
-
-        public async Task DeleteAsync(string email)
-        {
-            var partitionKey = SubscriberEntity.GeneratePartitionKey();
-            var rowKey = email;
-
-            var entity = await _tableStorage.GetDataAsync(partitionKey, rowKey);
-            await _tableStorage.DeleteAsync(entity.PartitionKey, entity.RowKey);
-        }
+        private static string GetRowKey(string email)
+            => email.ToLower();
     }
 }

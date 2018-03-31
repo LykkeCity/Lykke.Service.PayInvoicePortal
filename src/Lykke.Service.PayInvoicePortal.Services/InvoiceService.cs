@@ -106,16 +106,13 @@ namespace Lykke.Service.PayInvoicePortal.Services
 
             if (period != Period.AllTime)
             {
-                DateTime dateFrom = DateTime.Today;
-
-                if (period == Period.CurrentMonth)
-                    dateFrom = DateTime.Now.Date.AddDays(-DateTime.Now.Day);
+                DateTime dateFrom = DateTime.UtcNow.Date.AddDays(1 - DateTime.UtcNow.Day);
 
                 if (period == Period.LastMonth)
-                    dateFrom = DateTime.Now.Date.AddDays(-DateTime.Now.Day).AddMonths(-1);
+                    dateFrom = dateFrom.AddMonths(-1);
 
                 if (period == Period.LastThreeMonths)
-                    dateFrom = DateTime.Now.Date.AddDays(-DateTime.Now.Day).AddMonths(-3);
+                    dateFrom = dateFrom.AddMonths(-3);
 
                 query = query.Where(i => i.DueDate >= dateFrom);
             }
