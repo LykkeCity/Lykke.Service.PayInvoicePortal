@@ -21,7 +21,7 @@ namespace Lykke.Service.PayInvoicePortal.Controllers
         [Route("{invoiceId}")]
         public async Task<IActionResult> Index(string invoiceId)
         {
-            InvoiceModel invoice = await _invoiceDataService.GetById(invoiceId);
+            InvoiceModel invoice = await _invoiceDataService.GetByIdAsync(invoiceId);
 
             var vm = new IndexViewModel
             {

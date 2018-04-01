@@ -38,7 +38,7 @@ namespace Lykke.Service.PayInvoicePortal.Controllers.Api
         [HttpPost]
         public async Task<IActionResult> SendAsync([FromBody] EmailSendModel model)
         {
-            InvoiceModel invoice = await _invoiceDataService.GetById(model.InvoiceId);
+            InvoiceModel invoice = await _invoiceDataService.GetByIdAsync(model.InvoiceId);
 
             MerchantModel merchant = await _payInternalClient.GetMerchantByIdAsync(MerchantId);
 

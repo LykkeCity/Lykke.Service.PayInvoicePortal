@@ -42,7 +42,7 @@ namespace Lykke.Service.PayInvoicePortal.DataService
             _log = log;
         }
 
-        public async Task<InvoiceModel> GetById(string invoiceId)
+        public async Task<InvoiceModel> GetByIdAsync(string invoiceId)
         {
             PayInvoice.Client.Models.Invoice.InvoiceModel invoice =
                 await _payInvoiceClient.GetInvoiceAsync(invoiceId);

@@ -49,7 +49,7 @@ namespace Lykke.Service.PayInvoicePortal.Controllers.Api
         [Route("{invoiceId}")]
         public async Task<IActionResult> GetByIdAsync(string invoiceId)
         {
-            InvoiceModel result = await _invoiceDataService.GetById(invoiceId);
+            InvoiceModel result = await _invoiceDataService.GetByIdAsync(invoiceId);
 
             return Json(result);
         }
