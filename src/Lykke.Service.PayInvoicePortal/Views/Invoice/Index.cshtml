@@ -1,186 +1,168 @@
-﻿@using Lykke.Service.PayInvoice.Client.Models.Invoice
-@model Lykke.Service.PayInvoicePortal.Models.Invoice.InvoiceViewModel
+﻿@using Lykke.Service.PayInvoicePortal.Models.Invoice
+@using Newtonsoft.Json
+@using Newtonsoft.Json.Serialization
+
+@model InvoiceViewModel
 @{
     ViewData["Title"] = "Invoices";
 }
-<link rel="stylesheet" href="/js/vendor/pieloader/jquery-pie-loader.css" />
-<article class="content">
-    <div class="container">
-        <div class="invoice">
-            <div class="invoice__top">
-                <div class="invoice__title">Invoice #@Model.InvoiceNumber</div>
-                <div class="invoice__subtitle">@Model.ClientName</div>
-            </div>
-            <div class="invoice__body">
-                <div class="row">
-                    <div class="col-xs-12">
-                        <div class="invoice_address">
-                            <div class="invoice_address__text">
-                                <div class="invoice_address__label">Payment address</div>
-                                <div class="invoice_address__link">@Model.WalletAddress</div>
+<article class="content"
+         data-ng-controller="checkoutCtrl as vm"
+         data-ng-init="vm.handlers.init(@JsonConvert.SerializeObject(Model.PaymentDetails, new JsonSerializerSettings { ContractResolver = new DefaultContractResolver{NamingStrategy = new CamelCaseNamingStrategy()} }))"
+         ng-cloak>
+    <section class="section section--padding">
+        <div class="container">
+            <div class="row">
+                <div class="col-sm-9 col-md-6 automargin">
+                    <div class="invoice_header text-center">
+                        <h1 class="page__title">Invoice #{{vm.model.number}}</h1>
+                        <div class="invoice_header__subtitle">by {{vm.model.merchant}}</div>
+                    </div>
+
+                    <div data-ng-if="vm.model.waiting">
+                        <div class="invoice_info">
+                            <div class="invoice_info__left">
+                                <div class="invoice_info__qr">
+                                    <img data-ng-src="{{vm.model.qrCode}}" alt="qr" width="220" height="220">
+                                </div>
+                                <div class="invoice_info__loader">
+                                    <div class="pie">
+                                        <div class="pie_inner">
+                                            <div class="pie_half">
+                                                <div class="pie_circle-right" style="background-color: #0388ef;">
+                                                    <div class="pie_blocker-1" style="background-color: #f3f4f5;" ng-style="{'transform': vm.pie.transform1, '-webkit-transform': vm.pie.transform1, '-ms-transform': vm.pie.transform1 }"></div>
+                                                </div>
+                                            </div>
+                                            <div class="pie_half pie_half-left">
+                                                <div class="pie_circle-left" style="background-color: #0388ef;">
+                                                    <div class="pie_blocker-2" style="background-color: #f3f4f5;" ng-style="{'transform': vm.pie.transform2, '-webkit-transform': vm.pie.transform2, '-ms-transform': vm.pie.transform2 }"></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <span data-ng-if="vm.timer.seconds > 60">{{vm.timer.mins}} min remaining…</span>
+                                    <span data-ng-if="vm.timer.seconds > 0 && vm.timer.seconds <= 60">{{vm.timer.seconds}} sec remaining…</span>
+                                    <span data-ng-if="vm.timer.seconds === 0">Updating…</span>
+                                </div>
                             </div>
-                            <div class="invoice_address__button">
-                                <a href="#" type="button" name="button" class="create__item-copy">
-                                    <i class="icon icon--copy"></i>
-                                </a>
+                            <div class="invoice_info__right">
+                                <div class="invoice_info__row">
+                                    <div class="invoice_info__value">
+                                        {{vm.model.paymentAmount | currency : '' : vm.model.paymentAssetAccuracy}} {{vm.model.paymentAsset}}
+                                    </div>
+                                    <span class="invoice_info__title">FOR PAYMENT</span>
+                                </div>
+                                <div class="invoice_info__row">
+                                    <div class="invoice_info__value invoice_info__value--thin">1 {{vm.model.paymentAsset}} = {{vm.model.exchangeRate.toLocaleString(undefined, {minimumFractionDigits: vm.model.settlementAssetAccuracy})}} {{vm.model.settlementAsset}}</div>
+                                    <span class="invoice_info__title">Exchange rate</span>
+                                    <div class="invoice_info__hint">Includes {{vm.model.fee.toLocaleString(undefined, {style: 'percent', minimumFractionDigits: 1})}} uplift for covering the exchange risk and the fee of processing payment.</div>
+                                </div>
+                                <div class="invoice_info__row">
+                                    <div class="invoice_info__value">{{vm.model.settlementAmount.toLocaleString(undefined, {minimumFractionDigits: vm.model.settlementAssetAccuracy})}} {{vm.model.settlementAsset}}</div>
+                                    <span class="invoice_info__title">Original</span>
+                                </div>
+
+                                <hr class="hidden-xs">
+
+                                <div class="hint hidden-xs" data-ng-if="vm.timer.seconds > 60">The exchange rate is locked for {{vm.timer.mins}} {{vm.timer.mins === 1 ? 'minute' : 'minutes'}}</div>
+                                <div class="hint hidden-xs" data-ng-if="vm.timer.seconds > 0 && vm.timer.seconds <= 60">The exchange rate is locked for {{vm.timer.seconds}} seconds</div>
+                                <div class="hint hidden-xs" data-ng-if="vm.timer.seconds === 0">Updating…</div>
+                            </div>
+                        </div>
+                        <div class="asset_link_list">
+                            <div class="asset_link">
+                                <div class="asset_link__action">
+                                    <button id="btn-copy-wa" class="btn btn--icon _copy" type="button" data-copy="vm.model.walletAddress"><i class="icon icon--copy_thin"></i></button>
+                                </div>
+                                <div class="asset_link__info">
+                                    <div class="asset_link__title">Payment address</div>
+                                    <div class="asset_link__desc" data-ng-bind="vm.model.walletAddress"></div>
+                                </div>
+                            </div>
+                            <div class="asset_link">
+                                <div class="asset_link__info">
+                                    <div class="asset_link__title">Pay Due Date</div>
+                                    <div class="asset_link__desc" data-ng-bind="vm.model.dueDate.format('LL')"></div>
+                                </div>
+                            </div>
+                            <div class="asset_link" data-ng-if="vm.model.note">
+                                <div class="asset_link__info">
+                                    <div class="asset_link__title">Note</div>
+                                    <div class="asset_link__desc" data-ng-bind="vm.model.note"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div data-ng-if="!vm.model.waiting">
+                        <div class="alert" data-ng-class="vm.header.color" role="alert">
+                            <table>
+                                <tr>
+                                    <td>
+                                        <span class="label label--text label--white" data-ng-bind="vm.header.title"></span>
+                                    </td>
+                                    <td class="text-right">
+                                        <i data-ng-if="vm.header.icon !== 'icon--warning_icn'" class="icon hidden-xs" data-ng-show="vm.header.icon" data-ng-class="vm.header.icon"></i>
+                                        <i data-ng-if="vm.header.icon === 'icon--warning_icn'" class="icon--warning_icn hidden-xs"><span class="path1"></span><span class="path2"></span><span class="path3"></span></i>
+                                        {{vm.header.message}}
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+
+                        <div class="asset_link_list">
+                            <div class="asset_link">
+                                <div class="asset_link__info">
+                                    <div class="asset_link__title">For payment</div>
+                                    <div class="asset_link__desc">{{vm.model.paymentAmount.toLocaleString(undefined, {minimumFractionDigits: vm.model.paymentAssetAccuracy})}} {{vm.model.paymentAsset}}</div>
+                                </div>
+                            </div>
+                            <div class="asset_link">
+                                <div class="asset_link__info">
+                                    <div class="asset_link__title">Exchange rate</div>
+                                    <div class="asset_link__desc">1 {{vm.model.paymentAsset}} = {{vm.model.exchangeRate.toLocaleString(undefined, {minimumFractionDigits: vm.model.settlementAssetAccuracy})}} {{vm.model.settlementAsset}}</div>
+                                </div>
+                            </div>
+                            <div class="asset_link">
+                                <div class="asset_link__info">
+                                    <div class="asset_link__title">Original</div>
+                                    <div class="asset_link__desc">{{vm.model.settlementAmount.toLocaleString(undefined, {minimumFractionDigits: vm.model.settlementAssetAccuracy})}} {{vm.model.settlementAsset}}</div>
+                                </div>
+                            </div>
+                            <div class="asset_link">
+                                <div class="asset_link__info">
+                                    <div class="asset_link__title">Pay Due Date</div>
+                                    <div class="asset_link__desc" data-ng-bind="vm.model.dueDate.format('LL')"></div>
+                                </div>
+                            </div>
+                            <div class="asset_link" data-ng-if="vm.model.note">
+                                <div class="asset_link__info">
+                                    <div class="asset_link__title">Note</div>
+                                    <div class="asset_link__desc" data-ng-bind="vm.model.note"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div data-ng-if="vm.model.files && vm.model.files.length > 0">
+                        <h4>Attachment</h4>
+                        <div class="asset_link_list">
+                            <div class="asset_link asset_link--alt" data-ng-repeat="file in vm.model.files">
+                                <div class="asset_link__icon">
+                                    <div class="asset_icon asset_icon--red" data-ng-bind="vm.handlers.getFileExtension(file.name)" data-ng-click="vm.handlers.getFile(file)"></div>
+                                </div>
+                                <div class="asset_link__action">
+                                    <button class="btn btn--icon" data-ng-click="vm.handlers.getFile(file)"><i class="icon icon--download"></i></button>
+                                </div>
+                                <div class="asset_link__info">
+                                    <div class="asset_link__title" data-ng-bind="file.name" data-ng-click="vm.handlers.getFile(file)"></div>
+                                    <div class="asset_link__desc" data-ng-bind="vm.handlers.getFileSize(file.size)"></div>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
-                <div class="row">
-                    @if (Model.Status == InvoiceStatus.Unpaid)
-                    {
-                        <div class="col-xs-12 col-sm-5 col-md-6 state--pr0-sm">
-                            <div class="invoice__qr">
-                                <img src="@Model.QRCode" alt="">
-                            </div>
-                            <div class="invoice__row">
-                                <div class="invoice__remain">
-                                    <div class="invoice__remain-load ">
-                                        <figure id="my-item" class="pie-loader"></figure>
-                                    </div>
-                                    <span class="invoice__remain-text"></span>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-xs-12 col-sm-7 col-md-6">
-                            <div class="invoice__payment">
-                                @Model.Amount BTC
-                                <div class="invoice__info"> for payment </div>
-                            </div>
-                            <div class="invoice__original">
-                                @Model.OrigAmount @Model.Currency
-                                <div class="invoice__info"> original </div>
-                            </div>
-                            <div class="invoice__description">
-                                <div class="invoice__label">Waiting for payment </div>
-                                <div class="invoice__value"></div>
-                            </div>
-                        </div>
-                    }
-                    else if (Model.Status == InvoiceStatus.InProgress)
-                    {
-                        <div class="col-xs-12 col-sm-7 col-md-6">
-                            <div class="invoice__payment">
-                                @Model.Amount BTC
-                                <div class="invoice__info"> for payment </div>
-                            </div>
-                            <div class="invoice__original">
-                                @Model.OrigAmount @Model.Currency
-                                <div class="invoice__info"> original </div>
-                            </div>
-                            <div class="invoice__description">
-                                <div class="invoice__label">Payment detected</div>
-                                <div class="invoice__value"></div>
-                            </div>
-                        </div>
-                    }
-                    else if (Model.Status == InvoiceStatus.Paid)
-                    {
-                        <div class="col-xs-12 col-sm-7 col-md-6">
-                            <div class="invoice__payment">
-                                @Model.Amount BTC
-                                <div class="invoice__info"> for payment </div>
-                            </div>
-                            <div class="invoice__original">
-                                @Model.OrigAmount @Model.Currency
-                                <div class="invoice__info"> original </div>
-                            </div>
-                            <div class="invoice__description">
-                                <div class="invoice__label">Succesful paid</div>
-                                <div class="invoice__value"></div>
-                            </div>
-                        </div>
-                    }
-                    else if (Model.Status == InvoiceStatus.LatePaid)
-                    {
-                        <div class="col-xs-12 col-sm-7 col-md-6">
-                            <div class="invoice__payment">
-                                @Model.Amount BTC
-                                <div class="invoice__info"> for payment </div>
-                            </div>
-                            <div class="invoice__original">
-                                @Model.OrigAmount @Model.Currency
-                                <div class="invoice__info"> original </div>
-                            </div>
-                            <div class="invoice__description">
-                                <div class="invoice__label">Error. The transfer was paid to late</div>
-                                <div class="invoice__value"></div>
-                            </div>
-                        </div>
-                    }
-                    else if (Model.Status == InvoiceStatus.Overpaid)
-                    {
-                        <div class="col-xs-12 col-sm-7 col-md-6">
-                            <div class="invoice__payment">
-                                @Model.Amount BTC
-                                <div class="invoice__info"> for payment </div>
-                            </div>
-                            <div class="invoice__original">
-                                @Model.OrigAmount @Model.Currency
-                                <div class="invoice__info"> original </div>
-                            </div>
-                            <div class="invoice__description">
-                                <div class="invoice__label">Error. The transfer was paid to much</div>
-                                <div class="invoice__value"></div>
-                            </div>
-                        </div>
-                    }
-                    else if (Model.Status == InvoiceStatus.Underpaid)
-                    {
-                        <div class="col-xs-12 col-sm-7 col-md-6">
-                            <div class="invoice__payment">
-                                @Model.Amount BTC
-                                <div class="invoice__info"> for payment </div>
-                            </div>
-                            <div class="invoice__original">
-                                @Model.OrigAmount @Model.Currency
-                                <div class="invoice__info"> original </div>
-                            </div>
-                            <div class="invoice__description">
-                                <div class="invoice__label">Error. The transfer was paid to small</div>
-                                <div class="invoice__value"></div>
-                            </div>
-                        </div>
-                    }
-                </div>
             </div>
         </div>
-    </div>
+    </section>
 </article>
-@section Scripts
-    {
-    <script src="~/js/vendor/clipboard.min.js" asp-append-version="true"></script>
-    <script type="text/javascript" src="/js/vendor/pieloader/jquery-pie-loader.js"></script>
-    <script src='/js/invoice.js' type="text/javascript"></script>
-
-    <script type="text/javascript">
-        $(function() {
-            $.refreshSeconds = @Model.RefreshSeconds;
-            $.invoiceId = '@Model.InvoiceId';
-            $.updateStatusUrl = '@Url.Action("Status")';
-            $.profilePageUrl = '@Url.Action("Profile", "Home")';
-            $.invoiceStatus = '@Model.Status';
-            $.needAutoUpdate = @Model.AutoUpdate.ToString().ToLower();
-
-            if ($.invoiceStatus === '@InvoiceStatus.Unpaid.ToString()') {
-                $.setUpCountDown();
-            }
-
-            if ($.needAutoUpdate) {
-                $.setUpUpdateStatus();
-            }
-
-            var clipboard = new Clipboard('.create__item-copy', {
-                text: function (trigger) {
-                    return $('.invoice_address__link')[0].innerHTML;
-                }
-            });
-
-            clipboard.on('success', function (e) {
-                e.trigger.innerHTML = '<i class="icon icon--check_thin"></i> Copied';
-                e.clearSelection();
-            });
-        });
-    </script>
-}

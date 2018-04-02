@@ -58,7 +58,7 @@ namespace Lykke.Service.PayInvoicePortal
                     .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme, o =>
 
                     {
-                        o.LoginPath = new PathString("/Welcome");
+                        o.LoginPath = new PathString("/welcome");
                         o.ExpireTimeSpan = appSettings.CurrentValue.PayInvoicePortal.UserLoginTime;
                     });
                 
@@ -71,12 +71,13 @@ namespace Lykke.Service.PayInvoicePortal
                 
                 var builder = new ContainerBuilder();
                 Log = CreateLogWithSlack(services, appSettings);
-                SiteUrl = appSettings.CurrentValue.PayInvoicePortal.SiteUrl;
                 BlockchainExplorerUrl = appSettings.CurrentValue.PayInvoicePortal.BlockchainExplorerUrl;
                 OrderLiveTime = appSettings.CurrentValue.PayInvoicePortal.OrderLiveTime;
-                
+
+                builder.RegisterModule(new Repositories.AutofacModule(
+                    appSettings.Nested(o => o.PayInvoicePortal.Db.SubscriptionConnectionString), Log));
                 builder.RegisterModule(new Services.AutofacModule());
-                builder.RegisterModule(new AutofacModule(appSettings, Log));
+                builder.RegisterModule(new AutofacModule(appSettings, services, Log));
                 builder.Populate(services);
                 ApplicationContainer = builder.Build();
 
@@ -110,9 +111,7 @@ namespace Lykke.Service.PayInvoicePortal
                 app.UseAuthentication();
                 app.UseMvc(routes =>
                 {
-                    routes.MapRoute(
-                        name: "default",
-                        template: "{controller=Invoice}/{action=Index}");
+                    routes.MapRoute("default", "{controller=Home}/{action=Index}/{id?}");
                 });
 
                 appLifetime.ApplicationStarted.Register(() => StartApplication().GetAwaiter().GetResult());

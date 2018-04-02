@@ -21,6 +21,9 @@
 /packages/
 /target/
 **/aspnet_client/
+**/wwwroot/lib/
+**/wwwroot/css/
+**/wwwroot/js/
 
 # IDEs
 *[Rr]e[Ss]harper*

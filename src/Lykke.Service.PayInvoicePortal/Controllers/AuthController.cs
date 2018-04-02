@@ -35,16 +35,24 @@ namespace Lykke.Service.PayInvoicePortal.Controllers
         public IActionResult SignIn(string returnUrl)
         {
             if (User.Identity.IsAuthenticated)
-                return RedirectToAction("Profile", "Home");
+               return RedirectToAction(nameof(HomeController.Index), "Home");
 
-            return View(new SignInViewModel());
+            return View(new SignInViewModel
+            {
+                ReturnUrl = returnUrl
+            });
         }
 
         [HttpPost]
         public async Task<IActionResult> SignIn(SignInViewModel model)
         {
+            var vm = new SignInViewModel
+            {
+                ReturnUrl = model.ReturnUrl
+            };
+
             if (!ModelState.IsValid)
-                return View();
+                return View(vm);
 
             ValidateResultModel response;
 
@@ -58,13 +66,13 @@ namespace Lykke.Service.PayInvoicePortal.Controllers
                     $"Can not authenticate user '{model.Login}'", exception);
 
                 ModelState.AddModelError(string.Empty, "An error occurred during authentication.");
-                return View();
+                return View(vm);
             }
 
             if (!response.Success)
             {
                 ModelState.AddModelError(string.Empty, "The e-mail or password you entered incorrect.");
-                return View();
+                return View(vm);
             }
 
             EmployeeModel employee;
@@ -80,7 +88,7 @@ namespace Lykke.Service.PayInvoicePortal.Controllers
                     exception);
 
                 ModelState.AddModelError(string.Empty, "User profile not found.");
-                return View();
+                return View(vm);
             }
             
             var claims = new List<Claim>
@@ -95,14 +103,17 @@ namespace Lykke.Service.PayInvoicePortal.Controllers
 
             await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, claimsPrinciple);
 
-            return RedirectToAction("Profile", "Home");
+            if (!string.IsNullOrEmpty(model.ReturnUrl) && Url.IsLocalUrl(model.ReturnUrl))
+                return Redirect(model.ReturnUrl);
+
+            return RedirectToAction("Index", "Home");
         }
 
         [HttpGet("SignOut")]
         public async Task<IActionResult> SignOut()
         {
             await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
-            return RedirectToAction("Profile", "Home");
+            return RedirectToAction("SignIn", "Auth");
         }
     }
 }

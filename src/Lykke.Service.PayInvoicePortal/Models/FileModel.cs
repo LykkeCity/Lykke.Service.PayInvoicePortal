@@ -2,9 +2,8 @@
 {
     public class FileModel
     {
-        public string FileName { get; set; }
-        public string FileSize { get; set; }
-        public string FileExtension { get; set; }
-        public string FileUrl { get; set; }
+        public string Id { get; set; }
+        public string Name { get; set; }
+        public int Size { get; set; }
     }
 }
