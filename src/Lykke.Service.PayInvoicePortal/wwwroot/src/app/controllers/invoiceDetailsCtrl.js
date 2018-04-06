@@ -32,7 +32,8 @@
             dueDate: null,
             note: '',
             url: '',
-            files: []
+            files: [],
+            history: []
         };
 
         vm.handlers = {
@@ -45,7 +46,8 @@
             getFileSize: fileSvc.getSize,
             getFile: getFile,
             upload: upload,
-            deleteFile: deleteFile
+            deleteFile: deleteFile,
+            getInitials: getInitials
         };
 
         activate();
@@ -64,6 +66,23 @@
         function destroy() {
             if (vm.events.invoiceDraftUpdated)
                 vm.events.invoiceDraftUpdated();
+        }
+
+        function getInitials(author) {
+            var value = '';
+
+            if (!author || author.length === 0)
+                return value;
+
+            var parts = author.split(' ');
+            
+            if (parts.length > 0)
+                value = value + parts[0][0].toUpperCase();
+
+            if (parts.length > 1)
+                value = value + parts[1][0].toUpperCase();
+
+            return value;
         }
 
         function init(data) {
@@ -142,6 +161,16 @@
             vm.model.note = data.note;
             vm.model.url = $window.location.origin + '/invoice/' + vm.model.id;
             vm.model.files = data.files;
+
+            angular.forEach(data.history, function (item, key) {
+                item.dueDate = $window.moment(item.dueDate);
+                item.date = $window.moment(item.date);
+                if (item.paidDate)
+                    item.paidDate = $window.moment(item.paidDate);
+            });
+            
+
+            vm.model.history = data.history;
 
             vm.form.allowPay = data.status === 'Unpaid';
             vm.form.allowEdit = data.status === 'Draft';

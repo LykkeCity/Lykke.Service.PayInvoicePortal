@@ -27,9 +27,7 @@ namespace Lykke.Service.PayInvoicePortal
         public IConfigurationRoot Configuration { get; }
         public ILog Log { get; private set; }
 
-        internal static string SiteUrl;
         internal static string BlockchainExplorerUrl;
-        internal static TimeSpan OrderLiveTime;
         
         public Startup(IHostingEnvironment env)
         {
@@ -72,7 +70,6 @@ namespace Lykke.Service.PayInvoicePortal
                 var builder = new ContainerBuilder();
                 Log = CreateLogWithSlack(services, appSettings);
                 BlockchainExplorerUrl = appSettings.CurrentValue.PayInvoicePortal.BlockchainExplorerUrl;
-                OrderLiveTime = appSettings.CurrentValue.PayInvoicePortal.OrderLiveTime;
 
                 builder.RegisterModule(new Repositories.AutofacModule(
                     appSettings.Nested(o => o.PayInvoicePortal.Db.SubscriptionConnectionString), Log));

@@ -33,7 +33,7 @@
                     <input id="email" type="email" require placeholder="" class="form-control" data-ng-model="vm.model.email" data-ng-class="{'error': vm.form.errors.email}">
                 </div>
                 <div class="row">
-                    <div class="col-sm-4">
+                    <div class="col-sm-4 _currency">
                         <div class="form-group">
                             <label class="control-label" for="currency">Currency</label>
                             <div class="select">
@@ -41,13 +41,13 @@
                             </div>
                         </div>
                     </div>
-                    <div class="col-sm-4">
+                    <div class="col-sm-4 _amount">
                         <div class="form-group">
                             <label class="control-label" for="amount">Amount</label>
                             <input id="amount" type="number" require placeholder="0.00" min="0.01" step="0.01" class="form-control" data-ng-model="vm.model.amount" data-ng-class="{'error': vm.form.errors.amount}">
                         </div>
                     </div>
-                    <div class="col-sm-4">
+                    <div class="col-sm-4 _date">
                         <div class="form-group">
                             <label class="control-label" for="dueDate">Pay due date</label>
                             <div class="input-group date datetimepicker" datetimepicker data-ng-model="vm.model.dueDate">

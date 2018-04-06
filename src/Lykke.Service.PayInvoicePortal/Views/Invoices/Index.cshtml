@@ -6,7 +6,7 @@
     ViewData["Title"] = "Invoice - " + Model.Invoice.Number;
 }
 
-<div data-ng-controller="invoiceEditCtrl as vm">
+<div data-ng-controller="invoiceEditCtrl as vm" ng-cloak>
     <div class="_invoice_sidebar sidebar_menu sidebar_menu--right create draft sidebar_menu--open"
          data-ng-if="vm.form.open"
          data-click-outside="vm.handlers.close()"
@@ -244,14 +244,197 @@
                             </div>
                         </div>
                         <div class="blockchain_settlement_btn" data-ng-if="vm.model.status === 'Paid'">
-                            <a href="@Model.BlockchainExplorerUrl" class="btn btn--flat">
+                            <a href="@Model.BlockchainExplorerUrl" class="btn btn--flat" target="_blank">
                                 <img src="/img/bl_explorer_logo.svg" width="40" alt="bl_explorer_logo">
                                 <span>Blockchain Settlement</span>
                             </a>
                         </div>
+
+                        <div class="form_header">
+                            <h3>History</h3>
+                        </div>
+
+                        <div class="history_list">
+                            <div class="history_item" data-ng-repeat="item in vm.model.history" data-ng-include="'historyRowTemplate-' + item.status">
+                            </div>
+                        </div>
+
                     </div>
                 </div>
             </div>
         </div>
     </section>
 </article>
+
+<script type="text/ng-template" id="historyRowTemplate-Draft">
+    <div class="history_item__img">
+        <div class="_circle" data-ng-bind="vm.handlers.getInitials(item.author)"></div>
+    </div>
+    <div class="history_item__content">
+        <div class="pull-right label label--gray" data-ng-bind="item.status"></div>
+        <div class="history_item__title">
+            {{item.author}}
+            <span class="middot">&middot;</span>
+            <div class="history_item__date" data-ng-bind="item.date.format('LLL')"></div>
+        </div>
+        <div class="history_item__text">Created</div>
+    </div>
+</script>
+<script type="text/ng-template" id="historyRowTemplate-Removed">
+    <div class="history_item__img">
+        <div class="_circle" data-ng-bind="vm.handlers.getInitials(item.author)"></div>
+    </div>
+    <div class="history_item__content">
+        <div class="pull-right label label--gray" data-ng-bind="item.status"></div>
+        <div class="history_item__title">
+            {{item.author}}
+            <span class="middot">&middot;</span>
+            <div class="history_item__date" data-ng-bind="item.date.format('LLL')"></div>
+        </div>
+        <div class="history_item__text">Removed</div>
+    </div>
+</script>
+<script type="text/ng-template" id="historyRowTemplate-Unpaid">
+    <div class="history_item__img">
+        <div class="_circle" data-ng-bind="vm.handlers.getInitials(item.author)"></div>
+    </div>
+    <div class="history_item__content">
+        <div class="pull-right label label--yellow" data-ng-bind="item.status"></div>
+        <div class="history_item__title">
+            {{item.author}}
+            <span class="middot">&middot;</span>
+            <div class="history_item__date" data-ng-bind="item.date.format('LLL')"></div>
+        </div>
+        <div class="history_item__text">
+            {{item.settlementAmount | currency : '' : item.settlementAssetAccuracy}} {{item.settlementAsset}} to be paid due {{item.dueDate.format('LL')}}
+        </div>
+    </div>
+</script>
+<script type="text/ng-template" id="historyRowTemplate-Paid">
+    <div class="history_item__img history_item__img--success">
+        <div class="_circle"><i class="icon icon--check_thin"></i></div>
+    </div>
+    <div class="history_item__content">
+        <div class="pull-right label label--green" data-ng-bind="item.status"></div>
+        <div class="history_item__title">
+            Pay
+            <span class="middot">&middot;</span>
+            <div class="history_item__date" data-ng-bind="item.date.format('LLL')"></div>
+        </div>
+        <div class="history_item__text">
+            Transferred {{item.settlementAmount | currency : '' : item.settlementAssetAccuracy}} {{item.settlementAsset}} from {{item.sourceWalletAddresses.join(', ')}}, expected {{item.paymentAmount | currency : '' : item.paymentAssetAccuracy}} {{item.paymentAsset}}. Exchange rate 1 {{item.paymentAsset}} = {{item.exchangeRate | currency : '' :  item.settlementAssetAccuracy}} {{item.settlementAsset}}.
+        </div>
+    </div>
+</script>
+<script type="text/ng-template" id="historyRowTemplate-Settled">
+    <div class="history_item__img history_item__img--success">
+        <div class="_circle"><i class="icon icon--check_thin"></i></div>
+    </div>
+    <div class="history_item__content">
+        <div class="pull-right label label--blue" data-ng-bind="item.status"></div>
+        <div class="history_item__title">
+            Settlement
+            <span class="middot">&middot;</span>
+            <div class="history_item__date" data-ng-bind="item.date.format('LLL')"></div>
+        </div>
+        <div class="history_item__text">
+            Transferred {{item.settlementAmount | currency : '' : item.settlementAssetAccuracy}} {{item.settlementAsset}} to LykkePay's account for settlement.
+        </div>
+    </div>
+</script>
+<script type="text/ng-template" id="historyRowTemplate-Refunded">
+    <div class="history_item__img history_item__img--refund">
+        <div class="_circle"><i class="icon icon--move_to_thin"></i></div>
+    </div>
+    <div class="history_item__content">
+        <div class="pull-right label label--dark" data-ng-bind="item.status"></div>
+        <div class="history_item__title">
+            Refund
+            <span class="middot">&middot;</span>
+            <div class="history_item__date" data-ng-bind="item.date.format('LLL')"></div>
+        </div>
+        <div class="history_item__text">
+            Refunded {{item.paymentAmount | currency : '' : item.paymentAssetAccuracy}} {{item.paymentAsset}} to {{item.sourceWalletAddresses.join(', ')}}.
+        </div>
+    </div>
+</script>
+<script type="text/ng-template" id="historyRowTemplate-Underpaid">
+    <div class="history_item__img history_item__img--error">
+        <div class="_circle">!</div>
+    </div>
+    <div class="history_item__content">
+        <div class="pull-right label label--red">Underpaid</div>
+        <div class="history_item__title">
+            Error
+            <span class="middot">&middot;</span>
+            <div class="history_item__date" data-ng-bind="item.date.format('LLL')"></div>
+        </div>
+        <div class="history_item__text">
+            Transferred {{item.settlementAmount | currency : '' : item.settlementAssetAccuracy}} {{item.settlementAsset}} from {{item.sourceWalletAddresses.join(', ')}}, expected {{item.paymentAmount | currency : '' : item.paymentAssetAccuracy}} {{item.paymentAsset}}.
+        </div>
+    </div>
+</script>
+<script type="text/ng-template" id="historyRowTemplate-Overpaid">
+    <div class="history_item__img history_item__img--error">
+        <div class="_circle">!</div>
+    </div>
+    <div class="history_item__content">
+        <div class="pull-right label label--red" data-ng-bind="item.status"></div>
+        <div class="history_item__title">
+            Error
+            <span class="middot">&middot;</span>
+            <div class="history_item__date" data-ng-bind="item.date.format('LLL')"></div>
+        </div>
+        <div class="history_item__text">
+            Transferred {{item.settlementAmount | currency : '' : item.settlementAssetAccuracy}} {{item.settlementAsset}} from {{item.sourceWalletAddresses.join(', ')}}, expected {{item.paymentAmount | currency : '' : item.paymentAssetAccuracy}} {{item.paymentAsset}}.
+        </div>
+    </div>
+</script>
+<script type="text/ng-template" id="historyRowTemplate-LatePaid">
+    <div class="history_item__img history_item__img--error">
+        <div class="_circle">!</div>
+    </div>
+    <div class="history_item__content">
+        <div class="pull-right label label--red" data-ng-bind="item.status"></div>
+        <div class="history_item__title">
+            Error
+            <span class="middot">&middot;</span>
+            <div class="history_item__date" data-ng-bind="item.date.format('LLL')"></div>
+        </div>
+        <div class="history_item__text">
+            Transferred {{item.settlementAmount | currency : '' : item.settlementAssetAccuracy}} {{item.settlementAsset}} from {{item.sourceWalletAddresses.join(', ')}} on {{item.dueDate.format('LL')}}.
+        </div>
+    </div>
+</script>
+<script type="text/ng-template" id="historyRowTemplate-NotConfirmed">
+    <div class="history_item__img history_item__img--error">
+        <div class="_circle">!</div>
+    </div>
+    <div class="history_item__content">
+        <div class="pull-right label label--red" data-ng-bind="item.status"></div>
+        <div class="history_item__title">
+            Error
+            <span class="middot">&middot;</span>
+            <div class="history_item__date" data-ng-bind="item.date.format('LLL')"></div>
+        </div>
+        <div class="history_item__text">
+            Transfer hasn't been confirmed
+        </div>
+    </div>
+</script>
+<script type="text/ng-template" id="historyRowTemplate-InternalError">
+    <div class="history_item__img history_item__img--error">
+        <div class="_circle">!</div>
+    </div>
+    <div class="history_item__content">
+        <div class="pull-right label label--red" data-ng-bind="item.status"></div>
+        <div class="history_item__title">
+            Error
+            <span class="middot">&middot;</span>
+            <div class="history_item__date" data-ng-bind="item.date.format('LLL')"></div>
+        </div>
+        <div class="history_item__text">
+            Internal error occurred
+        </div>
+    </div>
+</script>

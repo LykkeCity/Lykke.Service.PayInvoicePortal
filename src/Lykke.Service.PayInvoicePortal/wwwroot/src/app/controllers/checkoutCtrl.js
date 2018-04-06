@@ -161,8 +161,8 @@
                         ' ' +
                         vm.model.paymentAsset +
                         ' have been refunded';
-                    vm.header.icon = '';
-                    vm.header.color = 'alert--violet';
+                    vm.header.icon = 'icon--refund';
+                    vm.header.color = 'alert--dark';
                     break;
                 case 'Underpaid':
                     vm.header.title = 'Underpaid';

@@ -18,5 +18,6 @@ namespace Lykke.Service.PayInvoicePortal.Models.Invoices
         public DateTime CreatedDate { get; set; }
         public string Note { get; set; }
         public List<FileModel> Files { get; set; }
+        public List<HistoryItem> History { get; set; }
     }
 }

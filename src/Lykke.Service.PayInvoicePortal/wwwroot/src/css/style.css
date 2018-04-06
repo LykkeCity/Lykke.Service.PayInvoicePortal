@@ -366,7 +366,7 @@ figcaption { font-weight: normal; font-style: normal; font-stretch: normal; line
 
 .icon--done:before { content: "\e964"; }
 
-.icon--recycle:before { content: "\e95f"; }
+.icon--recycle:before { content: "\e97b"; }
 
 .icon--reverse:before { content: "\e961"; }
 
@@ -413,6 +413,12 @@ figcaption { font-weight: normal; font-style: normal; font-stretch: normal; line
 .icon--download_alt:before { content: "\e97a"; }
 
 .icon--delete:before, .icon--trash:before { content: "\e97b"; }
+
+.icon--rss_feed:before { content: "\e95f"; }
+
+.icon--help:before { content: "\e97e"; }
+
+.icon--refund:before { content: "\e97d"; }
 
 .store_icon { background-position: center; background-repeat: no-repeat; display: inline-block; vertical-align: middle; position: relative; }
 
@@ -2543,6 +2549,16 @@ select.bs-select-hidden, select.selectpicker { display: none !important; }
   .alert a.pull-right { clear: both; text-align: right; margin-top: 10px; margin-top: 0.625rem; }
   .alert a.pull-right:after, .alert a.pull-right:before { content: ""; display: table; clear: both; } }
 
+.tooltip { position: absolute; z-index: 1070; display: block; font-family: "Helvetica Neue",Helvetica,Arial,sans-serif; font-size: 12px; font-style: normal; font-weight: 400; line-height: 1.42857143; text-align: left; text-decoration: none; text-shadow: none; text-transform: none; letter-spacing: normal; word-break: normal; word-spacing: normal; word-wrap: normal; white-space: normal; filter: alpha(opacity=0); opacity: 0; line-break: auto; }
+
+.tooltip.top { padding: 5px 0; margin-top: -3px; }
+
+.tooltip-inner { max-width: 300px; min-width: 200px; padding: 3px 8px; color: #fff; text-align: center; background-color: #000; border-radius: 4px; }
+
+.tooltip-arrow { position: absolute; width: 0; height: 0; border-color: transparent; border-style: solid; }
+
+.tooltip.top .tooltip-arrow { bottom: 0; left: 50%; margin-left: -5px; border-width: 5px 5px 0; border-top-color: #000; }
+
 body { color: #333333; }
 
 hr { max-width: none; width: 100%; border: 0; border-bottom: 1px solid #ebedef; }
@@ -2707,6 +2723,9 @@ ol.list_styled li:before { content: counter(step-counter); background-color: #33
 
 @media all and (max-width: 543px) { .sidebar_menu--right { width: 100%; } }
 
+@media all and (min-width: 768px) { .sidebar_menu .col-sm-4._amount { width: 28.333%; }
+  .sidebar_menu .col-sm-4._date { width: 37.333%; } }
+
 .profile_header .btn { min-width: 220px; min-width: 13.75rem; }
 
 @media all and (max-width: 480px) { .profile_header .col-xs-7, .profile_header .col-xs-5 { width: 100%; float: none; }
@@ -2760,7 +2779,9 @@ ol.list_styled li:before { content: counter(step-counter); background-color: #33
 
 .invoice_header__link { font-weight: 600; font-size: 24px; font-size: 1.5rem; }
 
-.invoice_header__link .btn { position: relative; top: -2px; top: -0.125rem; }
+.invoice_header__link .btn { position: relative; }
+
+.invoice_header__link .btn .icon { top: -2px; top: -0.125rem; }
 
 .invoice_header__desc { border-bottom: 1px solid #EBEDEF; padding-bottom: 28px; padding-bottom: 1.75rem; }
 
@@ -2840,6 +2861,8 @@ ol.list_styled li:before { content: counter(step-counter); background-color: #33
 .invoice_buttons .btn:first-child { min-width: 155px; }
 
 .alert { font-weight: 600; }
+
+.alert--dark { background-color: #333333; }
 
 .alert .label { line-height: 1.78; letter-spacing: 1.8px; padding: 0; font-size: 18px; font-size: 1.125rem; margin: -4px 0 -5px; margin: -0.25rem 0 -0.3125rem; }
 
@@ -2942,6 +2965,10 @@ ol.list_styled li:before { content: counter(step-counter); background-color: #33
 .history_item__img--success ._circle { background-color: #13B72A; }
 
 .history_item__img--error ._circle { background-color: #FF3E2E; }
+
+.history_item__img--refund ._circle { background-color: #3F4D60; }
+
+.history_item__img--refund .icon { font-size: 18px; font-size: 1.125rem; }
 
 .history_item__content { overflow: hidden; border-bottom: 1px solid #EBEDEF; padding-bottom: 24px; padding-bottom: 1.5rem; }
 
@@ -3280,6 +3307,12 @@ tbody.collapse.in { display: table-row-group; }
 
 .label--text { padding: 0; margin: 0; }
 
-.label--dark { color: #3F4D60 !important; }
+.label--dark { background-color: #3F4D60; }
+
+.label--dark.label--text { background-color: transparent !important; color: #3F4D60 !important; }
 
 .alert--violet { background-color: #ab00ff; }
+
+.icon--rss_feed:before { font-size: 90%; }
+
+.tooltip-inner { min-width: 0; }

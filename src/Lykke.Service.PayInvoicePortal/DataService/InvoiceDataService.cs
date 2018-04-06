@@ -8,6 +8,7 @@ using Lykke.Service.Assets.Client.Models;
 using Lykke.Service.PayInternal.Client;
 using Lykke.Service.PayInternal.Client.Models.Merchant;
 using Lykke.Service.PayInvoice.Client;
+using Lykke.Service.PayInvoice.Client.Models.Employee;
 using Lykke.Service.PayInvoice.Client.Models.File;
 using Lykke.Service.PayInvoice.Client.Models.Invoice;
 using Lykke.Service.PayInvoicePortal.Controllers;
@@ -49,6 +50,14 @@ namespace Lykke.Service.PayInvoicePortal.DataService
             IEnumerable<FileInfoModel> invoiceFiles = await _payInvoiceClient.GetFilesAsync(invoice.Id);
             Asset settlementAsset = await _assetsService.TryGetAssetAsync(invoice.SettlementAssetId);
 
+            IReadOnlyList<HistoryItemModel> history = await _payInvoiceClient.GetInvoiceHistoryAsync(invoice.Id);
+
+            history = history
+                .GroupBy(o => o.Status)
+                .Select(o => o.OrderByDescending(s => s.Date).First())
+                .OrderBy(o => o.Date)
+                .ToList();
+
             var model = new InvoiceModel
             {
                 Id = invoice.Id,
@@ -70,8 +79,48 @@ namespace Lykke.Service.PayInvoicePortal.DataService
                         Name = o.Name,
                         Size = o.Size
                     })
-                    .ToList()
+                    .ToList(),
+                History = new List<HistoryItem>()
             };
+
+            var employees = new List<EmployeeModel>();
+
+            foreach (HistoryItemModel item in history)
+            {
+                EmployeeModel employee = null;
+
+                if (!string.IsNullOrEmpty(item.ModifiedById))
+                {
+                    employee = employees.FirstOrDefault(o => o.Id == item.ModifiedById);
+
+                    if (employee == null)
+                    {
+                        employee = await _payInvoiceClient.GetEmployeeAsync(invoice.MerchantId, item.ModifiedById);
+                        employees.Add(employee);
+                    }
+                }
+
+                Asset historySettlementAsset = await _assetsService.TryGetAssetAsync(invoice.SettlementAssetId);
+                Asset historyPeymentAsset = await _assetsService.TryGetAssetAsync(invoice.PaymentAssetId);
+
+                model.History.Add(new HistoryItem
+                {
+                    Author = employee != null ? $"{employee.FirstName} {employee.LastName}" : null,
+                    Status = item.Status.ToString(),
+                    PaymentAmount = (double)item.PaymentAmount,
+                    SettlementAmount = (double)item.SettlementAmount,
+                    PaidAmount = (double)item.PaidAmount,
+                    PaymentAsset = historyPeymentAsset.DisplayId,
+                    SettlementAsset = historySettlementAsset.DisplayId,
+                    PaymentAssetAccuracy = historyPeymentAsset.Accuracy,
+                    SettlementAssetAccuracy = historySettlementAsset.Accuracy,
+                    ExchangeRate = (double)item.ExchangeRate,
+                    SourceWalletAddresses = item.SourceWalletAddresses,
+                    DueDate = item.DueDate,
+                    PaidDate = item.PaidDate,
+                    Date = item.Date
+                });
+            }
 
             return model;
         }
