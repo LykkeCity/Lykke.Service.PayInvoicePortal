@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Lykke.Service.PayInvoicePortal.Models.Invoices
 {
-    public class HistoryItem
+    public class HistoryItemModel
     {
         public string Author { get; set; }
 
@@ -26,6 +26,10 @@ namespace Lykke.Service.PayInvoicePortal.Models.Invoices
         public double ExchangeRate { get; set; }
 
         public List<string> SourceWalletAddresses { get; set; }
+
+        public string RefundWalletAddress { get; set; }
+
+        public decimal RefundAmount { get; set; }
 
         public DateTime DueDate { get; set; }
 

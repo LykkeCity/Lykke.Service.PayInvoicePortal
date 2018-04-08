@@ -1,7 +1,8 @@
-﻿using System;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Common.Log;
-using Lykke.Service.PayInvoice.Client;
+using Lykke.Service.PayInvoicePortal.Core.Domain;
+using Lykke.Service.PayInvoicePortal.Core.Services;
+using Lykke.Service.PayInvoicePortal.Extensions;
 using Lykke.Service.PayInvoicePortal.Models.Balances;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -10,38 +11,27 @@ namespace Lykke.Service.PayInvoicePortal.Controllers.Api
 {
     [Authorize]
     [Route("/api/balances")]
-    public class BalancesController : BaseController
+    public class BalancesController : Controller
     {
-        private const string AssetId = "CHF";
-
-        private readonly IPayInvoiceClient _payInvoiceClient;
+        private readonly IBalanceService _balanceService;
         private readonly ILog _log;
 
-        public BalancesController(IPayInvoiceClient payInvoiceClient, ILog log)
+        public BalancesController(IBalanceService balanceService, ILog log)
         {
-            _payInvoiceClient = payInvoiceClient;
+            _balanceService = balanceService;
             _log = log;
         }
 
         [HttpGet]
         public async Task<IActionResult> GetAsync()
         {
+            Balance balance = await _balanceService.GetAsync(User.GetMerchantId());
+
             var model = new BalanceModel
             {
-                Currency = AssetId
+                Value = balance.Value,
+                Currency = balance.Currency
             };
-
-            try
-            {
-                PayInvoice.Client.Models.Balances.BalanceModel balance = await _payInvoiceClient.GetBalanceAsync(MerchantId, AssetId);
-
-                if (balance?.Balance != null)
-                    model.Value = balance.Balance.Value;
-            }
-            catch (Exception exception)
-            {
-                await _log.WriteErrorAsync(nameof(BalancesController), nameof(GetAsync), MerchantId, exception);
-            }
 
             return Json(model);
         }

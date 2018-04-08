@@ -250,11 +250,11 @@
                             </a>
                         </div>
 
-                        <div class="form_header">
+                        <div class="form_header" data-ng-if="vm.model.history && vm.model.history.length > 0">
                             <h3>History</h3>
                         </div>
 
-                        <div class="history_list">
+                        <div class="history_list" data-ng-if="vm.model.history && vm.model.history.length > 0">
                             <div class="history_item" data-ng-repeat="item in vm.model.history" data-ng-include="'historyRowTemplate-' + item.status">
                             </div>
                         </div>
@@ -322,7 +322,7 @@
             <div class="history_item__date" data-ng-bind="item.date.format('LLL')"></div>
         </div>
         <div class="history_item__text">
-            Transferred {{item.settlementAmount | currency : '' : item.settlementAssetAccuracy}} {{item.settlementAsset}} from {{item.sourceWalletAddresses.join(', ')}}, expected {{item.paymentAmount | currency : '' : item.paymentAssetAccuracy}} {{item.paymentAsset}}. Exchange rate 1 {{item.paymentAsset}} = {{item.exchangeRate | currency : '' :  item.settlementAssetAccuracy}} {{item.settlementAsset}}.
+            Transferred {{item.settlementAmount | currency : '' : item.settlementAssetAccuracy}} {{item.settlementAsset}} from {{item.sourceWalletAddresses.join(', ')}}, expected {{item.paidAmount | currency : '' : item.paymentAssetAccuracy}} {{item.paymentAsset}}. Exchange rate 1 {{item.paymentAsset}} = {{item.exchangeRate | currency : '' :  item.settlementAssetAccuracy}} {{item.settlementAsset}}.
         </div>
     </div>
 </script>
@@ -354,7 +354,7 @@
             <div class="history_item__date" data-ng-bind="item.date.format('LLL')"></div>
         </div>
         <div class="history_item__text">
-            Refunded {{item.paymentAmount | currency : '' : item.paymentAssetAccuracy}} {{item.paymentAsset}} to {{item.sourceWalletAddresses.join(', ')}}.
+            Refunded {{item.refundAmount | currency : '' : item.paymentAssetAccuracy}} {{item.paymentAsset}} to {{item.refundWalletAddress}}.
         </div>
     </div>
 </script>
@@ -370,7 +370,7 @@
             <div class="history_item__date" data-ng-bind="item.date.format('LLL')"></div>
         </div>
         <div class="history_item__text">
-            Transferred {{item.settlementAmount | currency : '' : item.settlementAssetAccuracy}} {{item.settlementAsset}} from {{item.sourceWalletAddresses.join(', ')}}, expected {{item.paymentAmount | currency : '' : item.paymentAssetAccuracy}} {{item.paymentAsset}}.
+            Transferred {{item.settlementAmount | currency : '' : item.settlementAssetAccuracy}} {{item.settlementAsset}} from {{item.sourceWalletAddresses.join(', ')}}, expected {{item.paidAmount | currency : '' : item.paymentAssetAccuracy}} {{item.paymentAsset}}.
         </div>
     </div>
 </script>

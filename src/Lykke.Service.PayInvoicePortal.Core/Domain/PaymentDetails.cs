@@ -1,0 +1,46 @@
+﻿using System;
+using Lykke.Service.Assets.Client.Models;
+using Lykke.Service.PayInternal.Client.Models.Merchant;
+using Lykke.Service.PayInvoice.Client.Models.Invoice;
+
+namespace Lykke.Service.PayInvoicePortal.Core.Domain
+{
+    public class PaymentDetails
+    {
+        public string Id { get; set; }
+
+        public string Number { get; set; }
+
+        public InvoiceStatus Status { get; set; }
+
+        public MerchantModel Merchant { get; set; }
+
+        public decimal PaymentAmount { get; set; }
+
+        public decimal SettlementAmount { get; set; }
+
+        public Asset PaymentAsset { get; set; }
+
+        public Asset SettlementAsset { get; set; }
+
+        public decimal ExchangeRate { get; set; }
+
+        public double Fee { get; set; }
+
+        public DateTime DueDate { get; set; }
+
+        public string Note { get; set; }
+
+        public string WalletAddress { get; set; }
+
+        public string PaymentRequestId { get; set; }
+
+        public int TotalSeconds { get; set; }
+
+        public int RemainingSeconds { get; set; }
+
+        public DateTime? PaidDate { get; set; }
+
+        public double PaidAmount { get; set; }
+    }
+}

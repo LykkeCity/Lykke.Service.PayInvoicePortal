@@ -4,7 +4,15 @@ using System.Linq;
 using System.Linq.Dynamic.Core;
 using System.Threading.Tasks;
 using Common.Log;
+using Lykke.Service.Assets.Client;
+using Lykke.Service.Assets.Client.Models;
+using Lykke.Service.PayInternal.Client;
+using Lykke.Service.PayInternal.Client.Models.Merchant;
+using Lykke.Service.PayInternal.Client.Models.Order;
+using Lykke.Service.PayInternal.Client.Models.PaymentRequest;
 using Lykke.Service.PayInvoice.Client;
+using Lykke.Service.PayInvoice.Client.Models.Employee;
+using Lykke.Service.PayInvoice.Client.Models.File;
 using Lykke.Service.PayInvoice.Client.Models.Invoice;
 using Lykke.Service.PayInvoicePortal.Core.Domain;
 using Lykke.Service.PayInvoicePortal.Core.Services;
@@ -13,16 +21,117 @@ namespace Lykke.Service.PayInvoicePortal.Services
 {
     public class InvoiceService : IInvoiceService
     {
+        private readonly HashSet<InvoiceStatus> _excludeStatuses = new HashSet<InvoiceStatus>
+        {
+            InvoiceStatus.InProgress,
+            InvoiceStatus.RefundInProgress,
+            InvoiceStatus.SettlementInProgress
+        };
+
         private readonly IPayInvoiceClient _payInvoiceClient;
+        private readonly IPayInternalClient _payInternalClient;
+        private readonly IEmployeeCache _employeeCache;
+        private readonly IAssetsServiceWithCache _assetsService;
         private readonly ILog _log;
 
-        public InvoiceService(IPayInvoiceClient payInvoiceClient, ILog log)
+        public InvoiceService(
+            IPayInvoiceClient payInvoiceClient,
+            IPayInternalClient payInternalClient,
+            IEmployeeCache employeeCache,
+            IAssetsServiceWithCache assetsService,
+            ILog log)
         {
             _payInvoiceClient = payInvoiceClient;
+            _payInternalClient = payInternalClient;
+            _employeeCache = employeeCache;
+            _assetsService = assetsService;
             _log = log;
         }
 
-        public async Task<IReadOnlyList<InvoiceModel>> GetAsync(
+        public async Task<Invoice> GetByIdAsync(string invoiceId)
+        {
+            InvoiceModel invoice = await _payInvoiceClient.GetInvoiceAsync(invoiceId);
+
+            Asset settlementAsset = await _assetsService.TryGetAssetAsync(invoice.SettlementAssetId);
+
+            PaymentRequestModel paymentRequest = null;
+
+            if (!string.IsNullOrEmpty(invoice.PaymentRequestId))
+                paymentRequest =
+                    await _payInternalClient.GetPaymentRequestAsync(invoice.MerchantId, invoice.PaymentRequestId);
+
+            return new Invoice
+            {
+                Id = invoice.Id,
+                Number = invoice.Number,
+                ClientEmail = invoice.ClientEmail,
+                ClientName = invoice.ClientName,
+                Amount = invoice.Amount,
+                DueDate = invoice.DueDate,
+                Status = invoice.Status,
+                SettlementAsset = settlementAsset,
+                WalletAddress = paymentRequest?.WalletAddress,
+                CreatedDate = invoice.CreatedDate,
+                Note = invoice.Note
+            };
+        }
+
+        public async Task<IReadOnlyList<HistoryItem>> GetHistoryAsync(string merchantId, string invoiceId)
+        {
+            IReadOnlyList<HistoryItemModel> history = await _payInvoiceClient.GetInvoiceHistoryAsync(invoiceId);
+
+            history = history
+                .GroupBy(o => o.Status)
+                .Where(o => !_excludeStatuses.Contains(o.Key))
+                .Select(o => o.OrderByDescending(s => s.Date).First())
+                .OrderBy(o => o.Date)
+                .ToList();
+
+            var items = new List<HistoryItem>();
+
+            foreach (HistoryItemModel item in history)
+            {
+                EmployeeModel employee = null;
+
+                if (!string.IsNullOrEmpty(item.ModifiedById))
+                {
+                    // TODO: use cache
+                    employee = await _payInvoiceClient.GetEmployeeAsync(merchantId, item.ModifiedById);
+                }
+
+                Asset historySettlementAsset = await _assetsService.TryGetAssetAsync(item.SettlementAssetId);
+                Asset historyPeymentAsset = await _assetsService.TryGetAssetAsync(item.PaymentAssetId);
+
+                items.Add(new HistoryItem
+                {
+                    Author = employee,
+                    Status = item.Status,
+                    PaymentAmount = item.PaymentAmount,
+                    SettlementAmount = item.SettlementAmount,
+                    PaidAmount = item.PaidAmount,
+                    PaymentAsset = historyPeymentAsset,
+                    SettlementAsset = historySettlementAsset,
+                    ExchangeRate = item.ExchangeRate,
+                    SourceWalletAddresses = item.SourceWalletAddresses,
+                    RefundWalletAddress = item.RefundWalletAddress,
+                    RefundAmount = item.RefundAmount,
+                    DueDate = item.DueDate,
+                    PaidDate = item.PaidDate,
+                    Date = item.Date
+                });
+            }
+
+            return items;
+        }
+
+        public async Task<IReadOnlyList<FileInfoModel>> GetFilesAsync(string invoiceId)
+        {
+            IEnumerable<FileInfoModel> files = await _payInvoiceClient.GetFilesAsync(invoiceId);
+
+            return files.ToList();
+        }
+
+        public async Task<IReadOnlyList<Invoice>> GetAsync(
             string merchantId,
             IReadOnlyList<InvoiceStatus> status,
             Period period,
@@ -30,7 +139,7 @@ namespace Lykke.Service.PayInvoicePortal.Services
             string sortField,
             bool sortAscending)
         {
-            IReadOnlyList<InvoiceModel> result =
+            IReadOnlyList<Invoice> result =
                 await GetAsync(merchantId, period, searchValue, sortField, sortAscending);
 
             if (status.Count > 0)
@@ -43,6 +152,117 @@ namespace Lykke.Service.PayInvoicePortal.Services
             return result;
         }
 
+        public async Task<PaymentDetails> GetPaymentDetailsAsync(string invoiceId)
+        {
+            InvoiceModel invoice = await _payInvoiceClient.GetInvoiceAsync(invoiceId);
+
+            Task<MerchantModel> merchantTask = _payInternalClient.GetMerchantByIdAsync(invoice.MerchantId);
+            Task<PaymentRequestModel> paymentRequestTask =
+                _payInternalClient.GetPaymentRequestAsync(invoice.MerchantId, invoice.PaymentRequestId);
+            Task<OrderModel> orderTask = _payInternalClient.ChechoutOrderAsync(new ChechoutRequestModel
+            {
+                MerchantId = invoice.MerchantId,
+                PaymentRequestId = invoice.PaymentRequestId
+            });
+
+            await Task.WhenAll(merchantTask, paymentRequestTask, orderTask);
+
+            OrderModel order = orderTask.Result;
+            PaymentRequestModel paymentRequest = paymentRequestTask.Result;
+            MerchantModel merchant = merchantTask.Result;
+
+            Asset settlementAsset = await _assetsService.TryGetAssetAsync(invoice.SettlementAssetId);
+            Asset paymentAsset = await _assetsService.TryGetAssetAsync(invoice.PaymentAssetId);
+
+            int totalSeconds = 0;
+            int remainingSeconds = 0;
+            bool expired = invoice.DueDate <= DateTime.UtcNow;
+
+            if (!expired && invoice.Status == InvoiceStatus.Unpaid)
+            {
+                totalSeconds = (int)(order.DueDate - order.CreatedDate).TotalSeconds;
+                remainingSeconds = (int)(order.DueDate - DateTime.UtcNow).TotalSeconds;
+
+                if (remainingSeconds > totalSeconds)
+                    remainingSeconds = totalSeconds;
+            }
+
+            return new PaymentDetails
+            {
+                Id = invoice.Id,
+                Number = invoice.Number,
+                Status = invoice.Status,
+                Merchant = merchant,
+                PaymentAmount = order.PaymentAmount,
+                SettlementAmount = invoice.Amount,
+                PaymentAsset = paymentAsset,
+                SettlementAsset = settlementAsset,
+                ExchangeRate = order.ExchangeRate,
+                Fee = (merchant.DeltaSpread + paymentRequest.MarkupPercent + merchant.LpMarkupPercent) / 100,
+                DueDate = invoice.DueDate,
+                Note = invoice.Note,
+                WalletAddress = paymentRequest.WalletAddress,
+                PaymentRequestId = invoice.PaymentRequestId,
+                TotalSeconds = totalSeconds,
+                RemainingSeconds = remainingSeconds,
+                PaidAmount = paymentRequest.PaidAmount,
+                PaidDate = paymentRequest.PaidDate
+            };
+        }
+
+        public async Task<InvoiceStatus> GetStatusAsync(string invoiceId)
+        {
+            InvoiceModel invoice = await _payInvoiceClient.GetInvoiceAsync(invoiceId);
+
+            return invoice.Status;
+        }
+
+        public async Task<Invoice> CreateAsync(CreateInvoiceModel model, bool draft)
+        {
+            InvoiceModel invoice;
+
+            if (draft)
+                invoice = await _payInvoiceClient.CreateDraftInvoiceAsync(model);
+            else
+                invoice = await _payInvoiceClient.CreateInvoiceAsync(model);
+
+            Asset settlementAsset = await _assetsService.TryGetAssetAsync(invoice.SettlementAssetId);
+
+            return new Invoice
+            {
+                Id = invoice.Id,
+                Number = invoice.Number,
+                ClientEmail = invoice.ClientEmail,
+                ClientName = invoice.ClientName,
+                Amount = invoice.Amount,
+                DueDate = invoice.DueDate,
+                Status = invoice.Status,
+                SettlementAsset = settlementAsset,
+                CreatedDate = invoice.CreatedDate,
+                Note = invoice.Note
+            };
+        }
+
+        public async Task UpdateAsync(UpdateInvoiceModel model, bool draft)
+        {
+            await _payInvoiceClient.UpdateDraftInvoiceAsync(model);
+
+            if (!draft)
+            {
+                await _payInvoiceClient.CreateInvoiceAsync(model.Id);
+            }
+        }
+
+        public async Task UploadFileAsync(string invoiceId, byte[] content, string fileName, string contentType)
+        {
+            await _payInvoiceClient.UploadFileAsync(invoiceId, content, fileName, contentType);
+        }
+
+        public async Task DeleteAsync(string invoiceId)
+        {
+            await _payInvoiceClient.DeleteInvoiceAsync(invoiceId);
+        }
+
         public async Task<InvoiceSource> GetAsync(
             string merchantId,
             IReadOnlyList<InvoiceStatus> status,
@@ -53,7 +273,7 @@ namespace Lykke.Service.PayInvoicePortal.Services
             int skip,
             int take)
         {
-            IReadOnlyList<InvoiceModel> result =
+            IReadOnlyList<Invoice> result =
                 await GetAsync(merchantId, period, searchValue, sortField, sortAscending);
 
             var source = new InvoiceSource
@@ -84,14 +304,14 @@ namespace Lykke.Service.PayInvoicePortal.Services
             return source;
         }
 
-        private async Task<IReadOnlyList<InvoiceModel>> GetAsync(
+        private async Task<IReadOnlyList<Invoice>> GetAsync(
             string merchantId,
             Period period,
             string searchValue,
             string sortField,
             bool sortAscending)
         {
-            IEnumerable<InvoiceModel> invoices = await _payInvoiceClient.GetInvoicesAsync(merchantId);
+            IEnumerable<InvoiceModel> invoices = await _payInvoiceClient.GetMerchantInvoicesAsync(merchantId);
 
             var query = invoices.AsQueryable();
 
@@ -124,7 +344,28 @@ namespace Lykke.Service.PayInvoicePortal.Services
                                          (o.Number ?? string.Empty).ToLower().Contains(searchValue));
             }
 
-            return query.ToList();
+            var items = new List<Invoice>();
+
+            foreach (InvoiceModel invoice in query)
+            {
+                Asset settlementAsset = await _assetsService.TryGetAssetAsync(invoice.SettlementAssetId);
+
+                items.Add(new Invoice
+                {
+                    Id = invoice.Id,
+                    Number = invoice.Number,
+                    ClientEmail = invoice.ClientEmail,
+                    ClientName = invoice.ClientName,
+                    Amount = invoice.Amount,
+                    DueDate = invoice.DueDate,
+                    Status = invoice.Status,
+                    SettlementAsset = settlementAsset,
+                    CreatedDate = invoice.CreatedDate,
+                    Note = invoice.Note
+                });
+            }
+
+            return items;
         }
     }
 }

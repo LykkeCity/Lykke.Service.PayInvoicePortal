@@ -1,4 +1,12 @@
-﻿<div data-ng-controller="invoiceCtrl as vm" ng-cloak>
+﻿@using Newtonsoft.Json
+@using Newtonsoft.Json.Serialization
+
+@model Lykke.Service.PayInvoicePortal.Models.Home.IndexViewModel
+@{
+    ViewData["Title"] = "Invoices";
+}
+
+<div data-ng-controller="invoiceCtrl as vm" ng-cloak>
     <div class="_invoice_sidebar sidebar_menu sidebar_menu--right create draft sidebar_menu--open"
          data-ng-if="vm.form.open"
          data-click-outside="vm.handlers.close()"
@@ -96,7 +104,7 @@
     </div>
 </div>
 
-<div data-ng-controller="invoiceInfoCtrl as vm">
+<div data-ng-controller="invoiceInfoCtrl as vm" ng-cloak>
     <div class="invoice_sidebar sidebar_menu sidebar_menu--right create unpaid sidebar_menu--open"
          data-ng-if="vm.form.open"
          data-click-outside="vm.handlers.close()"
@@ -199,7 +207,10 @@
     </div>
 </div>
 
-<article class="content" data-ng-controller="invoicesCtrl as vm">
+<article class="content" 
+         data-ng-controller="invoicesCtrl as vm"
+         data-ng-init="vm.handlers.init(@JsonConvert.SerializeObject(Model.List, new JsonSerializerSettings { ContractResolver = new DefaultContractResolver{NamingStrategy = new CamelCaseNamingStrategy()} }))"
+         ng-cloak>
     <section class="section section--lead">
         <div class="container">
             <div class="page_header profile_header">
@@ -207,7 +218,9 @@
                 <div class="row">
                     <div class="col-md-6">
                         <div class="row">
-                            <div class="col-xs-7" div data-ng-controller="balanceCtrl as balanceVm">
+                            <div class="col-xs-7" 
+                                 data-ng-controller="balanceCtrl as balanceVm"
+                                 data-ng-init="balanceVm.handlers.init(@JsonConvert.SerializeObject(Model.Balance, new JsonSerializerSettings { ContractResolver = new DefaultContractResolver{NamingStrategy = new CamelCaseNamingStrategy()} }))">
                                 <div class="h1 value_accent" data-ng-bind="balanceVm.model.value.toLocaleString(undefined, {minimumFractionDigits: 2}) + ' ' + balanceVm.model.currency"></div>
                             </div>
                             <div class="col-xs-5">

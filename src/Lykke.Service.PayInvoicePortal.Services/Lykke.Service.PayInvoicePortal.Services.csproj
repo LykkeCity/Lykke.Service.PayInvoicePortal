@@ -9,7 +9,9 @@
     <ProjectReference Include="..\Lykke.Service.PayInvoicePortal.Core\Lykke.Service.PayInvoicePortal.Core.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Lykke.Common" Version="6.1.1" />
+    <PackageReference Include="Lykke.Service.Balances.Client" Version="1.0.21" />
+    <PackageReference Include="Lykke.Service.PayAuth.Client" Version="1.0.13" />
+    <PackageReference Include="Lykke.Service.EmailPartnerRouter.Client" Version="2.0.4" />
     <PackageReference Include="System.Linq.Dynamic.Core" Version="1.0.8.3" />
   </ItemGroup>
 </Project>

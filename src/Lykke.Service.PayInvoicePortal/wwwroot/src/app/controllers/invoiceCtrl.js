@@ -27,7 +27,7 @@
             email: '',
             settlementAsset: null,
             amount: 0,
-            dueDate: $window.moment(),
+            dueDate: $window.moment().add(2, 'days'),
             note: '',
             files: [],
             assets: []
@@ -92,7 +92,7 @@
                 vm.model.settlementAsset = null;
 
             vm.model.amount = 0;
-            vm.model.dueDate = $window.moment();
+            vm.model.dueDate = $window.moment().add(2, 'days');
             vm.model.note = '';
             vm.model.files = [];
 

@@ -25,7 +25,7 @@
                 case 'InProgress':
                 case 'RefundInProgress':
                 case 'SettlementInProgress':
-                    return '';
+                    return 'label--blue';
                 case 'Paid':
                     return 'label--green';
                 case 'UnderPaid':
@@ -33,6 +33,7 @@
                 case 'LatePaid':
                     return 'label--violet';
                 case 'Refunded':
+                    return 'label--dark';
                 case 'Settled':
                     return 'label--blue';
                 case 'NotConfirmed':

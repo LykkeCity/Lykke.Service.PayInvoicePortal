@@ -41,12 +41,10 @@ namespace Lykke.Service.PayInvoicePortal.Models.Invoice
 
         public int RemainingSeconds { get; set; }
 
-        public bool Expired { get; set; }
-
         public DateTime? PaidDate { get; set; }
 
         public double PaidAmount { get; set; }
 
-        public List<FileModel> Files { get; set; }
+        public IReadOnlyList<FileModel> Files { get; set; }
     }
 }
