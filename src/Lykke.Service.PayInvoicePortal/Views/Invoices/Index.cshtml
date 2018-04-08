@@ -124,7 +124,7 @@
                                     <h1 class="page__title">Invoice #{{vm.model.number}}</h1>
                                     <div class="invoice_header__link" data-ng-if="vm.form.allowPay">
                                         <a data-ng-href="{{vm.model.url}}" data-ng-bind="vm.model.url"></a>
-                                        <button class="btn btn--icon _copy" type="button" data-copy="vm.model.url"><i class="icon icon--copy_thin"></i></button>
+                                        <button class="btn btn--icon _copy" type="button" data-copy="vm.model.url" data-title="Copied!"><i class="icon icon--copy_thin"></i></button>
                                     </div>
                                 </div>
                                 <div class="col-md-4" data-ng-if="vm.form.allowPay">
