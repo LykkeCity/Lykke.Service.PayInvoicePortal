@@ -189,8 +189,8 @@
                                         <i class="icon icon--email"></i>
                                         <input type="text" placeholder="E-mail address" class="form-control" data-ng-model="vm.share.email" data-ng-class="{'error': vm.form.errors.email}">
                                     </div>
-                                    <button class="btn btn-sm btn--circle" type="button" data-ng-click="vm.handlers.share()" data-ng-class="{'btn--green': vm.share.sent, 'btn--primary': !vm.share.sent}"  data-ng-disabled="vm.share.blocked">
-                                        <i class="icon icon--arrow-right-alt" data-ng-class="{'icon--check': vm.share.sent, 'icon--arrow-right-alt': !vm.share.sent}"></i>
+                                    <button class="btn btn-sm btn--circle btn--primary" type="button" data-ng-click="vm.handlers.share()" data-ng-disabled="vm.share.blocked" data-tooltip data-trigger="vm.handlers.tooltipHandler(handler)" data-title="Email sent">
+                                        <i class="icon icon--arrow-right-alt icon--arrow-right-alt"></i>
                                     </button>
                                 </div>
                             </div>
