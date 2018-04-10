@@ -17,7 +17,8 @@
         vm.form = {
             allowDelete: false,
             allowEdit: false,
-            allowPay: false
+            allowPay: false,
+            showBcnLink: false
         };
 
         vm.model = {
@@ -30,6 +31,7 @@
             settlementAssetAccuracy: 0,
             amount: 0,
             dueDate: null,
+            walletAddress: '',
             note: '',
             url: '',
             files: [],
@@ -158,6 +160,7 @@
             vm.model.settlementAssetAccuracy = data.settlementAssetAccuracy;
             vm.model.amount = data.amount;
             vm.model.dueDate = $window.moment(data.dueDate);
+            vm.model.walletAddress = data.walletAddress;
             vm.model.note = data.note;
             vm.model.url = $window.location.origin + '/invoice/' + vm.model.id;
             vm.model.files = data.files;
@@ -175,6 +178,7 @@
             vm.form.allowPay = data.status === 'Unpaid';
             vm.form.allowEdit = data.status === 'Draft';
             vm.form.allowDelete = data.status === 'Draft' || data.status === 'Unpaid';
+            vm.form.showBcnLink = vm.model.walletAddress && ['Paid', 'Settled', 'Refunded', 'Overpaid', 'Underpaid', 'LatePaid'].indexOf(vm.model.status) > -1;
         }
 
         function update() {

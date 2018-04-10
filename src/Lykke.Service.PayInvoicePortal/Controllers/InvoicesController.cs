@@ -43,7 +43,7 @@ namespace Lykke.Service.PayInvoicePortal.Controllers
             var vm = new IndexViewModel
             {
                 Invoice = invoice,
-                BlockchainExplorerUrl = $"{Startup.BlockchainExplorerUrl.TrimEnd('/')}/address/{invoice.WalletAddress}"
+                BlockchainExplorerUrl = Startup.BlockchainExplorerUrl.TrimEnd('/')
             };
 
             return View(vm);
