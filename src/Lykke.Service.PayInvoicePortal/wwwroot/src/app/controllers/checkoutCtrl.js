@@ -116,7 +116,7 @@
             updateMessage(data);
 
             if (data.status === 'Unpaid') {
-                vm.model.qrCode = 'https://chart.googleapis.com/chart?chs=220x220&chld=L|2&cht=qr&chl=bitcoin:' +
+                vm.model.qrCode = 'https://chart.googleapis.com/chart?chs=220x220&chld=L|0&cht=qr&chl=bitcoin:' +
                     data.walletAddress +
                     '?amount=' +
                     data.paymentAmount +
