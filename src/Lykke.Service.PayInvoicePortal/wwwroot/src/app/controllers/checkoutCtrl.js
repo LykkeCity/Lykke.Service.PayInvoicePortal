@@ -47,8 +47,10 @@
             settlementAsset: '',
             paymentAssetAccuracy: 0,
             settlementAssetAccuracy: 0,
-            exchangeRate: 0,
-            fee: 0,
+            exchangeRate: {
+                value: 0,
+                hidden: false
+            },
             dueDate: $window.moment(),
             paidAmount: 0,
             paidDate: null,
@@ -56,7 +58,8 @@
             qrCode: '',
             walletAddress: '',
             files: [],
-            waiting: false
+            waiting: false,
+            message: ''
         };
 
         vm.handlers = {
@@ -96,7 +99,10 @@
             vm.model.settlementAsset = data.settlementAsset;
             vm.model.paymentAssetAccuracy = data.paymentAssetAccuracy;
             vm.model.settlementAssetAccuracy = data.settlementAssetAccuracy;
-            vm.model.exchangeRate = data.exchangeRate;
+            vm.model.exchangeRate.value = data.exchangeRate;
+            vm.model.deltaSpread = data.deltaSpread;
+            vm.model.percents = data.percents;
+            vm.model.pips = data.pips;
             vm.model.fee = data.fee;
             vm.model.dueDate = $window.moment(data.dueDate);
             vm.model.paidAmount = data.paidAmount;
@@ -104,6 +110,10 @@
             vm.model.note = data.note;
             vm.model.walletAddress = data.walletAddress;
             vm.model.files = data.files;
+
+            vm.model.exchangeRate.hidden = data.paymentAsset === data.settlementAsset;
+
+            updateMessage(data);
 
             if (data.status === 'Unpaid') {
                 vm.model.qrCode = 'https://chart.googleapis.com/chart?chs=220x220&chld=L|2&cht=qr&chl=bitcoin:' +
@@ -224,6 +234,36 @@
                     vm.header.icon = 'icon--warning_icn';
                     vm.header.color = 'alert--red';
                     break;
+            }
+        }
+
+        function updateMessage(data) {
+            vm.model.message = '';
+
+            var percents = data.percents.toLocaleString(undefined, { minimumFractionDigits: 1 });
+            var pips = data.pips;
+            var fee = data.fee.toLocaleString(undefined, { minimumFractionDigits: data.settlementAssetAccuracy });
+
+            if (data.paymentAsset === data.settlementAsset) {
+                if (data.deltaSpread) {
+                    if (data.percents > 0 || data.pips > 0 || data.fee > 0) {
+                        vm.model.message = 'Includes ' + percents + '%, ' + pips + ' pips and ' + fee + ' ' + data.settlementAsset + ' fee of processing payment.';
+                    }
+                }
+            } else {
+                if (data.deltaSpread) {
+                    if (data.percents > 0 && data.pips > 0 && data.fee > 0) {
+                        vm.model.message = 'Includes ' + percents + '%, ' + pips + ' pips and ' + fee + ' ' + data.settlementAsset + ' uplift for covering the exchange risk and the fee of processing payment.';
+                    }
+                    else if (data.percents > 0 && data.pips > 0 && data.fee === 0) {
+                        vm.model.message = 'Includes ' + percents + '% and ' + pips + ' pips uplift for covering the exchange risk and the fee of processing payment.';
+                    }
+                    else if (data.percents > 0 && data.pips === 0 && data.fee === 0) {
+                        vm.model.message = 'Includes ' + percents + '% for covering the exchange risk';
+                    }
+                } else {
+                    vm.model.message = 'Includes ' + percents + '%, ' + pips + ' pips and ' + fee + ' ' + data.settlementAsset + ' fee of processing payment.';
+                }
             }
         }
 
