@@ -120,7 +120,7 @@
                             <div class="asset_link">
                                 <div class="asset_link__info">
                                     <div class="asset_link__title">Exchange rate</div>
-                                    <div class="asset_link__desc">1 {{vm.model.paymentAsset}} = {{vm.model.exchangeRate.toLocaleString(undefined, {minimumFractionDigits: vm.model.settlementAssetAccuracy})}} {{vm.model.settlementAsset}}</div>
+                                    <div class="asset_link__desc">1 {{vm.model.paymentAsset}} = {{vm.model.exchangeRate.value.toLocaleString(undefined, {minimumFractionDigits: vm.model.settlementAssetAccuracy})}} {{vm.model.settlementAsset}}</div>
                                 </div>
                             </div>
                             <div class="asset_link">
