@@ -165,7 +165,9 @@
                                     <div class="asset_link">
                                         <div class="asset_link__info">
                                             <div class="asset_link__title">Status</div>
-                                            <div class="asset_link__desc" data-ng-bind="vm.model.status"></div>
+                                            <div class="asset_link__desc">
+                                                <span class="label" data-ng-class="vm.handlers.getStatusRowCss(vm.model.status)" data-ng-bind="vm.model.status"></span>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>

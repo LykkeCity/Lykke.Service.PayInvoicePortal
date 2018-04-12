@@ -47,6 +47,7 @@
             getFileExtension: fileSvc.getExtension,
             getFileSize: fileSvc.getSize,
             getFile: getFile,
+            getStatusRowCss: statusSvc.getStatusRowCss,
             upload: upload,
             deleteFile: deleteFile,
             getInitials: getInitials
