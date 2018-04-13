@@ -359,6 +359,8 @@
             if (status === 'Paid' && vm.callback.url) {
                 $window.location.href = vm.callback.url;
                 return true;
+            } else if (status === 'Removed') {
+                $window.location.href = $window.location.href;
             }
             return false;
         }
