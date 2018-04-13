@@ -156,6 +156,9 @@ namespace Lykke.Service.PayInvoicePortal.Services
         {
             InvoiceModel invoice = await _payInvoiceClient.GetInvoiceAsync(invoiceId);
 
+            if (invoice.DueDate <= DateTime.UtcNow || invoice.Status == InvoiceStatus.Removed)
+                return null;
+
             Task<MerchantModel> merchantTask = _payInternalClient.GetMerchantByIdAsync(invoice.MerchantId);
             Task<PaymentRequestModel> paymentRequestTask =
                 _payInternalClient.GetPaymentRequestAsync(invoice.MerchantId, invoice.PaymentRequestId);
@@ -176,9 +179,8 @@ namespace Lykke.Service.PayInvoicePortal.Services
 
             int totalSeconds = 0;
             int remainingSeconds = 0;
-            bool expired = invoice.DueDate <= DateTime.UtcNow;
-
-            if (!expired && invoice.Status == InvoiceStatus.Unpaid)
+            
+            if (invoice.Status == InvoiceStatus.Unpaid)
             {
                 totalSeconds = (int)(order.DueDate - order.CreatedDate).TotalSeconds;
                 remainingSeconds = (int)(order.DueDate - DateTime.UtcNow).TotalSeconds;
