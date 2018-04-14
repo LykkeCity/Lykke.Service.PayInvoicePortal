@@ -30,20 +30,17 @@ namespace Lykke.Service.PayInvoicePortal.Services
 
         private readonly IPayInvoiceClient _payInvoiceClient;
         private readonly IPayInternalClient _payInternalClient;
-        private readonly IEmployeeCache _employeeCache;
         private readonly IAssetsServiceWithCache _assetsService;
         private readonly ILog _log;
 
         public InvoiceService(
             IPayInvoiceClient payInvoiceClient,
             IPayInternalClient payInternalClient,
-            IEmployeeCache employeeCache,
             IAssetsServiceWithCache assetsService,
             ILog log)
         {
             _payInvoiceClient = payInvoiceClient;
             _payInternalClient = payInternalClient;
-            _employeeCache = employeeCache;
             _assetsService = assetsService;
             _log = log;
         }
@@ -165,7 +162,8 @@ namespace Lykke.Service.PayInvoicePortal.Services
             Task<OrderModel> orderTask = _payInternalClient.ChechoutOrderAsync(new ChechoutRequestModel
             {
                 MerchantId = invoice.MerchantId,
-                PaymentRequestId = invoice.PaymentRequestId
+                PaymentRequestId = invoice.PaymentRequestId,
+                Force = true
             });
 
             await Task.WhenAll(merchantTask, paymentRequestTask, orderTask);

@@ -261,7 +261,7 @@
                     else if (data.percents > 0 && data.pips === 0 && data.fee === 0) {
                         vm.model.message = 'Includes ' + percents + '% for covering the exchange risk';
                     }
-                } else {
+                } else if (data.percents > 0 || data.pips > 0 || data.fee > 0) {
                     vm.model.message = 'Includes ' + percents + '%, ' + pips + ' pips and ' + fee + ' ' + data.settlementAsset + ' fee of processing payment.';
                 }
             }
