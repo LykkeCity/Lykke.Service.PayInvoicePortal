@@ -258,11 +258,16 @@
                     else if (data.percents > 0 && data.pips > 0 && data.fee === 0) {
                         vm.model.message = 'Includes ' + percents + '% and ' + pips + ' pips uplift for covering the exchange risk and the fee of processing payment.';
                     }
+                    else if (data.percents > 0 && data.pips === 0 && data.fee > 0) {
+                        vm.model.message = 'Includes ' + percents + '%  and ' + fee + ' ' + data.settlementAsset + ' uplift for covering the exchange risk and the fee of processing payment.';
+                    }
                     else if (data.percents > 0 && data.pips === 0 && data.fee === 0) {
                         vm.model.message = 'Includes ' + percents + '% for covering the exchange risk';
                     }
-                } else if (data.percents > 0 || data.pips > 0 || data.fee > 0) {
+                } else if (data.percents > 0 && data.pips > 0 && data.fee > 0) {
                     vm.model.message = 'Includes ' + percents + '%, ' + pips + ' pips and ' + fee + ' ' + data.settlementAsset + ' fee of processing payment.';
+                } else if (data.percents === 0 && data.pips > 0 && data.fee === 0) {
+                    vm.model.message = 'Includes ' + pips + ' pips fee of processing payment.';
                 }
             }
         }
