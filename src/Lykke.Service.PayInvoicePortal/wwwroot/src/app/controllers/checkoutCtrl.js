@@ -240,38 +240,42 @@
         function updateMessage(data) {
             vm.model.message = '';
 
-            var percents = data.percents.toLocaleString(undefined, { minimumFractionDigits: 1 });
-            var pips = data.pips;
-            var fee = data.fee.toLocaleString(undefined, { minimumFractionDigits: data.settlementAssetAccuracy });
+            var values = [];
+
+            if (data.percents > 0)
+                values.push(data.percents.toLocaleString(undefined, { minimumFractionDigits: 1 }) + '%');
+
+            if (data.pips > 0)
+                values.push(data.pips + ' pips');
+
+            if(data.fee > 0)
+                values.push(data.fee.toLocaleString(undefined, { minimumFractionDigits: data.settlementAssetAccuracy }) + ' ' + data.settlementAsset);
+
+            var fee;
+
+            if (values.length === 3) {
+                fee = values[0] + ', ' + values[1] + ' and ' + values[2];
+            } else {
+                fee = values.join(' and ');
+            }
 
             if (data.paymentAsset === data.settlementAsset) {
-                if (data.deltaSpread) {
-                    if (data.percents > 0 || data.pips > 0 || data.fee > 0) {
-                        vm.model.message = 'Includes ' + percents + '%, ' + pips + ' pips and ' + fee + ' ' + data.settlementAsset + ' fee of processing payment.';
-                    }
+                if (data.deltaSpread && fee) {
+                    vm.model.message = 'Includes ' + fee + ' fee of processing payment.';
                 }
             } else {
                 if (data.deltaSpread) {
-                    if (data.percents > 0 && data.pips > 0 && data.fee > 0) {
-                        vm.model.message = 'Includes ' + percents + '%, ' + pips + ' pips and ' + fee + ' ' + data.settlementAsset + ' uplift for covering the exchange risk and the fee of processing payment.';
+                    if (data.percents > 0 && data.pips === 0 && data.fee === 0) {
+                        vm.model.message = 'Includes ' + fee + ' for covering the exchange risk';
+                    } else if (fee) {
+                        vm.model.message = 'Includes ' + fee + ' uplift for covering the exchange risk and the fee of processing payment.';
                     }
-                    else if (data.percents > 0 && data.pips > 0 && data.fee === 0) {
-                        vm.model.message = 'Includes ' + percents + '% and ' + pips + ' pips uplift for covering the exchange risk and the fee of processing payment.';
-                    }
-                    else if (data.percents > 0 && data.pips === 0 && data.fee > 0) {
-                        vm.model.message = 'Includes ' + percents + '%  and ' + fee + ' ' + data.settlementAsset + ' uplift for covering the exchange risk and the fee of processing payment.';
-                    }
-                    else if (data.percents > 0 && data.pips === 0 && data.fee === 0) {
-                        vm.model.message = 'Includes ' + percents + '% for covering the exchange risk';
-                    }
-                } else if (data.percents > 0 && data.pips > 0 && data.fee > 0) {
-                    vm.model.message = 'Includes ' + percents + '%, ' + pips + ' pips and ' + fee + ' ' + data.settlementAsset + ' fee of processing payment.';
-                } else if (data.percents === 0 && data.pips > 0 && data.fee === 0) {
-                    vm.model.message = 'Includes ' + pips + ' pips fee of processing payment.';
+                } else if (fee) {
+                    vm.model.message = 'Includes ' + fee + ' fee of processing payment.';
                 }
             }
         }
-
+        
         function updateDetails() {
             apiSvc.getPaymentDetails(vm.model.id)
                 .then(
