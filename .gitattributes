@@ -15,7 +15,19 @@
 
 *.cs     diff=csharp text 
 *.vb     text
-*.ttf     -text diff
-*.eot     -text diff
-*.woff    -text diff
-*.woff2   -text diff
+
+# Images & Media
+*.png     binary
+*.jpg     binary
+*.jpeg    binary
+*.gif     binary
+*.ico     binary
+*.mov     binary
+*.ico     binary
+*.pdf     binary
+
+# Fonts
+*.ttf       binary
+*.eot       binary
+*.woff      binary
+*.woff2     binary

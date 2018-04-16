@@ -47,8 +47,10 @@
             settlementAsset: '',
             paymentAssetAccuracy: 0,
             settlementAssetAccuracy: 0,
-            exchangeRate: 0,
-            fee: 0,
+            exchangeRate: {
+                value: 0,
+                hidden: false
+            },
             dueDate: $window.moment(),
             paidAmount: 0,
             paidDate: null,
@@ -56,7 +58,8 @@
             qrCode: '',
             walletAddress: '',
             files: [],
-            waiting: false
+            waiting: false,
+            message: ''
         };
 
         vm.handlers = {
@@ -96,7 +99,10 @@
             vm.model.settlementAsset = data.settlementAsset;
             vm.model.paymentAssetAccuracy = data.paymentAssetAccuracy;
             vm.model.settlementAssetAccuracy = data.settlementAssetAccuracy;
-            vm.model.exchangeRate = data.exchangeRate;
+            vm.model.exchangeRate.value = data.exchangeRate;
+            vm.model.deltaSpread = data.deltaSpread;
+            vm.model.percents = data.percents;
+            vm.model.pips = data.pips;
             vm.model.fee = data.fee;
             vm.model.dueDate = $window.moment(data.dueDate);
             vm.model.paidAmount = data.paidAmount;
@@ -105,8 +111,12 @@
             vm.model.walletAddress = data.walletAddress;
             vm.model.files = data.files;
 
+            vm.model.exchangeRate.hidden = data.paymentAsset === data.settlementAsset;
+
+            updateMessage(data);
+
             if (data.status === 'Unpaid') {
-                vm.model.qrCode = 'https://chart.googleapis.com/chart?chs=220x220&chld=L|2&cht=qr&chl=bitcoin:' +
+                vm.model.qrCode = 'https://chart.googleapis.com/chart?chs=220x220&chld=L|0&cht=qr&chl=bitcoin:' +
                     data.walletAddress +
                     '?amount=' +
                     data.paymentAmount +
@@ -161,8 +171,8 @@
                         ' ' +
                         vm.model.paymentAsset +
                         ' have been refunded';
-                    vm.header.icon = '';
-                    vm.header.color = 'alert--violet';
+                    vm.header.icon = 'icon--refund';
+                    vm.header.color = 'alert--dark';
                     break;
                 case 'Underpaid':
                     vm.header.title = 'Underpaid';
@@ -227,6 +237,45 @@
             }
         }
 
+        function updateMessage(data) {
+            vm.model.message = '';
+
+            var values = [];
+
+            if (data.percents > 0)
+                values.push(data.percents.toLocaleString(undefined, { minimumFractionDigits: 1 }) + '%');
+
+            if (data.pips > 0)
+                values.push(data.pips + ' pips');
+
+            if(data.fee > 0)
+                values.push(data.fee.toLocaleString(undefined, { minimumFractionDigits: data.settlementAssetAccuracy }) + ' ' + data.settlementAsset);
+
+            var fee;
+
+            if (values.length === 3) {
+                fee = values[0] + ', ' + values[1] + ' and ' + values[2];
+            } else {
+                fee = values.join(' and ');
+            }
+
+            if (data.paymentAsset === data.settlementAsset) {
+                if (data.deltaSpread && fee) {
+                    vm.model.message = 'Includes ' + fee + ' fee of processing payment.';
+                }
+            } else {
+                if (data.deltaSpread) {
+                    if (data.percents > 0 && data.pips === 0 && data.fee === 0) {
+                        vm.model.message = 'Includes ' + fee + ' for covering the exchange risk';
+                    } else if (fee) {
+                        vm.model.message = 'Includes ' + fee + ' uplift for covering the exchange risk and the fee of processing payment.';
+                    }
+                } else if (fee) {
+                    vm.model.message = 'Includes ' + fee + ' fee of processing payment.';
+                }
+            }
+        }
+        
         function updateDetails() {
             apiSvc.getPaymentDetails(vm.model.id)
                 .then(

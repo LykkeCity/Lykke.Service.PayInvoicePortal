@@ -1,9 +1,12 @@
-﻿using System;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
+using AutoMapper;
 using Common.Log;
-using Lykke.Service.PayInvoice.Client;
+using Lykke.Service.PayInvoice.Client.Models.File;
 using Lykke.Service.PayInvoice.Client.Models.Invoice;
-using Lykke.Service.PayInvoicePortal.DataService;
+using Lykke.Service.PayInvoicePortal.Core.Domain;
+using Lykke.Service.PayInvoicePortal.Core.Services;
+using Lykke.Service.PayInvoicePortal.Models;
 using Lykke.Service.PayInvoicePortal.Models.Invoice;
 using Microsoft.AspNetCore.Mvc;
 
@@ -12,17 +15,14 @@ namespace Lykke.Service.PayInvoicePortal.Controllers.Api
     [Route("/api/payments")]
     public class PaymentsController : Controller
     {
-        private readonly InvoiceDataService _invoiceDataService;
-        private readonly IPayInvoiceClient _payInvoiceClient;
+        private readonly IInvoiceService _invoiceService;
         private readonly ILog _log;
 
         public PaymentsController(
-            InvoiceDataService invoiceDataService,
-            IPayInvoiceClient payInvoiceClient,
+            IInvoiceService invoiceService,
             ILog log)
         {
-            _invoiceDataService = invoiceDataService;
-            _payInvoiceClient = payInvoiceClient;
+            _invoiceService = invoiceService;
             _log = log;
         }
 
@@ -30,7 +30,11 @@ namespace Lykke.Service.PayInvoicePortal.Controllers.Api
         [Route("{InvoiceId}")]
         public async Task<IActionResult> Details(string invoiceId)
         {
-            PaymentDetailsModel model = await _invoiceDataService.GetPaymentDetailsAsync(invoiceId);
+            PaymentDetails paymentDetails = await _invoiceService.GetPaymentDetailsAsync(invoiceId);
+            IReadOnlyList<FileInfoModel> files = await _invoiceService.GetFilesAsync(invoiceId);
+            
+            var model = Mapper.Map<PaymentDetailsModel>(paymentDetails);
+            model.Files = Mapper.Map<List<FileModel>>(files);
 
             return Json(model);
         }
@@ -39,21 +43,11 @@ namespace Lykke.Service.PayInvoicePortal.Controllers.Api
         [Route("{InvoiceId}/status")]
         public async Task<IActionResult> Status(string invoiceId)
         {
-            InvoiceModel invoice;
-
-            try
-            {
-                invoice = await _payInvoiceClient.GetInvoiceAsync(invoiceId);
-            }
-            catch (Exception exception)
-            {
-                await _log.WriteErrorAsync(nameof(InvoiceController), nameof(Status), invoiceId, exception);
-                return BadRequest();
-            }
+            InvoiceStatus status = await _invoiceService.GetStatusAsync(invoiceId);
 
             return Json(new
             {
-                status = invoice.Status.ToString()
+                status = status.ToString()
             });
         }
     }

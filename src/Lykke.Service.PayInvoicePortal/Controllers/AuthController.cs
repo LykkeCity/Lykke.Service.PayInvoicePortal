@@ -1,13 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using Common.Log;
 using Lykke.Service.PayInvoicePortal.Models.Auth;
-using Lykke.Service.PayAuth.Client;
-using Lykke.Service.PayAuth.Client.Models.Employees;
-using Lykke.Service.PayInvoice.Client;
 using Lykke.Service.PayInvoice.Client.Models.Employee;
+using Lykke.Service.PayInvoicePortal.Core.Services;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Mvc;
@@ -17,17 +14,14 @@ namespace Lykke.Service.PayInvoicePortal.Controllers
     [Route("welcome")]
     public class AuthController : Controller
     {
-        private readonly IPayAuthClient _payAuthClient;
-        private readonly IPayInvoiceClient _payInvoiceClient;
+        private readonly IAuthService _authService;
         private readonly ILog _log;
 
         public AuthController(
-            IPayAuthClient payAuthClient,
-            IPayInvoiceClient payInvoiceClient,
+            IAuthService authService,
             ILog log)
         {
-            _payAuthClient = payAuthClient;
-            _payInvoiceClient = payInvoiceClient;
+            _authService = authService;
             _log = log;
         }
 
@@ -54,43 +48,14 @@ namespace Lykke.Service.PayInvoicePortal.Controllers
             if (!ModelState.IsValid)
                 return View(vm);
 
-            ValidateResultModel response;
+            EmployeeModel employee = await _authService.ValidateAsync(model.Login, model.Password);
 
-            try
-            {
-                response = await _payAuthClient.ValidateAsync(model.Login, model.Password);
-            }
-            catch (Exception exception)
-            {
-                await _log.WriteErrorAsync(nameof(AuthController), nameof(SignIn),
-                    $"Can not authenticate user '{model.Login}'", exception);
-
-                ModelState.AddModelError(string.Empty, "An error occurred during authentication.");
-                return View(vm);
-            }
-
-            if (!response.Success)
+            if (employee == null)
             {
                 ModelState.AddModelError(string.Empty, "The e-mail or password you entered incorrect.");
                 return View(vm);
             }
 
-            EmployeeModel employee;
-
-            try
-            {
-                employee = await _payInvoiceClient.GetEmployeeAsync(response.MerchantId, response.EmployeeId);
-            }
-            catch (Exception exception)
-            {
-                await _log.WriteErrorAsync(nameof(AuthController), nameof(SignIn),
-                    $"Can not get employee. {nameof(response.MerchantId)}: '{response.MerchantId}'. {nameof(response.EmployeeId)}: '{response.EmployeeId}'",
-                    exception);
-
-                ModelState.AddModelError(string.Empty, "User profile not found.");
-                return View(vm);
-            }
-            
             var claims = new List<Claim>
             {
                 new Claim(ClaimTypes.Sid, employee.Id),

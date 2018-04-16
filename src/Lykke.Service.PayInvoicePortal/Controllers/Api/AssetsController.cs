@@ -1,11 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Common.Log;
-using Lykke.Service.Assets.Client;
 using Lykke.Service.Assets.Client.Models;
-using Lykke.Service.PayInternal.Client;
-using Lykke.Service.PayInternal.Client.Models.Asset;
+using Lykke.Service.PayInvoicePortal.Core.Services;
+using Lykke.Service.PayInvoicePortal.Extensions;
 using Lykke.Service.PayInvoicePortal.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -14,43 +13,26 @@ namespace Lykke.Service.PayInvoicePortal.Controllers.Api
 {
     [Authorize]
     [Route("/api/assets")]
-    public class AssetsController : BaseController
+    public class AssetsController : Controller
     {
-        private readonly IPayInternalClient _payInternalClient;
-        private readonly IAssetsServiceWithCache _assetsServiceWithCache;
+        private readonly IAssetService _assetService;
         private readonly ILog _log;
 
         public AssetsController(
-            IPayInternalClient payInternalClient,
-            IAssetsServiceWithCache assetsServiceWithCache,
+            IAssetService assetService,
             ILog log)
         {
-            _payInternalClient = payInternalClient;
-            _assetsServiceWithCache = assetsServiceWithCache;
+            _assetService = assetService;
             _log = log;
         }
 
         [HttpGet]
         public async Task<IActionResult> GetAsync()
         {
-            var model = new List<ItemViewModel>();
+            IReadOnlyList<Asset> assets = await _assetService.GetSettlementAssetsAsync(User.GetMerchantId());
 
-            try
-            {
-                AvailableAssetsResponse response =
-                    await _payInternalClient.ResolveAvailableAssetsAsync(MerchantId, AssetAvailabilityType.Settlement);
-
-                foreach (string assetId in response.Assets)
-                {
-                    Asset asset = await _assetsServiceWithCache.TryGetAssetAsync(assetId);
-                    model.Add(new ItemViewModel(assetId, asset.DisplayId));
-                }
-            }
-            catch (Exception exception)
-            {
-                await _log.WriteErrorAsync(nameof(AssetsController), nameof(GetAsync), MerchantId, exception);
-            }
-
+            var model = assets.Select(o => new ItemViewModel(o.Id, o.DisplayId));
+            
             return Json(model);
         }
     }

@@ -1,22 +1,27 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
+using AutoMapper;
 using Common.Log;
+using Lykke.Service.PayInvoice.Client.Models.File;
+using Lykke.Service.PayInvoicePortal.Core.Domain;
+using Lykke.Service.PayInvoicePortal.Core.Services;
 using Lykke.Service.PayInvoicePortal.Models.Invoice;
 using Microsoft.AspNetCore.Mvc;
-using Lykke.Service.PayInvoicePortal.DataService;
+using Lykke.Service.PayInvoicePortal.Models;
 
 namespace Lykke.Service.PayInvoicePortal.Controllers
 {
     [Route("invoice")]
-    public class InvoiceController : BaseController
+    public class InvoiceController : Controller
     {
-        private readonly InvoiceDataService _invoiceDataService;
+        private readonly IInvoiceService _invoiceService;
         private readonly ILog _log;
 
         public InvoiceController(
-            InvoiceDataService invoiceDataService,
+            IInvoiceService invoiceService,
             ILog log)
         {
-            _invoiceDataService = invoiceDataService;
+            _invoiceService = invoiceService;
             _log = log;
         }
         
@@ -24,10 +29,14 @@ namespace Lykke.Service.PayInvoicePortal.Controllers
         [Route("{InvoiceId}")]
         public async Task<IActionResult> Index(string invoiceId)
         {
-            PaymentDetailsModel model = await _invoiceDataService.GetPaymentDetailsAsync(invoiceId);
+            PaymentDetails paymentDetails = await _invoiceService.GetPaymentDetailsAsync(invoiceId);
+            IReadOnlyList<FileInfoModel> files = await _invoiceService.GetFilesAsync(invoiceId);
 
-            if (model == null)
+            if (paymentDetails == null)
                 return NotFound();
+
+            var model = Mapper.Map<PaymentDetailsModel>(paymentDetails);
+            model.Files = Mapper.Map<List<FileModel>>(files);
 
             var vm = new InvoiceViewModel
             {

@@ -3,14 +3,12 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using AutoMapper;
 using Common.Log;
-using Lykke.Service.Assets.Client;
-using Lykke.Service.Assets.Client.Models;
-using Lykke.Service.PayInvoice.Client;
 using Lykke.Service.PayInvoice.Client.Models.File;
 using Lykke.Service.PayInvoicePortal.Core.Domain;
 using Lykke.Service.PayInvoicePortal.Core.Services;
-using Lykke.Service.PayInvoicePortal.DataService;
+using Lykke.Service.PayInvoicePortal.Extensions;
 using Lykke.Service.PayInvoicePortal.Models;
 using Lykke.Service.PayInvoicePortal.Models.Invoices;
 using Microsoft.AspNetCore.Authorization;
@@ -21,27 +19,18 @@ namespace Lykke.Service.PayInvoicePortal.Controllers.Api
 {
     [Authorize]
     [Route("/api/invoices")]
-    public class InvoicesController : BaseController
+    public class InvoicesController : Controller
     {
         private const string PaymentAssetId = "BTC";
 
-        private readonly InvoiceDataService _invoiceDataService;
-        private readonly IPayInvoiceClient _payInvoiceClient;
         private readonly IInvoiceService _invoiceService;
-        private readonly IAssetsServiceWithCache _assetsService;
         private readonly ILog _log;
 
         public InvoicesController(
-            InvoiceDataService invoiceDataService,
-            IPayInvoiceClient payInvoiceClient,
             IInvoiceService invoiceService,
-            IAssetsServiceWithCache assetsService,
             ILog log)
         {
-            _invoiceDataService = invoiceDataService;
-            _payInvoiceClient = payInvoiceClient;
             _invoiceService = invoiceService;
-            _assetsService = assetsService;
             _log = log;
         }
 
@@ -49,9 +38,17 @@ namespace Lykke.Service.PayInvoicePortal.Controllers.Api
         [Route("{invoiceId}")]
         public async Task<IActionResult> GetByIdAsync(string invoiceId)
         {
-            InvoiceModel result = await _invoiceDataService.GetByIdAsync(invoiceId);
+            var invoiceTask = _invoiceService.GetByIdAsync(invoiceId);
+            var filesTask = _invoiceService.GetFilesAsync(invoiceId);
+            var historyTask = _invoiceService.GetHistoryAsync(User.GetMerchantId(), invoiceId);
 
-            return Json(result);
+            await Task.WhenAll(invoiceTask, filesTask, historyTask);
+
+            var model = Mapper.Map<InvoiceModel>(invoiceTask.Result);
+            model.Files = Mapper.Map<List<FileModel>>(filesTask.Result);
+            model.History = Mapper.Map<List<HistoryItemModel>>(historyTask.Result);
+
+            return Json(model);
         }
         
         [HttpGet]
@@ -64,54 +61,44 @@ namespace Lykke.Service.PayInvoicePortal.Controllers.Api
             int skip,
             int take)
         {
-            ListModel result = await _invoiceDataService.GetListSourceAsync(
-                MerchantId,
-                searchValue,
-                period,
+            InvoiceSource source = await _invoiceService.GetAsync(
+                User.GetMerchantId(),
                 status,
+                period,
+                searchValue,
                 sortField,
                 sortAscending,
                 skip,
                 take);
+
+            var model = new ListModel
+            {
+                Total = source.Total,
+                CountPerStatus = source.CountPerStatus.ToDictionary(o => o.Key.ToString(), o => o.Value),
+                Items = Mapper.Map<List<ListItemModel>>(source.Items)
+            };
             
-            return Json(result);
+            return Json(model);
         }
 
         [HttpPost]
         public async Task<IActionResult> AddAsync(CreateInvoiceModel model, IFormFileCollection files)
         {
-            PayInvoice.Client.Models.Invoice.InvoiceModel invoice;
+            var request = new PayInvoice.Client.Models.Invoice.CreateInvoiceModel
+            {
+                MerchantId = User.GetMerchantId(),
+                EmployeeId = User.GetEmployeeId(),
+                Number = model.Number,
+                ClientName = model.Client,
+                ClientEmail = model.Email,
+                Amount = decimal.Parse(model.Amount, CultureInfo.InvariantCulture),
+                SettlementAssetId = model.SettlementAsset,
+                PaymentAssetId = PaymentAssetId,
+                DueDate = model.DueDate,
+                Note = model.Note
+            };
 
-            if (model.IsDraft)
-            {
-                invoice = await _payInvoiceClient.CreateDraftInvoiceAsync(MerchantId, new PayInvoice.Client.Models.Invoice.CreateDraftInvoiceModel
-                {
-                    EmployeeId = EmployeeId,
-                    Number = model.Number,
-                    ClientName = model.Client,
-                    ClientEmail = model.Email,
-                    Amount = decimal.Parse(model.Amount, CultureInfo.InvariantCulture),
-                    SettlementAssetId = model.SettlementAsset,
-                    PaymentAssetId = PaymentAssetId,
-                    DueDate = model.DueDate,
-                    Note = model.Note
-                });
-            }
-            else
-            {
-                invoice = await _payInvoiceClient.CreateInvoiceAsync(MerchantId, new PayInvoice.Client.Models.Invoice.CreateInvoiceModel
-                {
-                    EmployeeId = EmployeeId,
-                    Number = model.Number,
-                    ClientName = model.Client,
-                    ClientEmail = model.Email,
-                    Amount = decimal.Parse(model.Amount, CultureInfo.InvariantCulture),
-                    SettlementAssetId = model.SettlementAsset,
-                    PaymentAssetId = PaymentAssetId,
-                    DueDate = model.DueDate,
-                    Note = model.Note
-                });
-            }
+            Invoice invoice = await _invoiceService.CreateAsync(request, model.IsDraft);
 
             if (files != null)
             {
@@ -125,34 +112,14 @@ namespace Lykke.Service.PayInvoicePortal.Controllers.Api
                         content = ms.ToArray();
                     }
 
-                    await _payInvoiceClient.UploadFileAsync(invoice.Id, content, formFile.FileName, formFile.ContentType);
+                    await _invoiceService.UploadFileAsync(invoice.Id, content, formFile.FileName, formFile.ContentType);
                 }
             }
 
-            IEnumerable<FileInfoModel> invoiceFiles = await _payInvoiceClient.GetFilesAsync(invoice.Id);
-            Asset settlementAsset = await _assetsService.TryGetAssetAsync(invoice.SettlementAssetId);
+            IEnumerable<FileInfoModel> invoiceFiles = await _invoiceService.GetFilesAsync(invoice.Id);
 
-            var result = new InvoiceModel
-            {
-                Id = invoice.Id,
-                Number = invoice.Number,
-                ClientEmail = invoice.ClientEmail,
-                ClientName = invoice.ClientName,
-                Amount = (double) invoice.Amount,
-                DueDate = invoice.DueDate,
-                Status = invoice.Status.ToString(),
-                SettlementAsset = settlementAsset.DisplayId,
-                SettlementAssetAccuracy = settlementAsset.Accuracy,
-                CreatedDate = invoice.CreatedDate,
-                Files = invoiceFiles
-                    .Select(o => new FileModel
-                    {
-                        Id = o.Id,
-                        Name = o.Name,
-                        Size = o.Size
-                    })
-                    .ToList()
-            };
+            var result = Mapper.Map<InvoiceModel>(invoice);
+            result.Files = Mapper.Map<List<FileModel>>(invoiceFiles);
 
             return Json(result);
         }
@@ -160,36 +127,22 @@ namespace Lykke.Service.PayInvoicePortal.Controllers.Api
         [HttpPut]
         public async Task<IActionResult> UpdateAsync([FromBody]UpdateInvoiceModel model)
         {
-            if (model.IsDraft)
+            var invoice = new PayInvoice.Client.Models.Invoice.UpdateInvoiceModel
             {
-                await _payInvoiceClient.UpdateDraftInvoiceAsync(MerchantId, model.Id, new PayInvoice.Client.Models.Invoice.CreateDraftInvoiceModel
-                {
-                    EmployeeId = EmployeeId,
-                    Number = model.Number,
-                    ClientName = model.Client,
-                    ClientEmail = model.Email,
-                    Amount = decimal.Parse(model.Amount, CultureInfo.InvariantCulture),
-                    SettlementAssetId = model.SettlementAsset,
-                    PaymentAssetId = PaymentAssetId,
-                    DueDate = model.DueDate,
-                    Note = model.Note
-                });
-            }
-            else
-            {
-                await _payInvoiceClient.CreateInvoiceFromDraftAsync(MerchantId, model.Id, new PayInvoice.Client.Models.Invoice.CreateInvoiceModel
-                {
-                    EmployeeId = EmployeeId,
-                    Number = model.Number,
-                    ClientName = model.Client,
-                    ClientEmail = model.Email,
-                    Amount = decimal.Parse(model.Amount, CultureInfo.InvariantCulture),
-                    SettlementAssetId = model.SettlementAsset,
-                    PaymentAssetId = PaymentAssetId,
-                    DueDate = model.DueDate,
-                    Note = model.Note
-                });
-            }
+                Id = model.Id,
+                MerchantId = User.GetMerchantId(),
+                EmployeeId = User.GetEmployeeId(),
+                Number = model.Number,
+                ClientName = model.Client,
+                ClientEmail = model.Email,
+                Amount = decimal.Parse(model.Amount, CultureInfo.InvariantCulture),
+                SettlementAssetId = model.SettlementAsset,
+                PaymentAssetId = PaymentAssetId,
+                DueDate = model.DueDate,
+                Note = model.Note
+            };
+
+            await _invoiceService.UpdateAsync(invoice, model.IsDraft);
             
             return NoContent();
         }
@@ -198,7 +151,7 @@ namespace Lykke.Service.PayInvoicePortal.Controllers.Api
         [Route("{invoiceId}")]
         public async Task<IActionResult> DeleteInvoice(string invoiceId)
         {
-            await _payInvoiceClient.DeleteInvoiceAsync(MerchantId, invoiceId);
+            await _invoiceService.DeleteAsync(invoiceId);
             return NoContent();
         }
     }

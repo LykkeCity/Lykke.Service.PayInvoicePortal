@@ -19,6 +19,10 @@
             currency: ''
         };
 
+        vm.handlers = {
+            init: init
+        };
+
         activate();
 
         function activate() {
@@ -28,7 +32,11 @@
                 });
 
             vm.intervals.balance = $interval(update, 3 * 60 * 1000);
-            update();
+        }
+
+        function init(data) {
+            vm.model.value = data.value;
+            vm.model.currency = data.currency;
         }
 
         function destroy() {

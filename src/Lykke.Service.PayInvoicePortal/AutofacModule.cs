@@ -2,11 +2,11 @@
 using Autofac;
 using Common.Log;
 using Lykke.Service.Assets.Client;
+using Lykke.Service.Balances.Client;
 using Lykke.Service.EmailPartnerRouter.Client;
 using Lykke.Service.PayAuth.Client;
 using Lykke.Service.PayInternal.Client;
 using Lykke.Service.PayInvoice.Client;
-using Lykke.Service.PayInvoicePortal.DataService;
 using Lykke.Service.PayInvoicePortal.Settings;
 using Lykke.SettingsReader;
 using Microsoft.Extensions.DependencyInjection;
@@ -50,7 +50,9 @@ namespace Lykke.Service.PayInvoicePortal
                 .As<IEmailPartnerRouterClient>()
                 .SingleInstance();
 
-            builder.RegisterType<InvoiceDataService>();
+            builder.RegisterInstance(new BalancesClient(_settings.CurrentValue.BalancesServiceClient.ServiceUrl, _log))
+                .As<IBalancesClient>()
+                .SingleInstance();
         }
     }
 }

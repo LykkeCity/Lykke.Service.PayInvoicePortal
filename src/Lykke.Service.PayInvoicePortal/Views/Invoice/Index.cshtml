@@ -52,10 +52,10 @@
                                     </div>
                                     <span class="invoice_info__title">FOR PAYMENT</span>
                                 </div>
-                                <div class="invoice_info__row">
-                                    <div class="invoice_info__value invoice_info__value--thin">1 {{vm.model.paymentAsset}} = {{vm.model.exchangeRate.toLocaleString(undefined, {minimumFractionDigits: vm.model.settlementAssetAccuracy})}} {{vm.model.settlementAsset}}</div>
-                                    <span class="invoice_info__title">Exchange rate</span>
-                                    <div class="invoice_info__hint">Includes {{vm.model.fee.toLocaleString(undefined, {style: 'percent', minimumFractionDigits: 1})}} uplift for covering the exchange risk and the fee of processing payment.</div>
+                                <div class="invoice_info__row" data-ng-if="vm.model.message || !vm.model.exchangeRate.hidden">
+                                    <div class="invoice_info__value invoice_info__value--thin" data-ng-if="!vm.model.exchangeRate.hidden">1 {{vm.model.paymentAsset}} = {{vm.model.exchangeRate.value.toLocaleString(undefined, {minimumFractionDigits: vm.model.settlementAssetAccuracy})}} {{vm.model.settlementAsset}}</div>
+                                    <span class="invoice_info__title" data-ng-if="!vm.model.exchangeRate.hidden">Exchange rate</span>
+                                    <div class="invoice_info__hint" data-ng-if="vm.model.message" data-ng-bind="vm.model.message"></div>
                                 </div>
                                 <div class="invoice_info__row">
                                     <div class="invoice_info__value">{{vm.model.settlementAmount.toLocaleString(undefined, {minimumFractionDigits: vm.model.settlementAssetAccuracy})}} {{vm.model.settlementAsset}}</div>
@@ -72,7 +72,7 @@
                         <div class="asset_link_list">
                             <div class="asset_link">
                                 <div class="asset_link__action">
-                                    <button id="btn-copy-wa" class="btn btn--icon _copy" type="button" data-copy="vm.model.walletAddress"><i class="icon icon--copy_thin"></i></button>
+                                    <button id="btn-copy-wa" class="btn btn--icon _copy" type="button" data-copy="vm.model.walletAddress" data-title="Copied!"><i class="icon icon--copy_thin"></i></button>
                                 </div>
                                 <div class="asset_link__info">
                                     <div class="asset_link__title">Payment address</div>
@@ -120,7 +120,7 @@
                             <div class="asset_link">
                                 <div class="asset_link__info">
                                     <div class="asset_link__title">Exchange rate</div>
-                                    <div class="asset_link__desc">1 {{vm.model.paymentAsset}} = {{vm.model.exchangeRate.toLocaleString(undefined, {minimumFractionDigits: vm.model.settlementAssetAccuracy})}} {{vm.model.settlementAsset}}</div>
+                                    <div class="asset_link__desc">1 {{vm.model.paymentAsset}} = {{vm.model.exchangeRate.value.toLocaleString(undefined, {minimumFractionDigits: vm.model.settlementAssetAccuracy})}} {{vm.model.settlementAsset}}</div>
                                 </div>
                             </div>
                             <div class="asset_link">

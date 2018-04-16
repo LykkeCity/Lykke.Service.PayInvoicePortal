@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using Autofac;
 using Autofac.Extensions.DependencyInjection;
+using AutoMapper;
 using AzureStorage.Tables;
 using Common.Log;
 using Lykke.Common.ApiLibrary.Middleware;
@@ -27,9 +28,7 @@ namespace Lykke.Service.PayInvoicePortal
         public IConfigurationRoot Configuration { get; }
         public ILog Log { get; private set; }
 
-        internal static string SiteUrl;
         internal static string BlockchainExplorerUrl;
-        internal static TimeSpan OrderLiveTime;
         
         public Startup(IHostingEnvironment env)
         {
@@ -68,11 +67,17 @@ namespace Lykke.Service.PayInvoicePortal
                             new AuthorizationPolicyBuilder(CookieAuthenticationDefaults.AuthenticationScheme)
                                 .RequireAuthenticatedUser().Build();
                     });
-                
+
+                Mapper.Initialize(cfg =>
+                {
+                    cfg.AddProfiles(typeof(AutoMapperProfile));
+                });
+
+                Mapper.AssertConfigurationIsValid();
+
                 var builder = new ContainerBuilder();
                 Log = CreateLogWithSlack(services, appSettings);
                 BlockchainExplorerUrl = appSettings.CurrentValue.PayInvoicePortal.BlockchainExplorerUrl;
-                OrderLiveTime = appSettings.CurrentValue.PayInvoicePortal.OrderLiveTime;
 
                 builder.RegisterModule(new Repositories.AutofacModule(
                     appSettings.Nested(o => o.PayInvoicePortal.Db.SubscriptionConnectionString), Log));

@@ -7,6 +7,6 @@ namespace Lykke.Service.PayInvoicePortal.Core.Domain
     {
         public int Total { get; set; }
         public Dictionary<InvoiceStatus, int> CountPerStatus { get; set; }
-        public List<InvoiceModel> Items { get; set; }
+        public List<Invoice> Items { get; set; }
     }
 }

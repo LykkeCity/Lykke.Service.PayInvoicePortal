@@ -38,13 +38,15 @@
         vm.share = {
             email: '',
             sent: false,
-            blocked: false
+            blocked: false,
+            handler: undefined
         };
 
         vm.handlers = {
             close: close,
             openForm: openForm,
-            share: share
+            share: share,
+            tooltipHandler: tooltipHandler
         };
 
         activate();
@@ -145,11 +147,18 @@
                         vm.share.sent = true;
                         vm.share.email = '';
                         vm.share.blocked = false;
+
+                        if (vm.share.handler)
+                            vm.share.handler();
                     },
                     function (error) {
                         $log.error(error);
                         vm.share.blocked = false;
                     });
+        }
+
+        function tooltipHandler(handler) {
+            vm.share.handler = handler;
         }
 
         function getUrl() {

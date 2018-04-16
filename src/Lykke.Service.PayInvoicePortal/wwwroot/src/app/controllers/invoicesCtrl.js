@@ -66,6 +66,7 @@
         };
 
         vm.handlers = {
+            init: init,
             exportToCsv: exportToCsv,
             getStatusRowCss: statusSvc.getStatusRowCss,
             canRemove: canRemove,
@@ -121,8 +122,10 @@
             });
 
             $interval(loadInvocies, 5 * 60 * 1000);
+        }
 
-            loadInvocies();
+        function init(data) {
+            updateList(data);
         }
 
         function destroy() {
@@ -143,39 +146,43 @@
                     vm.pager.pageSize * vm.pager.page)
                 .then(
                     function(data) {
-                        vm.filter.total = data.total;
-
-                        angular.forEach(data.items, function (item, key) {
-                            item.dueDate = $window.moment(item.dueDate);
-                            item.createdDate = $window.moment(item.createdDate);
-                        });
-                        
-                        vm.model.invoices = data.items;
-
-                        angular.forEach(vm.filter.statuses, function(status, key) {
-                            status.count = 0;
-                        });
-
-                        angular.forEach(vm.filter.statuses, function(status, key) {
-                            angular.forEach(status.values, function(value, key) {
-                                var count = data.countPerStatus[value];
-                                if (count)
-                                    status.count += count;
-                            });
-                        });
-
-                        if (vm.filter.status) {
-                            var selectedStatus = vm.filter.statuses.filter(function(status) {
-                                return status.id === vm.filter.status;
-                            })[0];
-
-                            if (selectedStatus.count === 0)
-                                vm.filter.status = null;
-                        }
+                        updateList(data);
                     },
                     function(error) {
                         $log.error(error);
                     });
+        }
+
+        function updateList(data) {
+            vm.filter.total = data.total;
+
+            angular.forEach(data.items, function (item, key) {
+                item.dueDate = $window.moment(item.dueDate);
+                item.createdDate = $window.moment(item.createdDate);
+            });
+
+            vm.model.invoices = data.items;
+
+            angular.forEach(vm.filter.statuses, function (status, key) {
+                status.count = 0;
+            });
+
+            angular.forEach(vm.filter.statuses, function (status, key) {
+                angular.forEach(status.values, function (value, key) {
+                    var count = data.countPerStatus[value];
+                    if (count)
+                        status.count += count;
+                });
+            });
+
+            if (vm.filter.status) {
+                var selectedStatus = vm.filter.statuses.filter(function (status) {
+                    return status.id === vm.filter.status;
+                })[0];
+
+                if (selectedStatus.count === 0)
+                    vm.filter.status = null;
+            }
         }
 
         function exportToCsv() {

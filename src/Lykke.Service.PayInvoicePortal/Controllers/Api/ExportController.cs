@@ -8,7 +8,8 @@ using Common.Log;
 using Lykke.Service.PayInvoice.Client.Models.Invoice;
 using Lykke.Service.PayInvoicePortal.Core.Domain;
 using Lykke.Service.PayInvoicePortal.Core.Services;
-using Lykke.Service.PayInvoicePortal.Models.Home;
+using Lykke.Service.PayInvoicePortal.Extensions;
+using Lykke.Service.PayInvoicePortal.Models.Invoices;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -16,7 +17,7 @@ namespace Lykke.Service.PayInvoicePortal.Controllers.Api
 {
     [Authorize]
     [Route("/api/export")]
-    public class ExportController : BaseController
+    public class ExportController : Controller
     {
         private readonly IInvoiceService _invoiceService;
         private readonly ILog _log;
@@ -35,8 +36,8 @@ namespace Lykke.Service.PayInvoicePortal.Controllers.Api
             string sortField,
             bool sortAscending)
         {
-            IEnumerable<InvoiceModel> invoices = await _invoiceService.GetAsync(
-                MerchantId,
+            IEnumerable<Invoice> invoices = await _invoiceService.GetAsync(
+                User.GetMerchantId(),
                 status,
                 period,
                 searchValue,
@@ -55,7 +56,7 @@ namespace Lykke.Service.PayInvoicePortal.Controllers.Api
                     ClientName = o.ClientName,
                     ClientEmail = o.ClientEmail,
                     Amount = o.Amount,
-                    Currency = o.SettlementAssetId,
+                    Currency = o.SettlementAsset.DisplayId,
                     Status = o.Status.ToString(),
                     DueDate = o.DueDate.ToIsoDateTime(),
                     CreatedDate = o.CreatedDate.ToIsoDateTime()

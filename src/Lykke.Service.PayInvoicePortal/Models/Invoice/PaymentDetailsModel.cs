@@ -27,6 +27,12 @@ namespace Lykke.Service.PayInvoicePortal.Models.Invoice
 
         public double ExchangeRate { get; set; }
 
+        public bool DeltaSpread { get; set; }
+
+        public double Percents { get; set; }
+
+        public int Pips { get; set; }
+
         public double Fee { get; set; }
 
         public DateTime DueDate { get; set; }
@@ -41,12 +47,10 @@ namespace Lykke.Service.PayInvoicePortal.Models.Invoice
 
         public int RemainingSeconds { get; set; }
 
-        public bool Expired { get; set; }
-
         public DateTime? PaidDate { get; set; }
 
         public double PaidAmount { get; set; }
 
-        public List<FileModel> Files { get; set; }
+        public IReadOnlyList<FileModel> Files { get; set; }
     }
 }

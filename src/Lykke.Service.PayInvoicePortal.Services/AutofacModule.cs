@@ -17,8 +17,24 @@ namespace Lykke.Service.PayInvoicePortal.Services
             builder.RegisterType<ShutdownManager>()
                 .As<IShutdownManager>();
 
+            builder.RegisterType<AuthService>()
+                .As<IAuthService>();
+
+            builder.RegisterType<AssetService>()
+                .As<IAssetService>();
+
+            builder.RegisterType<BalanceService>()
+                .As<IBalanceService>();
+
+            builder.RegisterType<EmailService>()
+                .As<IEmailService>();
+
             builder.RegisterType<InvoiceService>()
                 .As<IInvoiceService>();
+
+            builder.RegisterType<EmployeeCache>()
+                .As<IEmployeeCache>()
+                .SingleInstance();
         }
     }
 }

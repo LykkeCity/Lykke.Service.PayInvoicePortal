@@ -1,5 +1,10 @@
-﻿using System.Threading.Tasks;
-using Lykke.Service.PayInvoicePortal.DataService;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
+using AutoMapper;
+using Common.Log;
+using Lykke.Service.PayInvoicePortal.Core.Services;
+using Lykke.Service.PayInvoicePortal.Extensions;
+using Lykke.Service.PayInvoicePortal.Models;
 using Lykke.Service.PayInvoicePortal.Models.Invoices;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -8,25 +13,37 @@ namespace Lykke.Service.PayInvoicePortal.Controllers
 {
     [Authorize]
     [Route("/invoices")]
-    public class InvoicesController : BaseController
+    public class InvoicesController : Controller
     {
-        private readonly InvoiceDataService _invoiceDataService;
+        private readonly IInvoiceService _invoiceService;
+        private readonly ILog _log;
 
-        public InvoicesController(InvoiceDataService invoiceDataService)
+        public InvoicesController(
+            IInvoiceService invoiceService,
+            ILog log)
         {
-            _invoiceDataService = invoiceDataService;
+            _invoiceService = invoiceService;
+            _log = log;
         }
 
         [HttpGet]
         [Route("{invoiceId}")]
         public async Task<IActionResult> Index(string invoiceId)
         {
-            InvoiceModel invoice = await _invoiceDataService.GetByIdAsync(invoiceId);
+            var invoiceTask = _invoiceService.GetByIdAsync(invoiceId);
+            var filesTask = _invoiceService.GetFilesAsync(invoiceId);
+            var historyTask = _invoiceService.GetHistoryAsync(User.GetMerchantId(), invoiceId);
+
+            await Task.WhenAll(invoiceTask, filesTask, historyTask);
+
+            var invoice = Mapper.Map<InvoiceModel>(invoiceTask.Result);
+            invoice.Files = Mapper.Map<List<FileModel>>(filesTask.Result);
+            invoice.History = Mapper.Map<List<HistoryItemModel>>(historyTask.Result);
 
             var vm = new IndexViewModel
             {
                 Invoice = invoice,
-                BlockchainExplorerUrl = $"{BlockchainExplorerUrl.TrimEnd('/')}/address/{invoice.WalletAddress}"
+                BlockchainExplorerUrl = Startup.BlockchainExplorerUrl.TrimEnd('/')
             };
 
             return View(vm);
