@@ -12,6 +12,7 @@ using Lykke.Service.PayInternal.Client.Models.Merchant;
 using Lykke.Service.PayInvoice.Client;
 using Lykke.Service.PayInvoice.Client.Models.Invoice;
 using Lykke.Service.PayInvoicePortal.Core.Services;
+using MoreLinq;
 
 namespace Lykke.Service.PayInvoicePortal.Services
 {
@@ -61,7 +62,7 @@ namespace Lykke.Service.PayInvoicePortal.Services
             var payload = new Dictionary<string, string>
             {
                 {"InvoiceNumber", invoice.Number},
-                {"Company", merchant.Name},
+                {"Company", merchant.DisplayName},
                 {"ClientFullName", invoice.ClientName},
                 {"AmountToBePaid", invoice.Amount.ToString($"N{settlementAsset.Accuracy}")},
                 {"SettlementCurrency", settlementAsset.DisplayId},
