@@ -93,6 +93,7 @@
 
             vm.share.email = data.clientEmail;
             vm.share.sent = false;
+            vm.share.blocked = false;
 
             $rootScope.blur = true;
             vm.form.open = true;
