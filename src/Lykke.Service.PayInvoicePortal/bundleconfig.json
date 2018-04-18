@@ -4,6 +4,7 @@
     "inputFiles": [
       "wwwroot/src/css/bootstrap-custom.min.css",
       "wwwroot/src/css/style.css",
+      "wwwroot/src/css/style-custom.css",
       "wwwroot/vendors/jquery-confirm/jquery-confirm.css"
     ],
     "minify": {
@@ -18,6 +19,7 @@
     "inputFiles": [
       "wwwroot/src/css/bootstrap-custom.min.css",
       "wwwroot/src/css/style.css",
+      "wwwroot/src/css/style-custom.css",
       "wwwroot/vendors/jquery-confirm/jquery-confirm.css"
     ],
     "minify": {
