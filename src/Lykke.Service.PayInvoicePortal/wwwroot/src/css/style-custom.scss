@@ -14,3 +14,17 @@ input[type="number"] {
         height: auto;
     }
 }
+
+.attachment_list--download {
+    .asset_link__icon {
+        .asset_icon {
+            cursor: pointer;
+        }
+    }
+    .asset_link__info {
+        .asset_link__title {
+            cursor: pointer;
+        }
+    }
+}
+

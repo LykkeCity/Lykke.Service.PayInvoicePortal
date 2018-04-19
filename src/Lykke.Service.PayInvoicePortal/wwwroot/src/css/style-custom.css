@@ -8,3 +8,9 @@ input[type="number"]::-webkit-outer-spin-button, input[type="number"]::-webkit-i
   cursor: pointer;
   height: auto; }
 
+.attachment_list--download .asset_link__icon .asset_icon {
+  cursor: pointer; }
+
+.attachment_list--download .asset_link__info .asset_link__title {
+  cursor: pointer; }
+
