@@ -324,6 +324,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="AppCode" />
+    <Folder Include="wwwroot\src\css\scss\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Lykke.Service.PayInvoicePortal.Core\Lykke.Service.PayInvoicePortal.Core.csproj" />

@@ -1,1 +1,16 @@
-﻿
+﻿.select {
+    > .form-control {
+        cursor: pointer;
+    }
+    &::after {
+        pointer-events: none;
+    }
+}
+
+input[type="number"] {
+    &::-webkit-outer-spin-button,
+    &::-webkit-inner-spin-button {
+        cursor: pointer;
+        height: auto;
+    }
+}
