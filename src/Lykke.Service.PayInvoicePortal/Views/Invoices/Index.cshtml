@@ -1,9 +1,14 @@
-﻿@using Newtonsoft.Json
+﻿@using Lykke.Service.PayInvoicePortal.Models.Invoices
+@using Newtonsoft.Json
 @using Newtonsoft.Json.Serialization
 
 @model Lykke.Service.PayInvoicePortal.Models.Invoices.IndexViewModel
 @{
     ViewData["Title"] = "Invoice - " + Model.Invoice.Number;
+
+    const string partialPathWithAuthor = "/Views/Partials/HistoryRowTemplateWithAuthor.cshtml";
+    const string partialPathOther = "/Views/Partials/HistoryRowTemplateOther.cshtml";
+    const string partialPathError = "/Views/Partials/HistoryRowTemplateError.cshtml";
 }
 
 <div data-ng-controller="invoiceEditCtrl as vm" ng-cloak>
@@ -169,7 +174,7 @@
                                         <div class="asset_link__info">
                                             <div class="asset_link__title">Status</div>
                                             <div class="asset_link__desc">
-                                                <span class="label" data-ng-class="vm.handlers.getStatusRowCss(vm.model.status)" data-ng-bind="vm.model.status"></span>
+                                                <span class="label" data-ng-class="vm.handlers.getStatusCss(vm.model.status)" data-ng-bind="vm.model.status"></span>
                                             </div>
                                         </div>
                                     </div>
@@ -272,176 +277,89 @@
         </div>
     </section>
 </article>
-
 <script type="text/ng-template" id="historyRowTemplate-Draft">
-    <div class="history_item__img">
-        <div class="_circle" data-ng-bind="vm.handlers.getInitials(item.author)"></div>
-    </div>
-    <div class="history_item__content">
-        <div class="pull-right label label--gray" data-ng-bind="item.status"></div>
-        <div class="history_item__title">
-            {{item.author}}
-            <span class="middot">&middot;</span>
-            <div class="history_item__date" data-ng-bind="item.date.format('LLL')"></div>
-        </div>
-        <div class="history_item__text">Created</div>
-    </div>
+    @await Html.PartialAsync(partialPathWithAuthor, new HistoryRowTemplateModel
+    {
+        HistoryItemText = "Created"
+    })
 </script>
 <script type="text/ng-template" id="historyRowTemplate-Removed">
-    <div class="history_item__img">
-        <div class="_circle" data-ng-bind="vm.handlers.getInitials(item.author)"></div>
-    </div>
-    <div class="history_item__content">
-        <div class="pull-right label label--gray" data-ng-bind="item.status"></div>
-        <div class="history_item__title">
-            {{item.author}}
-            <span class="middot">&middot;</span>
-            <div class="history_item__date" data-ng-bind="item.date.format('LLL')"></div>
-        </div>
-        <div class="history_item__text">Removed</div>
-    </div>
+    @await Html.PartialAsync(partialPathWithAuthor, new HistoryRowTemplateModel
+    {
+        HistoryItemText = "Removed"
+    })
 </script>
 <script type="text/ng-template" id="historyRowTemplate-Unpaid">
-    <div class="history_item__img">
-        <div class="_circle" data-ng-bind="vm.handlers.getInitials(item.author)"></div>
-    </div>
-    <div class="history_item__content">
-        <div class="pull-right label label--yellow" data-ng-bind="item.status"></div>
-        <div class="history_item__title">
-            {{item.author}}
-            <span class="middot">&middot;</span>
-            <div class="history_item__date" data-ng-bind="item.date.format('LLL')"></div>
-        </div>
-        <div class="history_item__text">
-            {{item.settlementAmount | currency : '' : item.settlementAssetAccuracy}} {{item.settlementAsset}} to be paid due {{item.dueDate.format('LL')}}
-        </div>
-    </div>
+    @await Html.PartialAsync(partialPathWithAuthor, new HistoryRowTemplateModel
+    {
+        HistoryItemText = "{{item.settlementAmount | currency : '' : item.settlementAssetAccuracy}} " +
+                           "{{item.settlementAsset}} to be paid due {{item.dueDate.format('LL')}}"
+    })
 </script>
 <script type="text/ng-template" id="historyRowTemplate-Paid">
-    <div class="history_item__img history_item__img--success">
-        <div class="_circle"><i class="icon icon--check_thin"></i></div>
-    </div>
-    <div class="history_item__content">
-        <div class="pull-right label label--green" data-ng-bind="item.status"></div>
-        <div class="history_item__title">
-            Payment
-            <span class="middot">&middot;</span>
-            <div class="history_item__date" data-ng-bind="item.date.format('LLL')"></div>
-        </div>
-        <div class="history_item__text">
-            Transferred {{item.settlementAmount | currency : '' : item.settlementAssetAccuracy}} {{item.settlementAsset}} from {{item.sourceWalletAddresses.join(', ')}}, expected {{item.paidAmount | currency : '' : item.paymentAssetAccuracy}} {{item.paymentAsset}}. Exchange rate 1 {{item.paymentAsset}} = {{item.exchangeRate | currency : '' :  item.settlementAssetAccuracy}} {{item.settlementAsset}}.
-        </div>
-    </div>
+    @await Html.PartialAsync(partialPathOther, new HistoryRowTemplateModel
+    {
+        HistoryItemImg = "history_item__img--success",
+        HistoryItemIcon = "icon--check_thin",
+        HistoryItemTitle = "Payment",
+        HistoryItemText = "Transferred {{item.settlementAmount | currency : '' : item.settlementAssetAccuracy}} " +
+                          "{{item.settlementAsset}} from {{item.sourceWalletAddresses.join(', ')}}, " +
+                          "expected {{item.paidAmount | currency : '' : item.paymentAssetAccuracy}} {{item.paymentAsset}}. " +
+                          "Exchange rate 1 {{item.paymentAsset}} = {{item.exchangeRate | currency : '' :  item.settlementAssetAccuracy}} {{item.settlementAsset}}."
+    })
 </script>
-<script type="text/ng-template" id="historyRowTemplate-Settled">
-    <div class="history_item__img history_item__img--success">
-        <div class="_circle"><i class="icon icon--check_thin"></i></div>
-    </div>
-    <div class="history_item__content">
-        <div class="pull-right label label--blue" data-ng-bind="item.status"></div>
-        <div class="history_item__title">
-            Settlement
-            <span class="middot">&middot;</span>
-            <div class="history_item__date" data-ng-bind="item.date.format('LLL')"></div>
-        </div>
-        <div class="history_item__text">
-            Transferred {{item.settlementAmount | currency : '' : item.settlementAssetAccuracy}} {{item.settlementAsset}} to LykkePay's account for settlement.
-        </div>
-    </div>
+<script type="text/ng-template" id="historyRowTemplate-InProgress">
+    @await Html.PartialAsync(partialPathOther, new HistoryRowTemplateModel
+    {
+        HistoryItemImg = "history_item__img--success",
+        HistoryItemIcon = "icon--check_thin",
+        HistoryItemTitle = "In Progress",
+        HistoryItemText = "Transferred {{item.settlementAmount | currency : '' : item.settlementAssetAccuracy}} " +
+                          "{{item.settlementAsset}} to LykkePay's account for settlement."
+    })
 </script>
 <script type="text/ng-template" id="historyRowTemplate-Refunded">
-    <div class="history_item__img history_item__img--refund">
-        <div class="_circle"><i class="icon icon--move_to_thin"></i></div>
-    </div>
-    <div class="history_item__content">
-        <div class="pull-right label label--dark" data-ng-bind="item.status"></div>
-        <div class="history_item__title">
-            Refund
-            <span class="middot">&middot;</span>
-            <div class="history_item__date" data-ng-bind="item.date.format('LLL')"></div>
-        </div>
-        <div class="history_item__text">
-            Refunded {{item.refundAmount | currency : '' : item.paymentAssetAccuracy}} {{item.paymentAsset}} to {{item.refundWalletAddress}}.
-        </div>
-    </div>
+    @await Html.PartialAsync(partialPathOther, new HistoryRowTemplateModel
+    {
+        HistoryItemImg = "history_item__img--refund",
+        HistoryItemIcon = "icon--move_to_thin",
+        HistoryItemTitle = "Refund",
+        HistoryItemText = "Refunded {{item.refundAmount | currency : '' : item.paymentAssetAccuracy}} " +
+                          "{{item.paymentAsset}} to {{item.refundWalletAddress}}."
+    })
 </script>
 <script type="text/ng-template" id="historyRowTemplate-Underpaid">
-    <div class="history_item__img history_item__img--error">
-        <div class="_circle">!</div>
-    </div>
-    <div class="history_item__content">
-        <div class="pull-right label label--red">Underpaid</div>
-        <div class="history_item__title">
-            Error
-            <span class="middot">&middot;</span>
-            <div class="history_item__date" data-ng-bind="item.date.format('LLL')"></div>
-        </div>
-        <div class="history_item__text">
-            Transferred {{item.settlementAmount | currency : '' : item.settlementAssetAccuracy}} {{item.settlementAsset}} from {{item.sourceWalletAddresses.join(', ')}}, expected {{item.paidAmount | currency : '' : item.paymentAssetAccuracy}} {{item.paymentAsset}}.
-        </div>
-    </div>
+    @await Html.PartialAsync(partialPathError, new HistoryRowTemplateModel
+    {
+        HistoryItemText = "Transferred {{item.settlementAmount | currency : '' : item.settlementAssetAccuracy}} " +
+                          "{{item.settlementAsset}} from {{item.sourceWalletAddresses.join(', ')}}, " +
+                          "expected {{item.paidAmount | currency : '' : item.paymentAssetAccuracy}} {{item.paymentAsset}}."
+    })
 </script>
 <script type="text/ng-template" id="historyRowTemplate-Overpaid">
-    <div class="history_item__img history_item__img--error">
-        <div class="_circle">!</div>
-    </div>
-    <div class="history_item__content">
-        <div class="pull-right label label--red" data-ng-bind="item.status"></div>
-        <div class="history_item__title">
-            Error
-            <span class="middot">&middot;</span>
-            <div class="history_item__date" data-ng-bind="item.date.format('LLL')"></div>
-        </div>
-        <div class="history_item__text">
-            Transferred {{item.settlementAmount | currency : '' : item.settlementAssetAccuracy}} {{item.settlementAsset}} from {{item.sourceWalletAddresses.join(', ')}}, expected {{item.paymentAmount | currency : '' : item.paymentAssetAccuracy}} {{item.paymentAsset}}.
-        </div>
-    </div>
+    @await Html.PartialAsync(partialPathError, new HistoryRowTemplateModel
+    {
+        HistoryItemText = "Transferred {{item.settlementAmount | currency : '' : item.settlementAssetAccuracy}} " +
+                          "{{item.settlementAsset}} from {{item.sourceWalletAddresses.join(', ')}}, " +
+                          "expected {{item.paymentAmount | currency : '' : item.paymentAssetAccuracy}} {{item.paymentAsset}}."
+    })
 </script>
 <script type="text/ng-template" id="historyRowTemplate-LatePaid">
-    <div class="history_item__img history_item__img--error">
-        <div class="_circle">!</div>
-    </div>
-    <div class="history_item__content">
-        <div class="pull-right label label--red" data-ng-bind="item.status"></div>
-        <div class="history_item__title">
-            Error
-            <span class="middot">&middot;</span>
-            <div class="history_item__date" data-ng-bind="item.date.format('LLL')"></div>
-        </div>
-        <div class="history_item__text">
-            Transferred {{item.settlementAmount | currency : '' : item.settlementAssetAccuracy}} {{item.settlementAsset}} from {{item.sourceWalletAddresses.join(', ')}} on {{item.dueDate.format('LL')}}.
-        </div>
-    </div>
+    @await Html.PartialAsync(partialPathError, new HistoryRowTemplateModel
+    {
+        HistoryItemText = "Transferred {{item.settlementAmount | currency : '' : item.settlementAssetAccuracy}} " +
+                          "{{item.settlementAsset}} from {{item.sourceWalletAddresses.join(', ')}} on {{item.dueDate.format('LL')}}."
+    })
 </script>
 <script type="text/ng-template" id="historyRowTemplate-NotConfirmed">
-    <div class="history_item__img history_item__img--error">
-        <div class="_circle">!</div>
-    </div>
-    <div class="history_item__content">
-        <div class="pull-right label label--red" data-ng-bind="item.status"></div>
-        <div class="history_item__title">
-            Error
-            <span class="middot">&middot;</span>
-            <div class="history_item__date" data-ng-bind="item.date.format('LLL')"></div>
-        </div>
-        <div class="history_item__text">
-            Transfer hasn't been confirmed
-        </div>
-    </div>
+    @await Html.PartialAsync(partialPathError, new HistoryRowTemplateModel
+    {
+        HistoryItemText = "Transfer hasn't been confirmed"
+    })
 </script>
 <script type="text/ng-template" id="historyRowTemplate-InternalError">
-    <div class="history_item__img history_item__img--error">
-        <div class="_circle">!</div>
-    </div>
-    <div class="history_item__content">
-        <div class="pull-right label label--red" data-ng-bind="item.status"></div>
-        <div class="history_item__title">
-            Error
-            <span class="middot">&middot;</span>
-            <div class="history_item__date" data-ng-bind="item.date.format('LLL')"></div>
-        </div>
-        <div class="history_item__text">
-            Internal error occurred
-        </div>
-    </div>
+    @await Html.PartialAsync(partialPathError, new HistoryRowTemplateModel
+    {
+        HistoryItemText = "Internal error occurred"
+    })
 </script>

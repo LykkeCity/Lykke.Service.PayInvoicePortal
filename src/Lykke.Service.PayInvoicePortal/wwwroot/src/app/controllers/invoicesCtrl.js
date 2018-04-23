@@ -68,7 +68,7 @@
         vm.handlers = {
             init: init,
             exportToCsv: exportToCsv,
-            getStatusRowCss: statusSvc.getStatusRowCss,
+            getStatusCss: statusSvc.getStatusCss,
             canRemove: canRemove,
             remove: remove,
             showMore: showMore,

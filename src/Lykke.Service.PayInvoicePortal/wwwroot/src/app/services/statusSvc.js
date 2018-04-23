@@ -9,12 +9,12 @@
 
     function statusSvc() {
         var service = {
-            getStatusRowCss: getStatusRowCss
+            getStatusCss: getStatusCss
         };
 
         return service;
 
-        function getStatusRowCss(status) {
+        function getStatusCss(status) {
             switch (status) {
                 case 'Draft':
                     return 'label--gray';
@@ -24,20 +24,16 @@
                     return '';
                 case 'InProgress':
                 case 'RefundInProgress':
-                case 'SettlementInProgress':
                     return 'label--blue';
                 case 'Paid':
                     return 'label--green';
-                case 'UnderPaid':
-                case 'OverPaid':
+                case 'Underpaid':
+                case 'Overpaid':
                 case 'LatePaid':
                     return 'label--violet';
                 case 'Refunded':
                     return 'label--dark';
-                case 'Settled':
-                    return 'label--blue';
                 case 'NotConfirmed':
-                case 'InvalidAddress':
                 case 'InternalError':
                     return 'label--red';
             }
