@@ -225,13 +225,17 @@
                 return;
             }
 
+            vm.form.blocked = true;
+
             apiSvc.uploadFile(vm.model.id, files)
                 .then(
                     function(data) {
                         update(data);
+                        vm.form.blocked = false;
                     },
                     function(error) {
-                          $log.error(error);
+                        $log.error(error);
+                        vm.form.blocked = false;
                     });
         }
 

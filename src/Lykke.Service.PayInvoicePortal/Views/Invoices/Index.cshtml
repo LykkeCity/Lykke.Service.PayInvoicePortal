@@ -105,6 +105,8 @@
     </div>
 </div>
 
+@await Html.PartialAsync("/Views/Partials/InvoiceInfo.cshtml")
+
 <article class="content"
          data-ng-controller="invoiceDetailsCtrl as vm"
          data-ng-init="vm.handlers.init(@JsonConvert.SerializeObject(Model.Invoice, new JsonSerializerSettings { ContractResolver = new DefaultContractResolver{NamingStrategy = new CamelCaseNamingStrategy()} }))"
@@ -204,7 +206,8 @@
                         </div>
                         <div data-ng-if="vm.form.allowEdit">
                             <div class="form_header">
-                                <button type="button" class="btn btn-sm btn-primary pull-right" accept=".jpg,.jpeg,.png,.pdf,.doc,.docx,.xls,.xlsx,.rtf" ngf-multiple="true" data-ngf-select="vm.handlers.upload($files)">Add File</button>
+                                <button type="button" class="btn btn-sm btn-primary pull-right" accept=".jpg,.jpeg,.png,.pdf,.doc,.docx,.xls,.xlsx,.rtf" ngf-multiple="true" data-ngf-select="vm.handlers.upload($files)"
+                                        data-ng-disabled="vm.form.blocked">Add File</button>
                                 <h3>Attachment</h3>
                             </div>
                             <div class="attachment_list attachment_list--download" data-ng-show="vm.model.files && vm.model.files.length > 0">

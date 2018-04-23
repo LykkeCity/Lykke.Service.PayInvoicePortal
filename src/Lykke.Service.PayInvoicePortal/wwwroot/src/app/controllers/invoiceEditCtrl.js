@@ -179,9 +179,12 @@
 
             apiSvc.updateInvoice(model)
                 .then(
-                function () {
+                function (data) {
                     close();
                     onChanged();
+                    if (draft === false) {
+                        $rootScope.$broadcast('invoiceGenerated', data);
+                    }
                     vm.form.blocked = false;
                 },
                 function (error) {
