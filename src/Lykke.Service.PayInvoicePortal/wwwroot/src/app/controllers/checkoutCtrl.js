@@ -5,9 +5,9 @@
         .module('app')
         .controller('checkoutCtrl', checkoutCtrl);
 
-    checkoutCtrl.$inject = ['$window', '$location', '$scope', '$log', '$interval', '$timeout', 'apiSvc', 'fileSvc'];
+    checkoutCtrl.$inject = ['$window', '$location', '$scope', '$log', '$interval', '$timeout', 'apiSvc', 'fileSvc', 'statusSvc'];
 
-    function checkoutCtrl($window, $location, $scope, $log, $interval, $timeout, apiSvc, fileSvc) {
+    function checkoutCtrl($window, $location, $scope, $log, $interval, $timeout, apiSvc, fileSvc, statusSvc) {
         var vm = this;
 
         vm.callback = {
@@ -147,21 +147,19 @@
                     vm.header.title = 'InProgress';
                     vm.header.message = 'Payment in progress';
                     vm.header.icon = 'icon--check_circle';
-                    vm.header.color = 'alert--green';
+                    vm.header.color = statusSvc.getAlertStatusCss(vm.model.status);
                     break;
                 case 'Paid':
-                case 'Settled':
-                case 'SettlementInProgress':
                     vm.header.title = 'Paid';
                     vm.header.message = 'Invoice has been paid on ' + vm.model.paidDate.format('l');
                     vm.header.icon = 'icon--check_circle';
-                    vm.header.color = 'alert--green';
+                    vm.header.color = statusSvc.getAlertStatusCss(vm.model.status);
                     break;
                 case 'RefundInProgress':
                     vm.header.title = 'InProgress';
                     vm.header.message = 'Refund in progress';
                     vm.header.icon = '';
-                    vm.header.color = 'alert--violet';
+                    vm.header.color = statusSvc.getAlertStatusCss(vm.model.status);
                     break;
                 case 'Refunded':
                     vm.header.title = 'Refund';
@@ -172,7 +170,7 @@
                         vm.model.paymentAsset +
                         ' have been refunded';
                     vm.header.icon = 'icon--refund';
-                    vm.header.color = 'alert--dark';
+                    vm.header.color = statusSvc.getAlertStatusCss(vm.model.status);
                     break;
                 case 'Underpaid':
                     vm.header.title = 'Underpaid';
@@ -184,7 +182,7 @@
                         ' received on ' +
                         vm.model.paidDate.format('l');
                     vm.header.icon = 'icon--remove_circle';
-                    vm.header.color = 'alert--violet';
+                    vm.header.color = statusSvc.getAlertStatusCss(vm.model.status);
                     break;
                 case 'Overpaid':
                     vm.header.title = 'Overpaid';
@@ -196,7 +194,7 @@
                         ' received on ' +
                         vm.model.paidDate.format('l');
                     vm.header.icon = 'icon--add_circle';
-                    vm.header.color = 'alert--violet';
+                    vm.header.color = statusSvc.getAlertStatusCss(vm.model.status);
                     break;
                 case 'LatePaid':
                     vm.header.title = 'LatePaid';
@@ -208,25 +206,19 @@
                         ' received on ' +
                         vm.model.paidDate.format('l');
                     vm.header.icon = 'icon--warning_icn';
-                    vm.header.color = 'alert--red';
+                    vm.header.color = statusSvc.getAlertStatusCss(vm.model.status);
                     break;
                 case 'NotConfirmed':
                     vm.header.title = 'Error';
                     vm.header.message = 'Transfer hasn\'t been confirmed';
                     vm.header.icon = 'icon--warning_icn';
-                    vm.header.color = 'alert--red';
-                    break;
-                case 'InvalidAddress':
-                    vm.header.title = 'Error';
-                    vm.header.message = 'Invalid address has been provided';
-                    vm.header.icon = 'icon--warning_icn';
-                    vm.header.color = 'alert--red';
+                    vm.header.color = statusSvc.getAlertStatusCss(vm.model.status);
                     break;
                 case 'InternalError':
                     vm.header.title = 'Error';
                     vm.header.message = 'Internal error occurred';
                     vm.header.icon = 'icon--warning_icn';
-                    vm.header.color = 'alert--red';
+                    vm.header.color = statusSvc.getAlertStatusCss(vm.model.status);
                     break;
                 default:
                     vm.header.title = 'Error';

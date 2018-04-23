@@ -9,33 +9,42 @@
 
     function statusSvc() {
         var service = {
-            getStatusCss: getStatusCss
+            getStatusCss: getStatusCss,
+            getAlertStatusCss: getAlertStatusCss
         };
 
         return service;
 
-        function getStatusCss(status) {
+        function getAlertStatusCss(status) {
+            return getStatusCss(status, 'alert');
+        }
+    
+        function getStatusCss(status, prefix) {
+            if (!prefix) {
+                prefix = 'label';
+            }
+
             switch (status) {
                 case 'Draft':
-                    return 'label--gray';
+                    return prefix + '--gray';
                 case 'Unpaid':
-                    return 'label--yellow';
+                    return prefix + '--yellow';
                 case 'Removed':
                     return '';
                 case 'InProgress':
                 case 'RefundInProgress':
-                    return 'label--blue';
+                    return prefix + '--blue';
                 case 'Paid':
-                    return 'label--green';
+                    return prefix + '--green';
                 case 'Underpaid':
                 case 'Overpaid':
                 case 'LatePaid':
-                    return 'label--violet';
+                    return prefix + '--violet';
                 case 'Refunded':
-                    return 'label--dark';
+                    return prefix + '--dark';
                 case 'NotConfirmed':
                 case 'InternalError':
-                    return 'label--red';
+                    return prefix + '--red';
             }
             return '';
         }
