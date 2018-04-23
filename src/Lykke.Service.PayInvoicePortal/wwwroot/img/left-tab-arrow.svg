@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20">
+    <g fill="none" fill-rule="evenodd">
+        <text fill="#333" font-family="ProximaNova-Semibold, Proxima Nova" font-size="18" font-weight="500" transform="translate(-8 -3)">
+            <tspan x=".253" y="17">All ⋅ 32</tspan>
+        </text>
+        <path fill="#FFF" d="M-128-18H37v55h-165z"/>
+        <path stroke="#8C94A0" stroke-linecap="round" d="M13 3l-7 7 7 7"/>
+    </g>
+</svg>
