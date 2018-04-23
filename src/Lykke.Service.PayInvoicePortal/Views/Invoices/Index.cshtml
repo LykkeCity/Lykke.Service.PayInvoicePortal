@@ -302,10 +302,7 @@
         HistoryItemImg = "history_item__img--success",
         HistoryItemIcon = "icon--check_thin",
         HistoryItemTitle = "Payment",
-        HistoryItemText = "Transferred {{item.settlementAmount | currency : '' : item.settlementAssetAccuracy}} " +
-                          "{{item.settlementAsset}} from {{item.sourceWalletAddresses.join(', ')}}, " +
-                          "expected {{item.paidAmount | currency : '' : item.paymentAssetAccuracy}} {{item.paymentAsset}}. " +
-                          "Exchange rate 1 {{item.paymentAsset}} = {{item.exchangeRate | currency : '' :  item.settlementAssetAccuracy}} {{item.settlementAsset}}."
+        HistoryItemText = GetPaidText()
     })
 </script>
 <script type="text/ng-template" id="historyRowTemplate-InProgress">
@@ -331,17 +328,13 @@
 <script type="text/ng-template" id="historyRowTemplate-Underpaid">
     @await Html.PartialAsync(partialPathError, new HistoryRowTemplateModel
     {
-        HistoryItemText = "Transferred {{item.settlementAmount | currency : '' : item.settlementAssetAccuracy}} " +
-                          "{{item.settlementAsset}} from {{item.sourceWalletAddresses.join(', ')}}, " +
-                          "expected {{item.paidAmount | currency : '' : item.paymentAssetAccuracy}} {{item.paymentAsset}}."
+        HistoryItemText = GetPaidText()
     })
 </script>
 <script type="text/ng-template" id="historyRowTemplate-Overpaid">
     @await Html.PartialAsync(partialPathError, new HistoryRowTemplateModel
     {
-        HistoryItemText = "Transferred {{item.settlementAmount | currency : '' : item.settlementAssetAccuracy}} " +
-                          "{{item.settlementAsset}} from {{item.sourceWalletAddresses.join(', ')}}, " +
-                          "expected {{item.paymentAmount | currency : '' : item.paymentAssetAccuracy}} {{item.paymentAsset}}."
+        HistoryItemText = GetPaidText()
     })
 </script>
 <script type="text/ng-template" id="historyRowTemplate-LatePaid">
@@ -363,3 +356,15 @@
         HistoryItemText = "Internal error occurred"
     })
 </script>
+
+@functions {
+
+    private string GetPaidText()
+    {
+        return "Transferred {{item.paidAmount | currency : '' : item.paymentAssetAccuracy}} " +
+               "{{item.paymentAsset}} from {{item.sourceWalletAddresses.join(', ')}}, " +
+               "expected {{item.paymentAmount | currency : '' : item.paymentAssetAccuracy}} {{item.paymentAsset}}. " +
+               "Exchange rate 1 {{item.paymentAsset}} = {{item.exchangeRate | currency : '' :  item.settlementAssetAccuracy}} {{item.settlementAsset}}.";
+    }
+
+}
