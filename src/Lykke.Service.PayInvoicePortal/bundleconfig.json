@@ -104,23 +104,7 @@
   {
     "outputFileName": "wwwroot/js/app.min.js",
     "inputFiles": [
-      "wwwroot/src/app/app.js",
-      "wwwroot/src/app/directives/mtNavigate.js",
-      "wwwroot/src/app/directives/dateTimePicker.js",
-      "wwwroot/src/app/directives/clickOutside.js",
-      "wwwroot/src/app/directives/copy.js",
-      "wwwroot/src/app/directives/tooltip.js",
-      "wwwroot/src/app/controllers/invoicesCtrl.js",
-      "wwwroot/src/app/controllers/invoiceCtrl.js",
-      "wwwroot/src/app/controllers/invoiceInfoCtrl.js",
-      "wwwroot/src/app/controllers/balanceCtrl.js",
-      "wwwroot/src/app/controllers/checkoutCtrl.js",
-      "wwwroot/src/app/controllers/invoiceDetailsCtrl.js",
-      "wwwroot/src/app/controllers/invoiceEditCtrl.js",
-      "wwwroot/src/app/controllers/subscriptionCtrl.js",
-      "wwwroot/src/app/services/apiSvc.js",
-      "wwwroot/src/app/services/statusSvc.js",
-      "wwwroot/src/app/services/fileSvc.js"
+      "wwwroot/js/app.js"
     ],
     "minify": {
       "enabled": true,
