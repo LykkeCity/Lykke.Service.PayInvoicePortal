@@ -14,3 +14,7 @@ input[type="number"]::-webkit-outer-spin-button, input[type="number"]::-webkit-i
 .attachment_list--download .asset_link__info .asset_link__title {
   cursor: pointer; }
 
+.menu_overlay--open,
+.modal_dialog {
+  z-index: 1001; }
+

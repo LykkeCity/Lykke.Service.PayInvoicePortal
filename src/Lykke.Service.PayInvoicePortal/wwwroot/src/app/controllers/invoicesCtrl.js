@@ -5,9 +5,9 @@
         .module('app')
         .controller('invoicesCtrl', invoicesCtrl);
 
-    invoicesCtrl.$inject = ['$scope', '$window', '$rootScope', '$interval', '$log', 'apiSvc', 'statusSvc'];
+    invoicesCtrl.$inject = ['$scope', '$window', '$rootScope', '$interval', '$log', 'apiSvc', 'statusSvc', 'confirmModalSvc'];
 
-    function invoicesCtrl($scope, $window, $rootScope, $interval, $log, apiSvc, statusSvc) {
+    function invoicesCtrl($scope, $window, $rootScope, $interval, $log, apiSvc, statusSvc, confirmModalSvc) {
         var vm = this;
 
         vm.events = {
@@ -251,30 +251,17 @@
             if (!canRemove(invoice))
                 return;
 
-            $.confirm({
-                title: 'Are you sure?',
-                content: 'Do you really want to delete this invoice?',
-                icon: 'fa fa-question-circle',
-                animation: 'scale',
-                closeAnimation: 'scale',
-                opacity: 0.5,
-                buttons: {
-                    'confirm': {
-                        text: 'Yes',
-                        btnClass: 'btn-blue',
-                        action: function () {
-                            apiSvc.deleteInvoice(invoice.id)
-                                .then(
-                                    function() {
-                                        loadInvocies();
-                                    },
-                                    function(error) {
-                                        $log.error(error);
-                                    });
-                        }
-                    },
-                    cancel: function () {
-                    }
+            confirmModalSvc.open({
+                content: 'Are you sure you want to remove this invoice "#' + invoice.number + '"?',
+                yesAction: function () {
+                    apiSvc.deleteInvoice(invoice.id)
+                        .then(
+                            function () {
+                                loadInvocies();
+                            },
+                            function (error) {
+                                $log.error(error);
+                            });
                 }
             });
         }

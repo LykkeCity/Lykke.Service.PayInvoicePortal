@@ -6,7 +6,7 @@
     "jquery": "2.2.0",
     "fastclick": "1.0.6",
     "eonasdan-bootstrap-datetimepicker": "4.17.47",
-    "angular": "1.4.8",
+    "angular": "1.5.11",
     "ng-file-upload": "4.1.4",
     "moment": "2.15.1"
   }
