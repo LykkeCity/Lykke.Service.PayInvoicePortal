@@ -128,7 +128,7 @@
                     <div class="invoice_page">
                         <div class="invoice_header">
                             <div class="row">
-                                <div class="col-md-8">
+                                <div data-ng-class="vm.form.allowPay ? 'col-md-8' : 'col-md-12'">
                                     <h1 class="page__title">Invoice #{{vm.model.number}}</h1>
                                     <div class="invoice_header__link" data-ng-if="vm.form.allowPay">
                                         <a data-ng-href="{{vm.model.url}}" data-ng-bind="vm.model.url"></a>
