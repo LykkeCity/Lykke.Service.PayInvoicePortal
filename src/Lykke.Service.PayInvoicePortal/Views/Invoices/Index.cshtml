@@ -356,6 +356,13 @@
         HistoryItemText = "Internal error occurred"
     })
 </script>
+<script type="text/ng-template" id="historyRowTemplate-PastDue">
+    @await Html.PartialAsync(partialPathError, new HistoryRowTemplateModel
+    {
+        HistoryItemTitle = "PastDue",
+        HistoryItemText = "Payment due date expired"
+    })
+</script>
 
 @functions {
 

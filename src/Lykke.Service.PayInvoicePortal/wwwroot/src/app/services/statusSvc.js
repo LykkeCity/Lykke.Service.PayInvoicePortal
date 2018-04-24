@@ -44,6 +44,7 @@
                     return prefix + '--dark';
                 case 'NotConfirmed':
                 case 'InternalError':
+                case 'PastDue':
                     return prefix + '--red';
             }
             return '';

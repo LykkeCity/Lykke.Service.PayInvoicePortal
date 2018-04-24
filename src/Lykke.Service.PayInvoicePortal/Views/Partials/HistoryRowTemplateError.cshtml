@@ -7,7 +7,7 @@
 <div class="history_item__content">
     <div class="pull-right label" data-ng-class="vm.handlers.getStatusCss(item.status)" data-ng-bind="item.status"></div>
     <div class="history_item__title">
-        Error
+        @Html.Raw(Model.HistoryItemTitle ?? "Error")
         <span class="middot">&middot;</span>
         <div class="history_item__date" data-ng-bind="item.date.format('LLL')"></div>
     </div>
