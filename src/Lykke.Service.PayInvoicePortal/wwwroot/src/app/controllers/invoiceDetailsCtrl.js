@@ -166,7 +166,8 @@
             vm.form.allowPay = data.status === 'Unpaid';
             vm.form.allowEdit = data.status === 'Draft';
             vm.form.allowDelete = data.status === 'Draft' || data.status === 'Unpaid';
-            vm.form.showBcnLink = vm.model.walletAddress && ['Paid', 'Settled', 'Refunded', 'Overpaid', 'Underpaid', 'LatePaid'].indexOf(vm.model.status) > -1;
+            vm.form.showBcnLink = vm.model.walletAddress 
+                && ['InProgress', 'Paid', 'Underpaid', 'Overpaid', 'LatePaid', 'RefundInProgress', 'Refunded', 'NotConfirmed', 'InternalError'].indexOf(vm.model.status) > -1;
         }
 
         function update() {
