@@ -142,6 +142,15 @@
         }
 
         function updateHeader() {
+            var paidAmountText =
+                vm.model.paidAmount.toLocaleString(undefined,
+                        { minimumFractionDigits: vm.model.paymentAssetAccuracy }) +
+                    ' ' +
+                    vm.model.paymentAsset;
+
+            var dateText = vm.model.paidDate.format('l');
+            var receivedDateText = ' received on ' + dateText;
+
             switch (vm.model.status) {
                 case 'InProgress':
                     vm.header.title = 'InProgress';
@@ -151,7 +160,7 @@
                     break;
                 case 'Paid':
                     vm.header.title = 'Paid';
-                    vm.header.message = 'Invoice has been paid on ' + vm.model.paidDate.format('l');
+                    vm.header.message = 'Invoice has been paid on ' + dateText;
                     vm.header.icon = 'icon--check_circle';
                     vm.header.color = statusSvc.getAlertStatusCss(vm.model.status);
                     break;
@@ -163,48 +172,25 @@
                     break;
                 case 'Refunded':
                     vm.header.title = 'Refund';
-                    vm.header.message =
-                        vm.model.amount.toLocaleString(undefined,
-                            { minimumFractionDigits: vm.model.settlementAssetAccuracy }) +
-                        ' ' +
-                        vm.model.paymentAsset +
-                        ' have been refunded';
+                    vm.header.message = 'Invoice has been refunded on ' + dateText;
                     vm.header.icon = 'icon--refund';
                     vm.header.color = statusSvc.getAlertStatusCss(vm.model.status);
                     break;
                 case 'Underpaid':
                     vm.header.title = 'Underpaid';
-                    vm.header.message =
-                        vm.model.paidAmount.toLocaleString(undefined,
-                            { minimumFractionDigits: vm.model.paymentAssetAccuracy }) +
-                        ' ' +
-                        vm.model.paymentAsset +
-                        ' received on ' +
-                        vm.model.paidDate.format('l');
+                    vm.header.message = paidAmountText + receivedDateText;
                     vm.header.icon = 'icon--remove_circle';
                     vm.header.color = statusSvc.getAlertStatusCss(vm.model.status);
                     break;
                 case 'Overpaid':
                     vm.header.title = 'Overpaid';
-                    vm.header.message =
-                        vm.model.paidAmount.toLocaleString(undefined,
-                            { minimumFractionDigits: vm.model.paymentAssetAccuracy }) +
-                        ' ' +
-                        vm.model.paymentAsset +
-                        ' received on ' +
-                        vm.model.paidDate.format('l');
+                    vm.header.message = paidAmountText + receivedDateText;
                     vm.header.icon = 'icon--add_circle';
                     vm.header.color = statusSvc.getAlertStatusCss(vm.model.status);
                     break;
                 case 'LatePaid':
                     vm.header.title = 'LatePaid';
-                    vm.header.message =
-                        vm.model.paidAmount.toLocaleString(undefined,
-                            { minimumFractionDigits: vm.model.paymentAssetAccuracy }) +
-                        ' ' +
-                        vm.model.paymentAsset +
-                        ' received on ' +
-                        vm.model.paidDate.format('l');
+                    vm.header.message = paidAmountText + receivedDateText;
                     vm.header.icon = 'icon--warning_icn';
                     vm.header.color = statusSvc.getAlertStatusCss(vm.model.status);
                     break;
