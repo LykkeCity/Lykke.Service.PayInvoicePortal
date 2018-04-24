@@ -20,21 +20,22 @@
                     </div>
 
                     <div data-ng-if="vm.model.waiting">
-                        <div class="invoice_info">
+                        <div class="invoice_info clearfix">
                             <div class="invoice_info__left">
                                 <div class="invoice_info__qr">
-                                    <img data-ng-src="{{vm.model.qrCode}}" alt="qr" width="220" height="220">
+                                    <img class="invoice_info__qr_img_220" data-ng-src="{{vm.const.qrUrlSize220 + vm.model.qrCode}}" alt="qr" width="220" height="220">
+                                    <img class="invoice_info__qr_img_152" data-ng-src="{{vm.const.qrUrlSize152 + vm.model.qrCode}}" alt="qr" width="152" height="152">
                                 </div>
                                 <div class="invoice_info__loader">
                                     <div class="pie">
                                         <div class="pie_inner">
                                             <div class="pie_half">
-                                                <div class="pie_circle-right" style="background-color: #0388ef;">
+                                                <div class="pie_circle-right">
                                                     <div class="pie_blocker-1" style="background-color: #f3f4f5;" ng-style="{'transform': vm.pie.transform1, '-webkit-transform': vm.pie.transform1, '-ms-transform': vm.pie.transform1 }"></div>
                                                 </div>
                                             </div>
                                             <div class="pie_half pie_half-left">
-                                                <div class="pie_circle-left" style="background-color: #0388ef;">
+                                                <div class="pie_circle-left">
                                                     <div class="pie_blocker-2" style="background-color: #f3f4f5;" ng-style="{'transform': vm.pie.transform2, '-webkit-transform': vm.pie.transform2, '-ms-transform': vm.pie.transform2 }"></div>
                                                 </div>
                                             </div>

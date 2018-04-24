@@ -35,7 +35,15 @@
 
         vm.status = {
             timeout: null
-        }
+        };
+
+        var qrUrlBegin = 'https://chart.googleapis.com/chart?chs=';
+        var qrUrlEnd = '&chld=L|0&cht=qr&chl=';
+
+        vm.const = {
+            qrUrlSize220: qrUrlBegin + '220x220' + qrUrlEnd,
+            qrUrlSize152: qrUrlBegin + '152x152' + qrUrlEnd
+        };
 
         vm.model = {
             id: '',
@@ -116,14 +124,14 @@
             updateMessage(data);
 
             if (data.status === 'Unpaid') {
-                vm.model.qrCode = 'https://chart.googleapis.com/chart?chs=220x220&chld=L|0&cht=qr&chl=bitcoin:' +
+                vm.model.qrCode = encodeURIComponent('bitcoin:' +
                     data.walletAddress +
                     '?amount=' +
                     data.paymentAmount +
                     '&label=invoice #' +
                     data.number +
                     '&message=' +
-                    data.paymentRequestId;
+                    data.paymentRequestId);
 
                 vm.timer.total = data.totalSeconds;
                 vm.timer.seconds = data.remainingSeconds;
@@ -147,7 +155,7 @@
                         { minimumFractionDigits: vm.model.paymentAssetAccuracy }) +
                     ' ' +
                     vm.model.paymentAsset;
-
+            
             var dateText = vm.model.paidDate.format('l');
             var receivedDateText = ' received on ' + dateText;
 
