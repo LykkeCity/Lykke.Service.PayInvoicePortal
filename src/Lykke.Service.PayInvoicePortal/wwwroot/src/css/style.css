@@ -3453,3 +3453,11 @@ tbody.collapse.in { display: table-row-group; }
 .icon--rss_feed:before { font-size: 90%; }
 
 .tooltip-inner { min-width: 0; }
+
+.empty_result { text-align: center; max-width: 590px; margin-left: auto; margin-right: auto; padding-top: 94px; padding-top: 5.875rem; padding-bottom: 77px; padding-bottom: 4.8125rem; }
+
+.empty_result__img-container { margin-bottom: 33px; margin-bottom: 2.0625rem; }
+
+.empty_result__title { color: #111111; font-family: "Akrobat", "Segoe UI", Roboto, "Droid Sans", "Helvetica Neue", Arial, sans-serif; font-weight: 600; font-size: 30px; font-size: 1.875rem; margin-bottom: 34px; margin-bottom: 2.125rem; }
+
+.empty_result__description { color: #333333; font-size: 22px; font-size: 1.375rem; }

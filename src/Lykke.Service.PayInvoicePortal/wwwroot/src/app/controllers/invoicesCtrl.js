@@ -78,6 +78,13 @@
             create: create
         };
 
+        vm.view = {
+            isSearching: false,
+            get showNoResults() {
+                return showNoResults();
+            }
+        };
+
         activate();
 
         function activate() {
@@ -85,8 +92,11 @@
                 function () { return vm.filter.search; },
                 function (newValue, oldValue) {
                     if (newValue !== oldValue) {
+                        vm.view.isSearching = true;
                         resetPage();
-                        loadInvocies();
+                        loadInvocies().finally(function() {
+                            vm.view.isSearching = false;
+                        });
                     }
                 }
             );
@@ -137,7 +147,7 @@
         }
 
         function loadInvocies() {
-            apiSvc.getInvoices(vm.filter.search,
+            return apiSvc.getInvoices(vm.filter.search,
                     vm.filter.period,
                     getFilterStatuses(),
                     vm.filter.sortField,
@@ -295,6 +305,10 @@
         function showMore() {
             vm.pager.page++;
             loadInvocies();
+        }
+
+        function showNoResults() {
+            return vm.filter.search && !vm.model.invoices.length;
         }
     }
 })();

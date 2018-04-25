@@ -159,7 +159,10 @@
                     </div>
                     <div class="col-xs-9 col-sm-8">
                         <div class="input-search input-search--index">
-                            <button class="btn btn--icon"><i class="icon icon--search"></i></button>
+                            <button class="btn btn--icon">
+                                <img data-ng-show="vm.view.isSearching" src="img/processing.gif"/>
+                                <i data-ng-hide="vm.view.isSearching" class="icon icon--search"></i>
+                            </button>
                             <input type="text" class="form-control" placeholder="Number or client email..." data-ng-model="vm.filter.search" data-ng-model-options="{ debounce: 500 }">
                             <button class="btn btn--icon" data-ng-click="vm.filter.handlers.clear()"><i class="icon icon--cancel_round"></i></button>
                         </div>
@@ -172,8 +175,8 @@
             <div class="tab-content">
                 <div class="tab-pane active">
                     <div class="table-responsive">
-                        <table class="table table_invoices">
-                            <tr class="invoices__row">
+                        <table class="table table_invoices" data-ng-hide="vm.view.showNoResults">
+                            <tr class="invoices__row" data-ng-hide="">
                                 <th class="_number invoices__cell" data-ng-click="vm.handlers.sort('Number')">Invoice number, date</th>
                                 <th class="_client invoices__cell" data-ng-click="vm.handlers.sort('ClientName')">Client</th>
                                 <th class="_amount invoices__cell" data-ng-click="vm.handlers.sort('Amount')">Amount</th>
@@ -209,6 +212,13 @@
                     </div>
                     <div class="showmore" data-ng-click="vm.handlers.showMore()" data-ng-if="vm.handlers.canShowMore()">Show more</div>
                 </div>
+            </div>
+            <div data-ng-if="vm.view.showNoResults" class="invoices__empty_result empty_result">
+                <div class="empty_result__img-container">
+                    <img src="img/invoices-no-results.svg" />
+                </div>
+                <div class="empty_result__title">No search results</div>
+                <div class="empty_result__description">Sorry, we couldn't find any matches “{{vm.filter.search}}”. Try using another keyword.</div>
             </div>
         </div>
     </section>
