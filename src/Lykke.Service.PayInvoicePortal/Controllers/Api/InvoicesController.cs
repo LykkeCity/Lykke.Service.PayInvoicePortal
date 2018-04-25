@@ -38,6 +38,12 @@ namespace Lykke.Service.PayInvoicePortal.Controllers.Api
         [Route("{invoiceId}")]
         public async Task<IActionResult> GetByIdAsync(string invoiceId)
         {
+            var model = await GetInvoiceModelById(invoiceId);
+            return Json(model);
+        }
+
+        private async Task<InvoiceModel> GetInvoiceModelById(string invoiceId)
+        {
             var invoiceTask = _invoiceService.GetByIdAsync(invoiceId);
             var filesTask = _invoiceService.GetFilesAsync(invoiceId);
             var historyTask = _invoiceService.GetHistoryAsync(User.GetMerchantId(), invoiceId);
@@ -48,7 +54,7 @@ namespace Lykke.Service.PayInvoicePortal.Controllers.Api
             model.Files = Mapper.Map<List<FileModel>>(filesTask.Result);
             model.History = Mapper.Map<List<HistoryItemModel>>(historyTask.Result);
 
-            return Json(model);
+            return model;
         }
         
         [HttpGet]
@@ -143,8 +149,10 @@ namespace Lykke.Service.PayInvoicePortal.Controllers.Api
             };
 
             await _invoiceService.UpdateAsync(invoice, model.IsDraft);
-            
-            return NoContent();
+
+            var result = await GetInvoiceModelById(invoice.Id);
+
+            return Json(result);
         }
 
         [HttpDelete]

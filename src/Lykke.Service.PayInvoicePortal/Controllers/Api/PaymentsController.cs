@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using AutoMapper;
 using Common.Log;
@@ -23,7 +24,7 @@ namespace Lykke.Service.PayInvoicePortal.Controllers.Api
             ILog log)
         {
             _invoiceService = invoiceService;
-            _log = log;
+            _log = log.CreateComponentScope(nameof(PaymentsController));
         }
 
         [HttpGet]
@@ -31,8 +32,14 @@ namespace Lykke.Service.PayInvoicePortal.Controllers.Api
         public async Task<IActionResult> Details(string invoiceId)
         {
             PaymentDetails paymentDetails = await _invoiceService.GetPaymentDetailsAsync(invoiceId);
+
+            if (paymentDetails == null)
+            {
+                return Json(null);
+            }
+
             IReadOnlyList<FileInfoModel> files = await _invoiceService.GetFilesAsync(invoiceId);
-            
+
             var model = Mapper.Map<PaymentDetailsModel>(paymentDetails);
             model.Files = Mapper.Map<List<FileModel>>(files);
 

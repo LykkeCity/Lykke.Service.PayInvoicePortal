@@ -4,11 +4,11 @@
     angular
         .module('app')
         .directive('clickOutside', [
-            '$document', '$parse', '$timeout',
+            '$document', '$parse', '$timeout', 'confirmModalSvc',
             clickOutside
         ]);
 
-    function clickOutside($document, $parse, $timeout) {
+    function clickOutside($document, $parse, $timeout, confirmModalSvc) {
         return {
             restrict: 'A',
             link: function ($scope, elem, attr) {
@@ -16,6 +16,10 @@
                 $timeout(function () {
                     var classList = (attr.exclude !== undefined) ? attr.exclude.split(/[ ,]+/) : [],
                         fn;
+
+                    confirmModalSvc.excludeClickClassList.forEach(function(item) {
+                        classList.push(item);
+                    });
 
                     function eventHandler(e) {
                         var i,

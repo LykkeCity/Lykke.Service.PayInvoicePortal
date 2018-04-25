@@ -5,9 +5,9 @@
         .module('app')
         .controller('invoiceEditCtrl', invoiceEditCtrl);
 
-    invoiceEditCtrl.$inject = ['$scope', '$window', '$log', '$rootScope', '$interval', 'apiSvc', 'statusSvc', 'fileSvc'];
+    invoiceEditCtrl.$inject = ['$scope', '$window', '$log', '$rootScope', '$interval', 'apiSvc', 'statusSvc', 'fileSvc', 'confirmModalSvc'];
 
-    function invoiceEditCtrl($scope, $window, $log, $rootScope, $interval, apiSvc, statusSvc, fileSvc) {
+    function invoiceEditCtrl($scope, $window, $log, $rootScope, $interval, apiSvc, statusSvc, fileSvc, confirmModalSvc) {
         var vm = this;
 
         vm.form = {
@@ -179,9 +179,12 @@
 
             apiSvc.updateInvoice(model)
                 .then(
-                function () {
+                function (data) {
                     close();
                     onChanged();
+                    if (draft === false) {
+                        $rootScope.$broadcast('invoiceGenerated', data);
+                    }
                     vm.form.blocked = false;
                 },
                 function (error) {
@@ -200,19 +203,9 @@
             });
 
             if (!valid) {
-                $.confirm({
+                confirmModalSvc.open({
                     title: 'Invalid file',
-                    content: fileSvc.getError(),
-                    icon: 'fa fa-question-circle',
-                    animation: 'scale',
-                    closeAnimation: 'scale',
-                    opacity: 0.5,
-                    buttons: {
-                        'ok': {
-                            text: 'OK',
-                            btnClass: 'btn-blue'
-                        }
-                    }
+                    content: fileSvc.getError()
                 });
 
                 return;
@@ -237,31 +230,18 @@
             if (!file)
                 return;
 
-            $.confirm({
-                title: 'Are you sure?',
-                content: 'Do you really want to delete "' + file.name + '"?',
-                icon: 'fa fa-question-circle',
-                animation: 'scale',
-                closeAnimation: 'scale',
-                opacity: 0.5,
-                buttons: {
-                    'confirm': {
-                        text: 'Yes',
-                        btnClass: 'btn-blue',
-                        action: function () {
-                            apiSvc.deleteFile(vm.model.id, file.id)
-                                .then(
-                                    function () {
-                                        updateFiles();
-                                        onChanged();
-                                    },
-                                    function (error) {
-                                        $log.error(error);
-                                    });
-                        }
-                    },
-                    cancel: function () {
-                    }
+            confirmModalSvc.open({
+                content: 'Are you sure you want to remove this attachment "' + file.name + '"?',
+                yesAction: function () {
+                    apiSvc.deleteFile(vm.model.id, file.id)
+                        .then(
+                            function () {
+                                updateFiles();
+                                onChanged();
+                            },
+                            function (error) {
+                                $log.error(error);
+                            });
                 }
             });
         }

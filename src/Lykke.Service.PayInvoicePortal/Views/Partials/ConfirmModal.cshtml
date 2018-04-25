@@ -1,0 +1,24 @@
+﻿<div ng-controller="confirmModalCtrl as vm">
+    <aside class="menu_overlay" 
+           data-ng-class="{'menu_overlay--open': vm.modal.open}"
+           data-ng-click="vm.handlers.overlayClick($event)"></aside>
+    <div class="modal_dialog"
+         data-ng-class="{'modal_dialog--open': vm.modal.open}">
+        <div class="modal_dialog__title" data-ng-bind="vm.modal.title">
+        </div>
+        <div class="modal_dialog__text" data-ng-bind-html="vm.modal.content">
+        </div>
+        <div class="modal_dialog__controls">
+            <div class="pull-right">
+                <button class="btn btn--flat modal_dialog__btn"
+                        data-ng-if="vm.modal.showYesBtn"
+                        data-ng-click="vm.handlers.yes()">Yes</button>
+                <button class="btn modal_dialog__cancel modal_dialog__btn"
+                        data-ng-click="vm.handlers.close()">
+                    <span data-ng-show="vm.modal.showYesBtn">Cancel</span>
+                    <span data-ng-hide="vm.modal.showYesBtn">OK</span>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>

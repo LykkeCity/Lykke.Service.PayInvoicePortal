@@ -5,9 +5,9 @@
         .module('app')
         .controller('invoicesCtrl', invoicesCtrl);
 
-    invoicesCtrl.$inject = ['$scope', '$window', '$rootScope', '$interval', '$log', 'apiSvc', 'statusSvc'];
+    invoicesCtrl.$inject = ['$scope', '$window', '$rootScope', '$interval', '$log', 'apiSvc', 'statusSvc', 'confirmModalSvc'];
 
-    function invoicesCtrl($scope, $window, $rootScope, $interval, $log, apiSvc, statusSvc) {
+    function invoicesCtrl($scope, $window, $rootScope, $interval, $log, apiSvc, statusSvc, confirmModalSvc) {
         var vm = this;
 
         vm.events = {
@@ -68,7 +68,7 @@
         vm.handlers = {
             init: init,
             exportToCsv: exportToCsv,
-            getStatusRowCss: statusSvc.getStatusRowCss,
+            getStatusCss: statusSvc.getStatusCss,
             canRemove: canRemove,
             remove: remove,
             showMore: showMore,
@@ -78,6 +78,13 @@
             create: create
         };
 
+        vm.view = {
+            isSearching: false,
+            get showNoResults() {
+                return showNoResults();
+            }
+        };
+
         activate();
 
         function activate() {
@@ -85,8 +92,11 @@
                 function () { return vm.filter.search; },
                 function (newValue, oldValue) {
                     if (newValue !== oldValue) {
+                        vm.view.isSearching = true;
                         resetPage();
-                        loadInvocies();
+                        loadInvocies().finally(function() {
+                            vm.view.isSearching = false;
+                        });
                     }
                 }
             );
@@ -137,7 +147,7 @@
         }
 
         function loadInvocies() {
-            apiSvc.getInvoices(vm.filter.search,
+            return apiSvc.getInvoices(vm.filter.search,
                     vm.filter.period,
                     getFilterStatuses(),
                     vm.filter.sortField,
@@ -251,30 +261,17 @@
             if (!canRemove(invoice))
                 return;
 
-            $.confirm({
-                title: 'Are you sure?',
-                content: 'Do you really want to delete this invoice?',
-                icon: 'fa fa-question-circle',
-                animation: 'scale',
-                closeAnimation: 'scale',
-                opacity: 0.5,
-                buttons: {
-                    'confirm': {
-                        text: 'Yes',
-                        btnClass: 'btn-blue',
-                        action: function () {
-                            apiSvc.deleteInvoice(invoice.id)
-                                .then(
-                                    function() {
-                                        loadInvocies();
-                                    },
-                                    function(error) {
-                                        $log.error(error);
-                                    });
-                        }
-                    },
-                    cancel: function () {
-                    }
+            confirmModalSvc.open({
+                content: 'Are you sure you want to remove this invoice "#' + invoice.number + '"?',
+                yesAction: function () {
+                    apiSvc.deleteInvoice(invoice.id)
+                        .then(
+                            function () {
+                                loadInvocies();
+                            },
+                            function (error) {
+                                $log.error(error);
+                            });
                 }
             });
         }
@@ -308,6 +305,10 @@
         function showMore() {
             vm.pager.page++;
             loadInvocies();
+        }
+
+        function showNoResults() {
+            return vm.filter.search && !vm.model.invoices.length;
         }
     }
 })();

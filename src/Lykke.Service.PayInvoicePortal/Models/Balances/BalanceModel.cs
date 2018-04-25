@@ -2,7 +2,7 @@
 {
     public class BalanceModel
     {
-        public double Value { get; set; }
+        public decimal Value { get; set; }
 
         public string Currency { get; set; }
     }

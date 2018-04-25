@@ -5,9 +5,9 @@
         .module('app')
         .controller('checkoutCtrl', checkoutCtrl);
 
-    checkoutCtrl.$inject = ['$window', '$location', '$scope', '$log', '$interval', '$timeout', 'apiSvc', 'fileSvc'];
+    checkoutCtrl.$inject = ['$window', '$location', '$scope', '$log', '$interval', '$timeout', 'apiSvc', 'fileSvc', 'statusSvc'];
 
-    function checkoutCtrl($window, $location, $scope, $log, $interval, $timeout, apiSvc, fileSvc) {
+    function checkoutCtrl($window, $location, $scope, $log, $interval, $timeout, apiSvc, fileSvc, statusSvc) {
         var vm = this;
 
         vm.callback = {
@@ -35,7 +35,15 @@
 
         vm.status = {
             timeout: null
-        }
+        };
+
+        var qrUrlBegin = 'https://chart.googleapis.com/chart?chs=';
+        var qrUrlEnd = '&chld=L|0&cht=qr&chl=';
+
+        vm.const = {
+            qrUrlSize220: qrUrlBegin + '220x220' + qrUrlEnd,
+            qrUrlSize152: qrUrlBegin + '152x152' + qrUrlEnd
+        };
 
         vm.model = {
             id: '',
@@ -116,14 +124,14 @@
             updateMessage(data);
 
             if (data.status === 'Unpaid') {
-                vm.model.qrCode = 'https://chart.googleapis.com/chart?chs=220x220&chld=L|0&cht=qr&chl=bitcoin:' +
+                vm.model.qrCode = encodeURIComponent('bitcoin:' +
                     data.walletAddress +
                     '?amount=' +
                     data.paymentAmount +
                     '&label=invoice #' +
                     data.number +
                     '&message=' +
-                    data.paymentRequestId;
+                    data.paymentRequestId);
 
                 vm.timer.total = data.totalSeconds;
                 vm.timer.seconds = data.remainingSeconds;
@@ -142,91 +150,69 @@
         }
 
         function updateHeader() {
+            var paidAmountText =
+                vm.model.paidAmount.toLocaleString(undefined,
+                        { minimumFractionDigits: vm.model.paymentAssetAccuracy }) +
+                    ' ' +
+                    vm.model.paymentAsset;
+            
+            var dateText = vm.model.paidDate ? vm.model.paidDate.format('l') : '';
+            var receivedDateText = ' received on ' + dateText;
+
             switch (vm.model.status) {
                 case 'InProgress':
                     vm.header.title = 'InProgress';
                     vm.header.message = 'Payment in progress';
                     vm.header.icon = 'icon--check_circle';
-                    vm.header.color = 'alert--green';
+                    vm.header.color = statusSvc.getAlertStatusCss(vm.model.status);
                     break;
                 case 'Paid':
-                case 'Settled':
-                case 'SettlementInProgress':
                     vm.header.title = 'Paid';
-                    vm.header.message = 'Invoice has been paid on ' + vm.model.paidDate.format('l');
+                    vm.header.message = 'Invoice has been paid on ' + dateText;
                     vm.header.icon = 'icon--check_circle';
-                    vm.header.color = 'alert--green';
+                    vm.header.color = statusSvc.getAlertStatusCss(vm.model.status);
                     break;
                 case 'RefundInProgress':
                     vm.header.title = 'InProgress';
                     vm.header.message = 'Refund in progress';
                     vm.header.icon = '';
-                    vm.header.color = 'alert--violet';
+                    vm.header.color = statusSvc.getAlertStatusCss(vm.model.status);
                     break;
                 case 'Refunded':
                     vm.header.title = 'Refund';
-                    vm.header.message =
-                        vm.model.amount.toLocaleString(undefined,
-                            { minimumFractionDigits: vm.model.settlementAssetAccuracy }) +
-                        ' ' +
-                        vm.model.paymentAsset +
-                        ' have been refunded';
+                    vm.header.message = 'Invoice has been refunded on ' + dateText;
                     vm.header.icon = 'icon--refund';
-                    vm.header.color = 'alert--dark';
+                    vm.header.color = statusSvc.getAlertStatusCss(vm.model.status);
                     break;
                 case 'Underpaid':
                     vm.header.title = 'Underpaid';
-                    vm.header.message =
-                        vm.model.paidAmount.toLocaleString(undefined,
-                            { minimumFractionDigits: vm.model.paymentAssetAccuracy }) +
-                        ' ' +
-                        vm.model.paymentAsset +
-                        ' received on ' +
-                        vm.model.paidDate.format('l');
+                    vm.header.message = paidAmountText + receivedDateText;
                     vm.header.icon = 'icon--remove_circle';
-                    vm.header.color = 'alert--violet';
+                    vm.header.color = statusSvc.getAlertStatusCss(vm.model.status);
                     break;
                 case 'Overpaid':
                     vm.header.title = 'Overpaid';
-                    vm.header.message =
-                        vm.model.paidAmount.toLocaleString(undefined,
-                            { minimumFractionDigits: vm.model.paymentAssetAccuracy }) +
-                        ' ' +
-                        vm.model.paymentAsset +
-                        ' received on ' +
-                        vm.model.paidDate.format('l');
+                    vm.header.message = paidAmountText + receivedDateText;
                     vm.header.icon = 'icon--add_circle';
-                    vm.header.color = 'alert--violet';
+                    vm.header.color = statusSvc.getAlertStatusCss(vm.model.status);
                     break;
                 case 'LatePaid':
                     vm.header.title = 'LatePaid';
-                    vm.header.message =
-                        vm.model.paidAmount.toLocaleString(undefined,
-                            { minimumFractionDigits: vm.model.paymentAssetAccuracy }) +
-                        ' ' +
-                        vm.model.paymentAsset +
-                        ' received on ' +
-                        vm.model.paidDate.format('l');
+                    vm.header.message = paidAmountText + receivedDateText;
                     vm.header.icon = 'icon--warning_icn';
-                    vm.header.color = 'alert--red';
+                    vm.header.color = statusSvc.getAlertStatusCss(vm.model.status);
                     break;
                 case 'NotConfirmed':
                     vm.header.title = 'Error';
                     vm.header.message = 'Transfer hasn\'t been confirmed';
                     vm.header.icon = 'icon--warning_icn';
-                    vm.header.color = 'alert--red';
-                    break;
-                case 'InvalidAddress':
-                    vm.header.title = 'Error';
-                    vm.header.message = 'Invalid address has been provided';
-                    vm.header.icon = 'icon--warning_icn';
-                    vm.header.color = 'alert--red';
+                    vm.header.color = statusSvc.getAlertStatusCss(vm.model.status);
                     break;
                 case 'InternalError':
                     vm.header.title = 'Error';
                     vm.header.message = 'Internal error occurred';
                     vm.header.icon = 'icon--warning_icn';
-                    vm.header.color = 'alert--red';
+                    vm.header.color = statusSvc.getAlertStatusCss(vm.model.status);
                     break;
                 default:
                     vm.header.title = 'Error';
@@ -280,6 +266,10 @@
             apiSvc.getPaymentDetails(vm.model.id)
                 .then(
                     function (data) {
+                        if (!data) {
+                            $window.location.href = $window.location.href;
+                        }
+
                         apply(data);
                     },
                     function (error) {
@@ -359,6 +349,8 @@
             if (status === 'Paid' && vm.callback.url) {
                 $window.location.href = vm.callback.url;
                 return true;
+            } else if (status === 'Removed') {
+                $window.location.href = $window.location.href;
             }
             return false;
         }

@@ -1,0 +1,17 @@
+﻿@using Lykke.Service.PayInvoicePortal.Models.Invoices
+@model HistoryRowTemplateModel
+
+<div class="history_item__img">
+    <div class="_circle" data-ng-bind="vm.handlers.getInitials(item.author)"></div>
+</div>
+<div class="history_item__content">
+    <div class="pull-right label" data-ng-class="vm.handlers.getStatusCss(item.status)" data-ng-bind="item.status"></div>
+    <div class="history_item__title">
+        {{item.author}}
+        <span class="middot">&middot;</span>
+        <div class="history_item__date" data-ng-bind="item.date.format('LLL')"></div>
+    </div>
+    <div class="history_item__text">
+        @Model.HistoryItemText
+    </div>
+</div>

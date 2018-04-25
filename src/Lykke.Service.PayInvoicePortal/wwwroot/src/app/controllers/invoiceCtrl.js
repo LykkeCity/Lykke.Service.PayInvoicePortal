@@ -5,9 +5,9 @@
         .module('app')
         .controller('invoiceCtrl', invoiceCtrl);
 
-    invoiceCtrl.$inject = ['$scope', '$window', '$log', '$rootScope', '$interval', 'apiSvc', 'statusSvc', 'fileSvc'];
+    invoiceCtrl.$inject = ['$scope', '$window', '$log', '$rootScope', '$interval', 'apiSvc', 'statusSvc', 'fileSvc', 'confirmModalSvc'];
 
-    function invoiceCtrl($scope, $window, $log, $rootScope, $interval, apiSvc, statusSvc, fileSvc) {
+    function invoiceCtrl($scope, $window, $log, $rootScope, $interval, apiSvc, statusSvc, fileSvc, confirmModalSvc) {
         var vm = this;
 
         vm.events = {
@@ -205,19 +205,9 @@
             });
 
             if (!valid) {
-                $.confirm({
+                confirmModalSvc.open({
                     title: 'Invalid file',
-                    content: fileSvc.getError(),
-                    icon: 'fa fa-question-circle',
-                    animation: 'scale',
-                    closeAnimation: 'scale',
-                    opacity: 0.5,
-                    buttons: {
-                        'ok': {
-                            text: 'OK',
-                            btnClass: 'btn-blue'
-                        }
-                    }
+                    content: fileSvc.getError()
                 });
 
                 return;
