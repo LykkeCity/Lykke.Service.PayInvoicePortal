@@ -2815,6 +2815,7 @@ ol.list_styled li:before { content: counter(step-counter); background-color: #33
 .invoice_info__qr .img-responsive { width: 100%; }
 
 .invoice_info__qr_img_152 { display: none; }
+
 .invoice_info__select { position: relative; display: inline-block; vertical-align: middle; top: -1px; }
 
 .invoice_info__select .btn-group .btn { padding-right: 20px; }
@@ -2880,7 +2881,7 @@ ol.list_styled li:before { content: counter(step-counter); background-color: #33
 
 .alert { font-weight: 600; }
 
-.alert--dark { background-color: #333333; }
+.alert--dark { background-color: #3F4D60; }
 
 .alert .label { line-height: 1.78; letter-spacing: 1.8px; padding: 0; font-size: 18px; font-size: 1.125rem; margin: -4px 0 -5px; margin: -0.25rem 0 -0.3125rem; }
 

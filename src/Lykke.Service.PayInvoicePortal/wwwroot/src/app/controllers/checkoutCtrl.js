@@ -156,7 +156,7 @@
                     ' ' +
                     vm.model.paymentAsset;
             
-            var dateText = vm.model.paidDate.format('l');
+            var dateText = vm.model.paidDate ? vm.model.paidDate.format('l') : '';
             var receivedDateText = ' received on ' + dateText;
 
             switch (vm.model.status) {
