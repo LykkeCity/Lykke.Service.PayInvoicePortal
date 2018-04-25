@@ -25,6 +25,7 @@
 *.mov     binary
 *.ico     binary
 *.pdf     binary
+*.svg     binary
 
 # Fonts
 *.ttf       binary
