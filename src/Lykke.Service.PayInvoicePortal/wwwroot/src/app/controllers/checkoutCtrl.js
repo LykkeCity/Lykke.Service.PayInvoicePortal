@@ -266,6 +266,10 @@
             apiSvc.getPaymentDetails(vm.model.id)
                 .then(
                     function (data) {
+                        if (!data) {
+                            $window.location.href = $window.location.href;
+                        }
+
                         apply(data);
                     },
                     function (error) {

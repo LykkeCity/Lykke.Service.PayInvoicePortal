@@ -31,21 +31,19 @@ namespace Lykke.Service.PayInvoicePortal.Controllers.Api
         [Route("{InvoiceId}")]
         public async Task<IActionResult> Details(string invoiceId)
         {
-            try
-            {
-                PaymentDetails paymentDetails = await _invoiceService.GetPaymentDetailsAsync(invoiceId);
-                IReadOnlyList<FileInfoModel> files = await _invoiceService.GetFilesAsync(invoiceId);
+            PaymentDetails paymentDetails = await _invoiceService.GetPaymentDetailsAsync(invoiceId);
 
-                var model = Mapper.Map<PaymentDetailsModel>(paymentDetails);
-                model.Files = Mapper.Map<List<FileModel>>(files);
-
-                return Json(model);
-            }
-            catch (Exception ex)
+            if (paymentDetails == null)
             {
-                _log.WriteError(nameof(Details), invoiceId, ex);
-                return NotFound();
+                return Json(null);
             }
+
+            IReadOnlyList<FileInfoModel> files = await _invoiceService.GetFilesAsync(invoiceId);
+
+            var model = Mapper.Map<PaymentDetailsModel>(paymentDetails);
+            model.Files = Mapper.Map<List<FileModel>>(files);
+
+            return Json(model);
         }
 
         [HttpGet]
