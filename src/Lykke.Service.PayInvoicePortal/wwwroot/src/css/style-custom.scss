@@ -32,3 +32,11 @@ input[type="number"] {
 .modal_dialog {
     z-index: 1001;
 }
+
+.table_invoices {
+    tr {
+        th {
+            cursor: pointer;
+        }
+    }
+}

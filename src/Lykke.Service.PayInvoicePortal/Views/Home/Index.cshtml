@@ -210,7 +210,9 @@
                             </tbody>
                         </table>
                     </div>
-                    <div class="showmore" data-ng-click="vm.handlers.showMore()" data-ng-if="vm.handlers.canShowMore()">Show more</div>
+                    <div style="text-align: center;">
+                        <button class="btn btn--flat" data-ng-click="vm.handlers.showMore()" data-ng-if="vm.handlers.canShowMore()">Show more</button>
+                    </div>
                 </div>
             </div>
             <div data-ng-if="vm.view.showNoResults" class="invoices__empty_result empty_result">
