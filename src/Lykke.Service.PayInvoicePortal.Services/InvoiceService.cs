@@ -92,7 +92,7 @@ namespace Lykke.Service.PayInvoicePortal.Services
                 if (!string.IsNullOrEmpty(item.ModifiedById))
                 {
                     // TODO: use cache
-                    employee = await _payInvoiceClient.GetEmployeeAsync(merchantId, item.ModifiedById);
+                    employee = await _payInvoiceClient.GetEmployeeAsync(item.ModifiedById);
                 }
 
                 Asset historySettlementAsset = await _assetsService.TryGetAssetAsync(item.SettlementAssetId);
