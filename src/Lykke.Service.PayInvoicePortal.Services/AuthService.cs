@@ -49,7 +49,7 @@ namespace Lykke.Service.PayInvoicePortal.Services
 
             try
             {
-                return await _payInvoiceClient.GetEmployeeAsync(response.MerchantId, response.EmployeeId);
+                return await _payInvoiceClient.GetEmployeeAsync(response.EmployeeId);
             }
             catch (Exception exception)
             {
