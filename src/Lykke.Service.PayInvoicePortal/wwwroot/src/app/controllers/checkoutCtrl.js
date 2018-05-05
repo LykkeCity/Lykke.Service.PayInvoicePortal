@@ -48,11 +48,15 @@
         vm.model = {
             id: '',
             number: '',
+            merchantId: '',
             merchant: '',
             paymentAmount: 0,
             settlementAmount: 0,
             paymentAsset: '',
+            paymentAssetDisplay: '',
+            paymentAssetSelect: '',
             settlementAsset: '',
+            settlementAssetDisplay: '',
             paymentAssetAccuracy: 0,
             settlementAssetAccuracy: 0,
             exchangeRate: {
@@ -67,7 +71,8 @@
             walletAddress: '',
             files: [],
             waiting: false,
-            message: ''
+            message: '',
+            paymentAssets: []
         };
 
         vm.handlers = {
@@ -87,12 +92,35 @@
                     stopTimer();
                     stopStatusTimeout();
                 });
+
+            $scope.$watch(
+                function() {
+                    return vm.model.paymentAssetSelect;
+                },
+                function(newValue, oldValue) {
+                    console.log('newValue, oldValue', newValue, oldValue);
+                });
         }
 
         function init(data) {
             if (gotoCallbackUrl(data.status))
                 return;
             apply(data);
+
+            apiSvc
+                .getPaymentAssets(
+                    vm.model.merchantId,
+                    vm.model.settlementAsset
+                )
+                .then(
+                    function(data) {
+                        vm.model.paymentAssets = data || [];
+                    },
+                    function(error) {
+                        $log.error(error);
+                    }
+                );
+
             startStatusTimeout();
         }
 
@@ -100,11 +128,15 @@
             vm.model.id = data.id;
             vm.model.number = data.number;
             vm.model.status = data.status;
+            vm.model.merchantId = data.merchantId;
             vm.model.merchant = data.merchant;
             vm.model.paymentAmount = data.paymentAmount;
             vm.model.settlementAmount = data.settlementAmount;
             vm.model.paymentAsset = data.paymentAsset;
+            vm.model.paymentAssetDisplay = data.paymentAsset;
+            vm.model.paymentAssetSelect = data.paymentAsset;
             vm.model.settlementAsset = data.settlementAsset;
+            vm.model.settlementAssetDisplay = data.settlementAssetDisplay;
             vm.model.paymentAssetAccuracy = data.paymentAssetAccuracy;
             vm.model.settlementAssetAccuracy = data.settlementAssetAccuracy;
             vm.model.exchangeRate.value = data.exchangeRate;
@@ -155,7 +187,7 @@
                         { minimumFractionDigits: vm.model.paymentAssetAccuracy }) +
                     ' ' +
                     vm.model.paymentAsset;
-            
+
             var dateText = vm.model.paidDate ? vm.model.paidDate.format('l') : '';
             var receivedDateText = ' received on ' + dateText;
 
@@ -261,7 +293,7 @@
                 }
             }
         }
-        
+
         function updateDetails() {
             apiSvc.getPaymentDetails(vm.model.id)
                 .then(

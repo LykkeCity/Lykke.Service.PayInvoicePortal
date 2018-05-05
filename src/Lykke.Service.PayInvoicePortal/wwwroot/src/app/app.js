@@ -6,7 +6,8 @@
         .run(['$rootScope', startup]);
 
     function appConfig($compileProvider, datetimepickerProvider) {
-        $compileProvider.debugInfoEnabled(false);
+        var debugEnabled = window.location.host.indexOf('localhost') > -1 || window.location.host.indexOf('dev') > -1;
+        $compileProvider.debugInfoEnabled(debugEnabled);
 
         datetimepickerProvider.setOptions({
             format: 'l',

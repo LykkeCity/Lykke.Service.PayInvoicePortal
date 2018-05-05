@@ -49,18 +49,29 @@
                             <div class="invoice_info__right">
                                 <div class="invoice_info__row">
                                     <div class="invoice_info__value">
-                                        {{vm.model.paymentAmount | currency : '' : vm.model.paymentAssetAccuracy}} {{vm.model.paymentAsset}}
+                                        <span>{{vm.model.paymentAmount | currency : '' : vm.model.paymentAssetAccuracy}} </span>
+                                        <span data-ng-hide="vm.model.paymentAssets.length">{{vm.model.paymentAssetDisplay}}</span>
+                                        <div class="invoice_info__select custom_dropdown" data-ng-if="vm.model.paymentAssets.length">
+                                            <select class="selectpicker inline_select"
+                                                    data-selectpicker
+                                                    data-size="10"
+                                                    data-live-search="{{vm.model.paymentAssets.length > 10}}"
+                                                    data-live-search-placeholder="Asset name"
+                                                    data-ng-model="vm.model.paymentAssetSelect"
+                                                    ng-options="asset.id as asset.title for asset in vm.model.paymentAssets">
+                                            </select>
+                                        </div>
                                     </div>
                                     <span class="invoice_info__title">FOR PAYMENT</span>
                                 </div>
                                 <div class="invoice_info__row" data-ng-if="vm.model.message || !vm.model.exchangeRate.hidden">
-                                    <div class="invoice_info__value invoice_info__value--thin" data-ng-if="!vm.model.exchangeRate.hidden">1 {{vm.model.paymentAsset}} = {{vm.model.exchangeRate.value.toLocaleString(undefined, {minimumFractionDigits: vm.model.settlementAssetAccuracy})}} {{vm.model.settlementAsset}}</div>
+                                    <div class="invoice_info__value invoice_info__value--thin" data-ng-if="!vm.model.exchangeRate.hidden">1 {{vm.model.paymentAssetDisplay}} = {{vm.model.exchangeRate.value.toLocaleString(undefined, {minimumFractionDigits: vm.model.settlementAssetAccuracy})}} {{vm.model.settlementAssetDisplay}}</div>
                                     <span class="invoice_info__title" data-ng-if="!vm.model.exchangeRate.hidden">Exchange rate</span>
                                     <div class="invoice_info__hint" data-ng-if="vm.model.message" data-ng-bind="vm.model.message"></div>
                                 </div>
                                 <div class="invoice_info__row">
-                                    <div class="invoice_info__value">{{vm.model.settlementAmount.toLocaleString(undefined, {minimumFractionDigits: vm.model.settlementAssetAccuracy})}} {{vm.model.settlementAsset}}</div>
-                                    <span class="invoice_info__title">Original</span>
+                                    <div class="invoice_info__value">{{vm.model.settlementAmount.toLocaleString(undefined, {minimumFractionDigits: vm.model.settlementAssetAccuracy})}} {{vm.model.settlementAssetDisplay}}</div>
+                                    <span class="invoice_info__title">Original</span> 
                                 </div>
 
                                 <hr class="hidden-xs">
@@ -115,19 +126,19 @@
                             <div class="asset_link">
                                 <div class="asset_link__info">
                                     <div class="asset_link__title">For payment</div>
-                                    <div class="asset_link__desc">{{vm.model.paymentAmount.toLocaleString(undefined, {minimumFractionDigits: vm.model.paymentAssetAccuracy})}} {{vm.model.paymentAsset}}</div>
+                                    <div class="asset_link__desc">{{vm.model.paymentAmount.toLocaleString(undefined, {minimumFractionDigits: vm.model.paymentAssetAccuracy})}} {{vm.model.paymentAssetDisplay}}</div>
                                 </div>
                             </div>
                             <div class="asset_link">
                                 <div class="asset_link__info">
                                     <div class="asset_link__title">Exchange rate</div>
-                                    <div class="asset_link__desc">1 {{vm.model.paymentAsset}} = {{vm.model.exchangeRate.value.toLocaleString(undefined, {minimumFractionDigits: vm.model.settlementAssetAccuracy})}} {{vm.model.settlementAsset}}</div>
+                                    <div class="asset_link__desc">1 {{vm.model.paymentAssetDisplay}} = {{vm.model.exchangeRate.value.toLocaleString(undefined, {minimumFractionDigits: vm.model.settlementAssetAccuracy})}} {{vm.model.settlementAssetDisplay}}</div>
                                 </div>
                             </div>
                             <div class="asset_link">
                                 <div class="asset_link__info">
                                     <div class="asset_link__title">Original</div>
-                                    <div class="asset_link__desc">{{vm.model.settlementAmount.toLocaleString(undefined, {minimumFractionDigits: vm.model.settlementAssetAccuracy})}} {{vm.model.settlementAsset}}</div>
+                                    <div class="asset_link__desc">{{vm.model.settlementAmount.toLocaleString(undefined, {minimumFractionDigits: vm.model.settlementAssetAccuracy})}} {{vm.model.settlementAssetDisplay}}</div>
                                 </div>
                             </div>
                             <div class="asset_link">

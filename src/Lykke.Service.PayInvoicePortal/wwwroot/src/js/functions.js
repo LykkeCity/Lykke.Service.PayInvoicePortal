@@ -14,6 +14,12 @@ if (isMobile || wW <= 767) {
     $('body').removeClass('is_mobile');
 }
 
+function initSelects() {
+    $('.selectpicker').selectpicker({
+        mobile: isMobile
+    });
+}
+
 function initResize() {
     $(window).resize(function () {
         setTimeout(function () {
@@ -50,15 +56,14 @@ function initEventsOnClick() {
         });
     }
 
-    $('._open_cutted_content').on('click',
-        function (e) {
-            e.preventDefault();
+  $('._open_cutted_content').on('click', function(e) {
+    e.preventDefault();
 
-            var target = $(this).attr('href');
+    var target = $(this).attr('href')
 
-            $(target).toggleClass('show');
-            $(this).toggleClass('active');
-        });
+    $(target).toggleClass('show')
+    $(this).toggleClass('active')
+  })
 }
 
 function initEventsOnScroll() {

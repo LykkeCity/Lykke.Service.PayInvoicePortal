@@ -1,23 +1,4 @@
-﻿.select > .form-control {
-  cursor: pointer; }
-
-.select::after {
-  pointer-events: none; }
-
-input[type="number"]::-webkit-outer-spin-button, input[type="number"]::-webkit-inner-spin-button {
-  cursor: pointer;
-  height: auto; }
-
-.attachment_list--download .asset_link__icon .asset_icon {
-  cursor: pointer; }
-
-.attachment_list--download .asset_link__info .asset_link__title {
-  cursor: pointer; }
-
-.menu_overlay--open,
+﻿.menu_overlay--open,
 .modal_dialog {
   z-index: 1001; }
-
-.table_invoices tr th {
-  cursor: pointer; }
 

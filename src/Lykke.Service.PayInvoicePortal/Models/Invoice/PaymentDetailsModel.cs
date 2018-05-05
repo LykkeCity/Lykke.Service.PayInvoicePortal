@@ -11,6 +11,8 @@ namespace Lykke.Service.PayInvoicePortal.Models.Invoice
 
         public string Status { get; set; }
 
+        public string MerchantId { get; set; }
+
         public string Merchant { get; set; }
 
         public double PaymentAmount { get; set; }
@@ -19,7 +21,11 @@ namespace Lykke.Service.PayInvoicePortal.Models.Invoice
 
         public string PaymentAsset { get; set; }
 
+        public string PaymentAssetDisplay { get; set; }
+
         public string SettlementAsset { get; set; }
+
+        public string SettlementAssetDisplay { get; set; }
 
         public int PaymentAssetAccuracy { get; set; }
 

@@ -44,8 +44,16 @@
                     <div class="col-sm-4 _currency">
                         <div class="form-group">
                             <label class="control-label" for="currency">Currency</label>
-                            <div class="select">
-                                <select id="currency" class="form-control" data-ng-model="vm.model.settlementAsset" ng-options="asset.id as asset.title for asset in vm.model.assets" data-ng-class="{'error': vm.form.errors.settlementAsset}"></select>
+                            <div class="form_selectpicker">
+                                <select class="selectpicker" 
+                                        data-selectpicker
+                                        data-size="10" 
+                                        data-live-search="{{vm.model.assets.length > 10}}" 
+                                        data-live-search-placeholder="Asset name"
+                                        data-ng-model="vm.model.settlementAsset"
+                                        ng-options="asset.id as asset.title for asset in vm.model.assets"
+                                        data-ng-class="{'error': vm.form.errors.settlementAsset}">
+                                </select>
                             </div>
                         </div>
                     </div>

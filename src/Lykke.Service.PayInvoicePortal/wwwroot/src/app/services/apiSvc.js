@@ -16,6 +16,7 @@
             sendEmail: sendEmail,
 
             getAssets: getAssets,
+            getPaymentAssets: getPaymentAssets,
 
             getBalance: getBalance,
 
@@ -30,7 +31,7 @@
             saveInvoice: saveInvoice,
             updateInvoice: updateInvoice,
             deleteInvoice: deleteInvoice,
-            
+
             getPaymentDetails: getPaymentDetails,
             getPaymentStatus: getPaymentStatus
         };
@@ -55,12 +56,19 @@
             return get('assets', {});
         }
 
+        function getPaymentAssets(merchantId, settlementAssetId) {
+            return get("paymentAssets", {
+                merchantId: merchantId,
+                settlementAssetId: settlementAssetId
+            });
+        }
+
         // Balances
 
         function getBalance() {
             return get('balances', {});
         }
-        
+
         // Export
 
         function exportToCsv(searchValue, period, status, sortField, sortAscending) {
@@ -94,7 +102,7 @@
         }
 
         // Invoices
-        
+
         function getInvoice(invoiceId) {
             return get('invoices/' + invoiceId);
         }

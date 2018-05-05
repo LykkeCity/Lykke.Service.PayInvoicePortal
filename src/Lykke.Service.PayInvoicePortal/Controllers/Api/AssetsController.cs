@@ -11,8 +11,6 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Lykke.Service.PayInvoicePortal.Controllers.Api
 {
-    [Authorize]
-    [Route("/api/assets")]
     public class AssetsController : Controller
     {
         private readonly IAssetService _assetService;
@@ -26,13 +24,26 @@ namespace Lykke.Service.PayInvoicePortal.Controllers.Api
             _log = log;
         }
 
+        [Authorize]
         [HttpGet]
-        public async Task<IActionResult> GetAsync()
+        [Route("/api/assets")]
+        public async Task<IActionResult> GetAssetsAsync()
         {
             IReadOnlyList<Asset> assets = await _assetService.GetSettlementAssetsAsync(User.GetMerchantId());
 
-            var model = assets.Select(o => new ItemViewModel(o.Id, o.DisplayId));
+            var model = assets.Select(o => new ItemViewModel(o.Id, o.DisplayId ?? "empty"));
             
+            return Json(model);
+        }
+
+        [HttpGet]
+        [Route("/api/paymentAssets")]
+        public async Task<IActionResult> GetPaymentAssetsAsync(string merchantId, string settlementAssetId)
+        {
+            IReadOnlyList<Asset> assets = await _assetService.GetPaymentAssetsAsync(merchantId, settlementAssetId);
+
+            var model = assets.Select(o => new ItemViewModel(o.Id, o.DisplayId ?? "empty"));
+
             return Json(model);
         }
     }

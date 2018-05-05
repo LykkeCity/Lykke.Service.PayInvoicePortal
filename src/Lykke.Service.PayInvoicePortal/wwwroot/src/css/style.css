@@ -2677,9 +2677,13 @@ ol.list_styled li:before { content: counter(step-counter); background-color: #33
 
 .table_invoices tr th { text-transform: none; font-weight: 600; border-bottom: 0; font-size: 18px; font-size: 1.125rem; }
 
-.table_invoices tr td, .table_invoices tr th { cursor: auto; padding: 12px 20px 12px 0; padding: 0.75rem 1.25rem 0.75rem 0; }
+.table_invoices tr td, .table_invoices tr th { padding: 12px 20px 12px 0; padding: 0.75rem 1.25rem 0.75rem 0; }
 
 .table_invoices tr td a, .table_invoices tr th a { color: inherit; }
+
+.table_invoices tr td { cursor: auto; }
+
+.table_invoices tr th { cursor: pointer; }
 
 .table_invoices ._title { display: block; margin-bottom: 4px; margin-bottom: 0.25rem; }
 
@@ -2943,6 +2947,10 @@ ol.list_styled li:before { content: counter(step-counter); background-color: #33
 
 .attachment_list .asset_link_list .asset_link:first-child { border-top: 0; }
 
+.attachment_list--download .asset_link__icon .asset_icon { cursor: pointer; }
+
+.attachment_list--download .asset_link__info .asset_link__title { cursor: pointer; }
+
 .asset_link { position: relative; }
 
 .asset_link .form-group { max-width: none; margin: 15px 0; margin: 0.9375rem 0; }
@@ -3111,7 +3119,9 @@ ol.list_styled li:before { content: counter(step-counter); background-color: #33
 
 .select .icon { position: absolute; color: #CFD2D7; top: 50%; font-size: 10px; font-size: 0.625rem; right: 10px; right: 0.625rem; margin-top: -4px; margin-top: -0.25rem; }
 
-.select .form-control { margin-bottom: 0; }
+.select .form-control { cursor: pointer; margin-bottom: 0; }
+
+.select::after { pointer-events: none; }
 
 .form_container { width: 570px; max-width: 100%; padding-top: 50px; }
 
@@ -3192,7 +3202,9 @@ ol.list_styled li:before { content: counter(step-counter); background-color: #33
 
 .dropdown-menu .bs-searchbox .form-control :-ms-input-placeholder { color: #a0a7b1; }
 
-::-webkit-scrollbar { width: 18px; }
+input[type="number"]::-webkit-outer-spin-button, input[type="number"]::-webkit-inner-spin-button { cursor: pointer; height: auto; }
+
+::-webkit-scrollbar { height: 18px; width: 18px; }
 
 ::-webkit-scrollbar-thumb { height: 6px; background-clip: padding-box; background-color: #d5d7dc; border-radius: 18px; -webkit-border-radius: 18px; border: 6px solid transparent; }
 
