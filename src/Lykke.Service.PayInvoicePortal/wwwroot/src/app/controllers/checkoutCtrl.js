@@ -164,12 +164,16 @@
             updateMessage(data);
 
             if (data.status === 'Unpaid') {
+                // bip21 for BTC
+                // https://github.com/bitcoin/bips/blob/master/bip-0021.mediawiki#examples
+                var labelEncoded = encodeURIComponent('invoice #' + data.number);
+
                 vm.model.qrCode = encodeURIComponent('bitcoin:' +
                     data.walletAddress +
                     '?amount=' +
                     data.paymentAmount +
-                    '&label=invoice #' +
-                    data.number +
+                    '&label=' +
+                    labelEncoded +
                     '&message=' +
                     data.paymentRequestId);
 
