@@ -33,7 +33,8 @@
 
         vm.handlers = {
             close: close,
-            save: save,
+            generate: generate,
+            saveDraft: saveDraft,
             getFileExtension: fileSvc.getExtension,
             getFileSize: fileSvc.getSize,
             getFile: getFile,
@@ -155,7 +156,17 @@
             return true;
         }
 
-        function save(draft) {
+        function generate() {
+            // isDraft: false
+            save(false);
+        }
+
+        function saveDraft() {
+            // isDraft: true
+            save(true);
+        }
+
+        function save(isDraft) {
             if (vm.form.blocked)
                 return;
 
@@ -166,7 +177,7 @@
 
             var model =
                 {
-                    isDraft: draft === true,
+                    isDraft: isDraft,
                     id: vm.model.id,
                     number: vm.model.number,
                     client: vm.model.client,
@@ -182,7 +193,7 @@
                 function (data) {
                     close();
                     onChanged();
-                    if (draft === false) {
+                    if (isDraft === false) {
                         $rootScope.$broadcast('invoiceGenerated', data);
                     }
                     vm.form.blocked = false;

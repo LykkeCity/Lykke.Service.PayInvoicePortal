@@ -36,8 +36,8 @@
         vm.handlers = {
             close: close,
             openNewForm: openNewForm,
-            save: save,
-            draft: draft,
+            generate: generate,
+            saveDraft: saveDraft,
             getFileExtension: fileSvc.getExtension,
             getFileSize: fileSvc.getSize,
             addFiles: addFiles,
@@ -127,18 +127,28 @@
             return true;
         }
 
-        function save() {
+        function generate() {
+            // isDraft: false
+            save(false);
+        }
+
+        function saveDraft() {
+            // isDraft: true
+            save(true);
+        }
+
+        function save(isDraft) {
             if (vm.form.blocked)
                 return;
 
             if (!validate())
                 return;
-            
+
             vm.form.blocked = true;
 
             var model =
             {
-                isDraft: false,
+                isDraft: isDraft,
                 number: vm.model.number,
                 client: vm.model.client,
                 email: vm.model.email,
@@ -152,41 +162,7 @@
                 .then(
                     function (data) {
                         close();
-                        $rootScope.$broadcast('invoiceGenerated', data);
-                        vm.form.blocked = false;
-                    },
-                    function (error) {
-                        $log.error(error);
-                        vm.form.blocked = false;
-                    });
-        }
-
-        function draft() {
-            if (vm.form.blocked)
-                return;
-
-            if (!validate())
-                return;
-
-            vm.form.blocked = true;
-
-            var model =
-            {
-                isDraft: true,
-                number: vm.model.number,
-                client: vm.model.client,
-                email: vm.model.email,
-                amount: vm.model.amount,
-                settlementAsset: vm.model.settlementAsset,
-                dueDate: vm.model.dueDate.endOf('day').toDate(),
-                note: vm.model.note
-            };
-
-            apiSvc.saveInvoice(model, vm.model.files)
-                .then(
-                function (data) {
-                        close();
-                        $rootScope.$broadcast('invoiceDraftCreated', data);
+                        isDraft ? $rootScope.$broadcast("invoiceDraftCreated", data) : $rootScope.$broadcast("invoiceGenerated", data);
                         vm.form.blocked = false;
                     },
                     function (error) {
