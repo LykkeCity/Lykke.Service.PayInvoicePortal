@@ -148,7 +148,14 @@ namespace Lykke.Service.PayInvoicePortal.Services
             return result;
         }
 
-        public async Task<PaymentDetails> GetPaymentDetailsAsync(string invoiceId)
+        /// <summary>
+        /// Get payment details from Invoice, PaymentRequest and Order
+        /// </summary>
+        /// <param name="invoiceId">Invoice Id</param>
+        /// <param name="force">Will force to create new order if the actual order is expired but can be considered
+        //     as actual till extended due date</param>
+        /// <returns></returns>
+        public async Task<PaymentDetails> GetPaymentDetailsAsync(string invoiceId, bool force)
         {
             InvoiceModel invoice = await _payInvoiceClient.GetInvoiceAsync(invoiceId);
 
@@ -162,7 +169,7 @@ namespace Lykke.Service.PayInvoicePortal.Services
             {
                 MerchantId = invoice.MerchantId,
                 PaymentRequestId = invoice.PaymentRequestId,
-                Force = true
+                Force = force
             });
 
             await Task.WhenAll(merchantTask, paymentRequestTask, orderTask);
@@ -176,6 +183,8 @@ namespace Lykke.Service.PayInvoicePortal.Services
 
             int totalSeconds = 0;
             int remainingSeconds = 0;
+            int extendedTotalSeconds = 0;
+            int extendedRemainingSeconds = 0;
             
             if (invoice.Status == InvoiceStatus.Unpaid)
             {
@@ -184,6 +193,14 @@ namespace Lykke.Service.PayInvoicePortal.Services
 
                 if (remainingSeconds > totalSeconds)
                     remainingSeconds = totalSeconds;
+
+                extendedTotalSeconds = (int)(order.ExtendedDueDate - order.DueDate).TotalSeconds;
+                extendedRemainingSeconds = (int)(order.ExtendedDueDate - DateTime.UtcNow).TotalSeconds;
+
+                if (extendedRemainingSeconds > extendedTotalSeconds)
+                {
+                    extendedRemainingSeconds = extendedTotalSeconds;
+                }
             }
 
             return new PaymentDetails
@@ -207,6 +224,8 @@ namespace Lykke.Service.PayInvoicePortal.Services
                 PaymentRequestId = invoice.PaymentRequestId,
                 TotalSeconds = totalSeconds,
                 RemainingSeconds = remainingSeconds,
+                ExtendedTotalSeconds = extendedTotalSeconds,
+                ExtendedRemainingSeconds = extendedRemainingSeconds,
                 PaidAmount = paymentRequest.PaidAmount,
                 PaidDate = paymentRequest.PaidDate
             };

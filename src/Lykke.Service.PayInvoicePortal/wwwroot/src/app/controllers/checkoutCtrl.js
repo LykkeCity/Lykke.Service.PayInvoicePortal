@@ -26,11 +26,15 @@
             icon: ''
         };
 
+        var extendedTotalSeconds = 0,
+            extendedRemainingSeconds = 0;
+
         vm.timer = {
             interval: null,
             total: 0,
             seconds: 0,
-            mins: 0
+            mins: 0,
+            isExtended: false
         };
 
         vm.status = {
@@ -79,7 +83,8 @@
             init: init,
             getFileExtension: fileSvc.getExtension,
             getFileSize: fileSvc.getSize,
-            getFile: getFile
+            getFile: getFile,
+            refreshDetails: refreshDetails
         };
 
         activate();
@@ -153,6 +158,9 @@
 
             vm.model.exchangeRate.hidden = data.paymentAsset === data.settlementAsset;
 
+            extendedTotalSeconds = data.extendedTotalSeconds;
+            extendedRemainingSeconds = data.extendedRemainingSeconds;
+
             updateMessage(data);
 
             if (data.status === 'Unpaid') {
@@ -165,12 +173,19 @@
                     '&message=' +
                     data.paymentRequestId);
 
-                vm.timer.total = data.totalSeconds;
-                vm.timer.seconds = data.remainingSeconds;
-                vm.model.waiting = true;
-                updatePie();
+                if (data.remainingSeconds > 0) {
+                    // timer before order.DueDate
+                    vm.timer.total = data.totalSeconds;
+                    vm.timer.seconds = data.remainingSeconds;
+                    vm.timer.isExtended = false;
+                } else {
+                    // timer before order.ExtendedDueDate
+                    initExtendedTimer();
+                }
 
-                vm.timer.interval = $interval(tick, 1000);
+                vm.model.waiting = true;
+
+                restartTimer();
             } else {
                 vm.model.qrCode = '';
                 vm.timer.total = 0;
@@ -179,6 +194,18 @@
 
                 updateHeader();
             }
+        }
+
+        function initExtendedTimer() {
+            vm.timer.total = extendedTotalSeconds;
+            vm.timer.seconds = extendedRemainingSeconds;
+            vm.timer.isExtended = true;
+        }
+
+        function restartTimer() {
+            stopTimer();
+            updatePie();
+            vm.timer.interval = $interval(tick, 1000);
         }
 
         function updateHeader() {
@@ -330,17 +357,28 @@
 
         function tick() {
             vm.timer.seconds--;
-            vm.timer.mins = vm.timer.seconds / 60 | 0;
+            vm.timer.mins = (vm.timer.seconds / 60 | 0) + 1;
 
             if (vm.timer.seconds <= 0) {
-                stopTimer();
-                updateDetails();
-
-                vm.timer.seconds = 0;
-                vm.timer.mins = 0;
+                if (!vm.timer.isExtended) {
+                    initExtendedTimer();
+                    restartTimer();
+                } else {
+                    refreshDetails();
+                }
+            } else {
+                updatePie();
             }
+        }
 
+        function refreshDetails() {
+            stopTimer();
+
+            vm.timer.seconds = 0;
+            vm.timer.mins = 0;
             updatePie();
+
+            updateDetails();
         }
 
         function updatePie() {

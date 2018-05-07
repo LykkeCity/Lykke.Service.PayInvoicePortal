@@ -31,7 +31,7 @@ namespace Lykke.Service.PayInvoicePortal.Controllers.Api
         [Route("{InvoiceId}")]
         public async Task<IActionResult> Details(string invoiceId)
         {
-            PaymentDetails paymentDetails = await _invoiceService.GetPaymentDetailsAsync(invoiceId);
+            PaymentDetails paymentDetails = await _invoiceService.GetPaymentDetailsAsync(invoiceId, force: true);
 
             if (paymentDetails == null)
             {

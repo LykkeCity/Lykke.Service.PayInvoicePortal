@@ -1,0 +1,14 @@
+﻿<div class="hint" data-ng-if="!vm.timer.isExtended">
+    <span>The exchange rate is locked for </span>
+    @await Html.PartialAsync("Partials/InvoiceCheckoutMessageMinsSecs")
+</div>
+<div class="hint" data-ng-if="vm.timer.isExtended">
+    <span>We are detecting your transfer, please do not do any transfers the following </span>
+    @await Html.PartialAsync("Partials/InvoiceCheckoutMessageMinsSecs")
+</div>
+<div class="hint" data-ng-if="vm.timer.seconds === 0">
+    <div class="spinner spinner--inline spinner--small">
+        <div class="spinner__inside"></div>
+    </div>
+    <span>Updating...</span>
+</div>

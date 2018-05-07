@@ -14,7 +14,7 @@ namespace Lykke.Service.PayInvoicePortal.Core.Services
 
         Task<IReadOnlyList<FileInfoModel>> GetFilesAsync(string invoiceId);
 
-        Task<PaymentDetails> GetPaymentDetailsAsync(string invoiceId);
+        Task<PaymentDetails> GetPaymentDetailsAsync(string invoiceId, bool force);
 
         Task<InvoiceStatus> GetStatusAsync(string invoiceId);
 

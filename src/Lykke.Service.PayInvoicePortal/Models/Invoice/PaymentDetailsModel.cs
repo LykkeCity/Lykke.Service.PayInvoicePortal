@@ -53,6 +53,10 @@ namespace Lykke.Service.PayInvoicePortal.Models.Invoice
 
         public int RemainingSeconds { get; set; }
 
+        public int ExtendedTotalSeconds { get; set; }
+
+        public int ExtendedRemainingSeconds { get; set; }
+
         public DateTime? PaidDate { get; set; }
 
         public double PaidAmount { get; set; }

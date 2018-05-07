@@ -18,16 +18,15 @@
                         <h1 class="page__title">Invoice #{{vm.model.number}}</h1>
                         <div class="invoice_header__subtitle">by {{vm.model.merchant}}</div>
                     </div>
-
                     <div data-ng-if="vm.model.waiting">
                         <div class="invoice_info clearfix">
                             <div class="invoice_info__left">
-                                <div class="invoice_info__qr">
+                                <div class="invoice_info__qr" data-ng-class="{'invoice_info__qr--detecting': vm.timer.isExtended}">
                                     <img class="invoice_info__qr_img_220" data-ng-src="{{vm.const.qrUrlSize220 + vm.model.qrCode}}" alt="qr" width="220" height="220">
                                     <img class="invoice_info__qr_img_152" data-ng-src="{{vm.const.qrUrlSize152 + vm.model.qrCode}}" alt="qr" width="152" height="152">
                                 </div>
                                 <div class="invoice_info__loader">
-                                    <div class="pie">
+                                    <div class="pie" data-ng-class="{'pie--orange': vm.timer.isExtended}">
                                         <div class="pie_inner">
                                             <div class="pie_half">
                                                 <div class="pie_circle-right">
@@ -45,9 +44,13 @@
                                     <span data-ng-if="vm.timer.seconds > 0 && vm.timer.seconds <= 60">{{vm.timer.seconds}} sec remaining…</span>
                                     <span data-ng-if="vm.timer.seconds === 0">Updating…</span>
                                 </div>
+                                <div class="invoice_info__hint--mobile">
+                                    @await Html.PartialAsync("Partials/InvoiceCheckoutMessage")
+                                </div>
                             </div>
                             <div class="invoice_info__right">
-                                <div class="invoice_info__row">
+                                <div class="invoice_info__row"
+                                     data-ng-class="{'invoice_info__row--detecting': vm.timer.isExtended}">
                                     <div class="invoice_info__value">
                                         <span>{{vm.model.paymentAmount | currency : '' : vm.model.paymentAssetAccuracy}} </span>
                                         <span data-ng-hide="vm.model.paymentAssets.length">{{vm.model.paymentAssetDisplay}}</span>
@@ -64,21 +67,30 @@
                                     </div>
                                     <span class="invoice_info__title">FOR PAYMENT</span>
                                 </div>
-                                <div class="invoice_info__row" data-ng-if="vm.model.message || !vm.model.exchangeRate.hidden">
+                                <div class="invoice_info__row"
+                                     data-ng-class="{'invoice_info__row--detecting': vm.timer.isExtended}"
+                                     data-ng-if="vm.model.message || !vm.model.exchangeRate.hidden">
                                     <div class="invoice_info__value invoice_info__value--thin" data-ng-if="!vm.model.exchangeRate.hidden">1 {{vm.model.paymentAssetDisplay}} = {{vm.model.exchangeRate.value.toLocaleString(undefined, {minimumFractionDigits: vm.model.settlementAssetAccuracy})}} {{vm.model.settlementAssetDisplay}}</div>
                                     <span class="invoice_info__title" data-ng-if="!vm.model.exchangeRate.hidden">Exchange rate</span>
+                                </div>
+                                <div class="invoice_info__row">
                                     <div class="invoice_info__hint" data-ng-if="vm.model.message" data-ng-bind="vm.model.message"></div>
                                 </div>
                                 <div class="invoice_info__row">
                                     <div class="invoice_info__value">{{vm.model.settlementAmount.toLocaleString(undefined, {minimumFractionDigits: vm.model.settlementAssetAccuracy})}} {{vm.model.settlementAssetDisplay}}</div>
-                                    <span class="invoice_info__title">Original</span> 
+                                    <span class="invoice_info__title">Original</span>
                                 </div>
-
-                                <hr class="hidden-xs">
-
-                                <div class="hint hidden-xs" data-ng-if="vm.timer.seconds > 60">The exchange rate is locked for {{vm.timer.mins}} {{vm.timer.mins === 1 ? 'minute' : 'minutes'}}</div>
-                                <div class="hint hidden-xs" data-ng-if="vm.timer.seconds > 0 && vm.timer.seconds <= 60">The exchange rate is locked for {{vm.timer.seconds}} seconds</div>
-                                <div class="hint hidden-xs" data-ng-if="vm.timer.seconds === 0">Updating…</div>
+                                <div class="invoice_info__hint--mobile-old">
+                                    <hr>
+                                    @await Html.PartialAsync("Partials/InvoiceCheckoutMessage")
+                                </div>
+                            </div>
+                        </div>
+                        <div class="invoice_refresh" data-ng-if="vm.timer.isExtended">
+                            <button class="btn invoice_refresh__btn" data-ng-click="vm.handlers.refreshDetails()">Refresh the price, I haven't paid yet</button>
+                            <div class="invoice_refresh__text">
+                                If you have any other problem contact our support:
+                                <a class="invoice_refresh__a" href="mailto:support@lykke.com">support@lykke.com</a>
                             </div>
                         </div>
                         <div class="asset_link_list">
