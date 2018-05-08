@@ -37,7 +37,9 @@
                                     <h1 class="page__title">Invoice #{{vm.model.number}}</h1>
                                     <div class="invoice_header__link" data-ng-if="vm.form.allowPay">
                                         <a data-ng-href="{{vm.model.url}}" data-ng-bind="vm.model.url"></a>
-                                        <button class="btn btn--icon _copy" type="button" data-copy="vm.model.url" data-title="Copied!"><i class="icon icon--copy_thin"></i></button>
+                                        <button class="btn btn--icon _copy" type="button" data-copy="vm.model.url" data-title="Copied!">
+                                            <i class="btn__svg_icon svg_icon svg_icon--copy"></i>
+                                        </button>
                                     </div>
                                 </div>
                                 <div class="col-md-4" data-ng-if="vm.form.allowPay">
@@ -51,11 +53,21 @@
                                     <div class="col-md-8">
                                         <div class="invoice_header__data" data-ng-bind="vm.model.dueDate.format('LL')"></div>
                                     </div>
-                                    <div class="col-md-2 pull-right" data-ng-if="vm.form.allowDelete">
-                                        <button class="btn btn--flat btn--default btn-sm pull-right" type="button" data-ng-click="vm.handlers.remove()"><i class="icon icon--delete"></i> Delete</button>
-                                    </div>
-                                    <div class="col-md-2 pull-right" data-ng-if="vm.form.allowEdit">
-                                        <button class="btn btn--flat btn--default btn-sm pull-right" type="button" data-ng-click="vm.handlers.edit()"><i class="icon icon--edit"></i> Edit</button>
+                                    <div class="col-md-4">
+                                        <div class="invoice_controls">
+                                            <button class="invoice_controls__btn btn btn--flat btn--default btn-sm pull-left" type="button"
+                                                    data-ng-if="vm.form.allowEdit"
+                                                    data-ng-click="vm.handlers.edit()">
+                                                <i class="btn__svg_icon svg_icon svg_icon--edit svg_icon--margin"></i>
+                                                Edit
+                                            </button>
+                                            <button class="invoice_controls__btn btn btn--flat btn--default btn-sm pull-left" type="button"
+                                                    data-ng-if="vm.form.allowDelete"
+                                                    data-ng-click="vm.handlers.remove()">
+                                                <i class="btn__svg_icon svg_icon svg_icon--delete svg_icon--margin"></i>
+                                                Delete
+                                            </button>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -127,8 +139,12 @@
                                             <div class="asset_icon asset_icon--red" data-ng-bind="vm.handlers.getFileExtension(file.name)" data-ng-click="vm.handlers.getFile(file)"></div>
                                         </div>
                                         <div class="asset_link__action">
-                                            <button class="btn btn--icon" data-ng-click="vm.handlers.getFile(file)"><i class="icon icon--download"></i></button>
-                                            <button class="btn btn--icon" data-ng-click="vm.handlers.deleteFile(file)"><i class="icon icon--delete"></i></button>
+                                            <button class="btn btn--icon" data-ng-click="vm.handlers.getFile(file)">
+                                                <i class="btn__svg_icon svg_icon svg_icon--upload"></i>
+                                            </button>
+                                            <button class="btn btn--icon" data-ng-click="vm.handlers.deleteFile(file)">
+                                                <i class="btn__svg_icon svg_icon svg_icon--delete"></i>
+                                            </button>
                                         </div>
                                         <div class="asset_link__info">
                                             <div class="asset_link__title" data-ng-bind="file.name" data-ng-click="vm.handlers.getFile(file)"></div>
@@ -150,7 +166,9 @@
                                             <div class="asset_icon asset_icon--red" data-ng-bind="vm.handlers.getFileExtension(file.name)" data-ng-click="vm.handlers.getFile(file)"></div>
                                         </div>
                                         <div class="asset_link__action">
-                                            <button class="btn btn--icon" data-ng-click="vm.handlers.getFile(file)"><i class="icon icon--download"></i></button>
+                                            <button class="btn btn--icon" data-ng-click="vm.handlers.getFile(file)">
+                                                <i class="btn__svg_icon svg_icon svg_icon--upload"></i>
+                                            </button>
                                         </div>
                                         <div class="asset_link__info">
                                             <div class="asset_link__title" data-ng-bind="file.name" data-ng-click="vm.handlers.getFile(file)"></div>

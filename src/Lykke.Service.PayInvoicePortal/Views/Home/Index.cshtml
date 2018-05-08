@@ -24,7 +24,7 @@
                 <div class="row">
                     <div class="col-md-6">
                         <div class="row">
-                            <div class="col-xs-7" 
+                            <div class="col-xs-7"
                                  data-ng-controller="balanceCtrl as balanceVm"
                                  data-ng-init="balanceVm.handlers.init(@JsonConvert.SerializeObject(Model.Balance, new JsonSerializerSettings { ContractResolver = new DefaultContractResolver{NamingStrategy = new CamelCaseNamingStrategy()} }))">
                                 <div class="h1 value_accent" data-ng-bind="balanceVm.model.value.toLocaleString(undefined, {minimumFractionDigits: 2}) + ' ' + balanceVm.model.currency"></div>
@@ -34,24 +34,22 @@
                             </div>
                         </div>
                     </div>
-                    <div class="col-md-6">
-                        <div class="docs_list text-right">
-                            <div class="docs_item">
-                                <div class="docs_item__icon">
-                                    <img src="/img/terms_icn.svg" alt="terms" width="35">
-                                </div>
-                                <div class="docs_item__content">
-                                    <div class="docs_item__title">Export CSV file</div>
-                                    <div class="docs_item__action">
-                                        <a href="javascript:;" data-ng-click="vm.handlers.exportToCsv()">Download</a>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-6">
+                    <h3>Invoices</h3>
+                </div>
+                <div class="col-sm-6 clearfix">
+                    <div class="invoice_controls">
+                        <button class="invoice_controls__btn btn btn--flat btn--default btn-sm pull-left" type="button"
+                                data-ng-click="vm.handlers.exportToCsv()">
+                            <i class="btn__svg_icon svg_icon svg_icon--download svg_icon--margin"></i>
+                            CSV file
+                        </button>
                     </div>
                 </div>
             </div>
-            <h3>Invoices</h3>
             <ul class="nav nav-tabs">
                 <li><button class="btn btn--icon" data-ng-click="vm.filter.handlers.toggle()"><i class="icon icon--search"></i></button></li>
                 <li class="active" data-ng-class="{'active': !vm.filter.status}"><a href="javascript:;" data-ng-click="vm.filter.handlers.clearStatus()">All &middot; <span data-ng-bind="vm.filter.total"></span></a></li>
@@ -67,7 +65,7 @@
                     <div class="col-xs-9 col-sm-8">
                         <div class="input-search input-search--index">
                             <button class="btn btn--icon">
-                                <img data-ng-show="vm.view.isSearching" src="img/processing.gif"/>
+                                <img data-ng-show="vm.view.isSearching" src="img/processing.gif" />
                                 <i data-ng-hide="vm.view.isSearching" class="icon icon--search"></i>
                             </button>
                             <input type="text" class="form-control" placeholder="Number or client email..." data-ng-model="vm.filter.search" data-ng-model-options="{ debounce: 500 }">
@@ -109,8 +107,11 @@
                                     </td>
                                     <td class="_pay" style="cursor: pointer;">{{invoice.dueDate.format('l')}}</td>
                                     <td class="_action">
-                                        <button class="btn btn--icon delete" data-ng-class="{'btn--disabled': !vm.handlers.canRemove(invoice)}" data-ng-disabled="!vm.handlers.canRemove(invoice)" data-ng-click="vm.handlers.remove(invoice)" type="button">
-                                            <i class="icon icon--delete"></i>
+                                        <button class="btn btn--icon" type="button"
+                                                data-ng-class="{'btn--disabled': !vm.handlers.canRemove(invoice)}"
+                                                data-ng-disabled="!vm.handlers.canRemove(invoice)"
+                                                data-ng-click="vm.handlers.remove(invoice)">
+                                            <i class="btn__svg_icon svg_icon svg_icon--delete"></i>
                                         </button>
                                     </td>
                                 </tr>

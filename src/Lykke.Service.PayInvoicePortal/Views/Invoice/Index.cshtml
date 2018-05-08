@@ -96,7 +96,9 @@
                         <div class="asset_link_list">
                             <div class="asset_link">
                                 <div class="asset_link__action">
-                                    <button id="btn-copy-wa" class="btn btn--icon _copy" type="button" data-copy="vm.model.walletAddress" data-title="Copied!"><i class="icon icon--copy_thin"></i></button>
+                                    <button class="btn btn--icon _copy" type="button" data-copy="vm.model.walletAddress" data-title="Copied!">
+                                        <i class="btn__svg_icon svg_icon svg_icon--copy"></i>
+                                    </button>
                                 </div>
                                 <div class="asset_link__info">
                                     <div class="asset_link__title">Payment address</div>
@@ -176,7 +178,9 @@
                                     <div class="asset_icon asset_icon--red" data-ng-bind="vm.handlers.getFileExtension(file.name)" data-ng-click="vm.handlers.getFile(file)"></div>
                                 </div>
                                 <div class="asset_link__action">
-                                    <button class="btn btn--icon" data-ng-click="vm.handlers.getFile(file)"><i class="icon icon--download"></i></button>
+                                    <button class="btn btn--icon" data-ng-click="vm.handlers.getFile(file)">
+                                        <i class="btn__svg_icon svg_icon svg_icon--upload"></i>
+                                    </button>
                                 </div>
                                 <div class="asset_link__info">
                                     <div class="asset_link__title" data-ng-bind="file.name" data-ng-click="vm.handlers.getFile(file)"></div>

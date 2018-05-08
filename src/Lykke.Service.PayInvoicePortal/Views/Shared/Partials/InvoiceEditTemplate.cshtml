@@ -93,9 +93,13 @@
                         <div class="asset_link__action">
                             @if (!Model.IsNewInvoice)
                             {
-                                <button class="btn btn--icon" data-ng-click="vm.handlers.getFile(file)"><i class="icon icon--download"></i></button>
+                                <button class="btn btn--icon" data-ng-click="vm.handlers.getFile(file)">
+                                    <i class="btn__svg_icon svg_icon svg_icon--upload"></i>
+                                </button>
                             }
-                            <button class="btn btn--icon" data-ng-click="vm.handlers.deleteFile(file)"><i class="icon icon--delete"></i></button>
+                            <button class="btn btn--icon" data-ng-click="vm.handlers.deleteFile(file)">
+                                <i class="btn__svg_icon svg_icon svg_icon--delete"></i>
+                            </button>
                         </div>
                         <div class="asset_link__info">
                             <div class="asset_link__title" data-ng-bind="file.name"
