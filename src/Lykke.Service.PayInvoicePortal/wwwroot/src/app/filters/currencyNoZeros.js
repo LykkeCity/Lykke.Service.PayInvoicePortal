@@ -10,7 +10,7 @@
             var value = currency(amount, '', accuracy);
 
             var result = value.replace(/0+$/, '').replace(/\.+$/, '');
-            console.log(amount, accuracy, value, result);
+
             return result;
         };
     }
