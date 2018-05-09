@@ -12,7 +12,7 @@ using Lykke.Service.PayInternal.Client.Models.Merchant;
 using Lykke.Service.PayInvoice.Client;
 using Lykke.Service.PayInvoice.Client.Models.Invoice;
 using Lykke.Service.PayInvoicePortal.Core.Services;
-using MoreLinq;
+using Lykke.Service.PayInvoicePortal.Core.Extensions;
 
 namespace Lykke.Service.PayInvoicePortal.Services
 {
@@ -64,7 +64,7 @@ namespace Lykke.Service.PayInvoicePortal.Services
                 {"InvoiceNumber", invoice.Number},
                 {"Company", merchant.DisplayName},
                 {"ClientFullName", invoice.ClientName},
-                {"AmountToBePaid", invoice.Amount.ToString($"N{settlementAsset.Accuracy}")},
+                {"AmountToBePaid", invoice.Amount.ToStringNoZeros(settlementAsset.Accuracy)},
                 {"SettlementCurrency", settlementAsset.DisplayId},
                 {"DueDate", invoice.DueDate.ToString("d")},
                 {"CheckoutLink", checkoutUrl},

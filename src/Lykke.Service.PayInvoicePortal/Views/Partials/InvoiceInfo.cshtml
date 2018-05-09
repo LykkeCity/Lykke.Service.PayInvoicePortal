@@ -40,7 +40,7 @@
                 <div class="asset_link">
                     <div class="asset_link__info">
                         <div class="asset_link__title">Amount</div>
-                        <div class="asset_link__desc">{{vm.model.amount | currency : '' : vm.model.settlementAssetAccuracy}} {{vm.model.settlementAsset}}</div>
+                        <div class="asset_link__desc">{{vm.model.amount | nzcurrency : vm.model.settlementAssetAccuracy}} {{vm.model.settlementAsset}}</div>
                     </div>
                 </div>
                 <div class="asset_link">

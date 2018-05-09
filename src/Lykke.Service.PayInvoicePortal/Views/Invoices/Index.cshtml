@@ -100,7 +100,7 @@
                                     <div class="asset_link">
                                         <div class="asset_link__info">
                                             <div class="asset_link__title">Amount</div>
-                                            <div class="asset_link__desc" data-ng-bind="vm.model.amount | currency : '' : vm.model.settlementAssetAccuracy"></div>
+                                            <div class="asset_link__desc" data-ng-bind="vm.model.amount | nzcurrency : vm.model.settlementAssetAccuracy"></div>
                                         </div>
                                     </div>
                                     <div class="asset_link">
@@ -215,7 +215,7 @@
 <script type="text/ng-template" id="historyRowTemplate-Unpaid">
     @await Html.PartialAsync(partialPathWithAuthor, new HistoryRowTemplateModel
     {
-        HistoryItemText = "{{item.settlementAmount | currency : '' : item.settlementAssetAccuracy}} " +
+        HistoryItemText = "{{item.settlementAmount | nzcurrency : item.settlementAssetAccuracy}} " +
                            "{{item.settlementAsset}} to be paid due {{item.dueDate.format('LL')}}"
     })
 </script>
@@ -234,7 +234,7 @@
         HistoryItemImg = "history_item__img--success",
         HistoryItemIcon = "icon--check_thin",
         HistoryItemTitle = "In Progress",
-        HistoryItemText = "Transferred {{item.settlementAmount | currency : '' : item.settlementAssetAccuracy}} " +
+        HistoryItemText = "Transferred {{item.settlementAmount | nzcurrency : item.settlementAssetAccuracy}} " +
                           "{{item.settlementAsset}} to LykkePay's account for settlement."
     })
 </script>
@@ -244,7 +244,7 @@
         HistoryItemImg = "history_item__img--refund",
         HistoryItemIcon = "icon--move_to_thin",
         HistoryItemTitle = "Refund",
-        HistoryItemText = "Refunded {{item.refundAmount | currency : '' : item.paymentAssetAccuracy}} " +
+        HistoryItemText = "Refunded {{item.refundAmount | nzcurrency : item.paymentAssetAccuracy}} " +
                           "{{item.paymentAsset}} to {{item.refundWalletAddress}}."
     })
 </script>
@@ -263,7 +263,7 @@
 <script type="text/ng-template" id="historyRowTemplate-LatePaid">
     @await Html.PartialAsync(partialPathError, new HistoryRowTemplateModel
     {
-        HistoryItemText = "Transferred {{item.settlementAmount | currency : '' : item.settlementAssetAccuracy}} " +
+        HistoryItemText = "Transferred {{item.settlementAmount | nzcurrency : item.settlementAssetAccuracy}} " +
                           "{{item.settlementAsset}} from {{item.sourceWalletAddresses.join(', ')}} on {{item.dueDate.format('LL')}}."
     })
 </script>
@@ -291,10 +291,10 @@
 
     private string GetPaidText()
     {
-        return "Transferred {{item.paidAmount | currency : '' : item.paymentAssetAccuracy}} " +
+        return "Transferred {{item.paidAmount | nzcurrency : item.paymentAssetAccuracy}} " +
                "{{item.paymentAsset}} from {{item.sourceWalletAddresses.join(', ')}}, " +
-               "expected {{item.paymentAmount | currency : '' : item.paymentAssetAccuracy}} {{item.paymentAsset}}. " +
-               "Exchange rate 1 {{item.paymentAsset}} = {{item.exchangeRate | currency : '' :  item.settlementAssetAccuracy}} {{item.settlementAsset}}.";
+               "expected {{item.paymentAmount | nzcurrency : item.paymentAssetAccuracy}} {{item.paymentAsset}}. " +
+               "Exchange rate 1 {{item.paymentAsset}} = {{item.exchangeRate | nzcurrency :  item.settlementAssetAccuracy}} {{item.settlementAsset}}.";
     }
 
 }
