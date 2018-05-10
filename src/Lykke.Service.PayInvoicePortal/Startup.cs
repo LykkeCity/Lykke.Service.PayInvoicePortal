@@ -18,6 +18,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Lykke.Service.PayInvoicePortal.Core.Services;
 using Lykke.SettingsReader;
 using Lykke.SlackNotification.AzureQueue;
+using System.Net;
 
 namespace Lykke.Service.PayInvoicePortal
 {
@@ -59,6 +60,20 @@ namespace Lykke.Service.PayInvoicePortal
                     {
                         o.LoginPath = new PathString("/welcome");
                         o.ExpireTimeSpan = appSettings.CurrentValue.PayInvoicePortal.UserLoginTime;
+                        o.Events.OnRedirectToLogin = (context) =>
+                        {
+                            if (context.Request.Path.HasValue && 
+                                context.Request.Path.Value.StartsWith("/api/") &&
+                                context.Response.StatusCode == (int)HttpStatusCode.OK)
+                            {
+                                context.Response.StatusCode = (int)HttpStatusCode.Unauthorized;
+                            }
+                            else
+                            {
+                                context.Response.Redirect(context.RedirectUri);
+                            }
+                            return Task.FromResult(0);
+                        };
                     });
                 
                 services.AddAuthorization(options =>
