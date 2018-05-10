@@ -7,6 +7,7 @@ using Common.Log;
 using Lykke.Service.Assets.Client;
 using Lykke.Service.Assets.Client.Models;
 using Lykke.Service.PayInternal.Client;
+using Lykke.Service.PayInternal.Client.Models.Markup;
 using Lykke.Service.PayInternal.Client.Models.Merchant;
 using Lykke.Service.PayInternal.Client.Models.Order;
 using Lykke.Service.PayInternal.Client.Models.PaymentRequest;
@@ -164,6 +165,9 @@ namespace Lykke.Service.PayInvoicePortal.Services
 
             Task<MerchantModel> merchantTask = _payInternalClient.GetMerchantByIdAsync(invoice.MerchantId);
 
+            Task<MarkupResponse> markupForMerchantTask = 
+                _payInternalClient.ResolveMarkupByMerchantAsync(invoice.MerchantId, $"{invoice.PaymentAssetId}{invoice.SettlementAssetId}");
+
             // now it is important to wait order checkout before making GetPaymentRequest
             // as WalletAddress will be only after that
             Task<OrderModel> orderTask = _payInternalClient.ChechoutOrderAsync(new ChechoutRequestModel
@@ -173,10 +177,11 @@ namespace Lykke.Service.PayInvoicePortal.Services
                 Force = force
             });
 
-            await Task.WhenAll(merchantTask, orderTask);
+            await Task.WhenAll(merchantTask, markupForMerchantTask, orderTask);
 
             OrderModel order = orderTask.Result;
             MerchantModel merchant = merchantTask.Result;
+            MarkupResponse markupForMerchant = markupForMerchantTask.Result;
 
             PaymentRequestModel paymentRequest =
                 await _payInternalClient.GetPaymentRequestAsync(invoice.MerchantId, invoice.PaymentRequestId);
@@ -217,10 +222,10 @@ namespace Lykke.Service.PayInvoicePortal.Services
                 PaymentAsset = paymentAsset,
                 SettlementAsset = settlementAsset,
                 ExchangeRate = order.ExchangeRate,
-                DeltaSpread = merchant.DeltaSpread > 0,
-                Pips = paymentRequest.MarkupPips + merchant.LpMarkupPips,
-                Percents = merchant.DeltaSpread + paymentRequest.MarkupPercent + merchant.LpMarkupPercent,
-                Fee = merchant.MarkupFixedFee + paymentRequest.MarkupFixedFee,
+                DeltaSpread = markupForMerchant.DeltaSpread > 0,
+                Pips = markupForMerchant.Pips,
+                Percents = markupForMerchant.DeltaSpread + markupForMerchant.Percent,
+                Fee = markupForMerchant.FixedFee,
                 DueDate = invoice.DueDate,
                 Note = invoice.Note,
                 WalletAddress = paymentRequest.WalletAddress,

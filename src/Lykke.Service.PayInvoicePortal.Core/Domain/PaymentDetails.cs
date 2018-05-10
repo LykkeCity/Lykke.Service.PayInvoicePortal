@@ -27,11 +27,11 @@ namespace Lykke.Service.PayInvoicePortal.Core.Domain
 
         public bool DeltaSpread { get; set; }
 
-        public double Percents { get; set; }
+        public decimal Percents { get; set; }
 
         public int Pips { get; set; }
 
-        public double Fee { get; set; }
+        public decimal Fee { get; set; }
 
         public DateTime DueDate { get; set; }
 
