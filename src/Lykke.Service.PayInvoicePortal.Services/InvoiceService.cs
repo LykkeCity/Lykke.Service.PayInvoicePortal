@@ -163,8 +163,9 @@ namespace Lykke.Service.PayInvoicePortal.Services
                 return null;
 
             Task<MerchantModel> merchantTask = _payInternalClient.GetMerchantByIdAsync(invoice.MerchantId);
-            Task<PaymentRequestModel> paymentRequestTask =
-                _payInternalClient.GetPaymentRequestAsync(invoice.MerchantId, invoice.PaymentRequestId);
+
+            // now it is important to wait order checkout before making GetPaymentRequest
+            // as WalletAddress will be only after that
             Task<OrderModel> orderTask = _payInternalClient.ChechoutOrderAsync(new ChechoutRequestModel
             {
                 MerchantId = invoice.MerchantId,
@@ -172,11 +173,13 @@ namespace Lykke.Service.PayInvoicePortal.Services
                 Force = force
             });
 
-            await Task.WhenAll(merchantTask, paymentRequestTask, orderTask);
+            await Task.WhenAll(merchantTask, orderTask);
 
             OrderModel order = orderTask.Result;
-            PaymentRequestModel paymentRequest = paymentRequestTask.Result;
             MerchantModel merchant = merchantTask.Result;
+
+            PaymentRequestModel paymentRequest =
+                await _payInternalClient.GetPaymentRequestAsync(invoice.MerchantId, invoice.PaymentRequestId);
 
             Asset settlementAsset = await _assetsService.TryGetAssetAsync(invoice.SettlementAssetId);
             Asset paymentAsset = await _assetsService.TryGetAssetAsync(invoice.PaymentAssetId);
