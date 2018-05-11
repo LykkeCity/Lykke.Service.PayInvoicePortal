@@ -263,8 +263,7 @@
 <script type="text/ng-template" id="historyRowTemplate-LatePaid">
     @await Html.PartialAsync(partialPathError, new HistoryRowTemplateModel
     {
-        HistoryItemText = "Transferred {{item.settlementAmount | nzcurrency : item.settlementAssetAccuracy}} " +
-                          "{{item.settlementAsset}} from {{item.sourceWalletAddresses.join(', ')}} on {{item.dueDate.format('LL')}}."
+        HistoryItemText = GetPaidText()
     })
 </script>
 <script type="text/ng-template" id="historyRowTemplate-NotConfirmed">

@@ -5,9 +5,9 @@
         .module('app')
         .controller('checkoutCtrl', checkoutCtrl);
 
-    checkoutCtrl.$inject = ['$window', '$location', '$scope', '$log', '$interval', '$timeout', 'apiSvc', 'fileSvc', 'statusSvc'];
+    checkoutCtrl.$inject = ['$window', '$location', '$scope', '$log', '$interval', '$timeout', 'apiSvc', 'fileSvc', 'statusSvc', 'nzcurrencyFilter'];
 
-    function checkoutCtrl($window, $location, $scope, $log, $interval, $timeout, apiSvc, fileSvc, statusSvc) {
+    function checkoutCtrl($window, $location, $scope, $log, $interval, $timeout, apiSvc, fileSvc, statusSvc, nzcurrencyFilter) {
         var vm = this;
 
         vm.callback = {
@@ -214,10 +214,8 @@
 
         function updateHeader() {
             var paidAmountText =
-                vm.model.paidAmount.toLocaleString(undefined,
-                        { minimumFractionDigits: vm.model.paymentAssetAccuracy }) +
-                    ' ' +
-                    vm.model.paymentAsset;
+                nzcurrencyFilter(vm.model.paidAmount, vm.model.paymentAssetAccuracy)
+                + ' ' + vm.model.paymentAsset;
 
             var dateText = vm.model.paidDate ? vm.model.paidDate.format('l') : '';
             var receivedDateText = ' received on ' + dateText;
@@ -298,7 +296,9 @@
                 values.push(data.pips + ' pips');
 
             if(data.fee > 0)
-                values.push(data.fee.toLocaleString(undefined, { minimumFractionDigits: data.settlementAssetAccuracy }) + ' ' + data.settlementAsset);
+                values.push(
+                    nzcurrencyFilter(data.fee, data.settlementAssetAccuracy)
+                    + ' ' + data.settlementAsset);
 
             var fee;
 
