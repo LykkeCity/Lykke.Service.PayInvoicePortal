@@ -3,10 +3,9 @@ using Lykke.Service.PayInvoicePortal.Models.Invoices;
 
 namespace Lykke.Service.PayInvoicePortal.Models.Home
 {
-    public class IndexViewModel
+    public class HomeViewModel
     {
-        public ListModel List { get; set; }
-
+        public InvoicesGatheredInfoModel InvoicesGatheredInfo { get; set; }
         public BalanceModel Balance { get; set; }
     }
 }

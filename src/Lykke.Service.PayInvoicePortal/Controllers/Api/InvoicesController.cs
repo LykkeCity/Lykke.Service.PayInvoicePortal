@@ -77,11 +77,22 @@ namespace Lykke.Service.PayInvoicePortal.Controllers.Api
                 skip,
                 take);
 
-            var model = new ListModel
+            var model = new InvoicesGatheredInfoModel
             {
-                Total = source.Total,
-                CountPerStatus = source.CountPerStatus.ToDictionary(o => o.Key.ToString(), o => o.Value),
-                Items = Mapper.Map<List<ListItemModel>>(source.Items)
+                List = new ListModel
+                {
+                    Total = source.Total,
+                    CountPerStatus = source.CountPerStatus.ToDictionary(o => o.Key.ToString(), o => o.Value),
+                    Items = Mapper.Map<List<ListItemModel>>(source.Items)
+                },
+                BaseAsset = source.BaseAsset,
+                BaseAssetAccuracy = source.BaseAssetAccuracy,
+                Statistic = new StatisticModel
+                {
+                    MainStatistic = source.Statistic.ToDictionary(x => x.Key.ToString(), x => x.Value),
+                    Rates = source.Rates,
+                    HasErrorsInStatistic = source.HasErrorsInStatistic
+                }
             };
             
             return Json(model);

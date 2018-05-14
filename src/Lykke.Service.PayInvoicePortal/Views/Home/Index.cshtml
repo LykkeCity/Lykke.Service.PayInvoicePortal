@@ -1,10 +1,17 @@
 ﻿@using Newtonsoft.Json
 @using Newtonsoft.Json.Serialization
+@using Microsoft.AspNetCore.Html
 @using Lykke.Service.PayInvoicePortal.Models.Invoices
+@using Lykke.Service.PayInvoicePortal.Models.Home.Template
 
-@model Lykke.Service.PayInvoicePortal.Models.Home.IndexViewModel
+@model Lykke.Service.PayInvoicePortal.Models.Home.HomeViewModel
 @{
     ViewData["Title"] = "Invoices";
+
+    async Task<IHtmlContent> StatItemAsync(string status)
+    {
+        return await Html.PartialAsync("Partials/HomeStatisticItem", new HomeStatisticItemModel(status));
+    }
 }
 
 <div data-ng-controller="invoiceCtrl as vm" ng-cloak>
@@ -15,23 +22,47 @@
 
 <article class="content" 
          data-ng-controller="invoicesCtrl as vm"
-         data-ng-init="vm.handlers.init(@JsonConvert.SerializeObject(Model.List, new JsonSerializerSettings { ContractResolver = new DefaultContractResolver{NamingStrategy = new CamelCaseNamingStrategy()} }))"
+         data-ng-init="vm.handlers.init(@JsonConvert.SerializeObject(Model.InvoicesGatheredInfo, new JsonSerializerSettings { ContractResolver = new DefaultContractResolver{NamingStrategy = new CamelCaseNamingStrategy()} }))"
          ng-cloak>
     <section class="section section--lead">
         <div class="container">
-            <div class="page_header profile_header">
-                <div class="section_subtitle">Current balance</div>
+            <div class="profile_info">
                 <div class="row">
-                    <div class="col-md-6">
-                        <div class="row">
-                            <div class="col-xs-7"
-                                 data-ng-controller="balanceCtrl as balanceVm"
-                                 data-ng-init="balanceVm.handlers.init(@JsonConvert.SerializeObject(Model.Balance, new JsonSerializerSettings { ContractResolver = new DefaultContractResolver{NamingStrategy = new CamelCaseNamingStrategy()} }))">
-                                @* TODO: make with asset accuracy *@
-                                <div class="h1 value_accent">{{balanceVm.model.value | nzcurrency : 2}} {{balanceVm.model.currency}}</div>
+                    <div class="col-md-4 col-sm-5">
+                        <div class="profile_balance">
+                            <div class="profile_info__header">Current balance</div>
+                            <div class="profile_balance__value">
+                                @* TODO: make later in balances stories *@
+                                <span class="profile_balance__number">{{0 | nzcurrency : vm.baseAssetAccuracy}}</span>
+                                <span class="profile_balance__currency">{{vm.model.baseAsset}}</span>
                             </div>
-                            <div class="col-xs-5">
-                                <button class="btn btn--primary btn-block _create_invoice_btn" type="button" data-ng-click="vm.handlers.create()">Create new invoice</button>
+                            <div class="profile_controls">
+                                <button class="btn _create_invoice_btn" data-ng-click="vm.handlers.create()">
+                                    <i class="btn__svg_icon svg_icon svg_icon--add svg_icon--margin"></i>
+                                    New invoice
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-8 col-sm-7">
+                        <div class="profile_summary">
+                            <div class="profile_info__header">
+                                Summary
+                                <button class="profile_info__header_help">
+                                    <i class="btn__svg_icon svg_icon svg_icon--help"></i>
+                                </button>
+                            </div>
+                            <div class="profile_summary__list clearfix">
+                                <div class="profile_summary__left">
+                                    @await StatItemAsync("Paid")
+                                    @await StatItemAsync("Unpaid")
+                                    @await StatItemAsync("PastDue")
+                                </div>
+                                <div class="profile_summary__right">
+                                    @await StatItemAsync("Underpaid")
+                                    @await StatItemAsync("Overpaid")
+                                    @await StatItemAsync("LatePaid")
+                                </div>
                             </div>
                         </div>
                     </div>

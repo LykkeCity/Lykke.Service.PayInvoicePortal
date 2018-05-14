@@ -13,6 +13,7 @@ namespace Lykke.Service.PayInvoicePortal.Settings
         public PayInvoicePortalSettings PayInvoicePortal { get; set; }
         public SlackNotificationsSettings SlackNotifications { get; set; }
         public PayInvoiceServiceClientSettings PayInvoiceServiceClient { get; set; }
+        public RateCalculatorServiceClientSettings RateCalculatorServiceClient { get; set; }
         public PayAuthServiceClientSettings PayAuthServiceClient { get; set; }
         public AssetsServiceClientSettings AssetsServiceClient { get; set; }
         public PayInternalServiceClientSettings PayInternalServiceClient { get; set; }

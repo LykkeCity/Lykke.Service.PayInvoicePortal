@@ -8,10 +8,10 @@ using Lykke.Service.PayInvoicePortal.Core.Domain;
 using Lykke.Service.PayInvoicePortal.Core.Services;
 using Lykke.Service.PayInvoicePortal.Extensions;
 using Lykke.Service.PayInvoicePortal.Models.Balances;
+using Lykke.Service.PayInvoicePortal.Models.Home;
 using Lykke.Service.PayInvoicePortal.Models.Invoices;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using IndexViewModel = Lykke.Service.PayInvoicePortal.Models.Home.IndexViewModel;
 
 namespace Lykke.Service.PayInvoicePortal.Controllers
 {
@@ -43,11 +43,11 @@ namespace Lykke.Service.PayInvoicePortal.Controllers
                 null,
                 false,
                 0,
-                10);
+                20);
 
             Balance balance = await _balanceService.GetAsync(User.GetMerchantId());
 
-            var vm = new IndexViewModel
+            var invoicesGatheredInfo = new InvoicesGatheredInfoModel
             {
                 List = new ListModel
                 {
@@ -55,6 +55,19 @@ namespace Lykke.Service.PayInvoicePortal.Controllers
                     CountPerStatus = source.CountPerStatus.ToDictionary(o => o.Key.ToString(), o => o.Value),
                     Items = Mapper.Map<List<ListItemModel>>(source.Items)
                 },
+                BaseAsset = source.BaseAsset,
+                BaseAssetAccuracy = source.BaseAssetAccuracy,
+                Statistic = new StatisticModel
+                {
+                    MainStatistic = source.Statistic.ToDictionary(x => x.Key.ToString(), x => x.Value),
+                    Rates = source.Rates,
+                    HasErrorsInStatistic = source.HasErrorsInStatistic
+                }
+            };
+
+            var vm = new HomeViewModel
+            {
+                InvoicesGatheredInfo = invoicesGatheredInfo,
                 Balance = new BalanceModel
                 {
                     Value = balance.Value,

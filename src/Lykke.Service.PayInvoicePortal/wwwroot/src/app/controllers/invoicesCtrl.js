@@ -1,4 +1,4 @@
-(function () {
+﻿(function () {
     'use strict';
 
     angular
@@ -16,7 +16,13 @@
         };
 
         vm.model = {
+            baseAsset: null,
+            baseAssetAccuracy: 0,
             invoices: []
+        };
+
+        vm.statistic = {
+            main: null
         };
 
         vm.filter = {
@@ -138,8 +144,8 @@
         }
 
         function init(data) {
-            vm.view.hasInvoices = data.items.length ? true : false;
-            updateList(data);
+            vm.view.hasInvoices = data.list.items.length ? true : false;
+            updateData(data);
         }
 
         function destroy() {
@@ -160,11 +166,18 @@
                     vm.pager.pageSize * vm.pager.page)
                 .then(
                     function(data) {
-                        updateList(data);
+                        updateData(data);
                     },
                     function(error) {
                         $log.error(error);
                     });
+        }
+
+        function updateData(data) {
+            updateList(data.list);
+            vm.model.baseAsset = data.baseAsset;
+            vm.model.baseAssetAccuracy = data.baseAssetAccuracy;
+            vm.statistic.main = data.statistic.mainStatistic;
         }
 
         function updateList(data) {
