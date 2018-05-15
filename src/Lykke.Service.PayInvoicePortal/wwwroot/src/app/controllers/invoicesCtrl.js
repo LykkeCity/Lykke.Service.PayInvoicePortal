@@ -1,4 +1,4 @@
-﻿(function () {
+(function () {
     'use strict';
 
     angular
@@ -30,11 +30,10 @@
             statuses: [
                 { id: 'draft', title: 'Draft', values: ['Draft'], count: 0 },
                 { id: 'unpaid', title: 'Unpaid', values: ['Unpaid'], count: 0 },
-                { id: 'removed', title: 'Removed', values: ['Removed'], count: 0 },
                 {
                     id: 'inProgress',
                     title: 'In Progress',
-                    values: ['InProgress', 'RefundInProgress', 'SettlementInProgress'],
+                    values: ['InProgress', 'RefundInProgress'],
                     count: 0
                 },
                 { id: 'paid', title: 'Paid', values: ['Paid'], count: 0 },
@@ -42,7 +41,8 @@
                 { id: 'overpaid', title: 'Overpaid', values: ['Overpaid'], count: 0 },
                 { id: 'latePaid', title: 'LatePaid', values: ['LatePaid'], count: 0 },
                 { id: 'refunded', title: 'Refunded', values: ['Refunded'], count: 0 },
-                { id: 'settled', title: 'Settled', values: ['Settled'], count: 0 },
+                { id: 'pastDue', title: 'PastDue', values: ['PastDue'], count: 0 },
+                { id: 'removed', title: 'Removed', values: ['Removed'], count: 0 },
                 { id: 'error', title: 'Error', values: ['InternalError', 'InvalidAddress', 'NotConfirmed'], count: 0 }
             ],
             periods: [
@@ -61,7 +61,7 @@
         };
 
         vm.pager = {
-            pageSize: 10,
+            pageSize: 20,
             page: 1
         };
 
@@ -185,14 +185,21 @@
                 });
             });
 
+            var selectedIndex = 0;
             if (vm.filter.status) {
-                var selectedStatus = vm.filter.statuses.filter(function (status) {
-                    return status.id === vm.filter.status;
+                var selectedStatus = vm.filter.statuses.filter(function (status, index) {
+                    if (status.id === vm.filter.status) {
+                        selectedIndex = index;
+                        return true;
+                    }
+                    return false;
                 })[0];
 
                 if (selectedStatus.count === 0)
                     vm.filter.status = null;
             }
+
+            $rootScope.$broadcast('invoicesLoadedForCarousel', selectedIndex);
         }
 
         function exportToCsv() {

@@ -1,4 +1,4 @@
-﻿var wH = $(window).height(),
+var wH = $(window).height(),
     wW = $(window).width(),
     ua = navigator.userAgent,
     touchendOrClick = (ua.match(/iPad|iPhone|iPad/i)) ? "touchend" : "click",
@@ -21,21 +21,31 @@ function initSelects() {
 }
 
 function initResize() {
+    var timeout;
     $(window).resize(function () {
-        setTimeout(function () {
+        if (timeout) {
+            clearTimeout(timeout);
+        }
+
+        timeout = setTimeout(function () {
             $('.header_container').css({
                 height: $('.header').outerHeight()
             });
-        }, 30);
 
-        $('.video iframe').css({
-            maxHeight: $(window).outerHeight() - $('header').outerHeight()
-        });
+            $('.video iframe').css({
+                maxHeight: $(window).outerHeight() - $('header').outerHeight()
+            });
 
-        $('body').css({
-            paddingBottom: $('footer').outerHeight()
-        });
+            adjuctFooter();
+        }, 200);
+
     }).trigger('resize');
+}
+
+function adjuctFooter() {
+    $('body').css({
+        paddingBottom: $('footer').outerHeight()
+    });
 }
 
 function initEventsOnClick() {
@@ -261,6 +271,7 @@ function pie() {
 // Init
 
 $(document).ready(function () {
+    adjuctFooter();
     initResize();
     initEventsOnClick();
     initEventsOnScroll();

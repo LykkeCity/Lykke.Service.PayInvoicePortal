@@ -51,11 +51,35 @@
                     </div>
                 </div>
             </div>
-            <ul class="nav nav-tabs">
-                <li><button class="btn btn--icon" data-ng-click="vm.filter.handlers.toggle()"><i class="icon icon--search"></i></button></li>
-                <li class="active" data-ng-class="{'active': !vm.filter.status}"><a href="javascript:;" data-ng-click="vm.filter.handlers.clearStatus()">All &middot; <span data-ng-bind="vm.filter.total"></span></a></li>
-                <li data-ng-repeat="status in vm.filter.statuses" data-ng-class="{'active': vm.filter.status == status.id}" data-ng-if="status.count > 0"><a href="javascript:;" data-ng-click="vm.filter.handlers.selectStatus(status)">{{status.title}} &middot; <span data-ng-bind="status.count"></span></a></li>
-            </ul>
+            <div class="invoice_nav">
+                <button class="invoice_nav__search btn btn--icon" data-ng-click="vm.filter.handlers.toggle()">
+                    <i class="icon icon--search"></i>
+                </button>
+                <div class="invoice_tabs" tabs-carousel>
+                    <button class="invoice_tabs__arrow invoice_tabs__arrow--left"></button>
+                    <div class="invoice_tabs__carousel owl-carousel">
+                        <div class="invoice_tabs__item">
+                            <a class="invoice_tabs__tab invoice_tabs__tab--active"
+                               href="javascript:;"
+                               data-ng-class="{'invoice_tabs__tab--active': !vm.filter.status}"
+                               data-ng-click="vm.filter.handlers.clearStatus()">
+                                <span>All &middot; {{vm.filter.total}}</span>
+                            </a>
+                        </div>
+                        <div class="invoice_tabs__item"
+                             data-ng-repeat="status in vm.filter.statuses"
+                             data-ng-show="status.count > 0">
+                            <a class="invoice_tabs__tab"
+                               href="javascript:;"
+                               data-ng-class="{'invoice_tabs__tab--active': vm.filter.status == status.id}"
+                               data-ng-click="vm.filter.handlers.selectStatus(status)">
+                                <span>{{status.title}} &middot; {{status.count}}</span>
+                            </a>
+                        </div>
+                    </div>
+                    <button class="invoice_tabs__arrow invoice_tabs__arrow--right"></button>
+                </div>
+            </div>
             <div class="search_filter" data-ng-class="{'search_filter--show': vm.filter.show}">
                 <div class="row">
                     <div class="col-xs-6 col-sm-3">
