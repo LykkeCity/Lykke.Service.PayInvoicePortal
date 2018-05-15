@@ -27,9 +27,10 @@
                 }
 
                 var onInvoicesLoaded = scope.$on('invoicesLoadedForCarousel', function (evt, selectedIndex) {
-                    console.log('invoicesLoaded');
                     $timeout(function () {
-                        // carousel.trigger('resize.owl.carousel');
+                        var carouselData = carousel.data('owl.carousel');
+                        carouselData.refresh();
+                        carouselData.trigger('resized');
                     });
                 });
 
@@ -40,42 +41,34 @@
                 });
 
                 function initButtons() {
-                    right.click(function (e) {console.log('right.click')
+                    right.click(function (e) {
                         carousel.trigger('next.owl.carousel');
                     });
 
-                    left.click(function (e) {console.log('left.click')
+                    left.click(function (e) {
                         carousel.trigger('prev.owl.carousel');
                     });
                 }
 
                 function initTabsCarousel() {
                     carousel.owlCarousel({
-                        nav: true,
+                        nav: false,
                         loop: false,
                         autoWidth: true,
                         touchDrag: true,
                         mouseDrag: true,
                         items: 999999,
                         onInitialized: function () {
-                            console.log('onInitialized')
                             if (carousel.find('.owl-stage').width() > carousel.find('.owl-stage-outer').width()) {
-                                console.log('onInitialized', carousel.find('.owl-stage').width(), carousel.find('.owl-stage-outer').width())
                                 right.addClass('invoice_tabs__arrow--in');
                             }
                         },
                         onResized: function (e) {
-                            console.log('onResized', e)
-                            var owlStage = carousel.find('.owl-stage');
-                            owlStage.css('width', "+=5");
+                            adjustWidth();
                             adjustArrows(e);
                         },
                         onChanged: function (e) {
-                            console.log('onChanged', 'e.page.index ' + e.page.index, 'e.page.count ' + e.page.count)
                             adjustArrows(e);
-                        },
-                        onDragged: function (e) {
-                            console.log('onDragged');
                         }
                     });
 
@@ -92,6 +85,16 @@
                             right.addClass('invoice_tabs__arrow--in');
                         }
                     }
+                }
+
+                function adjustWidth() {
+                    var owlStage = carousel.find('.owl-stage');
+                    var newWidth = 0;
+                    owlStage.children().toArray()
+                        .forEach(function (item) {
+                            newWidth += item.getBoundingClientRect().width;
+                        });
+                    owlStage.css('width', Math.ceil(newWidth));
                 }
             }
         };
