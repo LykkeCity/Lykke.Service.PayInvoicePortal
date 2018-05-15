@@ -82,7 +82,8 @@
             isSearching: false,
             get showNoResults() {
                 return showNoResults();
-            }
+            },
+            hasInvoices: true
         };
 
         activate();
@@ -135,6 +136,7 @@
         }
 
         function init(data) {
+            vm.view.hasInvoices = data.items.length ? true : false;
             updateList(data);
         }
 

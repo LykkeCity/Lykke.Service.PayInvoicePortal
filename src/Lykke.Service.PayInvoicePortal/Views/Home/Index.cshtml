@@ -37,7 +37,7 @@
                     </div>
                 </div>
             </div>
-            <div class="row">
+            <div class="row" data-ng-show="vm.view.hasInvoices">
                 <div class="col-sm-6">
                     <h3>Invoices</h3>
                 </div>
@@ -51,7 +51,7 @@
                     </div>
                 </div>
             </div>
-            <div class="invoice_nav">
+            <div class="invoice_nav" data-ng-show="vm.view.hasInvoices">
                 <button class="invoice_nav__search btn btn--icon" data-ng-click="vm.filter.handlers.toggle()">
                     <i class="icon icon--search"></i>
                 </button>
@@ -80,7 +80,8 @@
                     <button class="invoice_tabs__arrow invoice_tabs__arrow--right"></button>
                 </div>
             </div>
-            <div class="search_filter" data-ng-class="{'search_filter--show': vm.filter.show}">
+            <div class="search_filter" data-ng-show="vm.view.hasInvoices"
+                 data-ng-class="{'search_filter--show': vm.filter.show}">
                 <div class="row">
                     <div class="col-xs-6 col-sm-3">
                         <div class="form-group select">
@@ -102,7 +103,7 @@
                     </div>
                 </div>
             </div>
-            <div class="tab-content">
+            <div class="tab-content" data-ng-show="vm.view.hasInvoices">
                 <div class="tab-pane active">
                     <div class="table-responsive">
                         <table class="table table_invoices" data-ng-hide="vm.view.showNoResults">
@@ -154,6 +155,13 @@
                 </div>
                 <div class="empty_result__title">No search results</div>
                 <div class="empty_result__description">Sorry, we couldn't find any matches “{{vm.filter.search}}”. Try using another keyword.</div>
+            </div>
+            <div data-ng-if="!vm.view.hasInvoices" class="invoices__empty_result empty_result">
+                <div class="empty_result__img-container">
+                    <img src="img/invoices-empty.svg" />
+                </div>
+                <div class="empty_result__title">You don't have invoices yet</div>
+                <div class="empty_result__description">Create the first one by clicking “Create new invoice” button.</div>
             </div>
         </div>
     </section>
