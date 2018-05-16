@@ -28,6 +28,7 @@
             client: '',
             email: '',
             settlementAsset: null,
+            settlementAssetDisplay: null,
             settlementAssetAccuracy: 0,
             amount: 0,
             dueDate: null,
@@ -145,6 +146,7 @@
             vm.model.client = data.clientName;
             vm.model.email = data.clientEmail;
             vm.model.settlementAsset = data.settlementAsset;
+            vm.model.settlementAssetDisplay = data.settlementAssetDisplay;
             vm.model.settlementAssetAccuracy = data.settlementAssetAccuracy;
             vm.model.amount = data.amount;
             vm.model.dueDate = $window.moment(data.dueDate);

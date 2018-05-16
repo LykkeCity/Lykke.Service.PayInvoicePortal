@@ -13,6 +13,7 @@ namespace Lykke.Service.PayInvoicePortal.Models.Invoices
         public DateTime DueDate { get; set; }
         public string Status { get; set; }
         public string SettlementAsset { get; set; }
+        public string SettlementAssetDisplay { get; set; }
         public int SettlementAssetAccuracy { get; set; }
         public string WalletAddress { get; set; }
         public DateTime CreatedDate { get; set; }

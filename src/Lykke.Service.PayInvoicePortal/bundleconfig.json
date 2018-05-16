@@ -2,10 +2,9 @@
   {
     "outputFileName": "wwwroot/css/style.css",
     "inputFiles": [
-      "wwwroot/src/css/bootstrap-custom.min.css",
+      "wwwroot/src/css/vendor/**/*.css",
       "wwwroot/src/css/style.css",
-      "wwwroot/src/css/style-custom.css",
-      "wwwroot/vendors/jquery-confirm/jquery-confirm.css"
+      "wwwroot/src/css/style-custom.css"
     ],
     "minify": {
       "enabled": false,
@@ -32,13 +31,12 @@
     "inputFiles": [
       "wwwroot/lib/jquery/dist/jquery.js",
       "wwwroot/lib/fastclick/lib/fastclick.js",
-      "wwwroot/vendors/clipboard/clipboard.js",
-      "wwwroot/vendors/jquery-confirm/jquery-confirm.js",
       "wwwroot/lib/moment/moment.js",
       "wwwroot/lib/bootstrap/dist/js/bootstrap.js",
       "wwwroot/lib/angular/angular.js",
       "wwwroot/lib/ng-file-upload/ng-file-upload.js",
-      "wwwroot/lib/eonasdan-bootstrap-datetimepicker/src/js/bootstrap-datetimepicker.js"
+      "wwwroot/lib/eonasdan-bootstrap-datetimepicker/src/js/bootstrap-datetimepicker.js",
+      "wwwroot/src/js/vendor/**/*.js"
     ],
     "minify": {
       "enabled": false,
@@ -50,15 +48,7 @@
   {
     "outputFileName": "wwwroot/js/vendors.min.js",
     "inputFiles": [
-      "wwwroot/lib/jquery/dist/jquery.min.js",
-      "wwwroot/lib/fastclick/lib/fastclick.js",
-      "wwwroot/vendors/clipboard/clipboard.min.js",
-      "wwwroot/vendors/jquery-confirm/jquery-confirm.js",
-      "wwwroot/lib/moment/min/moment.min.js",
-      "wwwroot/lib/bootstrap/dist/js/bootstrap.min.js",
-      "wwwroot/lib/angular/angular.min.js",
-      "wwwroot/lib/ng-file-upload/ng-file-upload.min.js",
-      "wwwroot/lib/eonasdan-bootstrap-datetimepicker/build/js/bootstrap-datetimepicker.min.js"
+      "wwwroot/js/vendors.js"
     ],
     "minify": {
       "enabled": false,
@@ -71,25 +61,7 @@
   {
     "outputFileName": "wwwroot/js/app.js",
     "inputFiles": [
-      "wwwroot/src/app/app.js",
-      "wwwroot/src/app/directives/mtNavigate.js",
-      "wwwroot/src/app/directives/dateTimePicker.js",
-      "wwwroot/src/app/directives/clickOutside.js",
-      "wwwroot/src/app/directives/copy.js",
-      "wwwroot/src/app/directives/tooltip.js",
-      "wwwroot/src/app/controllers/invoicesCtrl.js",
-      "wwwroot/src/app/controllers/invoiceCtrl.js",
-      "wwwroot/src/app/controllers/invoiceInfoCtrl.js",
-      "wwwroot/src/app/controllers/balanceCtrl.js",
-      "wwwroot/src/app/controllers/checkoutCtrl.js",
-      "wwwroot/src/app/controllers/invoiceDetailsCtrl.js",
-      "wwwroot/src/app/controllers/invoiceEditCtrl.js",
-      "wwwroot/src/app/controllers/subscriptionCtrl.js",
-      "wwwroot/src/app/controllers/confirmModalCtrl.js",
-      "wwwroot/src/app/services/confirmModalSvc.js",
-      "wwwroot/src/app/services/apiSvc.js",
-      "wwwroot/src/app/services/statusSvc.js",
-      "wwwroot/src/app/services/fileSvc.js"
+      "wwwroot/src/app/**/*.js"
     ],
     "minify": {
       "enabled": false,
@@ -105,19 +77,6 @@
     ],
     "minify": {
       "enabled": true,
-      "renameLocals": false,
-      "adjustRelativePaths": false
-    },
-    "sourceMap": false
-  },
-
-  {
-    "outputFileName": "wwwroot/js/html5shiv.js",
-    "inputFiles": [
-      "wwwroot/src/vendors/html5shiv.js"
-    ],
-    "minify": {
-      "enabled": false,
       "renameLocals": false,
       "adjustRelativePaths": false
     },

@@ -7,6 +7,7 @@ using Common.Log;
 using Lykke.Service.Assets.Client;
 using Lykke.Service.Assets.Client.Models;
 using Lykke.Service.PayInternal.Client;
+using Lykke.Service.PayInternal.Client.Models.Markup;
 using Lykke.Service.PayInternal.Client.Models.Merchant;
 using Lykke.Service.PayInternal.Client.Models.Order;
 using Lykke.Service.PayInternal.Client.Models.PaymentRequest;
@@ -148,7 +149,14 @@ namespace Lykke.Service.PayInvoicePortal.Services
             return result;
         }
 
-        public async Task<PaymentDetails> GetPaymentDetailsAsync(string invoiceId)
+        /// <summary>
+        /// Get payment details from Invoice, PaymentRequest and Order
+        /// </summary>
+        /// <param name="invoiceId">Invoice Id</param>
+        /// <param name="force">Will force to create new order if the actual order is expired but can be considered
+        //     as actual till extended due date</param>
+        /// <returns></returns>
+        public async Task<PaymentDetails> GetPaymentDetailsAsync(string invoiceId, bool force)
         {
             InvoiceModel invoice = await _payInvoiceClient.GetInvoiceAsync(invoiceId);
 
@@ -156,26 +164,35 @@ namespace Lykke.Service.PayInvoicePortal.Services
                 return null;
 
             Task<MerchantModel> merchantTask = _payInternalClient.GetMerchantByIdAsync(invoice.MerchantId);
-            Task<PaymentRequestModel> paymentRequestTask =
-                _payInternalClient.GetPaymentRequestAsync(invoice.MerchantId, invoice.PaymentRequestId);
+
+            Task<MarkupResponse> markupForMerchantTask = 
+                _payInternalClient.ResolveMarkupByMerchantAsync(invoice.MerchantId, $"{invoice.PaymentAssetId}{invoice.SettlementAssetId}");
+
+            // now it is important to wait order checkout before making GetPaymentRequest
+            // as WalletAddress will be only after that
             Task<OrderModel> orderTask = _payInternalClient.ChechoutOrderAsync(new ChechoutRequestModel
             {
                 MerchantId = invoice.MerchantId,
                 PaymentRequestId = invoice.PaymentRequestId,
-                Force = true
+                Force = force
             });
 
-            await Task.WhenAll(merchantTask, paymentRequestTask, orderTask);
+            await Task.WhenAll(merchantTask, markupForMerchantTask, orderTask);
 
             OrderModel order = orderTask.Result;
-            PaymentRequestModel paymentRequest = paymentRequestTask.Result;
             MerchantModel merchant = merchantTask.Result;
+            MarkupResponse markupForMerchant = markupForMerchantTask.Result;
+
+            PaymentRequestModel paymentRequest =
+                await _payInternalClient.GetPaymentRequestAsync(invoice.MerchantId, invoice.PaymentRequestId);
 
             Asset settlementAsset = await _assetsService.TryGetAssetAsync(invoice.SettlementAssetId);
             Asset paymentAsset = await _assetsService.TryGetAssetAsync(invoice.PaymentAssetId);
 
             int totalSeconds = 0;
             int remainingSeconds = 0;
+            int extendedTotalSeconds = 0;
+            int extendedRemainingSeconds = 0;
             
             if (invoice.Status == InvoiceStatus.Unpaid)
             {
@@ -184,6 +201,14 @@ namespace Lykke.Service.PayInvoicePortal.Services
 
                 if (remainingSeconds > totalSeconds)
                     remainingSeconds = totalSeconds;
+
+                extendedTotalSeconds = (int)(order.ExtendedDueDate - order.DueDate).TotalSeconds;
+                extendedRemainingSeconds = (int)(order.ExtendedDueDate - DateTime.UtcNow).TotalSeconds;
+
+                if (extendedRemainingSeconds > extendedTotalSeconds)
+                {
+                    extendedRemainingSeconds = extendedTotalSeconds;
+                }
             }
 
             return new PaymentDetails
@@ -197,16 +222,18 @@ namespace Lykke.Service.PayInvoicePortal.Services
                 PaymentAsset = paymentAsset,
                 SettlementAsset = settlementAsset,
                 ExchangeRate = order.ExchangeRate,
-                DeltaSpread = merchant.DeltaSpread > 0,
-                Pips = paymentRequest.MarkupPips + merchant.LpMarkupPips,
-                Percents = merchant.DeltaSpread + paymentRequest.MarkupPercent + merchant.LpMarkupPercent,
-                Fee = merchant.MarkupFixedFee + paymentRequest.MarkupFixedFee,
+                DeltaSpread = markupForMerchant.DeltaSpread > 0,
+                Pips = markupForMerchant.Pips + paymentRequest.MarkupPips,
+                Percents = markupForMerchant.DeltaSpread + markupForMerchant.Percent + (decimal)paymentRequest.MarkupPercent,
+                Fee = markupForMerchant.FixedFee + (decimal)paymentRequest.MarkupFixedFee,
                 DueDate = invoice.DueDate,
                 Note = invoice.Note,
                 WalletAddress = paymentRequest.WalletAddress,
                 PaymentRequestId = invoice.PaymentRequestId,
                 TotalSeconds = totalSeconds,
                 RemainingSeconds = remainingSeconds,
+                ExtendedTotalSeconds = extendedTotalSeconds,
+                ExtendedRemainingSeconds = extendedRemainingSeconds,
                 PaidAmount = paymentRequest.PaidAmount,
                 PaidDate = paymentRequest.PaidDate
             };

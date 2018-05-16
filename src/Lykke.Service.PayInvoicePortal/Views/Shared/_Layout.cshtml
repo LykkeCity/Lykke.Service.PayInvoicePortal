@@ -1,11 +1,7 @@
 ﻿@inject Microsoft.ApplicationInsights.AspNetCore.JavaScriptSnippet JavaScriptSnippet
 <!DOCTYPE html>
-<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 ie7"> <![endif]-->
-<!--[if IE 8]>         <html class="no-js lt-ie9 ie8"> <![endif]-->
-<!--[if IE 9]>         <html class="no-js ie9"> <![endif]-->
-<!--[if gt IE 9]><!-->
+@* Support from IE11 *@
 <html class="no-js" data-ng-app="app">
-<!--<![endif]-->
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=Edge">
@@ -20,6 +16,7 @@
     <link rel="manifest" href="/manifest.json">
     <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
     <meta name="theme-color" content="#ffffff">
+    @* https://github.com/madskristensen/BundlerMinifier/blob/master/README.md#bundleconfigjson *@
     <environment include="Development">
         <link rel="stylesheet" type="text/css" href="~/css/style.css" asp-append-version="true">
         <script type="text/javascript" src="~/js/vendors.js" asp-append-version="true"></script>
@@ -33,9 +30,6 @@
         <script type="text/javascript" src="~/js/app.min.js" asp-append-version="true"></script>
     </environment>
     @Html.Raw(JavaScriptSnippet.FullScript)
-    <!--[if lte IE 9]>
-      <script type="text/javascript" src="js/html5shiv.js"></script>
-    <![endif]-->
     <script>
         (function (i, s, o, g, r, a, m) {
             i['GoogleAnalyticsObject'] = r; i[r] = i[r] || function () {

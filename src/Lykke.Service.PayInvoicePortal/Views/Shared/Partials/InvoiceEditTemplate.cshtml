@@ -1,0 +1,122 @@
+﻿@using Lykke.Service.PayInvoicePortal.Models.Invoices
+@model InvoiceEditTemplateModel
+
+<div class="_invoice_sidebar sidebar_menu sidebar_menu--right create draft sidebar_menu--open"
+     data-ng-if="vm.form.open"
+     data-click-outside="vm.handlers.close()"
+     data-exclude="_create_invoice_btn,btn--icon">
+    <form action="" enctype="multipart/form-data" method="post" class="invoice_form sidebar_menu__inner" onsubmit="event.preventDefault();">
+        <div class="sidebar_breadcrumbs">
+            <button class="btn btn--icon btn_close_menu visible-xs" type="button" data-ng-click="vm.handlers.close()">
+                <i class="icon icon--close"></i>
+            </button>
+            <div class="breadcrumbs_item">
+                <a href="javascript:;" data-ng-click="vm.handlers.close()">Profile</a>
+            </div>
+            <i class="icon icon--chevron-thin-right"></i>
+            <div class="breadcrumbs_item breadcrumbs_item--current">
+                @Html.Raw(Model.IsNewInvoice ? "Create new invoice" : "{{::vm.model.number}}")
+            </div>
+        </div>
+        <div class="sidebar_menu__body">
+            <div class="sidebar_menu__header">
+                <div class="invoice_form__title">Invoice</div>
+                <div class="invoice_form__status">
+                    @Html.Raw(Model.IsNewInvoice ? "Not created" : "{{::vm.model.status}}")
+                </div>
+            </div>
+            <h3>Details</h3>
+            <div class="form-group">
+                <label class="control-label" for="number">Invoice number</label>
+                <input id="number" type="text" require placeholder="" class="form-control" data-ng-model="vm.model.number" data-ng-class="{'error': vm.form.errors.number}">
+            </div>
+            <div class="form-group">
+                <label class="control-label" for="name">Client</label>
+                <input id="clientName" type="text" require placeholder="" class="form-control" data-ng-model="vm.model.client" data-ng-class="{'error': vm.form.errors.client}">
+            </div>
+            <div class="form-group">
+                <label class="control-label" for="email">Client's Email</label>
+                <input id="email" type="email" require placeholder="" class="form-control" data-ng-model="vm.model.email" data-ng-class="{'error': vm.form.errors.email}">
+            </div>
+            <div class="row">
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        <label class="control-label" for="currency">Currency</label>
+                        <div class="form_selectpicker custom_dropdown">
+                            <select class="selectpicker"
+                                    data-selectpicker
+                                    data-size="10"
+                                    data-live-search="{{vm.model.assets.length > 10}}"
+                                    data-live-search-placeholder="Asset name"
+                                    data-ng-model="vm.model.settlementAsset"
+                                    ng-options="asset.id as asset.title for asset in vm.model.assets"
+                                    data-ng-class="{'error': vm.form.errors.settlementAsset}"></select>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-4 _amount">
+                    <div class="form-group">
+                        <label class="control-label" for="amount">Amount</label>
+                        <input id="amount" type="number" require placeholder="0.00" min="0.01" step="0.01" class="form-control" data-ng-model="vm.model.amount" data-ng-class="{'error': vm.form.errors.amount}">
+                    </div>
+                </div>
+                <div class="col-sm-4 _date">
+                    <div class="form-group">
+                        <label class="control-label" for="dueDate">Pay due date</label>
+                        <div class="input-group date datetimepicker" datetimepicker data-ng-model="vm.model.dueDate">
+                            <input id="dueDate" type="text" require placeholder="" class="form-control datetimepicker" data-ng-class="{'error': vm.form.errors.dueDate}">
+                            <span class="input-group-addon">
+                                <span class="icon icon--cal"></span>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="control-label" for="note">Note</label>
+                <textarea name="note" id="note" class="form-control" data-ng-model="vm.model.note"></textarea>
+            </div>
+            <div class="form_header">
+                <button type="button" class="btn btn-sm btn-primary pull-right" 
+                        ngf-select="vm.handlers.@Html.Raw(Model.IsNewInvoice ? "addFiles(" : "upload(")$files)" 
+                        accept=".jpg,.jpeg,.png,.pdf,.doc,.docx,.xls,.xlsx,.rtf" 
+                        ngf-multiple="true">Add File</button>
+                <h3>Attachment</h3>
+            </div>
+            <div class="attachment_list @Html.Raw(Model.IsNewInvoice ? string.Empty : "attachment_list--download")">
+                <div class="asset_link_list" data-ng-show="vm.model.files && vm.model.files.length > 0">
+                    <div class="asset_link asset_link--alt" data-ng-repeat="file in vm.model.files">
+                        <div class="asset_link__icon">
+                            <div class="asset_icon asset_icon--red" data-ng-bind="vm.handlers.getFileExtension(file.name)"
+                                 @Html.Raw(Model.IsNewInvoice ? string.Empty : "data-ng-click='vm.handlers.getFile(file)'")></div>
+                        </div>
+                        <div class="asset_link__action">
+                            @if (!Model.IsNewInvoice)
+                            {
+                                <button class="btn btn--icon" data-ng-click="vm.handlers.getFile(file)">
+                                    <i class="btn__svg_icon svg_icon svg_icon--upload"></i>
+                                </button>
+                            }
+                            <button class="btn btn--icon" data-ng-click="vm.handlers.deleteFile(file)">
+                                <i class="btn__svg_icon svg_icon svg_icon--delete"></i>
+                            </button>
+                        </div>
+                        <div class="asset_link__info">
+                            <div class="asset_link__title" data-ng-bind="file.name"
+                                 @Html.Raw(Model.IsNewInvoice ? string.Empty : "data-ng-click='vm.handlers.getFile(file)'")></div>
+                            <div class="asset_link__desc" data-ng-bind="vm.handlers.getFileSize(file.size)"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="hint" data-ng-show="!vm.model.files || vm.model.files.length === 0">No file selected</div>
+            </div>
+            <div class="sidebar_menu__footer">
+                <div class="form-group">
+                    <button class="btn btn-block" name="button" type="submit" data-ng-click="vm.handlers.generate()" data-ng-disabled="vm.form.blocked">Generate</button>
+                </div>
+                <button class="btn btn--flat btn-block" type="submit" name="button" data-ng-click="vm.handlers.saveDraft()" data-ng-disabled="vm.form.blocked">Safe draft</button>
+                <button class="btn btn--flat btn-block btn_close_menu" type="button" name="button" data-ng-click="vm.handlers.close()">Cancel and close</button>
+            </div>
+        </div>
+    </form>
+</div>

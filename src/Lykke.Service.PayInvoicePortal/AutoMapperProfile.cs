@@ -22,6 +22,8 @@ namespace Lykke.Service.PayInvoicePortal
                 .ForMember(dest => dest.Status,
                     opt => opt.MapFrom(src => src.Status.ToString()))
                 .ForMember(dest => dest.SettlementAsset,
+                    opt => opt.MapFrom(src => src.SettlementAsset.Id))
+                .ForMember(dest => dest.SettlementAssetDisplay,
                     opt => opt.MapFrom(src => src.SettlementAsset.DisplayId))
                 .ForMember(dest => dest.SettlementAssetAccuracy,
                     opt => opt.MapFrom(src => src.SettlementAsset.Accuracy))
@@ -48,13 +50,19 @@ namespace Lykke.Service.PayInvoicePortal
             CreateMap<PaymentDetails, PaymentDetailsModel>(MemberList.Destination)
                 .ForMember(dest => dest.Status,
                     opt => opt.MapFrom(src => src.Status.ToString()))
+                .ForMember(dest => dest.MerchantId,
+                    opt => opt.MapFrom(src => src.Merchant.Id))
                 .ForMember(dest => dest.Merchant,
                     opt => opt.MapFrom(src => src.Merchant.DisplayName))
                 .ForMember(dest => dest.SettlementAsset,
+                    opt => opt.MapFrom(src => src.SettlementAsset.Id))
+                .ForMember(dest => dest.SettlementAssetDisplay,
                     opt => opt.MapFrom(src => src.SettlementAsset.DisplayId))
                 .ForMember(dest => dest.SettlementAssetAccuracy,
                     opt => opt.MapFrom(src => src.SettlementAsset.Accuracy))
                 .ForMember(dest => dest.PaymentAsset,
+                    opt => opt.MapFrom(src => src.PaymentAsset.Id))
+                .ForMember(dest => dest.PaymentAssetDisplay,
                     opt => opt.MapFrom(src => src.PaymentAsset.DisplayId))
                 .ForMember(dest => dest.PaymentAssetAccuracy,
                     opt => opt.MapFrom(src => src.PaymentAsset.Accuracy))

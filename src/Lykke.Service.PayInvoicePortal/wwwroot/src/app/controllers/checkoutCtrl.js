@@ -5,9 +5,9 @@
         .module('app')
         .controller('checkoutCtrl', checkoutCtrl);
 
-    checkoutCtrl.$inject = ['$window', '$location', '$scope', '$log', '$interval', '$timeout', 'apiSvc', 'fileSvc', 'statusSvc'];
+    checkoutCtrl.$inject = ['$window', '$location', '$scope', '$log', '$interval', '$timeout', 'apiSvc', 'fileSvc', 'statusSvc', 'nzcurrencyFilter'];
 
-    function checkoutCtrl($window, $location, $scope, $log, $interval, $timeout, apiSvc, fileSvc, statusSvc) {
+    function checkoutCtrl($window, $location, $scope, $log, $interval, $timeout, apiSvc, fileSvc, statusSvc, nzcurrencyFilter) {
         var vm = this;
 
         vm.callback = {
@@ -26,11 +26,15 @@
             icon: ''
         };
 
+        var extendedTotalSeconds = 0,
+            extendedRemainingSeconds = 0;
+
         vm.timer = {
             interval: null,
             total: 0,
             seconds: 0,
-            mins: 0
+            mins: 0,
+            isExtended: false
         };
 
         vm.status = {
@@ -48,11 +52,15 @@
         vm.model = {
             id: '',
             number: '',
+            merchantId: '',
             merchant: '',
             paymentAmount: 0,
             settlementAmount: 0,
             paymentAsset: '',
+            paymentAssetDisplay: '',
+            paymentAssetSelect: '',
             settlementAsset: '',
+            settlementAssetDisplay: '',
             paymentAssetAccuracy: 0,
             settlementAssetAccuracy: 0,
             exchangeRate: {
@@ -67,14 +75,16 @@
             walletAddress: '',
             files: [],
             waiting: false,
-            message: ''
+            message: '',
+            paymentAssets: []
         };
 
         vm.handlers = {
             init: init,
             getFileExtension: fileSvc.getExtension,
             getFileSize: fileSvc.getSize,
-            getFile: getFile
+            getFile: getFile,
+            refreshDetails: refreshDetails
         };
 
         activate();
@@ -87,12 +97,35 @@
                     stopTimer();
                     stopStatusTimeout();
                 });
+
+            $scope.$watch(
+                function() {
+                    return vm.model.paymentAssetSelect;
+                },
+                function(newValue, oldValue) {
+                    console.log('newValue, oldValue', newValue, oldValue);
+                });
         }
 
         function init(data) {
             if (gotoCallbackUrl(data.status))
                 return;
             apply(data);
+
+            apiSvc
+                .getPaymentAssets(
+                    vm.model.merchantId,
+                    vm.model.settlementAsset
+                )
+                .then(
+                    function(data) {
+                        vm.model.paymentAssets = data || [];
+                    },
+                    function(error) {
+                        $log.error(error);
+                    }
+                );
+
             startStatusTimeout();
         }
 
@@ -100,11 +133,15 @@
             vm.model.id = data.id;
             vm.model.number = data.number;
             vm.model.status = data.status;
+            vm.model.merchantId = data.merchantId;
             vm.model.merchant = data.merchant;
             vm.model.paymentAmount = data.paymentAmount;
             vm.model.settlementAmount = data.settlementAmount;
             vm.model.paymentAsset = data.paymentAsset;
+            vm.model.paymentAssetDisplay = data.paymentAsset;
+            vm.model.paymentAssetSelect = data.paymentAsset;
             vm.model.settlementAsset = data.settlementAsset;
+            vm.model.settlementAssetDisplay = data.settlementAssetDisplay;
             vm.model.paymentAssetAccuracy = data.paymentAssetAccuracy;
             vm.model.settlementAssetAccuracy = data.settlementAssetAccuracy;
             vm.model.exchangeRate.value = data.exchangeRate;
@@ -121,24 +158,38 @@
 
             vm.model.exchangeRate.hidden = data.paymentAsset === data.settlementAsset;
 
+            extendedTotalSeconds = data.extendedTotalSeconds;
+            extendedRemainingSeconds = data.extendedRemainingSeconds;
+
             updateMessage(data);
 
             if (data.status === 'Unpaid') {
+                // bip21 for BTC
+                // https://github.com/bitcoin/bips/blob/master/bip-0021.mediawiki#examples
+                var labelEncoded = encodeURIComponent('invoice #' + data.number);
+
                 vm.model.qrCode = encodeURIComponent('bitcoin:' +
                     data.walletAddress +
                     '?amount=' +
                     data.paymentAmount +
-                    '&label=invoice #' +
-                    data.number +
+                    '&label=' +
+                    labelEncoded +
                     '&message=' +
                     data.paymentRequestId);
 
-                vm.timer.total = data.totalSeconds;
-                vm.timer.seconds = data.remainingSeconds;
-                vm.model.waiting = true;
-                updatePie();
+                if (data.remainingSeconds > 0) {
+                    // timer before order.DueDate
+                    vm.timer.total = data.totalSeconds;
+                    vm.timer.seconds = data.remainingSeconds;
+                    vm.timer.isExtended = false;
+                } else {
+                    // timer before order.ExtendedDueDate
+                    initExtendedTimer();
+                }
 
-                vm.timer.interval = $interval(tick, 1000);
+                vm.model.waiting = true;
+
+                restartTimer();
             } else {
                 vm.model.qrCode = '';
                 vm.timer.total = 0;
@@ -149,13 +200,23 @@
             }
         }
 
+        function initExtendedTimer() {
+            vm.timer.total = extendedTotalSeconds;
+            vm.timer.seconds = extendedRemainingSeconds;
+            vm.timer.isExtended = true;
+        }
+
+        function restartTimer() {
+            stopTimer();
+            updatePie();
+            vm.timer.interval = $interval(tick, 1000);
+        }
+
         function updateHeader() {
             var paidAmountText =
-                vm.model.paidAmount.toLocaleString(undefined,
-                        { minimumFractionDigits: vm.model.paymentAssetAccuracy }) +
-                    ' ' +
-                    vm.model.paymentAsset;
-            
+                nzcurrencyFilter(vm.model.paidAmount, vm.model.paymentAssetAccuracy)
+                + ' ' + vm.model.paymentAsset;
+
             var dateText = vm.model.paidDate ? vm.model.paidDate.format('l') : '';
             var receivedDateText = ' received on ' + dateText;
 
@@ -235,7 +296,9 @@
                 values.push(data.pips + ' pips');
 
             if(data.fee > 0)
-                values.push(data.fee.toLocaleString(undefined, { minimumFractionDigits: data.settlementAssetAccuracy }) + ' ' + data.settlementAsset);
+                values.push(
+                    nzcurrencyFilter(data.fee, data.settlementAssetAccuracy)
+                    + ' ' + data.settlementAsset);
 
             var fee;
 
@@ -261,7 +324,7 @@
                 }
             }
         }
-        
+
         function updateDetails() {
             apiSvc.getPaymentDetails(vm.model.id)
                 .then(
@@ -298,17 +361,28 @@
 
         function tick() {
             vm.timer.seconds--;
-            vm.timer.mins = vm.timer.seconds / 60 | 0;
+            vm.timer.mins = (vm.timer.seconds / 60 | 0) + 1;
 
             if (vm.timer.seconds <= 0) {
-                stopTimer();
-                updateDetails();
-
-                vm.timer.seconds = 0;
-                vm.timer.mins = 0;
+                if (!vm.timer.isExtended) {
+                    initExtendedTimer();
+                    restartTimer();
+                } else {
+                    refreshDetails();
+                }
+            } else {
+                updatePie();
             }
+        }
 
+        function refreshDetails() {
+            stopTimer();
+
+            vm.timer.seconds = 0;
+            vm.timer.mins = 0;
             updatePie();
+
+            updateDetails();
         }
 
         function updatePie() {

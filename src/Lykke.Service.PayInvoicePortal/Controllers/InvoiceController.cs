@@ -29,7 +29,7 @@ namespace Lykke.Service.PayInvoicePortal.Controllers
         [Route("{InvoiceId}")]
         public async Task<IActionResult> Index(string invoiceId)
         {
-            PaymentDetails paymentDetails = await _invoiceService.GetPaymentDetailsAsync(invoiceId);
+            PaymentDetails paymentDetails = await _invoiceService.GetPaymentDetailsAsync(invoiceId, force: false);
             IReadOnlyList<FileInfoModel> files = await _invoiceService.GetFilesAsync(invoiceId);
 
             if (paymentDetails == null)

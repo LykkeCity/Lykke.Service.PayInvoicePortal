@@ -1,4 +1,4 @@
-﻿var wH = $(window).height(),
+var wH = $(window).height(),
     wW = $(window).width(),
     ua = navigator.userAgent,
     touchendOrClick = (ua.match(/iPad|iPhone|iPad/i)) ? "touchend" : "click",
@@ -14,22 +14,38 @@ if (isMobile || wW <= 767) {
     $('body').removeClass('is_mobile');
 }
 
+function initSelects() {
+    $('.selectpicker').selectpicker({
+        mobile: isMobile
+    });
+}
+
 function initResize() {
+    var timeout;
     $(window).resize(function () {
-        setTimeout(function () {
+        if (timeout) {
+            clearTimeout(timeout);
+        }
+
+        timeout = setTimeout(function () {
             $('.header_container').css({
                 height: $('.header').outerHeight()
             });
-        }, 30);
 
-        $('.video iframe').css({
-            maxHeight: $(window).outerHeight() - $('header').outerHeight()
-        });
+            $('.video iframe').css({
+                maxHeight: $(window).outerHeight() - $('header').outerHeight()
+            });
 
-        $('body').css({
-            paddingBottom: $('footer').outerHeight()
-        });
+            adjuctFooter();
+        }, 200);
+
     }).trigger('resize');
+}
+
+function adjuctFooter() {
+    $('body').css({
+        paddingBottom: $('footer').outerHeight()
+    });
 }
 
 function initEventsOnClick() {
@@ -50,15 +66,14 @@ function initEventsOnClick() {
         });
     }
 
-    $('._open_cutted_content').on('click',
-        function (e) {
-            e.preventDefault();
+  $('._open_cutted_content').on('click', function(e) {
+    e.preventDefault();
 
-            var target = $(this).attr('href');
+    var target = $(this).attr('href')
 
-            $(target).toggleClass('show');
-            $(this).toggleClass('active');
-        });
+    $(target).toggleClass('show')
+    $(this).toggleClass('active')
+  })
 }
 
 function initEventsOnScroll() {
@@ -256,6 +271,7 @@ function pie() {
 // Init
 
 $(document).ready(function () {
+    adjuctFooter();
     initResize();
     initEventsOnClick();
     initEventsOnScroll();

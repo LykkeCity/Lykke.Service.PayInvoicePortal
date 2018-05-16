@@ -12,102 +12,7 @@
 }
 
 <div data-ng-controller="invoiceEditCtrl as vm" ng-cloak>
-    <div class="_invoice_sidebar sidebar_menu sidebar_menu--right create draft sidebar_menu--open"
-         data-ng-if="vm.form.open"
-         data-click-outside="vm.handlers.close()"
-         data-exclude="_create_invoice_btn">
-        <form action="" enctype="multipart/form-data" method="post" class="invoice_form sidebar_menu__inner" onsubmit="event.preventDefault();">
-            <div class="sidebar_breadcrumbs">
-                <button class="btn btn--icon btn_close_menu visible-xs" type="button" data-ng-click="vm.handlers.close()">
-                    <i class="icon icon--close"></i>
-                </button>
-                <div class="breadcrumbs_item">
-                    <a href="javascript:;" data-ng-click="vm.handlers.close()">Profile</a>
-                </div>
-                <i class="icon icon--chevron-thin-right"></i>
-                <div class="breadcrumbs_item breadcrumbs_item--current" data-ng-bind="vm.model.number"></div>
-            </div>
-            <div class="sidebar_menu__body">
-                <div class="sidebar_menu__header">
-                    <div class="invoice_form__title">Invoice</div>
-                    <div class="invoice_form__status" data-ng-bind="vm.model.status"></div>
-                </div>
-                <h3>Details</h3>
-                <div class="form-group">
-                    <label class="control-label" for="number">Invoice number</label>
-                    <input id="number" type="text" require placeholder="" class="form-control" data-ng-model="vm.model.number" data-ng-class="{'error': vm.form.errors.number}">
-                </div>
-                <div class="form-group">
-                    <label class="control-label" for="name">Client</label>
-                    <input id="clientName" type="text" require placeholder="" class="form-control" data-ng-model="vm.model.client" data-ng-class="{'error': vm.form.errors.client}">
-                </div>
-                <div class="form-group">
-                    <label class="control-label" for="email">Client's Email</label>
-                    <input id="email" type="email" require placeholder="" class="form-control" data-ng-model="vm.model.email" data-ng-class="{'error': vm.form.errors.email}">
-                </div>
-                <div class="row">
-                    <div class="col-sm-4">
-                        <div class="form-group">
-                            <label class="control-label" for="currency">Currency</label>
-                            <div class="select">
-                                <select id="currency" class="form-control" data-ng-model="vm.model.settlementAsset" ng-options="asset.id as asset.title for asset in vm.model.assets" data-ng-class="{'error': vm.form.errors.settlementAsset}"></select>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-sm-4">
-                        <div class="form-group">
-                            <label class="control-label" for="amount">Amount</label>
-                            <input id="amount" type="number" require placeholder="0.00" min="0.01" step="0.01" class="form-control" data-ng-model="vm.model.amount" data-ng-class="{'error': vm.form.errors.amount}">
-                        </div>
-                    </div>
-                    <div class="col-sm-4">
-                        <div class="form-group">
-                            <label class="control-label" for="dueDate">Pay due date</label>
-                            <div class="input-group date datetimepicker" datetimepicker data-ng-model="vm.model.dueDate">
-                                <input id="dueDate" type="text" require placeholder="" class="form-control datetimepicker" data-ng-class="{'error': vm.form.errors.dueDate}">
-                                <span class="input-group-addon">
-                                    <span class="icon icon--cal"></span>
-                                </span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label class="control-label" for="note">Note</label>
-                    <textarea name="note" id="note" class="form-control" data-ng-model="vm.model.note"></textarea>
-                </div>
-                <div class="form_header">
-                    <button type="button" class="btn btn-sm btn-primary pull-right" ngf-select="vm.handlers.upload($files)" accept=".jpg,.jpeg,.png,.pdf,.doc,.docx,.xls,.xlsx,.rtf" ngf-multiple="true">Add File</button>
-                    <h3>Attachment</h3>
-                </div>
-                <div class="attachment_list attachment_list--download">
-                    <div class="asset_link_list" data-ng-show="vm.model.files && vm.model.files.length > 0">
-                        <div class="asset_link asset_link--alt" data-ng-repeat="file in vm.model.files">
-                            <div class="asset_link__icon">
-                                <div class="asset_icon asset_icon--red" data-ng-bind="vm.handlers.getFileExtension(file.name)" data-ng-click="vm.handlers.getFile(file)"></div>
-                            </div>
-                            <div class="asset_link__action">
-                                <button class="btn btn--icon" data-ng-click="vm.handlers.getFile(file)"><i class="icon icon--download"></i></button>
-                                <button class="btn btn--icon" data-ng-click="vm.handlers.deleteFile(file)"><i class="icon icon--delete"></i></button>
-                            </div>
-                            <div class="asset_link__info">
-                                <div class="asset_link__title" data-ng-bind="file.name" data-ng-click="vm.handlers.getFile(file)"></div>
-                                <div class="asset_link__desc" data-ng-bind="vm.handlers.getFileSize(file.size)"></div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="hint" data-ng-show="!vm.model.files || vm.model.files.length === 0">No file selected</div>
-                </div>
-                <div class="sidebar_menu__footer">
-                    <div class="form-group">
-                        <button class="btn btn-block" name="button" type="submit" data-ng-click="vm.handlers.save(false)" data-ng-disabled="vm.form.blocked">Generate</button>
-                    </div>
-                    <button class="btn btn--flat btn-block" type="submit" name="button" data-ng-click="vm.handlers.save(true)" data-ng-disabled="vm.form.blocked">Safe draft</button>
-                    <button class="btn btn--flat btn-block btn_close_menu" type="button" name="button" data-ng-click="vm.handlers.close()">Cancel and close</button>
-                </div>
-            </div>
-        </form>
-    </div>
+    @await Html.PartialAsync("Partials/InvoiceEditTemplate", new InvoiceEditTemplateModel { IsNewInvoice = false })
 </div>
 
 @await Html.PartialAsync("/Views/Partials/InvoiceInfo.cshtml")
@@ -132,7 +37,9 @@
                                     <h1 class="page__title">Invoice #{{vm.model.number}}</h1>
                                     <div class="invoice_header__link" data-ng-if="vm.form.allowPay">
                                         <a data-ng-href="{{vm.model.url}}" data-ng-bind="vm.model.url"></a>
-                                        <button class="btn btn--icon _copy" type="button" data-copy="vm.model.url" data-title="Copied!"><i class="icon icon--copy_thin"></i></button>
+                                        <button class="btn btn--icon _copy" type="button" data-copy="vm.model.url" data-title="Copied!">
+                                            <i class="btn__svg_icon svg_icon svg_icon--copy"></i>
+                                        </button>
                                     </div>
                                 </div>
                                 <div class="col-md-4" data-ng-if="vm.form.allowPay">
@@ -146,11 +53,21 @@
                                     <div class="col-md-8">
                                         <div class="invoice_header__data" data-ng-bind="vm.model.dueDate.format('LL')"></div>
                                     </div>
-                                    <div class="col-md-2 pull-right" data-ng-if="vm.form.allowDelete">
-                                        <button class="btn btn--flat btn--default btn-sm pull-right" type="button" data-ng-click="vm.handlers.remove()"><i class="icon icon--delete"></i> Delete</button>
-                                    </div>
-                                    <div class="col-md-2 pull-right" data-ng-if="vm.form.allowEdit">
-                                        <button class="btn btn--flat btn--default btn-sm pull-right" type="button" data-ng-click="vm.handlers.edit()"><i class="icon icon--edit"></i> Edit</button>
+                                    <div class="col-md-4">
+                                        <div class="invoice_controls">
+                                            <button class="invoice_controls__btn btn btn--flat btn--default btn-sm pull-left" type="button"
+                                                    data-ng-if="vm.form.allowEdit"
+                                                    data-ng-click="vm.handlers.edit()">
+                                                <i class="btn__svg_icon svg_icon svg_icon--edit svg_icon--margin"></i>
+                                                Edit
+                                            </button>
+                                            <button class="invoice_controls__btn btn btn--flat btn--default btn-sm pull-left" type="button"
+                                                    data-ng-if="vm.form.allowDelete"
+                                                    data-ng-click="vm.handlers.remove()">
+                                                <i class="btn__svg_icon svg_icon svg_icon--delete svg_icon--margin"></i>
+                                                Delete
+                                            </button>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -183,13 +100,13 @@
                                     <div class="asset_link">
                                         <div class="asset_link__info">
                                             <div class="asset_link__title">Amount</div>
-                                            <div class="asset_link__desc" data-ng-bind="vm.model.amount | currency : '' : vm.model.settlementAssetAccuracy"></div>
+                                            <div class="asset_link__desc" data-ng-bind="vm.model.amount | nzcurrency : vm.model.settlementAssetAccuracy"></div>
                                         </div>
                                     </div>
                                     <div class="asset_link">
                                         <div class="asset_link__info">
                                             <div class="asset_link__title">Currency</div>
-                                            <div class="asset_link__desc" data-ng-bind="vm.model.settlementAsset"></div>
+                                            <div class="asset_link__desc" data-ng-bind="vm.model.settlementAssetDisplay"></div>
                                         </div>
                                     </div>
                                     <div class="asset_link">
@@ -222,8 +139,12 @@
                                             <div class="asset_icon asset_icon--red" data-ng-bind="vm.handlers.getFileExtension(file.name)" data-ng-click="vm.handlers.getFile(file)"></div>
                                         </div>
                                         <div class="asset_link__action">
-                                            <button class="btn btn--icon" data-ng-click="vm.handlers.getFile(file)"><i class="icon icon--download"></i></button>
-                                            <button class="btn btn--icon" data-ng-click="vm.handlers.deleteFile(file)"><i class="icon icon--delete"></i></button>
+                                            <button class="btn btn--icon" data-ng-click="vm.handlers.getFile(file)">
+                                                <i class="btn__svg_icon svg_icon svg_icon--upload"></i>
+                                            </button>
+                                            <button class="btn btn--icon" data-ng-click="vm.handlers.deleteFile(file)">
+                                                <i class="btn__svg_icon svg_icon svg_icon--delete"></i>
+                                            </button>
                                         </div>
                                         <div class="asset_link__info">
                                             <div class="asset_link__title" data-ng-bind="file.name" data-ng-click="vm.handlers.getFile(file)"></div>
@@ -245,7 +166,9 @@
                                             <div class="asset_icon asset_icon--red" data-ng-bind="vm.handlers.getFileExtension(file.name)" data-ng-click="vm.handlers.getFile(file)"></div>
                                         </div>
                                         <div class="asset_link__action">
-                                            <button class="btn btn--icon" data-ng-click="vm.handlers.getFile(file)"><i class="icon icon--download"></i></button>
+                                            <button class="btn btn--icon" data-ng-click="vm.handlers.getFile(file)">
+                                                <i class="btn__svg_icon svg_icon svg_icon--upload"></i>
+                                            </button>
                                         </div>
                                         <div class="asset_link__info">
                                             <div class="asset_link__title" data-ng-bind="file.name" data-ng-click="vm.handlers.getFile(file)"></div>
@@ -292,7 +215,7 @@
 <script type="text/ng-template" id="historyRowTemplate-Unpaid">
     @await Html.PartialAsync(partialPathWithAuthor, new HistoryRowTemplateModel
     {
-        HistoryItemText = "{{item.settlementAmount | currency : '' : item.settlementAssetAccuracy}} " +
+        HistoryItemText = "{{item.settlementAmount | nzcurrency : item.settlementAssetAccuracy}} " +
                            "{{item.settlementAsset}} to be paid due {{item.dueDate.format('LL')}}"
     })
 </script>
@@ -311,7 +234,7 @@
         HistoryItemImg = "history_item__img--success",
         HistoryItemIcon = "icon--check_thin",
         HistoryItemTitle = "In Progress",
-        HistoryItemText = "Transferred {{item.settlementAmount | currency : '' : item.settlementAssetAccuracy}} " +
+        HistoryItemText = "Transferred {{item.settlementAmount | nzcurrency : item.settlementAssetAccuracy}} " +
                           "{{item.settlementAsset}} to LykkePay's account for settlement."
     })
 </script>
@@ -321,7 +244,7 @@
         HistoryItemImg = "history_item__img--refund",
         HistoryItemIcon = "icon--move_to_thin",
         HistoryItemTitle = "Refund",
-        HistoryItemText = "Refunded {{item.refundAmount | currency : '' : item.paymentAssetAccuracy}} " +
+        HistoryItemText = "Refunded {{item.refundAmount | nzcurrency : item.paymentAssetAccuracy}} " +
                           "{{item.paymentAsset}} to {{item.refundWalletAddress}}."
     })
 </script>
@@ -340,8 +263,7 @@
 <script type="text/ng-template" id="historyRowTemplate-LatePaid">
     @await Html.PartialAsync(partialPathError, new HistoryRowTemplateModel
     {
-        HistoryItemText = "Transferred {{item.settlementAmount | currency : '' : item.settlementAssetAccuracy}} " +
-                          "{{item.settlementAsset}} from {{item.sourceWalletAddresses.join(', ')}} on {{item.dueDate.format('LL')}}."
+        HistoryItemText = GetPaidText()
     })
 </script>
 <script type="text/ng-template" id="historyRowTemplate-NotConfirmed">
@@ -368,10 +290,10 @@
 
     private string GetPaidText()
     {
-        return "Transferred {{item.paidAmount | currency : '' : item.paymentAssetAccuracy}} " +
+        return "Transferred {{item.paidAmount | nzcurrency : item.paymentAssetAccuracy}} " +
                "{{item.paymentAsset}} from {{item.sourceWalletAddresses.join(', ')}}, " +
-               "expected {{item.paymentAmount | currency : '' : item.paymentAssetAccuracy}} {{item.paymentAsset}}. " +
-               "Exchange rate 1 {{item.paymentAsset}} = {{item.exchangeRate | currency : '' :  item.settlementAssetAccuracy}} {{item.settlementAsset}}.";
+               "expected {{item.paymentAmount | nzcurrency : item.paymentAssetAccuracy}} {{item.paymentAsset}}. " +
+               "Exchange rate 1 {{item.paymentAsset}} = {{item.exchangeRate | nzcurrency :  item.settlementAssetAccuracy}} {{item.settlementAsset}}.";
     }
 
 }

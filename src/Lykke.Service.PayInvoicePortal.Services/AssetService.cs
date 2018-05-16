@@ -23,7 +23,7 @@ namespace Lykke.Service.PayInvoicePortal.Services
         {
             _payInternalClient = payInternalClient;
             _assetsServiceWithCache = assetsServiceWithCache;
-            _log = log;
+            _log = log.CreateComponentScope(nameof(AssetService));
         }
 
         public async Task<IReadOnlyList<Asset>> GetSettlementAssetsAsync(string merchantId)
@@ -33,17 +33,48 @@ namespace Lykke.Service.PayInvoicePortal.Services
             try
             {
                 AvailableAssetsResponse response =
-                    await _payInternalClient.ResolveAvailableAssetsAsync(merchantId, AssetAvailabilityType.Settlement);
+                    await _payInternalClient.GetAvailableSettlementAssetsAsync(merchantId);
 
                 foreach (string assetId in response.Assets)
                 {
                     Asset asset = await _assetsServiceWithCache.TryGetAssetAsync(assetId);
-                    assets.Add(asset);
+                    
+                    if (asset != null)
+                    {
+                        assets.Add(asset);
+                    }
                 }
             }
             catch (Exception exception)
             {
                 _log.WriteError(nameof(GetSettlementAssetsAsync), new {merchantId}, exception);
+            }
+
+            return assets;
+        }
+
+        public async Task<IReadOnlyList<Asset>> GetPaymentAssetsAsync(string merchantId, string settlementAssetId)
+        {
+            var assets = new List<Asset>();
+
+            try
+            {
+                AvailableAssetsResponse response =
+                    await _payInternalClient.GetAvailablePaymentAssetsAsync(merchantId, settlementAssetId);
+
+                foreach (string assetId in response.Assets)
+                {
+                    Asset asset = await _assetsServiceWithCache.TryGetAssetAsync(assetId);
+
+                    if (asset != null)
+                    {
+                        assets.Add(asset);
+                    }
+                }
+            }
+            catch (Exception exception)
+            {
+                _log.WriteError(nameof(GetSettlementAssetsAsync), new { merchantId }, exception);
             }
 
             return assets;
