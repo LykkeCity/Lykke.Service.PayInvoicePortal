@@ -62,6 +62,7 @@
                             if (carousel.find('.owl-stage').width() > carousel.find('.owl-stage-outer').width()) {
                                 right.addClass('invoice_tabs__arrow--in');
                             }
+                            adjustWidth();
                         },
                         onResized: function (e) {
                             adjustWidth();
