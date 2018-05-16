@@ -126,10 +126,12 @@
 
             vm.events.invoiceGenerated = $scope.$on('invoiceGenerated', function (evt, data) {
                 loadInvocies();
+                vm.view.hasInvoices = true;
             });
 
             vm.events.invoiceDraftCreated = $scope.$on('invoiceDraftCreated', function (evt, data) {
                 loadInvocies();
+                vm.view.hasInvoices = true;
             });
 
             $interval(loadInvocies, 5 * 60 * 1000);
