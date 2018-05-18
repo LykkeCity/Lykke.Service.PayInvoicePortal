@@ -42,7 +42,13 @@
                 <div class="col-sm-4">
                     <div class="form-group">
                         <label class="control-label" for="currency">Currency</label>
-                        <div class="form_selectpicker custom_dropdown">
+                        <input data-ng-hide="vm.model.assets.length > 1"
+                               class="form-control" 
+                               style="font-weight: 600"
+                               disabled
+                               value="{{vm.model.settlementAsset}}"/>
+                        <div data-ng-show="vm.model.assets.length > 1"
+                             class="form_selectpicker custom_dropdown">
                             <select class="selectpicker"
                                     data-selectpicker
                                     data-size="10"
