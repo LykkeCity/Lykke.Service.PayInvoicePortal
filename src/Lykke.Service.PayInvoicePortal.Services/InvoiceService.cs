@@ -326,12 +326,7 @@ namespace Lykke.Service.PayInvoicePortal.Services
             int skip,
             int take)
         {
-            var sw = Stopwatch.StartNew();
-
             IEnumerable<InvoiceModel> allInvoices = await _payInvoiceClient.GetMerchantInvoicesAsync(merchantId);
-
-            _log.WriteInfo(nameof(GetAsync), new { allInvoices.ToList().Count, sw.ElapsedMilliseconds }, "Get invoices");
-            sw.Restart();
 
             var baseAssetIdTuple = await _baseAssetCache.GetOrAddAsync
                 (
@@ -344,9 +339,6 @@ namespace Lykke.Service.PayInvoicePortal.Services
                 );
             var baseAssetId = baseAssetIdTuple.Item1;
             Asset baseAsset = await _assetsService.TryGetAssetAsync(baseAssetId);
-
-            _log.WriteInfo(nameof(GetAsync), new { baseAssetId, sw.ElapsedMilliseconds }, "GetBaseAssetId");
-            sw.Restart();
 
             #region Statistic
             var rateDictionary = new Dictionary<string, double>();
@@ -384,9 +376,6 @@ namespace Lykke.Service.PayInvoicePortal.Services
 
                 rateDictionary.Add(assetId, rate);
             }
-
-            _log.WriteInfo(nameof(GetAsync), new { rateDictionary, sw.ElapsedMilliseconds }, "Get rates");
-            sw.Restart();
 
             bool IsPaidStatus(InvoiceStatus invoiceStatus)
             {
@@ -458,7 +447,6 @@ namespace Lykke.Service.PayInvoicePortal.Services
 
             // order by status
             summaryStatistic = summaryStatistic.OrderBy(x => x.Key).ToDictionary(x => x.Key, x => x.Value);
-            _log.WriteInfo(nameof(GetAsync), null, $"summaryStatisticGrouppedByAsset for {sw.ElapsedMilliseconds} ms");
             #endregion
 
             IReadOnlyList<Invoice> result =
@@ -556,7 +544,7 @@ namespace Lykke.Service.PayInvoicePortal.Services
             }
 
             var items = new List<Invoice>();
-            var sw = Stopwatch.StartNew();
+
             foreach (InvoiceModel invoice in query)
             {
                 Asset settlementAsset = await _assetsService.TryGetAssetAsync(invoice.SettlementAssetId);
@@ -577,7 +565,7 @@ namespace Lykke.Service.PayInvoicePortal.Services
                     Note = invoice.Note
                 });
             }
-            _log.WriteInfo(nameof(FilterAsync), null, $"Filtered for {sw.ElapsedMilliseconds} ms");
+
             return items;
         }
     }

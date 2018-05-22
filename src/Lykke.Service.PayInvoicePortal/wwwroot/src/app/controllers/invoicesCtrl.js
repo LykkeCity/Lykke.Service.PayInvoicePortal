@@ -185,7 +185,6 @@
             vm.model.baseAssetAccuracy = data.baseAssetAccuracy;
             vm.statistic.main = data.statistic.mainStatistic;
             vm.statistic.summary = data.statistic.summaryStatistic;
-            console.log(vm.statistic.summary)
         }
 
         function updateList(data) {
