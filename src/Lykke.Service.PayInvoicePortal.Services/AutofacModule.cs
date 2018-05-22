@@ -32,9 +32,6 @@ namespace Lykke.Service.PayInvoicePortal.Services
             builder.RegisterType<AssetService>()
                 .As<IAssetService>();
 
-            builder.RegisterType<BalanceService>()
-                .As<IBalanceService>();
-
             builder.RegisterType<EmailService>()
                 .As<IEmailService>();
 

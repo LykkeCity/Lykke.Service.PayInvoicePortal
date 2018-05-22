@@ -7,7 +7,6 @@ using Lykke.Service.PayInvoice.Client.Models.Invoice;
 using Lykke.Service.PayInvoicePortal.Core.Domain;
 using Lykke.Service.PayInvoicePortal.Core.Services;
 using Lykke.Service.PayInvoicePortal.Extensions;
-using Lykke.Service.PayInvoicePortal.Models.Balances;
 using Lykke.Service.PayInvoicePortal.Models.Home;
 using Lykke.Service.PayInvoicePortal.Models.Invoices;
 using Microsoft.AspNetCore.Authorization;
@@ -19,16 +18,13 @@ namespace Lykke.Service.PayInvoicePortal.Controllers
     public class HomeController : Controller
     {
         private readonly IInvoiceService _invoiceService;
-        private readonly IBalanceService _balanceService;
         private readonly ILog _log;
 
         public HomeController(
             IInvoiceService invoiceService,
-            IBalanceService balanceService,
             ILog log)
         {
             _invoiceService = invoiceService;
-            _balanceService = balanceService;
             _log = log;
         }
 
@@ -45,8 +41,6 @@ namespace Lykke.Service.PayInvoicePortal.Controllers
                 0,
                 20);
 
-            Balance balance = await _balanceService.GetAsync(User.GetMerchantId());
-
             var invoicesGatheredInfo = new InvoicesGatheredInfoModel
             {
                 List = new ListModel
@@ -55,6 +49,7 @@ namespace Lykke.Service.PayInvoicePortal.Controllers
                     CountPerStatus = source.CountPerStatus.ToDictionary(o => o.Key.ToString(), o => o.Value),
                     Items = Mapper.Map<List<ListItemModel>>(source.Items)
                 },
+                Balance = source.Balance,
                 BaseAsset = source.BaseAsset,
                 BaseAssetAccuracy = source.BaseAssetAccuracy,
                 Statistic = new StatisticModel
@@ -67,12 +62,7 @@ namespace Lykke.Service.PayInvoicePortal.Controllers
 
             var vm = new HomeViewModel
             {
-                InvoicesGatheredInfo = invoicesGatheredInfo,
-                Balance = new BalanceModel
-                {
-                    Value = balance.Value,
-                    Currency = balance.Currency
-                }
+                InvoicesGatheredInfo = invoicesGatheredInfo
             };
 
             return View(vm);

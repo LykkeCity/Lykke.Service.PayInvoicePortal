@@ -85,6 +85,7 @@ namespace Lykke.Service.PayInvoicePortal.Controllers.Api
                     CountPerStatus = source.CountPerStatus.ToDictionary(o => o.Key.ToString(), o => o.Value),
                     Items = Mapper.Map<List<ListItemModel>>(source.Items)
                 },
+                Balance = source.Balance,
                 BaseAsset = source.BaseAsset,
                 BaseAssetAccuracy = source.BaseAssetAccuracy,
                 Statistic = new StatisticModel

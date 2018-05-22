@@ -16,6 +16,7 @@
         };
 
         vm.model = {
+            balance: 0,
             baseAsset: null,
             baseAssetAccuracy: 0,
             invoices: []
@@ -175,6 +176,7 @@
 
         function updateData(data) {
             updateList(data.list);
+            vm.model.balance = data.balance;
             vm.model.baseAsset = data.baseAsset;
             vm.model.baseAssetAccuracy = data.baseAssetAccuracy;
             vm.statistic.main = data.statistic.mainStatistic;

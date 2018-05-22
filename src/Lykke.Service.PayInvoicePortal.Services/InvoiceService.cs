@@ -387,21 +387,24 @@ namespace Lykke.Service.PayInvoicePortal.Services
             _log.WriteInfo(nameof(GetAsync), new { rateDictionary, sw.ElapsedMilliseconds }, "Get rates");
             sw.Restart();
 
-            bool IsPaidInvoice(InvoiceModel invoice)
+            bool IsPaidStatus(InvoiceStatus invoiceStatus)
             {
-                return invoice.Status == InvoiceStatus.Paid
-                    || invoice.Status == InvoiceStatus.Overpaid
-                    || invoice.Status == InvoiceStatus.Underpaid
-                    || invoice.Status == InvoiceStatus.LatePaid;
+                return invoiceStatus == InvoiceStatus.Paid
+                    || invoiceStatus == InvoiceStatus.Overpaid
+                    || invoiceStatus == InvoiceStatus.Underpaid
+                    || invoiceStatus == InvoiceStatus.LatePaid;
             }
 
             var statistic = new Dictionary<InvoiceStatus, double>();
             var grouppedByStatus = allInvoices.GroupBy(x => x.Status);
+
+            double balance = 0;
+
             foreach (var group in grouppedByStatus)
             {
                 foreach (var invoice in group)
                 {
-                    var amount = IsPaidInvoice(invoice)
+                    var amount = IsPaidStatus(invoice.Status)
                         ? (double)invoice.PaidAmount * rateDictionary[invoice.PaymentAssetId]
                         : (double)invoice.Amount * rateDictionary[invoice.SettlementAssetId];
 
@@ -412,6 +415,11 @@ namespace Lykke.Service.PayInvoicePortal.Services
                     else
                     {
                         statistic.Add(invoice.Status, amount);
+                    }
+
+                    if (IsPaidStatus(group.Key))
+                    {
+                        balance += amount;
                     }
                 }
             }
@@ -425,6 +433,7 @@ namespace Lykke.Service.PayInvoicePortal.Services
             {
                 Total = result.Count,
                 CountPerStatus = new Dictionary<InvoiceStatus, int>(),
+                Balance = balance,
                 BaseAsset = baseAssetId,
                 BaseAssetAccuracy = baseAsset.Accuracy,
                 Statistic = statistic,
