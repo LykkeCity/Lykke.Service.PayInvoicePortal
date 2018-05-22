@@ -1,10 +1,19 @@
 ﻿using Autofac;
+using Lykke.Service.PayInvoicePortal.Core.Domain.Settings.ServiceSettings;
 using Lykke.Service.PayInvoicePortal.Core.Services;
 
 namespace Lykke.Service.PayInvoicePortal.Services
 {
     public class AutofacModule : Module
     {
+        private readonly CacheExpirationPeriodsSettings _cacheExpirationPeriods;
+
+        public AutofacModule(
+            CacheExpirationPeriodsSettings cacheExpirationPeriods)
+        {
+            _cacheExpirationPeriods = cacheExpirationPeriods;
+        }
+
         protected override void Load(ContainerBuilder builder)
         {
             builder.RegisterType<HealthService>()
@@ -30,7 +39,8 @@ namespace Lykke.Service.PayInvoicePortal.Services
                 .As<IEmailService>();
 
             builder.RegisterType<InvoiceService>()
-                .As<IInvoiceService>();
+                .As<IInvoiceService>()
+                .WithParameter(TypedParameter.From(_cacheExpirationPeriods));
 
             builder.RegisterType<EmployeeCache>()
                 .As<IEmployeeCache>()

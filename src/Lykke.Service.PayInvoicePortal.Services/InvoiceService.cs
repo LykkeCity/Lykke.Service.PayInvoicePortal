@@ -19,6 +19,7 @@ using Lykke.Service.PayInvoice.Client.Models.Employee;
 using Lykke.Service.PayInvoice.Client.Models.File;
 using Lykke.Service.PayInvoice.Client.Models.Invoice;
 using Lykke.Service.PayInvoicePortal.Core.Domain;
+using Lykke.Service.PayInvoicePortal.Core.Domain.Settings.ServiceSettings;
 using Lykke.Service.PayInvoicePortal.Core.Services;
 using Lykke.Service.RateCalculator.Client;
 using Lykke.Service.RateCalculator.Client.AutorestClient.Models;
@@ -41,6 +42,7 @@ namespace Lykke.Service.PayInvoicePortal.Services
         private readonly IPayInternalClient _payInternalClient;
         private readonly IRateCalculatorClient _rateCalculatorClient;
         private readonly IAssetsServiceWithCache _assetsService;
+        private readonly CacheExpirationPeriodsSettings _cacheExpirationPeriods;
         private readonly ILog _log;
         private readonly OnDemandDataCache<Tuple<double>> _ratesCache;
         private readonly OnDemandDataCache<Tuple<string>> _baseAssetCache;
@@ -51,12 +53,14 @@ namespace Lykke.Service.PayInvoicePortal.Services
             IRateCalculatorClient rateCalculatorClient,
             IAssetsServiceWithCache assetsService,
             IMemoryCache memoryCache,
+            CacheExpirationPeriodsSettings cacheExpirationPeriods,
             ILog log)
         {
             _payInvoiceClient = payInvoiceClient;
             _payInternalClient = payInternalClient;
             _rateCalculatorClient = rateCalculatorClient;
             _assetsService = assetsService;
+            _cacheExpirationPeriods = cacheExpirationPeriods;
             _ratesCache = new OnDemandDataCache<Tuple<double>>(memoryCache);
             _baseAssetCache = new OnDemandDataCache<Tuple<string>>(memoryCache);
             _log = log;
@@ -335,7 +339,7 @@ namespace Lykke.Service.PayInvoicePortal.Services
                         var baseAssetIdResponse = await GetBaseAssetId(merchantId);
                         return new Tuple<string>(baseAssetIdResponse);
                     },
-                    TimeSpan.FromMinutes(10)
+                    _cacheExpirationPeriods.BaseAsset
                 );
             var baseAssetId = baseAssetIdTuple.Item1;
             Asset baseAsset = await _assetsService.TryGetAssetAsync(baseAssetId);
@@ -367,7 +371,7 @@ namespace Lykke.Service.PayInvoicePortal.Services
                             assetFrom: assetId, amount: 1d, assetTo: baseAssetId);
                         return new Tuple<double>(rateResponse);
                     },
-                    TimeSpan.FromMinutes(10)
+                    _cacheExpirationPeriods.Rate
                 );
 
                 var rate = rateTuple.Item1;
