@@ -24,9 +24,15 @@
 
 <article class="content"
          data-ng-controller="invoicesCtrl as vm"
-         data-ng-init="vm.handlers.init(@JsonConvert.SerializeObject(Model.InvoicesGatheredInfo, new JsonSerializerSettings { ContractResolver = new DefaultContractResolver{NamingStrategy = new CamelCaseNamingStrategy()} }))"
          ng-cloak>
-    <section class="section section--lead">
+    <div data-ng-if="vm.model.isFirstLoading"
+         class="main-page-loader">
+        <div class="spinner spinner--inline">
+            <div class="spinner__inside"></div>
+        </div>
+    </div>
+    <section class="section section--lead"
+             data-ng-hide="vm.model.isFirstLoading">
         <div class="container">
             <div class="profile_info">
                 <div class="row">
@@ -84,7 +90,7 @@
                     </div>
                 </div>
             </div>
-            <div class="invoice_nav" data-ng-show="vm.view.hasInvoices">
+            <div class="invoice_nav" data-ng-show="vm.view.hasInvoices" data-ng-if="!vm.model.isFirstLoading">
                 <button class="invoice_nav__search btn btn--icon" data-ng-click="vm.filter.handlers.toggle()">
                     <i class="icon icon--search"></i>
                 </button>

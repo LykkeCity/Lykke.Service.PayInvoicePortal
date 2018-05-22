@@ -32,40 +32,7 @@ namespace Lykke.Service.PayInvoicePortal.Controllers
         [HttpGet]
         public async Task<IActionResult> Index()
         {
-            InvoiceSource source = await _invoiceService.GetAsync(
-                User.GetMerchantId(),
-                new List<InvoiceStatus>(),
-                Period.AllTime,
-                null,
-                null,
-                false,
-                0,
-                20);
-
-            var invoicesGatheredInfo = new InvoicesGatheredInfoModel
-            {
-                List = new ListModel
-                {
-                    Total = source.Total,
-                    CountPerStatus = source.CountPerStatus.ToDictionary(o => o.Key.ToString(), o => o.Value),
-                    Items = Mapper.Map<List<ListItemModel>>(source.Items)
-                },
-                Balance = source.Balance,
-                BaseAsset = source.BaseAsset,
-                BaseAssetAccuracy = source.BaseAssetAccuracy,
-                Statistic = new StatisticModel
-                {
-                    MainStatistic = source.MainStatistic.ToDictionary(x => x.Key.ToString(), x => x.Value),
-                    SummaryStatistic = source.SummaryStatistic,
-                    Rates = source.Rates,
-                    HasErrorsInStatistic = source.HasErrorsInStatistic
-                }
-            };
-
-            var vm = new HomeViewModel
-            {
-                InvoicesGatheredInfo = invoicesGatheredInfo
-            };
+            var vm = new HomeViewModel();
 
             return View(vm);
         }

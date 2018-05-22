@@ -16,6 +16,7 @@
         };
 
         vm.model = {
+            isFirstLoading: true,
             balance: 0,
             baseAsset: null,
             baseAssetAccuracy: 0,
@@ -77,7 +78,6 @@
         };
 
         vm.handlers = {
-            init: init,
             exportToCsv: exportToCsv,
             getStatusCss: statusSvc.getStatusCss,
             canRemove: canRemove,
@@ -100,6 +100,8 @@
         activate();
 
         function activate() {
+            loadInvocies();
+
             $scope.$watch(
                 function () { return vm.filter.search; },
                 function (newValue, oldValue) {
@@ -148,11 +150,6 @@
             $interval(loadInvocies, 5 * 60 * 1000);
         }
 
-        function init(data) {
-            vm.view.hasInvoices = data.list.items.length ? true : false;
-            updateData(data);
-        }
-
         function destroy() {
             if (vm.events.invoiceGenerated)
                 vm.events.invoiceGenerated();
@@ -185,6 +182,11 @@
             vm.model.baseAssetAccuracy = data.baseAssetAccuracy;
             vm.statistic.main = data.statistic.mainStatistic;
             vm.statistic.summary = data.statistic.summaryStatistic;
+
+            if (vm.model.isFirstLoading){
+                vm.view.hasInvoices = data.list.items.length ? true : false;
+                vm.model.isFirstLoading = false;
+            }
         }
 
         function updateList(data) {
