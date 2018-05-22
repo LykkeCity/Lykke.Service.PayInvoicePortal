@@ -20,6 +20,7 @@ using Lykke.Service.PayInvoice.Client.Models.File;
 using Lykke.Service.PayInvoice.Client.Models.Invoice;
 using Lykke.Service.PayInvoicePortal.Core.Domain;
 using Lykke.Service.PayInvoicePortal.Core.Domain.Settings.ServiceSettings;
+using Lykke.Service.PayInvoicePortal.Core.Domain.Statistic;
 using Lykke.Service.PayInvoicePortal.Core.Services;
 using Lykke.Service.RateCalculator.Client;
 using Lykke.Service.RateCalculator.Client.AutorestClient.Models;
@@ -395,35 +396,69 @@ namespace Lykke.Service.PayInvoicePortal.Services
                     || invoiceStatus == InvoiceStatus.LatePaid;
             }
 
-            var statistic = new Dictionary<InvoiceStatus, double>();
+            var mainStatistic = new Dictionary<InvoiceStatus, double>();
+            var summaryStatistic = new Dictionary<InvoiceStatus, SummaryStatisticModel>();
             var grouppedByStatus = allInvoices.GroupBy(x => x.Status);
 
             double balance = 0;
-
+            
             foreach (var group in grouppedByStatus)
             {
+                var summaryStatisticGrouppedByAsset = new Dictionary<string, SummaryStatisticItemModel>();
+                
                 foreach (var invoice in group)
                 {
                     var amount = IsPaidStatus(invoice.Status)
                         ? (double)invoice.PaidAmount * rateDictionary[invoice.PaymentAssetId]
                         : (double)invoice.Amount * rateDictionary[invoice.SettlementAssetId];
 
-                    if (statistic.ContainsKey(invoice.Status))
+                    if (mainStatistic.ContainsKey(invoice.Status))
                     {
-                        statistic[invoice.Status] += amount;
+                        mainStatistic[invoice.Status] += amount;
                     }
                     else
                     {
-                        statistic.Add(invoice.Status, amount);
+                        mainStatistic.Add(invoice.Status, amount);
                     }
 
                     if (IsPaidStatus(group.Key))
                     {
                         balance += amount;
                     }
+                    
+                    // summary
+                    if (summaryStatisticGrouppedByAsset.ContainsKey(invoice.SettlementAssetId))
+                    {
+                        var model = summaryStatisticGrouppedByAsset[invoice.SettlementAssetId];
+                        model.Total += invoice.Amount;
+                        model.Count++;
+                    }
+                    else
+                    {
+                        Asset settlementAsset = await _assetsService.TryGetAssetAsync(invoice.SettlementAssetId);
+
+                        summaryStatisticGrouppedByAsset.Add(invoice.SettlementAssetId,
+                            new SummaryStatisticItemModel
+                            {
+                                Asset = invoice.SettlementAssetId,
+                                AssetAccuracy = settlementAsset?.Accuracy ?? 2,
+                                Total = invoice.Amount,
+                                Count = 1
+                            });
+                    }
                 }
+
+                summaryStatistic.Add(group.Key,
+                    new SummaryStatisticModel
+                    {
+                        Status = group.Key.ToString(),
+                        Items = summaryStatisticGrouppedByAsset.OrderBy(x => x.Key).Select(x => x.Value)
+                    });
             }
 
+            // order by status
+            summaryStatistic = summaryStatistic.OrderBy(x => x.Key).ToDictionary(x => x.Key, x => x.Value);
+            _log.WriteInfo(nameof(GetAsync), null, $"summaryStatisticGrouppedByAsset for {sw.ElapsedMilliseconds} ms");
             #endregion
 
             IReadOnlyList<Invoice> result =
@@ -436,7 +471,8 @@ namespace Lykke.Service.PayInvoicePortal.Services
                 Balance = balance,
                 BaseAsset = baseAssetId,
                 BaseAssetAccuracy = baseAsset.Accuracy,
-                Statistic = statistic,
+                MainStatistic = mainStatistic,
+                SummaryStatistic = summaryStatistic.Values,
                 Rates = rateDictionary,
                 HasErrorsInStatistic = rateDictionary.ContainsValue(0)
             };
@@ -520,7 +556,7 @@ namespace Lykke.Service.PayInvoicePortal.Services
             }
 
             var items = new List<Invoice>();
-
+            var sw = Stopwatch.StartNew();
             foreach (InvoiceModel invoice in query)
             {
                 Asset settlementAsset = await _assetsService.TryGetAssetAsync(invoice.SettlementAssetId);
@@ -541,7 +577,7 @@ namespace Lykke.Service.PayInvoicePortal.Services
                     Note = invoice.Note
                 });
             }
-
+            _log.WriteInfo(nameof(FilterAsync), null, $"Filtered for {sw.ElapsedMilliseconds} ms");
             return items;
         }
     }

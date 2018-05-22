@@ -1,4 +1,6 @@
-﻿namespace Lykke.Service.PayInvoicePortal.Models.Invoices
+﻿using Lykke.Service.PayInvoicePortal.Models.Invoices.Statistic;
+
+namespace Lykke.Service.PayInvoicePortal.Models.Invoices
 {
     public class InvoicesGatheredInfoModel
     {

@@ -18,9 +18,11 @@
     @await Html.PartialAsync("Partials/InvoiceEditTemplate", new InvoiceEditTemplateModel { IsNewInvoice = true })
 </div>
 
+@await Html.PartialAsync("Partials/HomeSummaryStatistic")
+
 @await Html.PartialAsync("/Views/Partials/InvoiceInfo.cshtml")
 
-<article class="content" 
+<article class="content"
          data-ng-controller="invoicesCtrl as vm"
          data-ng-init="vm.handlers.init(@JsonConvert.SerializeObject(Model.InvoicesGatheredInfo, new JsonSerializerSettings { ContractResolver = new DefaultContractResolver{NamingStrategy = new CamelCaseNamingStrategy()} }))"
          ng-cloak>
@@ -47,7 +49,8 @@
                         <div class="profile_summary">
                             <div class="profile_info__header">
                                 Summary
-                                <button class="profile_info__header_help">
+                                <button class="profile_info__header_help"
+                                        data-ng-click="vm.statistic.handlers.openSummaryStatistic()">
                                     <i class="btn__svg_icon svg_icon svg_icon--help"></i>
                                 </button>
                             </div>

@@ -23,7 +23,11 @@
         };
 
         vm.statistic = {
-            main: null
+            main: null,
+            summary: [],
+            handlers: {
+                openSummaryStatistic: openSummaryStatistic
+            }
         };
 
         vm.filter = {
@@ -180,6 +184,8 @@
             vm.model.baseAsset = data.baseAsset;
             vm.model.baseAssetAccuracy = data.baseAssetAccuracy;
             vm.statistic.main = data.statistic.mainStatistic;
+            vm.statistic.summary = data.statistic.summaryStatistic;
+            console.log(vm.statistic.summary)
         }
 
         function updateList(data) {
@@ -335,6 +341,10 @@
 
         function showNoResults() {
             return vm.filter.search && !vm.model.invoices.length;
+        }
+
+        function openSummaryStatistic() {
+            $rootScope.$broadcast('openSummaryStatistic', vm.statistic.summary);
         }
     }
 })();
