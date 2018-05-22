@@ -1,4 +1,5 @@
 ﻿using Autofac;
+using Lykke.Service.PayInvoicePortal.Core.Domain.Settings.AppSettings;
 using Lykke.Service.PayInvoicePortal.Core.Domain.Settings.ServiceSettings;
 using Lykke.Service.PayInvoicePortal.Core.Services;
 
@@ -7,11 +8,14 @@ namespace Lykke.Service.PayInvoicePortal.Services
     public class AutofacModule : Module
     {
         private readonly CacheExpirationPeriodsSettings _cacheExpirationPeriods;
+        private readonly AssetsMapSettings _assetsMap;
 
         public AutofacModule(
-            CacheExpirationPeriodsSettings cacheExpirationPeriods)
+            CacheExpirationPeriodsSettings cacheExpirationPeriods,
+            AssetsMapSettings assetsMap)
         {
             _cacheExpirationPeriods = cacheExpirationPeriods;
+            _assetsMap = assetsMap;
         }
 
         protected override void Load(ContainerBuilder builder)
@@ -42,6 +46,10 @@ namespace Lykke.Service.PayInvoicePortal.Services
             builder.RegisterType<EmployeeCache>()
                 .As<IEmployeeCache>()
                 .SingleInstance();
+
+            builder.RegisterType<LykkeAssetsResolver>()
+                .As<ILykkeAssetsResolver>()
+                .WithParameter(TypedParameter.From(_assetsMap));
         }
     }
 }

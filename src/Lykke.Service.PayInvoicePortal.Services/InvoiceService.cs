@@ -7,7 +7,6 @@ using System.Net;
 using System.Threading.Tasks;
 using Common.Log;
 using Lykke.Common.Cache;
-using Lykke.Service.Assets.Client;
 using Lykke.Service.Assets.Client.Models;
 using Lykke.Service.PayInternal.Client;
 using Lykke.Service.PayInternal.Client.Models.Markup;
@@ -42,7 +41,7 @@ namespace Lykke.Service.PayInvoicePortal.Services
         private readonly IPayInvoiceClient _payInvoiceClient;
         private readonly IPayInternalClient _payInternalClient;
         private readonly IRateCalculatorClient _rateCalculatorClient;
-        private readonly IAssetsServiceWithCache _assetsService;
+        private readonly ILykkeAssetsResolver _lykkeAssetsResolver;
         private readonly CacheExpirationPeriodsSettings _cacheExpirationPeriods;
         private readonly ILog _log;
         private readonly OnDemandDataCache<Tuple<double>> _ratesCache;
@@ -52,7 +51,7 @@ namespace Lykke.Service.PayInvoicePortal.Services
             IPayInvoiceClient payInvoiceClient,
             IPayInternalClient payInternalClient,
             IRateCalculatorClient rateCalculatorClient,
-            IAssetsServiceWithCache assetsService,
+            ILykkeAssetsResolver lykkeAssetsResolver,
             IMemoryCache memoryCache,
             CacheExpirationPeriodsSettings cacheExpirationPeriods,
             ILog log)
@@ -60,18 +59,18 @@ namespace Lykke.Service.PayInvoicePortal.Services
             _payInvoiceClient = payInvoiceClient;
             _payInternalClient = payInternalClient;
             _rateCalculatorClient = rateCalculatorClient;
-            _assetsService = assetsService;
+            _lykkeAssetsResolver = lykkeAssetsResolver;
             _cacheExpirationPeriods = cacheExpirationPeriods;
             _ratesCache = new OnDemandDataCache<Tuple<double>>(memoryCache);
             _baseAssetCache = new OnDemandDataCache<Tuple<string>>(memoryCache);
-            _log = log;
+            _log = log.CreateComponentScope(nameof(InvoiceService));
         }
 
         public async Task<Invoice> GetByIdAsync(string invoiceId)
         {
             InvoiceModel invoice = await _payInvoiceClient.GetInvoiceAsync(invoiceId);
 
-            Asset settlementAsset = await _assetsService.TryGetAssetAsync(invoice.SettlementAssetId);
+            Asset settlementAsset = await _lykkeAssetsResolver.TryGetAssetAsync(invoice.SettlementAssetId);
 
             PaymentRequestModel paymentRequest = null;
 
@@ -118,8 +117,8 @@ namespace Lykke.Service.PayInvoicePortal.Services
                     employee = await _payInvoiceClient.GetEmployeeAsync(item.ModifiedById);
                 }
 
-                Asset historySettlementAsset = await _assetsService.TryGetAssetAsync(item.SettlementAssetId);
-                Asset historyPeymentAsset = await _assetsService.TryGetAssetAsync(item.PaymentAssetId);
+                Asset historySettlementAsset = await _lykkeAssetsResolver.TryGetAssetAsync(item.SettlementAssetId);
+                Asset historyPeymentAsset = await _lykkeAssetsResolver.TryGetAssetAsync(item.PaymentAssetId);
 
                 items.Add(new HistoryItem
                 {
@@ -201,7 +200,15 @@ namespace Lykke.Service.PayInvoicePortal.Services
                 Force = force
             });
 
-            await Task.WhenAll(merchantTask, markupForMerchantTask, orderTask);
+            try
+            {
+                await Task.WhenAll(merchantTask, markupForMerchantTask, orderTask);
+            }
+            catch (Exception ex)
+            {
+                _log.WriteError(nameof(GetPaymentDetailsAsync), invoice, ex);
+                throw;
+            }
 
             OrderModel order = orderTask.Result;
             MerchantModel merchant = merchantTask.Result;
@@ -210,8 +217,8 @@ namespace Lykke.Service.PayInvoicePortal.Services
             PaymentRequestModel paymentRequest =
                 await _payInternalClient.GetPaymentRequestAsync(invoice.MerchantId, invoice.PaymentRequestId);
 
-            Asset settlementAsset = await _assetsService.TryGetAssetAsync(invoice.SettlementAssetId);
-            Asset paymentAsset = await _assetsService.TryGetAssetAsync(invoice.PaymentAssetId);
+            Asset settlementAsset = await _lykkeAssetsResolver.TryGetAssetAsync(invoice.SettlementAssetId);
+            Asset paymentAsset = await _lykkeAssetsResolver.TryGetAssetAsync(invoice.PaymentAssetId);
 
             int totalSeconds = 0;
             int remainingSeconds = 0;
@@ -279,7 +286,7 @@ namespace Lykke.Service.PayInvoicePortal.Services
             else
                 invoice = await _payInvoiceClient.CreateInvoiceAsync(model);
 
-            Asset settlementAsset = await _assetsService.TryGetAssetAsync(invoice.SettlementAssetId);
+            Asset settlementAsset = await _lykkeAssetsResolver.TryGetAssetAsync(invoice.SettlementAssetId);
 
             return new Invoice
             {
@@ -338,7 +345,7 @@ namespace Lykke.Service.PayInvoicePortal.Services
                     _cacheExpirationPeriods.BaseAsset
                 );
             var baseAssetId = baseAssetIdTuple.Item1;
-            Asset baseAsset = await _assetsService.TryGetAssetAsync(baseAssetId);
+            Asset baseAsset = await _lykkeAssetsResolver.TryGetAssetAsync(baseAssetId);
 
             #region Statistic
             var rateDictionary = new Dictionary<string, double>();
@@ -360,8 +367,9 @@ namespace Lykke.Service.PayInvoicePortal.Services
                 (
                     $"Rate-{assetId}-{baseAssetId}",
                     async x => {
+                        var asset = await _lykkeAssetsResolver.TryGetAssetAsync(assetId);
                         var rateResponse = await _rateCalculatorClient.GetAmountInBaseAsync(
-                            assetFrom: assetId, amount: 1d, assetTo: baseAssetId);
+                            assetFrom: asset.Id, amount: 1d, assetTo: baseAsset.Id);
                         return new Tuple<double>(rateResponse);
                     },
                     _cacheExpirationPeriods.Rate
@@ -424,12 +432,12 @@ namespace Lykke.Service.PayInvoicePortal.Services
                     }
                     else
                     {
-                        Asset settlementAsset = await _assetsService.TryGetAssetAsync(invoice.SettlementAssetId);
+                        Asset settlementAsset = await _lykkeAssetsResolver.TryGetAssetAsync(invoice.SettlementAssetId);
 
                         summaryStatisticGrouppedByAsset.Add(invoice.SettlementAssetId,
                             new SummaryStatisticItemModel
                             {
-                                Asset = invoice.SettlementAssetId,
+                                Asset = settlementAsset.DisplayId,
                                 AssetAccuracy = settlementAsset?.Accuracy ?? 2,
                                 Total = invoice.Amount,
                                 Count = 1
@@ -547,7 +555,7 @@ namespace Lykke.Service.PayInvoicePortal.Services
 
             foreach (InvoiceModel invoice in query)
             {
-                Asset settlementAsset = await _assetsService.TryGetAssetAsync(invoice.SettlementAssetId);
+                Asset settlementAsset = await _lykkeAssetsResolver.TryGetAssetAsync(invoice.SettlementAssetId);
 
                 items.Add(new Invoice
                 {

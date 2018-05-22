@@ -29,9 +29,9 @@ namespace Lykke.Service.PayInvoicePortal.Controllers.Api
         [Route("/api/assets")]
         public async Task<IActionResult> GetAssetsAsync()
         {
-            IReadOnlyList<Asset> assets = await _assetService.GetSettlementAssetsAsync(User.GetMerchantId());
+            IReadOnlyDictionary<string, string> assets = await _assetService.GetSettlementAssetsAsync(User.GetMerchantId());
 
-            var model = assets.Select(o => new ItemViewModel(o.Id, o.DisplayId ?? "empty"));
+            var model = assets.Select(o => new ItemViewModel(o.Key, o.Value));
             
             return Json(model);
         }
@@ -40,9 +40,9 @@ namespace Lykke.Service.PayInvoicePortal.Controllers.Api
         [Route("/api/paymentAssets")]
         public async Task<IActionResult> GetPaymentAssetsAsync(string merchantId, string settlementAssetId)
         {
-            IReadOnlyList<Asset> assets = await _assetService.GetPaymentAssetsAsync(merchantId, settlementAssetId);
+            IReadOnlyDictionary<string, string> assets = await _assetService.GetPaymentAssetsAsync(merchantId, settlementAssetId);
 
-            var model = assets.Select(o => new ItemViewModel(o.Id, o.DisplayId ?? "empty"));
+            var model = assets.Select(o => new ItemViewModel(o.Key, o.Value));
 
             return Json(model);
         }
