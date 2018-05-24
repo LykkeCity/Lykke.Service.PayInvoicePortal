@@ -25,6 +25,7 @@ using Lykke.Service.RateCalculator.Client;
 using Lykke.Service.RateCalculator.Client.AutorestClient.Models;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Options;
+using Lykke.Service.PayInternal.Client.Models.Supervisor;
 
 namespace Lykke.Service.PayInvoicePortal.Services
 {
@@ -423,6 +424,193 @@ namespace Lykke.Service.PayInvoicePortal.Services
                         balance += amount;
                     }
                     
+                    // summary
+                    if (summaryStatisticGrouppedByAsset.ContainsKey(invoice.SettlementAssetId))
+                    {
+                        var model = summaryStatisticGrouppedByAsset[invoice.SettlementAssetId];
+                        model.Total += invoice.Amount;
+                        model.Count++;
+                    }
+                    else
+                    {
+                        Asset settlementAsset = await _lykkeAssetsResolver.TryGetAssetAsync(invoice.SettlementAssetId);
+
+                        summaryStatisticGrouppedByAsset.Add(invoice.SettlementAssetId,
+                            new SummaryStatisticItemModel
+                            {
+                                Asset = settlementAsset.DisplayId,
+                                AssetAccuracy = settlementAsset?.Accuracy ?? 2,
+                                Total = invoice.Amount,
+                                Count = 1
+                            });
+                    }
+                }
+
+                summaryStatistic.Add(group.Key,
+                    new SummaryStatisticModel
+                    {
+                        Status = group.Key.ToString(),
+                        Items = summaryStatisticGrouppedByAsset.OrderBy(x => x.Key).Select(x => x.Value)
+                    });
+            }
+
+            // order by status
+            summaryStatistic = summaryStatistic.OrderBy(x => x.Key).ToDictionary(x => x.Key, x => x.Value);
+            #endregion
+
+            IReadOnlyList<Invoice> result =
+                await FilterAsync(allInvoices, merchantId, period, searchValue, sortField, sortAscending);
+
+            var source = new InvoiceSource
+            {
+                Total = result.Count,
+                CountPerStatus = new Dictionary<InvoiceStatus, int>(),
+                Balance = balance,
+                BaseAsset = baseAssetId,
+                BaseAssetAccuracy = baseAsset.Accuracy,
+                MainStatistic = mainStatistic,
+                SummaryStatistic = summaryStatistic.Values,
+                Rates = rateDictionary,
+                HasErrorsInStatistic = rateDictionary.ContainsValue(0)
+            };
+
+            if (status.Count > 0)
+            {
+                source.Items = result
+                    .Where(o => status.Contains(o.Status))
+                    .Skip(skip)
+                    .Take(take)
+                    .ToList();
+            }
+            else
+            {
+                source.Items = result
+                    .Skip(skip)
+                    .Take(take)
+                    .ToList();
+            }
+
+            foreach (InvoiceStatus value in Enum.GetValues(typeof(InvoiceStatus)))
+                source.CountPerStatus[value] = result.Count(o => o.Status == value);
+
+            return source;
+        }
+
+        public async Task<InvoiceSource> GetSupervisingAsync(
+            string merchantId,
+            string employeeId,
+            IReadOnlyList<InvoiceStatus> status,
+            Period period,
+            string searchValue,
+            string sortField,
+            bool sortAscending,
+            int skip,
+            int take)
+        {
+            var supervising = new SupervisingMerchantsResponse();
+            try
+            {
+                supervising = await _payInternalClient.GetSupervisingMerchantsAsync(merchantId, employeeId);
+            }
+            catch(Exception ex)
+            {
+
+            }
+            var invoiceslist = new List<InvoiceModel>();
+            foreach(var merchant in supervising.Merchants)
+            {
+                var invoices = await _payInvoiceClient.GetMerchantInvoicesAsync(merchant);
+                invoiceslist.AddRange(invoices);
+            }
+            IEnumerable<InvoiceModel> allInvoices = invoiceslist;
+            var baseAssetIdTuple = await _baseAssetCache.GetOrAddAsync
+                (
+                    $"BaseAssetId-{merchantId}",
+                    async x => {
+                        var baseAssetIdResponse = await GetBaseAssetId(merchantId);
+                        return new Tuple<string>(baseAssetIdResponse);
+                    },
+                    _cacheExpirationPeriods.BaseAsset
+                );
+            var baseAssetId = baseAssetIdTuple.Item1;
+            Asset baseAsset = await _lykkeAssetsResolver.TryGetAssetAsync(baseAssetId);
+
+            #region Statistic
+            var rateDictionary = new Dictionary<string, double>();
+
+            var allAssetIds = new List<string>();
+            allAssetIds.AddRange(allInvoices.Select(x => x.PaymentAssetId));
+            allAssetIds.AddRange(allInvoices.Select(x => x.SettlementAssetId));
+            allAssetIds = allAssetIds.Distinct().ToList();
+
+            foreach (var assetId in allAssetIds)
+            {
+                if (assetId == baseAssetId)
+                {
+                    rateDictionary.Add(assetId, 1);
+                    continue;
+                }
+
+                var rateTuple = await _ratesCache.GetOrAddAsync
+                (
+                    $"Rate-{assetId}-{baseAssetId}",
+                    async x => {
+                        var asset = await _lykkeAssetsResolver.TryGetAssetAsync(assetId);
+                        var rateResponse = await _rateCalculatorClient.GetAmountInBaseAsync(
+                            assetFrom: asset.Id, amount: 1d, assetTo: baseAsset.Id);
+                        return new Tuple<double>(rateResponse);
+                    },
+                    _cacheExpirationPeriods.Rate
+                );
+
+                var rate = rateTuple.Item1;
+
+                if (rate == 0)
+                {
+                    _log.WriteWarning(nameof(GetAsync), null, $"No rates from {assetId} to {baseAssetId}");
+                }
+
+                rateDictionary.Add(assetId, rate);
+            }
+
+            bool IsPaidStatus(InvoiceStatus invoiceStatus)
+            {
+                return invoiceStatus == InvoiceStatus.Paid
+                    || invoiceStatus == InvoiceStatus.Overpaid
+                    || invoiceStatus == InvoiceStatus.Underpaid
+                    || invoiceStatus == InvoiceStatus.LatePaid;
+            }
+
+            var mainStatistic = new Dictionary<InvoiceStatus, double>();
+            var summaryStatistic = new Dictionary<InvoiceStatus, SummaryStatisticModel>();
+            var grouppedByStatus = allInvoices.GroupBy(x => x.Status);
+
+            double balance = 0;
+
+            foreach (var group in grouppedByStatus)
+            {
+                var summaryStatisticGrouppedByAsset = new Dictionary<string, SummaryStatisticItemModel>();
+
+                foreach (var invoice in group)
+                {
+                    var amount = IsPaidStatus(invoice.Status)
+                        ? (double)invoice.PaidAmount * rateDictionary[invoice.PaymentAssetId]
+                        : (double)invoice.Amount * rateDictionary[invoice.SettlementAssetId];
+
+                    if (mainStatistic.ContainsKey(invoice.Status))
+                    {
+                        mainStatistic[invoice.Status] += amount;
+                    }
+                    else
+                    {
+                        mainStatistic.Add(invoice.Status, amount);
+                    }
+
+                    if (IsPaidStatus(group.Key))
+                    {
+                        balance += amount;
+                    }
+
                     // summary
                     if (summaryStatisticGrouppedByAsset.ContainsKey(invoice.SettlementAssetId))
                     {
