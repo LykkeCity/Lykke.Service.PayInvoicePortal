@@ -11,6 +11,7 @@ using Lykke.Service.PayInvoicePortal.Core.Services;
 using Lykke.Service.PayInvoicePortal.Extensions;
 using Lykke.Service.PayInvoicePortal.Models;
 using Lykke.Service.PayInvoicePortal.Models.Invoices;
+using Lykke.Service.PayInvoicePortal.Models.Invoices.Statistic;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -77,11 +78,24 @@ namespace Lykke.Service.PayInvoicePortal.Controllers.Api
                 skip,
                 take);
 
-            var model = new ListModel
+            var model = new InvoicesGatheredInfoModel
             {
-                Total = source.Total,
-                CountPerStatus = source.CountPerStatus.ToDictionary(o => o.Key.ToString(), o => o.Value),
-                Items = Mapper.Map<List<ListItemModel>>(source.Items)
+                List = new ListModel
+                {
+                    Total = source.Total,
+                    CountPerStatus = source.CountPerStatus.ToDictionary(o => o.Key.ToString(), o => o.Value),
+                    Items = Mapper.Map<List<ListItemModel>>(source.Items)
+                },
+                Balance = source.Balance,
+                BaseAsset = source.BaseAsset,
+                BaseAssetAccuracy = source.BaseAssetAccuracy,
+                Statistic = new StatisticModel
+                {
+                    MainStatistic = source.MainStatistic.ToDictionary(x => x.Key.ToString(), x => x.Value),
+                    SummaryStatistic = source.SummaryStatistic,
+                    Rates = source.Rates,
+                    HasErrorsInStatistic = source.HasErrorsInStatistic
+                }
             };
             
             return Json(model);

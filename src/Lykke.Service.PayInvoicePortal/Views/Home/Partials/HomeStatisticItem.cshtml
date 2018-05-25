@@ -1,0 +1,8 @@
+﻿@using Lykke.Service.PayInvoicePortal.Models.Home.Template
+@model HomeStatisticItemModel
+
+<div class="profile_summary__item clearfix">
+    <div class="profile_summary__status_name">@Model.Status</div>
+    <div data-ng-if="vm.statistic.main.hasOwnProperty('@Model.Status')" class="profile_summary__status_value">{{vm.statistic.main.@Model.Status | nzcurrency : vm.model.baseAssetAccuracy}} {{vm.model.baseAsset}}</div>
+    <div data-ng-if="!vm.statistic.main.hasOwnProperty('@Model.Status')" class="profile_summary__status_value">0</div>
+</div>

@@ -1,4 +1,5 @@
 ﻿using System;
+using Lykke.Service.PayInvoicePortal.Core.Domain.Settings.ServiceSettings;
 using Lykke.Service.PayInvoicePortal.Settings.ServiceSettings.Db;
 
 namespace Lykke.Service.PayInvoicePortal.Settings.ServiceSettings
@@ -12,5 +13,6 @@ namespace Lykke.Service.PayInvoicePortal.Settings.ServiceSettings
         public DbSettings Db { get; set; }
 
         public TimeSpan AssetsCacheExpirationPeriod { get; set; }
+        public CacheExpirationPeriodsSettings CacheExpirationPeriods { get; set; }
     }
 }

@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Common.Log;
-using Lykke.Service.Assets.Client;
 using Lykke.Service.Assets.Client.Models;
 using Lykke.Service.PayInternal.Client;
 using Lykke.Service.PayInternal.Client.Models.Asset;
@@ -13,22 +12,22 @@ namespace Lykke.Service.PayInvoicePortal.Services
     public class AssetService : IAssetService
     {
         private readonly IPayInternalClient _payInternalClient;
-        private readonly IAssetsServiceWithCache _assetsServiceWithCache;
+        private readonly ILykkeAssetsResolver _lykkeAssetsResolver;
         private readonly ILog _log;
 
         public AssetService(
             IPayInternalClient payInternalClient,
-            IAssetsServiceWithCache assetsServiceWithCache,
+            ILykkeAssetsResolver lykkeAssetsResolver,
             ILog log)
         {
             _payInternalClient = payInternalClient;
-            _assetsServiceWithCache = assetsServiceWithCache;
+            _lykkeAssetsResolver = lykkeAssetsResolver;
             _log = log.CreateComponentScope(nameof(AssetService));
         }
 
-        public async Task<IReadOnlyList<Asset>> GetSettlementAssetsAsync(string merchantId)
+        public async Task<IReadOnlyDictionary<string, string>> GetSettlementAssetsAsync(string merchantId)
         {
-            var assets = new List<Asset>();
+            var result = new Dictionary<string, string>();
 
             try
             {
@@ -37,12 +36,9 @@ namespace Lykke.Service.PayInvoicePortal.Services
 
                 foreach (string assetId in response.Assets)
                 {
-                    Asset asset = await _assetsServiceWithCache.TryGetAssetAsync(assetId);
-                    
-                    if (asset != null)
-                    {
-                        assets.Add(asset);
-                    }
+                    Asset asset = await _lykkeAssetsResolver.TryGetAssetAsync(assetId);
+
+                    result.TryAdd(assetId, asset?.DisplayId ?? assetId);
                 }
             }
             catch (Exception exception)
@@ -50,12 +46,12 @@ namespace Lykke.Service.PayInvoicePortal.Services
                 _log.WriteError(nameof(GetSettlementAssetsAsync), new {merchantId}, exception);
             }
 
-            return assets;
+            return result;
         }
 
-        public async Task<IReadOnlyList<Asset>> GetPaymentAssetsAsync(string merchantId, string settlementAssetId)
+        public async Task<IReadOnlyDictionary<string, string>> GetPaymentAssetsAsync(string merchantId, string settlementAssetId)
         {
-            var assets = new List<Asset>();
+            var result = new Dictionary<string, string>();
 
             try
             {
@@ -64,20 +60,17 @@ namespace Lykke.Service.PayInvoicePortal.Services
 
                 foreach (string assetId in response.Assets)
                 {
-                    Asset asset = await _assetsServiceWithCache.TryGetAssetAsync(assetId);
+                    Asset asset = await _lykkeAssetsResolver.TryGetAssetAsync(assetId);
 
-                    if (asset != null)
-                    {
-                        assets.Add(asset);
-                    }
+                    result.TryAdd(assetId, asset?.DisplayId ?? assetId);
                 }
             }
             catch (Exception exception)
             {
-                _log.WriteError(nameof(GetSettlementAssetsAsync), new { merchantId }, exception);
+                _log.WriteError(nameof(GetPaymentAssetsAsync), new { merchantId }, exception);
             }
 
-            return assets;
+            return result;
         }
     }
 }

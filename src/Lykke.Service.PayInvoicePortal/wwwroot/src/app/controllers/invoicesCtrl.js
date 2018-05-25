@@ -1,4 +1,4 @@
-(function () {
+﻿(function () {
     'use strict';
 
     angular
@@ -16,7 +16,19 @@
         };
 
         vm.model = {
+            isFirstLoading: true,
+            balance: 0,
+            baseAsset: null,
+            baseAssetAccuracy: 0,
             invoices: []
+        };
+
+        vm.statistic = {
+            main: null,
+            summary: [],
+            handlers: {
+                openSummaryStatistic: openSummaryStatistic
+            }
         };
 
         vm.filter = {
@@ -66,7 +78,6 @@
         };
 
         vm.handlers = {
-            init: init,
             exportToCsv: exportToCsv,
             getStatusCss: statusSvc.getStatusCss,
             canRemove: canRemove,
@@ -89,6 +100,8 @@
         activate();
 
         function activate() {
+            loadInvocies();
+
             $scope.$watch(
                 function () { return vm.filter.search; },
                 function (newValue, oldValue) {
@@ -137,11 +150,6 @@
             $interval(loadInvocies, 5 * 60 * 1000);
         }
 
-        function init(data) {
-            vm.view.hasInvoices = data.items.length ? true : false;
-            updateList(data);
-        }
-
         function destroy() {
             if (vm.events.invoiceGenerated)
                 vm.events.invoiceGenerated();
@@ -160,11 +168,25 @@
                     vm.pager.pageSize * vm.pager.page)
                 .then(
                     function(data) {
-                        updateList(data);
+                        updateData(data);
                     },
                     function(error) {
                         $log.error(error);
                     });
+        }
+
+        function updateData(data) {
+            updateList(data.list);
+            vm.model.balance = data.balance;
+            vm.model.baseAsset = data.baseAsset;
+            vm.model.baseAssetAccuracy = data.baseAssetAccuracy;
+            vm.statistic.main = data.statistic.mainStatistic;
+            vm.statistic.summary = data.statistic.summaryStatistic;
+
+            if (vm.model.isFirstLoading){
+                vm.view.hasInvoices = data.list.items.length ? true : false;
+                vm.model.isFirstLoading = false;
+            }
         }
 
         function updateList(data) {
@@ -320,6 +342,10 @@
 
         function showNoResults() {
             return vm.filter.search && !vm.model.invoices.length;
+        }
+
+        function openSummaryStatistic() {
+            $rootScope.$broadcast('openSummaryStatistic', vm.statistic.summary);
         }
     }
 })();

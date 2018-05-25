@@ -8,6 +8,7 @@ using Lykke.Service.PayAuth.Client;
 using Lykke.Service.PayInternal.Client;
 using Lykke.Service.PayInvoice.Client;
 using Lykke.Service.PayInvoicePortal.Settings;
+using Lykke.Service.RateCalculator.Client;
 using Lykke.SettingsReader;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -52,6 +53,10 @@ namespace Lykke.Service.PayInvoicePortal
 
             builder.RegisterInstance(new BalancesClient(_settings.CurrentValue.BalancesServiceClient.ServiceUrl, _log))
                 .As<IBalancesClient>()
+                .SingleInstance();
+
+            builder.RegisterInstance(new RateCalculatorClient(_settings.CurrentValue.RateCalculatorServiceClient.ServiceUrl, _log))
+                .As<IRateCalculatorClient>()
                 .SingleInstance();
         }
     }

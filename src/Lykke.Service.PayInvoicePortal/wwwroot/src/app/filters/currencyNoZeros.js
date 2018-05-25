@@ -7,6 +7,10 @@
         var currency = $filter('currency');
 
         return function(amount, accuracy) {
+            if (typeof(amount) === 'undefined') {
+                return '';
+            }
+
             var value = currency(amount, '', accuracy);
 
             var result = value.replace(/0+$/, '').replace(/\.+$/, '');

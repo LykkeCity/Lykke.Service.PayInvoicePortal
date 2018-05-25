@@ -23,20 +23,20 @@ namespace Lykke.Service.PayInvoicePortal.Services
 
         private readonly IPayInvoiceClient _payInvoiceClient;
         private readonly IPayInternalClient _payInternalClient;
-        private readonly IAssetsServiceWithCache _assetsService;
+        private readonly ILykkeAssetsResolver _lykkeAssetsResolver;
         private readonly IEmailPartnerRouterClient _emailPartnerRouterClient;
         private readonly ILog _log;
 
         public EmailService(
             IPayInvoiceClient payInvoiceClient,
             IPayInternalClient payInternalClient,
-            IAssetsServiceWithCache assetsService,
+            ILykkeAssetsResolver lykkeAssetsResolver,
             IEmailPartnerRouterClient emailPartnerRouterClient,
             ILog log)
         {
             _payInvoiceClient = payInvoiceClient;
             _payInternalClient = payInternalClient;
-            _assetsService = assetsService;
+            _lykkeAssetsResolver = lykkeAssetsResolver;
             _emailPartnerRouterClient = emailPartnerRouterClient;
             _log = log;
         }
@@ -57,7 +57,7 @@ namespace Lykke.Service.PayInvoicePortal.Services
                 return false;
             }
 
-            Asset settlementAsset = await _assetsService.TryGetAssetAsync(invoice.SettlementAssetId);
+            Asset settlementAsset = await _lykkeAssetsResolver.TryGetAssetAsync(invoice.SettlementAssetId);
 
             var payload = new Dictionary<string, string>
             {
