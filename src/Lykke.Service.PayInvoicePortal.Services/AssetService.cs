@@ -38,7 +38,7 @@ namespace Lykke.Service.PayInvoicePortal.Services
                 {
                     Asset asset = await _lykkeAssetsResolver.TryGetAssetAsync(assetId);
 
-                    result.TryAdd(assetId, asset.DisplayId ?? assetId);
+                    result.TryAdd(assetId, asset?.DisplayId ?? assetId);
                 }
             }
             catch (Exception exception)
@@ -62,7 +62,7 @@ namespace Lykke.Service.PayInvoicePortal.Services
                 {
                     Asset asset = await _lykkeAssetsResolver.TryGetAssetAsync(assetId);
 
-                    result.TryAdd(assetId, asset.DisplayId ?? assetId);
+                    result.TryAdd(assetId, asset?.DisplayId ?? assetId);
                 }
             }
             catch (Exception exception)

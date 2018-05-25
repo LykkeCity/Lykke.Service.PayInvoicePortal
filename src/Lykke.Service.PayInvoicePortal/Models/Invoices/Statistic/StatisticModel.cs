@@ -12,9 +12,9 @@ namespace Lykke.Service.PayInvoicePortal.Models.Invoices.Statistic
             Rates = new Dictionary<string, double>();
         }
 
-        public Dictionary<string, double> MainStatistic { get; set; }
+        public IDictionary<string, double> MainStatistic { get; set; }
         public IEnumerable<SummaryStatisticModel> SummaryStatistic { get; set; }
-        public Dictionary<string, double> Rates { get; internal set; }
+        public IDictionary<string, double> Rates { get; internal set; }
         public bool HasErrorsInStatistic { get; internal set; }
     }
 }
