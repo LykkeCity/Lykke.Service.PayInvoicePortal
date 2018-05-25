@@ -40,7 +40,9 @@
                         <div class="profile_balance">
                             <div class="profile_info__header">Current balance</div>
                             <div class="profile_balance__value">
-                                <span class="profile_balance__number">{{vm.model.balance | nzcurrency : vm.baseAssetAccuracy}}</span>
+                                @* TODO: make calculation for overpaid, underpaid, latepaid *@
+                                @*<span class="profile_balance__number">{{vm.model.balance | nzcurrency : vm.baseAssetAccuracy}}</span>*@
+                                <span class="profile_balance__number">0</span>
                                 <span class="profile_balance__currency">{{vm.model.baseAsset}}</span>
                             </div>
                             <div class="profile_controls">
