@@ -368,7 +368,7 @@ namespace Lykke.Service.PayInvoicePortal.Services
                     $"Rate-{assetId}-{baseAssetId}",
                     async x => {
                         var asset = await _lykkeAssetsResolver.TryGetAssetAsync(assetId);
-                        var rateResponse = asset == null ? 0 : await _rateCalculatorClient.GetAmountInBaseAsync(
+                        var rateResponse = asset == null || baseAsset == null ? 0 : await _rateCalculatorClient.GetAmountInBaseAsync(
                             assetFrom: asset.Id, amount: 1d, assetTo: baseAsset.Id);
                         return new Tuple<double>(rateResponse);
                     },
