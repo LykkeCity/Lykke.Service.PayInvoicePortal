@@ -6,24 +6,13 @@
 
 @model Lykke.Service.PayInvoicePortal.Models.Home.HomeViewModel
 @{
-    ViewData["Title"] = "Invoices";
+    ViewData["Title"] = "Supervising invoices";
 
-    async Task<IHtmlContent> StatItemAsync(string status)
-    {
-        return await Html.PartialAsync("Partials/HomeStatisticItem", new HomeStatisticItemModel(status));
-    }
 }
-
-<div data-ng-controller="invoiceCtrl as vm" ng-cloak>
-    @await Html.PartialAsync("Partials/InvoiceEditTemplate", new InvoiceEditTemplateModel { IsNewInvoice = true })
-</div>
-
-@await Html.PartialAsync("Partials/HomeSummaryStatistic")
-
-@await Html.PartialAsync("/Views/Partials/InvoiceInfo.cshtml")
 
 <article class="content"
          data-ng-controller="invoicesCtrl as vm"
+         data-ng-init="vm.model.init({isSupervising:true})"
          ng-cloak>
     <div data-ng-if="vm.model.isFirstLoading"
          class="main-page-loader">
@@ -34,48 +23,6 @@
     <section class="section section--lead"
              data-ng-hide="vm.model.isFirstLoading">
         <div class="container">
-            <div class="profile_info">
-                <div class="row">
-                    <div class="col-md-4 col-sm-5">
-                        <div class="profile_balance">
-                            <div class="profile_info__header">Current balance</div>
-                            <div class="profile_balance__value">
-                                <span class="profile_balance__number">{{vm.model.balance | nzcurrency : vm.baseAssetAccuracy}}</span>
-                                <span class="profile_balance__currency">{{vm.model.baseAsset}}</span>
-                            </div>
-                            <div class="profile_controls">
-                                <button class="btn _create_invoice_btn" data-ng-click="vm.handlers.create()">
-                                    <i class="btn__svg_icon svg_icon svg_icon--add svg_icon--margin"></i>
-                                    New invoice
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-8 col-sm-7">
-                        <div class="profile_summary">
-                            <div class="profile_info__header">
-                                Summary
-                                <button class="profile_info__header_help"
-                                        data-ng-click="vm.statistic.handlers.openSummaryStatistic()">
-                                    <i class="btn__svg_icon svg_icon svg_icon--help"></i>
-                                </button>
-                            </div>
-                            <div class="profile_summary__list clearfix">
-                                <div class="profile_summary__left">
-                                    @await StatItemAsync("Paid")
-                                    @await StatItemAsync("Unpaid")
-                                    @await StatItemAsync("PastDue")
-                                </div>
-                                <div class="profile_summary__right">
-                                    @await StatItemAsync("Underpaid")
-                                    @await StatItemAsync("Overpaid")
-                                    @await StatItemAsync("LatePaid")
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
             <div class="row" data-ng-show="vm.view.hasInvoices">
                 <div class="col-sm-6">
                     <h3>Invoices</h3>
@@ -157,28 +104,20 @@
                             </tr>
                             <tbody>
                                 <tr data-ng-repeat="invoice in vm.model.invoices" data-mt-navigate="::vm.handlers.openDetails(invoice)">
-                                    <td class="_number" style="cursor: pointer;">
+                                    <td class="_number" >
                                         <span class="_title"><a ng-href="{{::'/invoices/' + invoice.id}}">#{{::invoice.number}}</a></span>
                                         <span class="_hint">{{::invoice.createdDate.format('l')}}</span>
                                     </td>
-                                    <td class="_client" style="cursor: pointer;">
+                                    <td class="_client" >
                                         <span class="_title">{{::invoice.clientName}}</span>
                                         <span class="_hint">{{::invoice.clientEmail}}</span>
                                     </td>
-                                    <td class="_amount" style="cursor: pointer;text-align: right">{{::invoice.amount | nzcurrency : invoice.settlementAssetAccuracy}}</td>
-                                    <td class="_currency" style="cursor: pointer;">{{::invoice.settlementAsset}}</td>
-                                    <td class="_status" style="cursor: pointer;">
+                                    <td class="_amount" style="text-align: right">{{::invoice.amount | nzcurrency : invoice.settlementAssetAccuracy}}</td>
+                                    <td class="_currency" >{{::invoice.settlementAsset}}</td>
+                                    <td class="_status" >
                                         <span class="label" data-ng-class="::vm.handlers.getStatusCss(invoice.status)">{{::invoice.status}}</span>
                                     </td>
-                                    <td class="_pay" style="cursor: pointer;">{{::invoice.dueDate.format('l')}}</td>
-                                    <td class="_action">
-                                        <button class="btn btn--icon" type="button"
-                                                data-ng-class="::{'btn--disabled': !vm.handlers.canRemove(invoice)}"
-                                                data-ng-disabled="::!vm.handlers.canRemove(invoice)"
-                                                data-ng-click="::vm.handlers.remove(invoice)">
-                                            <i class="btn__svg_icon svg_icon svg_icon--delete"></i>
-                                        </button>
-                                    </td>
+                                    <td class="_pay" >{{::invoice.dueDate.format('l')}}</td>
                                 </tr>
                             </tbody>
                         </table>

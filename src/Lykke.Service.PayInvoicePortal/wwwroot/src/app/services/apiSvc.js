@@ -1,4 +1,4 @@
-﻿(function () {
+(function () {
     'use strict';
 
     angular
@@ -28,6 +28,7 @@
 
             getInvoice: getInvoice,
             getInvoices: getInvoices,
+            getSupervisingInvoices: getSupervisingInvoices,
             saveInvoice: saveInvoice,
             updateInvoice: updateInvoice,
             deleteInvoice: deleteInvoice,
@@ -119,7 +120,18 @@
                     take: take
                 });
         }
-
+        function getSupervisingInvoices(searchValue, period, status, sortField, sortAscending, skip, take) {
+            return get('invoices/supervising',
+                {
+                    searchValue: searchValue,
+                    period: period,
+                    status: status,
+                    sortField: sortField,
+                    sortAscending: sortAscending,
+                    skip: skip,
+                    take: take
+                });
+        }
         function saveInvoice(model, files) {
             return upload('invoices', model, files);
         }

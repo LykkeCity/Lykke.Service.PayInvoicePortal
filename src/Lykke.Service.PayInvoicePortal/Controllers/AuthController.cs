@@ -8,6 +8,8 @@ using Lykke.Service.PayInvoicePortal.Core.Services;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Mvc;
+using Lykke.Service.PayInternal.Client;
+using System;
 
 namespace Lykke.Service.PayInvoicePortal.Controllers
 {
@@ -15,13 +17,16 @@ namespace Lykke.Service.PayInvoicePortal.Controllers
     public class AuthController : Controller
     {
         private readonly IAuthService _authService;
+        private readonly IPayInternalClient _payInternalClient;
         private readonly ILog _log;
 
         public AuthController(
             IAuthService authService,
+            IPayInternalClient payInternalClient,
             ILog log)
         {
             _authService = authService;
+            _payInternalClient = payInternalClient;
             _log = log;
         }
 
@@ -55,11 +60,22 @@ namespace Lykke.Service.PayInvoicePortal.Controllers
                 ModelState.AddModelError(string.Empty, "The e-mail or password you entered incorrect.");
                 return View(vm);
             }
-
+            IReadOnlyList<string> supervisor = new List<string>();
+            var isSupervisor = false;
+            try
+            {
+                supervisor = (await _payInternalClient.GetSupervisingMerchantsAsync(employee.MerchantId, employee.Id)).Merchants;
+                isSupervisor = supervisor.Count != 0;
+            }
+            catch (Exception ex)
+            {
+                isSupervisor = false;
+            }
             var claims = new List<Claim>
             {
                 new Claim(ClaimTypes.Sid, employee.Id),
                 new Claim(ClaimTypes.UserData, employee.MerchantId),
+                new Claim(ClaimTypes.Actor, isSupervisor.ToString()),
                 new Claim(ClaimTypes.Name, $"{employee.FirstName} {employee.LastName}")
             };
 

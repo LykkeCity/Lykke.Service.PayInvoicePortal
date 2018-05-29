@@ -53,9 +53,8 @@
                                      data-ng-class="{'invoice_info__row--detecting': vm.timer.isExtended}">
                                     <div class="invoice_info__value">
                                         <span>{{vm.model.paymentAmount | nzcurrency : vm.model.paymentAssetAccuracy}} </span>
-                                        <span data-ng-hide="vm.model.paymentAssets.length > 1">{{vm.model.paymentAssetDisplay}}</span>
-                                        <div data-ng-show="vm.model.paymentAssets.length > 1"
-                                             class="invoice_info__select custom_dropdown" data-ng-if="vm.model.paymentAssets.length">
+                                        <span data-ng-hide="vm.model.paymentAssets.length">{{vm.model.paymentAssetDisplay}}</span>
+                                        <div class="invoice_info__select custom_dropdown" data-ng-if="vm.model.paymentAssets.length">
                                             <select class="selectpicker inline_select"
                                                     data-selectpicker
                                                     data-size="10"

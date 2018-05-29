@@ -32,7 +32,7 @@ namespace Lykke.Service.PayInvoicePortal.Services
 
             try
             {
-                response = await _payAuthClient.ValidatePasswordAsync(email, password);
+                response = await _payAuthClient.ValidateAsync(email, password);
             }
             catch (Exception exception)
             {
