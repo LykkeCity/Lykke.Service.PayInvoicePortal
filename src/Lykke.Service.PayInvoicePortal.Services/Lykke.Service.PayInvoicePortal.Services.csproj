@@ -10,7 +10,7 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Lykke.Service.Balances.Client" Version="1.1.0" />
-    <PackageReference Include="Lykke.Service.PayAuth.Client" Version="1.0.15" />
+    <PackageReference Include="Lykke.Service.PayAuth.Client" Version="1.0.18" />
     <PackageReference Include="Lykke.Service.EmailPartnerRouter.Client" Version="2.0.4" />
     <PackageReference Include="Lykke.Service.RateCalculator.Client" Version="1.0.12" />
     <PackageReference Include="System.Linq.Dynamic.Core" Version="1.0.8.8" />

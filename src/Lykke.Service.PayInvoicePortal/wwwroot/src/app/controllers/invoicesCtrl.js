@@ -328,7 +328,8 @@
         }
 
         function openDetails(invoice) {
-            $window.location.href = '/invoices/'+invoice.id;
+            if (!vm.model.isSupervising)
+                $window.location.href = '/invoices/'+invoice.id;
         }
 
         function create() {

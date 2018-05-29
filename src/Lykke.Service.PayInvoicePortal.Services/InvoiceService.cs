@@ -369,7 +369,7 @@ namespace Lykke.Service.PayInvoicePortal.Services
                     $"Rate-{assetId}-{baseAssetId}",
                     async x => {
                         var asset = await _lykkeAssetsResolver.TryGetAssetAsync(assetId);
-                        var rateResponse = await _rateCalculatorClient.GetAmountInBaseAsync(
+                        var rateResponse = asset == null || baseAsset == null ? 0 : await _rateCalculatorClient.GetAmountInBaseAsync(
                             assetFrom: asset.Id, amount: 1d, assetTo: baseAsset.Id);
                         return new Tuple<double>(rateResponse);
                     },
@@ -438,7 +438,7 @@ namespace Lykke.Service.PayInvoicePortal.Services
                         summaryStatisticGrouppedByAsset.Add(invoice.SettlementAssetId,
                             new SummaryStatisticItemModel
                             {
-                                Asset = settlementAsset.DisplayId,
+                                Asset = settlementAsset?.DisplayId,
                                 AssetAccuracy = settlementAsset?.Accuracy ?? 2,
                                 Total = invoice.Amount,
                                 Count = 1
@@ -467,7 +467,7 @@ namespace Lykke.Service.PayInvoicePortal.Services
                 CountPerStatus = new Dictionary<InvoiceStatus, int>(),
                 Balance = balance,
                 BaseAsset = baseAssetId,
-                BaseAssetAccuracy = baseAsset.Accuracy,
+                BaseAssetAccuracy = baseAsset?.Accuracy ?? 2,
                 MainStatistic = mainStatistic,
                 SummaryStatistic = summaryStatistic.Values,
                 Rates = rateDictionary,
@@ -517,10 +517,13 @@ namespace Lykke.Service.PayInvoicePortal.Services
 
             }
             var invoiceslist = new List<InvoiceModel>();
-            foreach(var merchant in supervising.Merchants)
+            if (supervising.Merchants != null)
             {
-                var invoices = await _payInvoiceClient.GetMerchantInvoicesAsync(merchant);
-                invoiceslist.AddRange(invoices);
+                foreach (var merchant in supervising.Merchants)
+                {
+                    var invoices = await _payInvoiceClient.GetMerchantInvoicesAsync(merchant);
+                    invoiceslist.AddRange(invoices);
+                }
             }
             IEnumerable<InvoiceModel> allInvoices = invoiceslist;
             var baseAssetIdTuple = await _baseAssetCache.GetOrAddAsync

@@ -104,20 +104,20 @@
                             </tr>
                             <tbody>
                                 <tr data-ng-repeat="invoice in vm.model.invoices" data-mt-navigate="::vm.handlers.openDetails(invoice)">
-                                    <td class="_number" style="cursor: pointer;">
+                                    <td class="_number" >
                                         <span class="_title"><a ng-href="{{::'/invoices/' + invoice.id}}">#{{::invoice.number}}</a></span>
                                         <span class="_hint">{{::invoice.createdDate.format('l')}}</span>
                                     </td>
-                                    <td class="_client" style="cursor: pointer;">
+                                    <td class="_client" >
                                         <span class="_title">{{::invoice.clientName}}</span>
                                         <span class="_hint">{{::invoice.clientEmail}}</span>
                                     </td>
-                                    <td class="_amount" style="cursor: pointer;text-align: right">{{::invoice.amount | nzcurrency : invoice.settlementAssetAccuracy}}</td>
-                                    <td class="_currency" style="cursor: pointer;">{{::invoice.settlementAsset}}</td>
-                                    <td class="_status" style="cursor: pointer;">
+                                    <td class="_amount" style="text-align: right">{{::invoice.amount | nzcurrency : invoice.settlementAssetAccuracy}}</td>
+                                    <td class="_currency" >{{::invoice.settlementAsset}}</td>
+                                    <td class="_status" >
                                         <span class="label" data-ng-class="::vm.handlers.getStatusCss(invoice.status)">{{::invoice.status}}</span>
                                     </td>
-                                    <td class="_pay" style="cursor: pointer;">{{::invoice.dueDate.format('l')}}</td>
+                                    <td class="_pay" >{{::invoice.dueDate.format('l')}}</td>
                                 </tr>
                             </tbody>
                         </table>
