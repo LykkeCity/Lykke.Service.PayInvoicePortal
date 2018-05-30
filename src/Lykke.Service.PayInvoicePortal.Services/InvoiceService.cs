@@ -87,6 +87,7 @@ namespace Lykke.Service.PayInvoicePortal.Services
                 Amount = invoice.Amount,
                 DueDate = invoice.DueDate,
                 Status = invoice.Status,
+                SettlementAssetId = invoice.SettlementAssetId,
                 SettlementAsset = settlementAsset,
                 WalletAddress = paymentRequest?.WalletAddress,
                 CreatedDate = invoice.CreatedDate,
@@ -279,6 +280,8 @@ namespace Lykke.Service.PayInvoicePortal.Services
 
         public async Task<Invoice> CreateAsync(CreateInvoiceModel model, bool draft)
         {
+            model.PaymentAssetId = _lykkeAssetsResolver.GetInvoiceCreationPair(model.SettlementAssetId);
+
             InvoiceModel invoice;
 
             if (draft)
@@ -305,11 +308,20 @@ namespace Lykke.Service.PayInvoicePortal.Services
 
         public async Task UpdateAsync(UpdateInvoiceModel model, bool draft)
         {
-            await _payInvoiceClient.UpdateDraftInvoiceAsync(model);
+            model.PaymentAssetId = _lykkeAssetsResolver.GetInvoiceCreationPair(model.SettlementAssetId);
 
-            if (!draft)
+            try
             {
-                await _payInvoiceClient.CreateInvoiceAsync(model.Id);
+                await _payInvoiceClient.UpdateDraftInvoiceAsync(model);
+
+                if (!draft)
+                {
+                    await _payInvoiceClient.CreateInvoiceAsync(model.Id);
+                }
+            }
+            catch (ErrorResponseException ex)
+            {
+                throw new InvalidOperationException(ex.Message);
             }
         }
 

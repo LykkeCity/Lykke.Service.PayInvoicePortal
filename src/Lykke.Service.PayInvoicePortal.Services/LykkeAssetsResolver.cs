@@ -8,6 +8,7 @@ namespace Lykke.Service.PayInvoicePortal.Services
 {
     public class LykkeAssetsResolver : ILykkeAssetsResolver
     {
+        private const string _defaultPaymentAssetId = "BTC";
         private readonly AssetsMapSettings _assetsMap;
         private readonly IAssetsServiceWithCache _assetsService;
 
@@ -29,6 +30,16 @@ namespace Lykke.Service.PayInvoicePortal.Services
             }
 
             return asset;
+        }
+
+        public string GetInvoiceCreationPair(string assetId)
+        {
+            if (_assetsMap.InvoiceCreationPairs.TryGetValue(assetId, out string paymentAssetId))
+            {
+                return paymentAssetId;
+            }
+
+            return _defaultPaymentAssetId;
         }
     }
 }

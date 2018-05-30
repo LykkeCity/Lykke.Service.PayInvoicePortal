@@ -22,7 +22,7 @@ namespace Lykke.Service.PayInvoicePortal
                 .ForMember(dest => dest.Status,
                     opt => opt.MapFrom(src => src.Status.ToString()))
                 .ForMember(dest => dest.SettlementAsset,
-                    opt => opt.MapFrom(src => src.SettlementAsset.Id))
+                    opt => opt.MapFrom(src => src.SettlementAssetId))
                 .ForMember(dest => dest.SettlementAssetDisplay,
                     opt => opt.MapFrom(src => src.SettlementAsset.DisplayId))
                 .ForMember(dest => dest.SettlementAssetAccuracy,
