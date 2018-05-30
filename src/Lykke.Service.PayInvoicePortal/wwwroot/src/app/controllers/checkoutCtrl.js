@@ -138,7 +138,7 @@
             vm.model.paymentAmount = data.paymentAmount;
             vm.model.settlementAmount = data.settlementAmount;
             vm.model.paymentAsset = data.paymentAsset;
-            vm.model.paymentAssetDisplay = data.paymentAsset;
+            vm.model.paymentAssetDisplay = data.paymentAssetDisplay;
             vm.model.paymentAssetSelect = data.paymentAsset;
             vm.model.settlementAsset = data.settlementAsset;
             vm.model.settlementAssetDisplay = data.settlementAssetDisplay;
