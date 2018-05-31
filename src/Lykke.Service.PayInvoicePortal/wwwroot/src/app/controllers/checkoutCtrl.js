@@ -10,6 +10,14 @@
     function checkoutCtrl($window, $location, $scope, $log, $interval, $timeout, apiSvc, fileSvc, statusSvc, nzcurrencyFilter) {
         var vm = this;
 
+        var BlockchainType = {
+            None: 'None',
+            Bitcoin: 'Bitcoin',
+            Ethereum: 'Ethereum'
+        };
+
+        var paymentRequestId;
+
         vm.callback = {
             url: ''
         };
@@ -71,7 +79,7 @@
             paidAmount: 0,
             paidDate: null,
             note: '',
-            qrCode: '',
+            qrCodeData: '',
             walletAddress: '',
             files: [],
             waiting: false,
@@ -120,6 +128,7 @@
                 .then(
                     function(data) {
                         vm.model.paymentAssets = data || [];
+                        setQrCodeData();
                     },
                     function(error) {
                         $log.error(error);
@@ -160,22 +169,12 @@
 
             extendedTotalSeconds = data.extendedTotalSeconds;
             extendedRemainingSeconds = data.extendedRemainingSeconds;
+            paymentRequestId = data.paymentRequestId;
 
             updateMessage(data);
 
             if (data.status === 'Unpaid') {
-                // bip21 for BTC
-                // https://github.com/bitcoin/bips/blob/master/bip-0021.mediawiki#examples
-                var labelEncoded = encodeURIComponent('invoice #' + data.number);
-
-                vm.model.qrCode = encodeURIComponent('bitcoin:' +
-                    data.walletAddress +
-                    '?amount=' +
-                    data.paymentAmount +
-                    '&label=' +
-                    labelEncoded +
-                    '&message=' +
-                    data.paymentRequestId);
+                setQrCodeData();
 
                 if (data.remainingSeconds > 0) {
                     // timer before order.DueDate
@@ -191,12 +190,64 @@
 
                 restartTimer();
             } else {
-                vm.model.qrCode = '';
+                vm.model.qrCodeData = '';
                 vm.timer.total = 0;
                 vm.timer.seconds = 0;
                 vm.model.waiting = false;
 
                 updateHeader();
+            }
+        }
+
+        function setQrCodeData() {
+            var labelEncoded = encodeURIComponent('invoice #' + vm.model.number);
+
+            if (vm.model.paymentAssets.length) {
+                var network = getPaymentAssetNetwork();
+
+                switch (network) {
+                    case BlockchainType.Ethereum:
+                        setEthereumQrCodeData();
+                        break;
+                    default:
+                        setBitcoinQrCodeData();
+                }
+            }
+
+            function getPaymentAssetNetwork() {
+                var length = vm.model.paymentAssets.length;
+                for (var i = 0; i < length; i++) {
+                    if (vm.model.paymentAssets[i].id === vm.model.paymentAsset) {
+                        return vm.model.paymentAssets[i].network;
+                    }
+                }
+
+                return '';
+            }
+
+            function setEthereumQrCodeData() {
+                // ethereum:<address>[?value=<value>][?label=<label>][?message=<message>]
+                vm.model.qrCodeData = encodeURIComponent('ethereum:' +
+                    vm.model.walletAddress +
+                    '?value=' +
+                    vm.model.paymentAmount +
+                    '&label=' +
+                    labelEncoded +
+                    '&message=' +
+                    paymentRequestId);
+            }
+
+            function setBitcoinQrCodeData() {
+                // bip21 for BTC https://github.com/bitcoin/bips/blob/master/bip-0021.mediawiki#examples
+                // bitcoin:<address>[?amount=<amount>][?label=<label>][?message=<message>]
+                vm.model.qrCodeData = encodeURIComponent('bitcoin:' +
+                    vm.model.walletAddress +
+                    '?amount=' +
+                    vm.model.paymentAmount +
+                    '&label=' +
+                    labelEncoded +
+                    '&message=' +
+                    paymentRequestId);
             }
         }
 

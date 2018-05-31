@@ -22,8 +22,8 @@
                         <div class="invoice_info clearfix">
                             <div class="invoice_info__left">
                                 <div class="invoice_info__qr" data-ng-class="{'invoice_info__qr--detecting': vm.timer.isExtended}">
-                                    <img class="invoice_info__qr_img_220" data-ng-src="{{vm.const.qrUrlSize220 + vm.model.qrCode}}" alt="qr" width="220" height="220">
-                                    <img class="invoice_info__qr_img_152" data-ng-src="{{vm.const.qrUrlSize152 + vm.model.qrCode}}" alt="qr" width="152" height="152">
+                                    <img class="invoice_info__qr_img_220" data-ng-if="vm.model.qrCodeData" data-ng-src="{{vm.const.qrUrlSize220 + vm.model.qrCodeData}}" alt="qr" width="220" height="220">
+                                    <img class="invoice_info__qr_img_152" data-ng-if="vm.model.qrCodeData" data-ng-src="{{vm.const.qrUrlSize152 + vm.model.qrCodeData}}" alt="qr" width="152" height="152">
                                 </div>
                                 <div class="invoice_info__loader">
                                     <div class="pie" data-ng-class="{'pie--orange': vm.timer.isExtended}">
