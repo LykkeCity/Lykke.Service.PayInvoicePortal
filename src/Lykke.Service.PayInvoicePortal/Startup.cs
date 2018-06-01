@@ -30,7 +30,8 @@ namespace Lykke.Service.PayInvoicePortal
         public ILog Log { get; private set; }
 
         internal static string BlockchainExplorerUrl;
-        
+        internal static string EthereumBlockchainExplorerUrl;
+
         public Startup(IHostingEnvironment env)
         {
             var builder = new ConfigurationBuilder()
@@ -93,6 +94,7 @@ namespace Lykke.Service.PayInvoicePortal
                 var builder = new ContainerBuilder();
                 Log = CreateLogWithSlack(services, appSettings);
                 BlockchainExplorerUrl = appSettings.CurrentValue.PayInvoicePortal.BlockchainExplorerUrl;
+                EthereumBlockchainExplorerUrl = appSettings.CurrentValue.PayInvoicePortal.EthereumBlockchainExplorerUrl;
 
                 builder.RegisterModule(new Repositories.AutofacModule(
                     appSettings.Nested(o => o.PayInvoicePortal.Db.SubscriptionConnectionString), Log));

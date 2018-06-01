@@ -27,6 +27,8 @@ namespace Lykke.Service.PayInvoicePortal
                     opt => opt.MapFrom(src => src.SettlementAsset.DisplayId))
                 .ForMember(dest => dest.SettlementAssetAccuracy,
                     opt => opt.MapFrom(src => src.SettlementAsset.Accuracy))
+                .ForMember(dest => dest.PaymentAsset, opt => opt.MapFrom(src => src.PaymentAssetId))
+                .ForMember(dest => dest.PaymentAssetNetwork, opt => opt.Ignore())
                 .ForMember(dest => dest.Files,
                     opt => opt.Ignore())
                 .ForMember(dest => dest.History,

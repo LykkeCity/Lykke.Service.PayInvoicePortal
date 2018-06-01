@@ -89,6 +89,7 @@ namespace Lykke.Service.PayInvoicePortal.Services
                 Status = invoice.Status,
                 SettlementAssetId = invoice.SettlementAssetId,
                 SettlementAsset = settlementAsset,
+                PaymentAssetId = invoice.PaymentAssetId,
                 WalletAddress = paymentRequest?.WalletAddress,
                 CreatedDate = invoice.CreatedDate,
                 Note = invoice.Note
