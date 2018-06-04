@@ -87,7 +87,9 @@ namespace Lykke.Service.PayInvoicePortal.Services
                 Amount = invoice.Amount,
                 DueDate = invoice.DueDate,
                 Status = invoice.Status,
+                SettlementAssetId = invoice.SettlementAssetId,
                 SettlementAsset = settlementAsset,
+                PaymentAssetId = invoice.PaymentAssetId,
                 WalletAddress = paymentRequest?.WalletAddress,
                 CreatedDate = invoice.CreatedDate,
                 Note = invoice.Note
@@ -250,7 +252,9 @@ namespace Lykke.Service.PayInvoicePortal.Services
                 Merchant = merchant,
                 PaymentAmount = order.PaymentAmount,
                 SettlementAmount = invoice.Amount,
+                PaymentAssetId = invoice.PaymentAssetId,
                 PaymentAsset = paymentAsset,
+                SettlementAssetId = invoice.SettlementAssetId,
                 SettlementAsset = settlementAsset,
                 ExchangeRate = order.ExchangeRate,
                 DeltaSpread = markupForMerchant.DeltaSpread > 0,
@@ -279,6 +283,8 @@ namespace Lykke.Service.PayInvoicePortal.Services
 
         public async Task<Invoice> CreateAsync(CreateInvoiceModel model, bool draft)
         {
+            model.PaymentAssetId = _lykkeAssetsResolver.GetInvoiceCreationPair(model.SettlementAssetId);
+
             InvoiceModel invoice;
 
             if (draft)
@@ -305,11 +311,20 @@ namespace Lykke.Service.PayInvoicePortal.Services
 
         public async Task UpdateAsync(UpdateInvoiceModel model, bool draft)
         {
-            await _payInvoiceClient.UpdateDraftInvoiceAsync(model);
+            model.PaymentAssetId = _lykkeAssetsResolver.GetInvoiceCreationPair(model.SettlementAssetId);
 
-            if (!draft)
+            try
             {
-                await _payInvoiceClient.CreateInvoiceAsync(model.Id);
+                await _payInvoiceClient.UpdateDraftInvoiceAsync(model);
+
+                if (!draft)
+                {
+                    await _payInvoiceClient.CreateInvoiceAsync(model.Id);
+                }
+            }
+            catch (ErrorResponseException ex)
+            {
+                throw new InvalidOperationException(ex.Message);
             }
         }
 

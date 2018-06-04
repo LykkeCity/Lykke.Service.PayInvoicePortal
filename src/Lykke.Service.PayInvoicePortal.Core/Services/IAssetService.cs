@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
-using Lykke.Service.Assets.Client.Models;
+using Lykke.Service.PayInternal.Client.Models;
 
 namespace Lykke.Service.PayInvoicePortal.Core.Services
 {
@@ -8,5 +8,6 @@ namespace Lykke.Service.PayInvoicePortal.Core.Services
     {
         Task<IReadOnlyDictionary<string, string>> GetSettlementAssetsAsync(string merchantId);
         Task<IReadOnlyDictionary<string, string>> GetPaymentAssetsAsync(string merchantId, string settlementAssetId);
+        Task<IReadOnlyDictionary<string, BlockchainType>> GetAssetsNetworkAsync();
     }
 }

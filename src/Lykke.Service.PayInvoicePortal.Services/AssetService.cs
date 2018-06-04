@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Common.Log;
 using Lykke.Service.Assets.Client.Models;
 using Lykke.Service.PayInternal.Client;
+using Lykke.Service.PayInternal.Client.Models;
 using Lykke.Service.PayInternal.Client.Models.Asset;
 using Lykke.Service.PayInvoicePortal.Core.Services;
 
@@ -64,10 +66,30 @@ namespace Lykke.Service.PayInvoicePortal.Services
 
                     result.TryAdd(assetId, asset?.DisplayId ?? assetId);
                 }
+
             }
             catch (Exception exception)
             {
                 _log.WriteError(nameof(GetPaymentAssetsAsync), new { merchantId }, exception);
+            }
+
+            return result;
+        }
+
+        public async Task<IReadOnlyDictionary<string, BlockchainType>> GetAssetsNetworkAsync()
+        {
+            var result = new Dictionary<string, BlockchainType>();
+
+            try
+            {
+                IEnumerable<AssetGeneralSettingsResponse> response =
+                    await _payInternalClient.GetAssetGeneralSettingsAsync();
+
+                result = response.ToDictionary(x => x.AssetDisplayId, x => x.Network);
+            }
+            catch (Exception exception)
+            {
+                _log.WriteError(nameof(GetAssetsNetworkAsync), null, exception);
             }
 
             return result;

@@ -3,6 +3,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Common.Log;
 using Lykke.Service.Assets.Client.Models;
+using Lykke.Service.PayInternal.Client.Models;
 using Lykke.Service.PayInvoicePortal.Core.Services;
 using Lykke.Service.PayInvoicePortal.Extensions;
 using Lykke.Service.PayInvoicePortal.Models;
@@ -31,7 +32,7 @@ namespace Lykke.Service.PayInvoicePortal.Controllers.Api
         {
             IReadOnlyDictionary<string, string> assets = await _assetService.GetSettlementAssetsAsync(User.GetMerchantId());
 
-            var model = assets.Select(o => new ItemViewModel(o.Key, o.Value));
+            var model = assets.Select(o => new AssetItemViewModel(o.Key, o.Value));
             
             return Json(model);
         }
@@ -42,7 +43,14 @@ namespace Lykke.Service.PayInvoicePortal.Controllers.Api
         {
             IReadOnlyDictionary<string, string> assets = await _assetService.GetPaymentAssetsAsync(merchantId, settlementAssetId);
 
-            var model = assets.Select(o => new ItemViewModel(o.Key, o.Value));
+            IReadOnlyDictionary<string, BlockchainType> assetsNetwork = await _assetService.GetAssetsNetworkAsync();
+
+            var model = assets.Select(o => new AssetItemViewModel
+            {
+                Id = o.Key,
+                Title = o.Value,
+                Network = assetsNetwork.TryGetValue(o.Key, out var network) ? network : BlockchainType.None
+            });
 
             return Json(model);
         }

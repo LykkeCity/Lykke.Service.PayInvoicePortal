@@ -22,11 +22,13 @@ namespace Lykke.Service.PayInvoicePortal
                 .ForMember(dest => dest.Status,
                     opt => opt.MapFrom(src => src.Status.ToString()))
                 .ForMember(dest => dest.SettlementAsset,
-                    opt => opt.MapFrom(src => src.SettlementAsset.Id))
+                    opt => opt.MapFrom(src => src.SettlementAssetId))
                 .ForMember(dest => dest.SettlementAssetDisplay,
                     opt => opt.MapFrom(src => src.SettlementAsset.DisplayId))
                 .ForMember(dest => dest.SettlementAssetAccuracy,
                     opt => opt.MapFrom(src => src.SettlementAsset.Accuracy))
+                .ForMember(dest => dest.PaymentAsset, opt => opt.MapFrom(src => src.PaymentAssetId))
+                .ForMember(dest => dest.PaymentAssetNetwork, opt => opt.Ignore())
                 .ForMember(dest => dest.Files,
                     opt => opt.Ignore())
                 .ForMember(dest => dest.History,
@@ -55,13 +57,13 @@ namespace Lykke.Service.PayInvoicePortal
                 .ForMember(dest => dest.Merchant,
                     opt => opt.MapFrom(src => src.Merchant.DisplayName))
                 .ForMember(dest => dest.SettlementAsset,
-                    opt => opt.MapFrom(src => src.SettlementAsset.Id))
+                    opt => opt.MapFrom(src => src.SettlementAssetId))
                 .ForMember(dest => dest.SettlementAssetDisplay,
                     opt => opt.MapFrom(src => src.SettlementAsset.DisplayId))
                 .ForMember(dest => dest.SettlementAssetAccuracy,
                     opt => opt.MapFrom(src => src.SettlementAsset.Accuracy))
                 .ForMember(dest => dest.PaymentAsset,
-                    opt => opt.MapFrom(src => src.PaymentAsset.Id))
+                    opt => opt.MapFrom(src => src.PaymentAssetId))
                 .ForMember(dest => dest.PaymentAssetDisplay,
                     opt => opt.MapFrom(src => src.PaymentAsset.DisplayId))
                 .ForMember(dest => dest.PaymentAssetAccuracy,
