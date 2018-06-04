@@ -33,7 +33,9 @@
             deleteInvoice: deleteInvoice,
 
             getPaymentDetails: getPaymentDetails,
-            getPaymentStatus: getPaymentStatus
+            refreshPaymentDetails: refreshPaymentDetails,
+            getPaymentStatus: getPaymentStatus,
+            changePaymentAsset: changePaymentAsset
         };
 
         return service;
@@ -138,8 +140,16 @@
             return get('payments/' + invoiceId, {});
         }
 
+        function refreshPaymentDetails(invoiceId) {
+            return get('payments/refresh/' + invoiceId, {});
+        }
+
         function getPaymentStatus(invoiceId) {
             return get('payments/' + invoiceId + '/status', {});
+        }
+
+        function changePaymentAsset(invoiceId, paymentAssetId) {
+            return post('payments/changeasset/' + invoiceId + '/' + paymentAssetId)
         }
 
         // Private

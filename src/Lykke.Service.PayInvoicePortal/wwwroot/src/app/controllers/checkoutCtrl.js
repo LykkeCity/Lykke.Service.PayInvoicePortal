@@ -5,9 +5,9 @@
         .module('app')
         .controller('checkoutCtrl', checkoutCtrl);
 
-    checkoutCtrl.$inject = ['$window', '$location', '$scope', '$log', '$interval', '$timeout', 'apiSvc', 'fileSvc', 'statusSvc', 'nzcurrencyFilter'];
+    checkoutCtrl.$inject = ['$window', '$location', '$rootScope', '$scope', '$log', '$interval', '$timeout', 'apiSvc', 'fileSvc', 'statusSvc', 'nzcurrencyFilter', 'confirmModalSvc'];
 
-    function checkoutCtrl($window, $location, $scope, $log, $interval, $timeout, apiSvc, fileSvc, statusSvc, nzcurrencyFilter) {
+    function checkoutCtrl($window, $location, $rootScope, $scope, $log, $interval, $timeout, apiSvc, fileSvc, statusSvc, nzcurrencyFilter, confirmModalSvc) {
         var vm = this;
 
         var BlockchainType = {
@@ -17,6 +17,10 @@
         };
 
         var paymentRequestId;
+
+        vm.view = {
+            paymentAssetUpdating: false
+        };
 
         vm.callback = {
             url: ''
@@ -111,7 +115,20 @@
                     return vm.model.paymentAssetSelect;
                 },
                 function(newValue, oldValue) {
-                    console.log('newValue, oldValue', newValue, oldValue);
+                    // console.log('newValue, oldValue', newValue, oldValue);
+                    // console.log('vm.model.paymentAssetSelect, vm.model.paymentAsset', vm.model.paymentAssetSelect, vm.model.paymentAsset);
+                    if (vm.model.paymentAssetSelect !== vm.model.paymentAsset) {
+                        confirmModalSvc.open({
+                            content: 'Are you sure you want to change payment asset?',
+                            yesAction: function () {
+                                changePaymentAsset(vm.model.id, vm.model.paymentAssetSelect);
+                            },
+                            closeAction: function() {
+                                vm.model.paymentAssetSelect = oldValue;
+                                $rootScope.$broadcast('changeSelectPicker', {paymentAssetSelect: oldValue});
+                            }
+                        });
+                    }
                 });
         }
 
@@ -401,6 +418,8 @@
                             if (!gotoCallbackUrl(data.status)) {
                                 updateDetails();
                             }
+                        } else if (data.paymentRequestId !== paymentRequestId) {
+                            updateDetails();
                         }
                         startStatusTimeout();
                     },
@@ -408,6 +427,27 @@
                         $log.error(error);
                         startStatusTimeout();
                     });
+        }
+
+        function changePaymentAsset(invoiceId, paymentAssetId) {
+            vm.view.paymentAssetUpdating = true;
+            stopStatusTimeout();
+            apiSvc.changePaymentAsset(invoiceId, paymentAssetId)
+                .then(
+                    function (data) {
+                        if (!data) {
+                            $window.location.href = $window.location.href;
+                        }
+
+                        apply(data);
+                    },
+                    function (error) {
+                        $log.error(error);
+                    })
+                .finally(function() {
+                    startStatusTimeout();
+                    vm.view.paymentAssetUpdating = false;
+                });
         }
 
         function tick() {
@@ -433,7 +473,18 @@
             vm.timer.mins = 0;
             updatePie();
 
-            updateDetails();
+            apiSvc.refreshPaymentDetails(vm.model.id)
+                .then(
+                    function (data) {
+                        if (!data) {
+                            $window.location.href = $window.location.href;
+                        }
+
+                        apply(data);
+                    },
+                    function (error) {
+                        $log.error(error);
+                    });
         }
 
         function updatePie() {
