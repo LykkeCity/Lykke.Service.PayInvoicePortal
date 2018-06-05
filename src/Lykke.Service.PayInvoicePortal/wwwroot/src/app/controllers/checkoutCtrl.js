@@ -393,7 +393,7 @@
             }
         }
 
-        function updateDetails() {
+        function updateDetails(isPaymentRequestChanged) {
             apiSvc.getPaymentDetails(vm.model.id)
                 .then(
                     function (data) {
@@ -402,6 +402,10 @@
                         }
 
                         apply(data);
+
+                        if (isPaymentRequestChanged) {
+                            $rootScope.$broadcast('changeSelectPicker');
+                        }
                     },
                     function (error) {
                         $log.error(error);
@@ -419,7 +423,7 @@
                                 updateDetails();
                             }
                         } else if (data.paymentRequestId !== paymentRequestId) {
-                            updateDetails();
+                            updateDetails(true);
                         }
                         startStatusTimeout();
                     },
