@@ -90,6 +90,7 @@ namespace Lykke.Service.PayInvoicePortal.Services
                 SettlementAssetId = invoice.SettlementAssetId,
                 SettlementAsset = settlementAsset,
                 PaymentAssetId = invoice.PaymentAssetId,
+                PaymentRequestId = invoice.PaymentRequestId,
                 WalletAddress = paymentRequest?.WalletAddress,
                 CreatedDate = invoice.CreatedDate,
                 Note = invoice.Note
@@ -274,11 +275,31 @@ namespace Lykke.Service.PayInvoicePortal.Services
             };
         }
 
-        public async Task<InvoiceStatus> GetStatusAsync(string invoiceId)
+        public async Task<InvoiceStatusModel> GetStatusAsync(string invoiceId)
         {
             InvoiceModel invoice = await _payInvoiceClient.GetInvoiceAsync(invoiceId);
 
-            return invoice.Status;
+            var model = new InvoiceStatusModel
+            {
+                Status = invoice.Status.ToString(),
+                PaymentRequestId = invoice.PaymentRequestId
+            };
+
+            return model;
+        }
+
+        public async Task<InvoiceModel> ChangePaymentAssetAsync(string invoiceId, string paymentRequestId)
+        {
+            try
+            {
+                InvoiceModel invoice = await _payInvoiceClient.ChangePaymentAssetAsync(invoiceId, paymentRequestId);
+
+                return invoice;
+            }
+            catch (ErrorResponseException ex)
+            {
+                throw new InvalidOperationException(ex.Message);
+            }
         }
 
         public async Task<Invoice> CreateAsync(CreateInvoiceModel model, bool draft)

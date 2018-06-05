@@ -16,7 +16,9 @@ namespace Lykke.Service.PayInvoicePortal.Core.Services
 
         Task<PaymentDetails> GetPaymentDetailsAsync(string invoiceId, bool force);
 
-        Task<InvoiceStatus> GetStatusAsync(string invoiceId);
+        Task<InvoiceStatusModel> GetStatusAsync(string invoiceId);
+
+        Task<InvoiceModel> ChangePaymentAssetAsync(string invoiceId, string paymentRequestId);
 
         Task<Invoice> CreateAsync(CreateInvoiceModel model, bool draft);
 

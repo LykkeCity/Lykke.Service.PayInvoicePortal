@@ -9,6 +9,7 @@ using Lykke.Service.PayInvoicePortal.Core.Domain;
 using Lykke.Service.PayInvoicePortal.Core.Services;
 using Lykke.Service.PayInvoicePortal.Models;
 using Lykke.Service.PayInvoicePortal.Models.Invoice;
+using Lykke.Service.PayInvoicePortal.Models.Invoices;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Lykke.Service.PayInvoicePortal.Controllers.Api
@@ -31,31 +32,71 @@ namespace Lykke.Service.PayInvoicePortal.Controllers.Api
         [Route("{InvoiceId}")]
         public async Task<IActionResult> Details(string invoiceId)
         {
-            PaymentDetails paymentDetails = await _invoiceService.GetPaymentDetailsAsync(invoiceId, force: true);
+            var result = await GetPaymentDetailsAsync(invoiceId, force: false);
+            
+            return Json(result);
+        }
 
-            if (paymentDetails == null)
-            {
-                return Json(null);
-            }
+        [HttpGet]
+        [Route("refresh/{InvoiceId}")]
+        public async Task<IActionResult> RefreshDetails(string invoiceId)
+        {
+            var result = await GetPaymentDetailsAsync(invoiceId, force: true);
 
-            IReadOnlyList<FileInfoModel> files = await _invoiceService.GetFilesAsync(invoiceId);
-
-            var model = Mapper.Map<PaymentDetailsModel>(paymentDetails);
-            model.Files = Mapper.Map<List<FileModel>>(files);
-
-            return Json(model);
+            return Json(result);
         }
 
         [HttpGet]
         [Route("{InvoiceId}/status")]
         public async Task<IActionResult> Status(string invoiceId)
         {
-            InvoiceStatus status = await _invoiceService.GetStatusAsync(invoiceId);
+            InvoiceStatusModel model = await _invoiceService.GetStatusAsync(invoiceId);
+            
+            return Json(model);
+        }
 
-            return Json(new
+        [HttpPost]
+        [Route("changeasset/{invoiceId}/{paymentAssetId}")]
+        public async Task<IActionResult> ChangePaymentAssetAsync(string invoiceId, string paymentAssetId)
+        {
+            try
             {
-                status = status.ToString()
-            });
+                await _invoiceService.ChangePaymentAssetAsync(invoiceId, paymentAssetId);
+
+                var result = await GetPaymentDetailsAsync(invoiceId, force: false);
+
+                return Json(result);
+            }
+            catch (InvalidOperationException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        /// <summary>
+        /// Get payment details from Invoice, PaymentRequest and Order
+        /// </summary>
+        /// <param name="force">Will force to create new order if the actual order is expired but can be considered
+        //     as actual till extended due date</param>
+        private async Task<PaymentDetailsModel> GetPaymentDetailsAsync(string invoiceId, bool force)
+        {
+            PaymentDetails paymentDetails = await _invoiceService.GetPaymentDetailsAsync(invoiceId, force);
+
+            if (paymentDetails == null)
+            {
+                return null;
+            }
+
+            var model = Mapper.Map<PaymentDetailsModel>(paymentDetails);
+            await UpdateFiles(model);
+
+            return model;
+        }
+
+        private async Task UpdateFiles(PaymentDetailsModel model)
+        {
+            IReadOnlyList<FileInfoModel> files = await _invoiceService.GetFilesAsync(model.Id);
+            model.Files = Mapper.Map<List<FileModel>>(files);
         }
     }
 }

@@ -49,8 +49,14 @@
                                 </div>
                             </div>
                             <div class="invoice_info__right">
+                                <div data-ng-show="vm.view.paymentAssetUpdating"
+                                     class="payment-asset-changing-loader">
+                                    <div class="spinner">
+                                        <div class="spinner__inside"></div>
+                                    </div>
+                                </div>
                                 <div class="invoice_info__row"
-                                     data-ng-class="{'invoice_info__row--detecting': vm.timer.isExtended}">
+                                     data-ng-class="{'invoice_info__row--detecting': vm.timer.isExtended || vm.view.paymentAssetUpdating}">
                                     <div class="invoice_info__value">
                                         <span>{{vm.model.paymentAmount | nzcurrency : vm.model.paymentAssetAccuracy}} </span>
                                         <span data-ng-hide="vm.model.paymentAssets.length > 1">{{vm.model.paymentAssetDisplay}}</span>
