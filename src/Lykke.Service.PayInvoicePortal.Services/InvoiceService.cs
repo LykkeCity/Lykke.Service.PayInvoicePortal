@@ -275,11 +275,17 @@ namespace Lykke.Service.PayInvoicePortal.Services
             };
         }
 
-        public async Task<InvoiceModel> GetStatusAsync(string invoiceId)
+        public async Task<InvoiceStatusModel> GetStatusAsync(string invoiceId)
         {
             InvoiceModel invoice = await _payInvoiceClient.GetInvoiceAsync(invoiceId);
 
-            return invoice;
+            var model = new InvoiceStatusModel
+            {
+                Status = invoice.Status.ToString(),
+                PaymentRequestId = invoice.PaymentRequestId
+            };
+
+            return model;
         }
 
         public async Task<InvoiceModel> ChangePaymentAssetAsync(string invoiceId, string paymentRequestId)

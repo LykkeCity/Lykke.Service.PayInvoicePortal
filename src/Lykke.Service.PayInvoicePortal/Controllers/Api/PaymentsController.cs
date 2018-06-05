@@ -50,12 +50,8 @@ namespace Lykke.Service.PayInvoicePortal.Controllers.Api
         [Route("{InvoiceId}/status")]
         public async Task<IActionResult> Status(string invoiceId)
         {
-            PayInvoice.Client.Models.Invoice.InvoiceModel invoice = await _invoiceService.GetStatusAsync(invoiceId);
-            var model = new InvoiceStatusModel
-            {
-                Status = invoice.Status.ToString(),
-                PaymentRequestId = invoice.PaymentRequestId
-            };
+            InvoiceStatusModel model = await _invoiceService.GetStatusAsync(invoiceId);
+            
             return Json(model);
         }
 
