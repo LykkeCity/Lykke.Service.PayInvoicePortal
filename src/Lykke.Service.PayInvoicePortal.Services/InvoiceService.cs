@@ -421,10 +421,9 @@ namespace Lykke.Service.PayInvoicePortal.Services
                 rateDictionary.Add(assetId, rate);
             }
 
-            bool IsPaidStatus(InvoiceStatus invoiceStatus)
+            bool IsOtherPaidStatuses(InvoiceStatus invoiceStatus)
             {
-                return invoiceStatus == InvoiceStatus.Paid
-                    || invoiceStatus == InvoiceStatus.Overpaid
+                return invoiceStatus == InvoiceStatus.Overpaid
                     || invoiceStatus == InvoiceStatus.Underpaid
                     || invoiceStatus == InvoiceStatus.LatePaid;
             }
@@ -441,7 +440,7 @@ namespace Lykke.Service.PayInvoicePortal.Services
                 
                 foreach (var invoice in group)
                 {
-                    var amount = IsPaidStatus(invoice.Status)
+                    var amount = IsOtherPaidStatuses(invoice.Status)
                         ? (double)invoice.PaidAmount * rateDictionary[invoice.PaymentAssetId]
                         : (double)invoice.Amount * rateDictionary[invoice.SettlementAssetId];
 
@@ -454,11 +453,13 @@ namespace Lykke.Service.PayInvoicePortal.Services
                         mainStatistic.Add(invoice.Status, amount);
                     }
 
-                    if (IsPaidStatus(group.Key))
+                    //TODO make calculation for OtherPaidStatuses in balance task
+                    if (group.Key == InvoiceStatus.Paid
+                        || IsOtherPaidStatuses(group.Key))
                     {
                         balance += amount;
                     }
-                    
+
                     // summary
                     if (summaryStatisticGrouppedByAsset.ContainsKey(invoice.SettlementAssetId))
                     {
