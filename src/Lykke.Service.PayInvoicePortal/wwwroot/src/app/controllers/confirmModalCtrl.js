@@ -85,7 +85,7 @@
                 e.preventDefault();
                 e.stopPropagation();
 
-                closeModal();
+                close();
             }
         }
     }
