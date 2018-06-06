@@ -1,13 +1,15 @@
 ﻿using System.Collections.Generic;
 using System.Security.Claims;
 using System.Threading.Tasks;
-using Common.Log;
 using Lykke.Service.PayInvoicePortal.Models.Auth;
 using Lykke.Service.PayInvoice.Client.Models.Employee;
 using Lykke.Service.PayInvoicePortal.Core.Services;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Mvc;
+using Lykke.Service.PayInternal.Client;
+using System.Linq;
+using Lykke.Service.PayInternal.Client.Models.SupervisorMembership;
 
 namespace Lykke.Service.PayInvoicePortal.Controllers
 {
@@ -15,14 +17,14 @@ namespace Lykke.Service.PayInvoicePortal.Controllers
     public class AuthController : Controller
     {
         private readonly IAuthService _authService;
-        private readonly ILog _log;
+        private readonly IPayInternalClient _payInternalClient;
 
         public AuthController(
             IAuthService authService,
-            ILog log)
+            IPayInternalClient payInternalClient)
         {
             _authService = authService;
-            _log = log;
+            _payInternalClient = payInternalClient;
         }
 
         [HttpGet]
@@ -56,10 +58,16 @@ namespace Lykke.Service.PayInvoicePortal.Controllers
                 return View(vm);
             }
 
+            SupervisorMembershipResponse supervisorMembership =
+                await _payInternalClient.GetSupervisorMembershipAsync(employee.Id);
+
+            bool isSupervisor = supervisorMembership?.MerchantGroups.Any() ?? false;
+
             var claims = new List<Claim>
             {
                 new Claim(ClaimTypes.Sid, employee.Id),
                 new Claim(ClaimTypes.UserData, employee.MerchantId),
+                new Claim(ClaimTypes.Actor, isSupervisor.ToString()),
                 new Claim(ClaimTypes.Name, $"{employee.FirstName} {employee.LastName}")
             };
 
