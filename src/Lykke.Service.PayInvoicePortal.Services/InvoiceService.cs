@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Linq.Dynamic.Core;
 using System.Net;
@@ -22,10 +21,8 @@ using Lykke.Service.PayInvoicePortal.Core.Domain.Settings.ServiceSettings;
 using Lykke.Service.PayInvoicePortal.Core.Domain.Statistic;
 using Lykke.Service.PayInvoicePortal.Core.Services;
 using Lykke.Service.RateCalculator.Client;
-using Lykke.Service.RateCalculator.Client.AutorestClient.Models;
 using Microsoft.Extensions.Caching.Memory;
-using Microsoft.Extensions.Options;
-using Lykke.Service.PayInternal.Client.Models.Supervisor;
+using Lykke.Service.PayInternal.Client.Models.SupervisorMembership;
 
 namespace Lykke.Service.PayInvoicePortal.Services
 {
@@ -544,19 +541,14 @@ namespace Lykke.Service.PayInvoicePortal.Services
             int skip,
             int take)
         {
-            var supervising = new SupervisingMerchantsResponse();
-            try
-            {
-                supervising = await _payInternalClient.GetSupervisingMerchantsAsync(merchantId, employeeId);
-            }
-            catch (Exception ex)
-            {
+            MerchantsSupervisorMembershipResponse membership =
+                await _payInternalClient.GetSupervisorMembershipWithMerchantsAsync(employeeId);
 
-            }
             var invoiceslist = new List<InvoiceModel>();
-            if (supervising.Merchants != null)
+
+            if (membership?.Merchants.Any() ?? false)
             {
-                foreach (var merchant in supervising.Merchants)
+                foreach (var merchant in membership.Merchants)
                 {
                     var invoices = await _payInvoiceClient.GetMerchantInvoicesAsync(merchant);
                     invoiceslist.AddRange(invoices);

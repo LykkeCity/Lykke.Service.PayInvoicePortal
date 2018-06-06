@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Security.Claims;
 using System.Threading.Tasks;
-using Common.Log;
 using Lykke.Service.PayInvoicePortal.Models.Auth;
 using Lykke.Service.PayInvoice.Client.Models.Employee;
 using Lykke.Service.PayInvoicePortal.Core.Services;
@@ -9,7 +8,8 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Mvc;
 using Lykke.Service.PayInternal.Client;
-using System;
+using System.Linq;
+using Lykke.Service.PayInternal.Client.Models.SupervisorMembership;
 
 namespace Lykke.Service.PayInvoicePortal.Controllers
 {
@@ -18,16 +18,13 @@ namespace Lykke.Service.PayInvoicePortal.Controllers
     {
         private readonly IAuthService _authService;
         private readonly IPayInternalClient _payInternalClient;
-        private readonly ILog _log;
 
         public AuthController(
             IAuthService authService,
-            IPayInternalClient payInternalClient,
-            ILog log)
+            IPayInternalClient payInternalClient)
         {
             _authService = authService;
             _payInternalClient = payInternalClient;
-            _log = log;
         }
 
         [HttpGet]
@@ -60,17 +57,12 @@ namespace Lykke.Service.PayInvoicePortal.Controllers
                 ModelState.AddModelError(string.Empty, "The e-mail or password you entered incorrect.");
                 return View(vm);
             }
-            IReadOnlyList<string> supervisor = new List<string>();
-            var isSupervisor = false;
-            try
-            {
-                supervisor = (await _payInternalClient.GetSupervisingMerchantsAsync(employee.MerchantId, employee.Id)).Merchants;
-                isSupervisor = supervisor.Count != 0;
-            }
-            catch (Exception ex)
-            {
-                isSupervisor = false;
-            }
+
+            SupervisorMembershipResponse supervisorMembership =
+                await _payInternalClient.GetSupervisorMembershipAsync(employee.Id);
+
+            bool isSupervisor = supervisorMembership?.MerchantGroups.Any() ?? false;
+
             var claims = new List<Claim>
             {
                 new Claim(ClaimTypes.Sid, employee.Id),
