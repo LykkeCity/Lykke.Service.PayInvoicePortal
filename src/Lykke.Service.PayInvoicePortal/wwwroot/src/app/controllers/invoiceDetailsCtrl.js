@@ -10,6 +10,10 @@
     function invoiceDetailsCtrl($scope, $window, $log, $rootScope, apiSvc, statusSvc, fileSvc, confirmModalSvc) {
         var vm = this;
 
+        var BlockchainType = {
+            Ethereum: 'Ethereum'
+        };
+
         vm.events = {
             invoiceDraftUpdated: undefined
         };
@@ -18,7 +22,8 @@
             allowDelete: false,
             allowEdit: false,
             allowPay: false,
-            showBcnLink: false
+            showBcnLink: false,
+            isEthereumPaymentAsset: false
         };
 
         vm.model = {
@@ -168,8 +173,9 @@
             vm.form.allowPay = data.status === 'Unpaid';
             vm.form.allowEdit = data.status === 'Draft';
             vm.form.allowDelete = data.status === 'Draft' || data.status === 'Unpaid';
-            vm.form.showBcnLink = vm.model.walletAddress 
+            vm.form.showBcnLink = vm.model.walletAddress
                 && ['InProgress', 'Paid', 'Underpaid', 'Overpaid', 'LatePaid', 'RefundInProgress', 'Refunded', 'NotConfirmed', 'InternalError'].indexOf(vm.model.status) > -1;
+            vm.form.isEthereumPaymentAsset = data.paymentAssetNetwork === BlockchainType.Ethereum;
         }
 
         function update() {

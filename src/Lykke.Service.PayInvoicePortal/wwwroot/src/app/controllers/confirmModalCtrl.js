@@ -17,7 +17,8 @@
             title: '',
             content: '',
             showYesBtn: false,
-            yesAction: null
+            yesAction: null,
+            closeAction: null
         };
 
         vm.handlers = {
@@ -53,6 +54,7 @@
             if (data.yesAction) {
                 vm.modal.showYesBtn = true;
                 vm.modal.yesAction = data.yesAction;
+                vm.modal.closeAction = data.closeAction || null;
             } else {
                 vm.modal.showYesBtn = false;
             }
@@ -60,10 +62,17 @@
 
         function yes() {
             vm.modal.yesAction();
-            close();
+            closeModal();
         }
 
         function close() {
+            closeModal();
+            if (vm.modal.closeAction) {
+                vm.modal.closeAction();
+            }
+        }
+
+        function closeModal() {
             if (vm.modal.open) {
                 $rootScope.modalOpened = false;
                 vm.modal.open = false;

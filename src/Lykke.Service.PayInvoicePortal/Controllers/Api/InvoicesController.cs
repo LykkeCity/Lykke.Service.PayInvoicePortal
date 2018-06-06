@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -22,8 +23,6 @@ namespace Lykke.Service.PayInvoicePortal.Controllers.Api
     [Route("/api/invoices")]
     public class InvoicesController : Controller
     {
-        private const string PaymentAssetId = "BTC";
-
         private readonly IInvoiceService _invoiceService;
         private readonly ILog _log;
 
@@ -154,7 +153,6 @@ namespace Lykke.Service.PayInvoicePortal.Controllers.Api
                 ClientEmail = model.Email,
                 Amount = decimal.Parse(model.Amount, CultureInfo.InvariantCulture),
                 SettlementAssetId = model.SettlementAsset,
-                PaymentAssetId = PaymentAssetId,
                 DueDate = model.DueDate,
                 Note = model.Note
             };
@@ -198,12 +196,18 @@ namespace Lykke.Service.PayInvoicePortal.Controllers.Api
                 ClientEmail = model.Email,
                 Amount = decimal.Parse(model.Amount, CultureInfo.InvariantCulture),
                 SettlementAssetId = model.SettlementAsset,
-                PaymentAssetId = PaymentAssetId,
                 DueDate = model.DueDate,
                 Note = model.Note
             };
 
-            await _invoiceService.UpdateAsync(invoice, model.IsDraft);
+            try
+            {
+                await _invoiceService.UpdateAsync(invoice, model.IsDraft);
+            }
+            catch (InvalidOperationException ex)
+            {
+                return BadRequest(ex.Message);
+            }
 
             var result = await GetInvoiceModelById(invoice.Id);
 

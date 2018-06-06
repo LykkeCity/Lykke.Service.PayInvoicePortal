@@ -178,7 +178,13 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="blockchain_settlement_btn" data-ng-if="vm.form.showBcnLink">
+                        <div class="blockchain_settlement_btn" data-ng-if="vm.form.showBcnLink && vm.form.isEthereumPaymentAsset">
+                            <a data-ng-href="@Model.EthereumBlockchainExplorerUrl/address/{{vm.model.walletAddress}}#tokentxns" class="btn btn--flat" target="_blank">
+                                <img src="/img/bl_explorer_logo.svg" width="40" alt="bl_explorer_logo">
+                                <span>Blockchain Settlement</span>
+                            </a>
+                        </div>
+                        <div class="blockchain_settlement_btn" data-ng-if="vm.form.showBcnLink && !vm.form.isEthereumPaymentAsset">
                             <a data-ng-href="@Model.BlockchainExplorerUrl/address/{{vm.model.walletAddress}}" class="btn btn--flat" target="_blank">
                                 <img src="/img/bl_explorer_logo.svg" width="40" alt="bl_explorer_logo">
                                 <span>Blockchain Settlement</span>

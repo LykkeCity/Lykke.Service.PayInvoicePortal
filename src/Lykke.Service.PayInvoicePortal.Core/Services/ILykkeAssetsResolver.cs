@@ -6,5 +6,6 @@ namespace Lykke.Service.PayInvoicePortal.Core.Services
     public interface ILykkeAssetsResolver
     {
         Task<Asset> TryGetAssetAsync(string assetId);
+        string GetInvoiceCreationPair(string assetId);
     }
 }

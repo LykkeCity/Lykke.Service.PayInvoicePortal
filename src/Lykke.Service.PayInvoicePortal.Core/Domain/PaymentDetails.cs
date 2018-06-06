@@ -19,7 +19,17 @@ namespace Lykke.Service.PayInvoicePortal.Core.Domain
 
         public decimal SettlementAmount { get; set; }
 
+        /// <summary>
+        /// In UI we must operate with PaymentAssetId stored in invoice
+        /// </summary>
+        public string PaymentAssetId { get; set; }
+
         public Asset PaymentAsset { get; set; }
+
+        /// <summary>
+        /// In UI we must operate with SettlementAssetId stored in invoice
+        /// </summary>
+        public string SettlementAssetId { get; set; }
 
         public Asset SettlementAsset { get; set; }
 

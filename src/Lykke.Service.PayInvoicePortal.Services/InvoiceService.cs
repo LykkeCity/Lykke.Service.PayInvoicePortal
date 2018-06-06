@@ -88,7 +88,10 @@ namespace Lykke.Service.PayInvoicePortal.Services
                 Amount = invoice.Amount,
                 DueDate = invoice.DueDate,
                 Status = invoice.Status,
+                SettlementAssetId = invoice.SettlementAssetId,
                 SettlementAsset = settlementAsset,
+                PaymentAssetId = invoice.PaymentAssetId,
+                PaymentRequestId = invoice.PaymentRequestId,
                 WalletAddress = paymentRequest?.WalletAddress,
                 CreatedDate = invoice.CreatedDate,
                 Note = invoice.Note
@@ -251,7 +254,9 @@ namespace Lykke.Service.PayInvoicePortal.Services
                 Merchant = merchant,
                 PaymentAmount = order.PaymentAmount,
                 SettlementAmount = invoice.Amount,
+                PaymentAssetId = invoice.PaymentAssetId,
                 PaymentAsset = paymentAsset,
+                SettlementAssetId = invoice.SettlementAssetId,
                 SettlementAsset = settlementAsset,
                 ExchangeRate = order.ExchangeRate,
                 DeltaSpread = markupForMerchant.DeltaSpread > 0,
@@ -271,15 +276,37 @@ namespace Lykke.Service.PayInvoicePortal.Services
             };
         }
 
-        public async Task<InvoiceStatus> GetStatusAsync(string invoiceId)
+        public async Task<InvoiceStatusModel> GetStatusAsync(string invoiceId)
         {
             InvoiceModel invoice = await _payInvoiceClient.GetInvoiceAsync(invoiceId);
 
-            return invoice.Status;
+            var model = new InvoiceStatusModel
+            {
+                Status = invoice.Status.ToString(),
+                PaymentRequestId = invoice.PaymentRequestId
+            };
+
+            return model;
+        }
+
+        public async Task<InvoiceModel> ChangePaymentAssetAsync(string invoiceId, string paymentRequestId)
+        {
+            try
+            {
+                InvoiceModel invoice = await _payInvoiceClient.ChangePaymentAssetAsync(invoiceId, paymentRequestId);
+
+                return invoice;
+            }
+            catch (ErrorResponseException ex)
+            {
+                throw new InvalidOperationException(ex.Message);
+            }
         }
 
         public async Task<Invoice> CreateAsync(CreateInvoiceModel model, bool draft)
         {
+            model.PaymentAssetId = _lykkeAssetsResolver.GetInvoiceCreationPair(model.SettlementAssetId);
+
             InvoiceModel invoice;
 
             if (draft)
@@ -306,11 +333,20 @@ namespace Lykke.Service.PayInvoicePortal.Services
 
         public async Task UpdateAsync(UpdateInvoiceModel model, bool draft)
         {
-            await _payInvoiceClient.UpdateDraftInvoiceAsync(model);
+            model.PaymentAssetId = _lykkeAssetsResolver.GetInvoiceCreationPair(model.SettlementAssetId);
 
-            if (!draft)
+            try
             {
-                await _payInvoiceClient.CreateInvoiceAsync(model.Id);
+                await _payInvoiceClient.UpdateDraftInvoiceAsync(model);
+
+                if (!draft)
+                {
+                    await _payInvoiceClient.CreateInvoiceAsync(model.Id);
+                }
+            }
+            catch (ErrorResponseException ex)
+            {
+                throw new InvalidOperationException(ex.Message);
             }
         }
 
@@ -386,10 +422,9 @@ namespace Lykke.Service.PayInvoicePortal.Services
                 rateDictionary.Add(assetId, rate);
             }
 
-            bool IsPaidStatus(InvoiceStatus invoiceStatus)
+            bool IsOtherPaidStatuses(InvoiceStatus invoiceStatus)
             {
-                return invoiceStatus == InvoiceStatus.Paid
-                    || invoiceStatus == InvoiceStatus.Overpaid
+                return invoiceStatus == InvoiceStatus.Overpaid
                     || invoiceStatus == InvoiceStatus.Underpaid
                     || invoiceStatus == InvoiceStatus.LatePaid;
             }
@@ -406,7 +441,7 @@ namespace Lykke.Service.PayInvoicePortal.Services
                 
                 foreach (var invoice in group)
                 {
-                    var amount = IsPaidStatus(invoice.Status)
+                    var amount = IsOtherPaidStatuses(invoice.Status)
                         ? (double)invoice.PaidAmount * rateDictionary[invoice.PaymentAssetId]
                         : (double)invoice.Amount * rateDictionary[invoice.SettlementAssetId];
 
@@ -419,11 +454,13 @@ namespace Lykke.Service.PayInvoicePortal.Services
                         mainStatistic.Add(invoice.Status, amount);
                     }
 
-                    if (IsPaidStatus(group.Key))
+                    //TODO make calculation for OtherPaidStatuses in balance task
+                    if (group.Key == InvoiceStatus.Paid
+                        || IsOtherPaidStatuses(group.Key))
                     {
                         balance += amount;
                     }
-                    
+
                     // summary
                     if (summaryStatisticGrouppedByAsset.ContainsKey(invoice.SettlementAssetId))
                     {
