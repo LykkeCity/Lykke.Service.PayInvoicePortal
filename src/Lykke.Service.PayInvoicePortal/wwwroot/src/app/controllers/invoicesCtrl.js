@@ -1,4 +1,4 @@
-﻿(function () {
+(function () {
     'use strict';
 
     angular
@@ -17,6 +17,7 @@
 
         vm.model = {
             isFirstLoading: true,
+            isSupervising: ($window.location.pathname.indexOf("Supervising") != -1),
             balance: 0,
             baseAsset: null,
             baseAssetAccuracy: 0,
@@ -100,7 +101,9 @@
         activate();
 
         function activate() {
-            loadInvocies();
+            if (!vm.model.isSupervising)
+                loadInvocies();
+            else loadSupervisingInvocies();
 
             $scope.$watch(
                 function () { return vm.filter.search; },
@@ -173,6 +176,23 @@
                     function(error) {
                         $log.error(error);
                     });
+        }
+
+        function loadSupervisingInvocies() {
+            return apiSvc.getSupervisingInvoices(vm.filter.search,
+                vm.filter.period,
+                getFilterStatuses(),
+                vm.filter.sortField,
+                vm.filter.sortAscending,
+                0,
+                vm.pager.pageSize * vm.pager.page)
+                .then(
+                function (data) {
+                    updateData(data);
+                },
+                function (error) {
+                    $log.error(error);
+                });
         }
 
         function updateData(data) {
@@ -310,7 +330,8 @@
         }
 
         function openDetails(invoice) {
-            $window.location.href = '/invoices/'+invoice.id;
+            if (!vm.model.isSupervising)
+                $window.location.href = '/invoices/'+invoice.id;
         }
 
         function create() {
@@ -337,7 +358,9 @@
 
         function showMore() {
             vm.pager.page++;
-            loadInvocies();
+            if (!vm.model.isSupervising)
+                loadInvocies();
+            else loadSupervisingInvocies();
         }
 
         function showNoResults() {

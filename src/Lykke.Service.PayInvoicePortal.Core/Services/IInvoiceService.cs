@@ -45,5 +45,16 @@ namespace Lykke.Service.PayInvoicePortal.Core.Services
             string searchValue,
             string sortField,
             bool sortAscending);
+
+        Task<InvoiceSource> GetSupervisingAsync(
+            string merchantId,
+            string employeeId,
+            IReadOnlyList<InvoiceStatus> status,
+            Period period,
+            string searchValue,
+            string sortField,
+            bool sortAscending,
+            int skip,
+            int take);
     }
 }

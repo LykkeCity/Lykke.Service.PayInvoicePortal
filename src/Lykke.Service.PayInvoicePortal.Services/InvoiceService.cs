@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Linq.Dynamic.Core;
 using System.Net;
@@ -22,9 +21,8 @@ using Lykke.Service.PayInvoicePortal.Core.Domain.Settings.ServiceSettings;
 using Lykke.Service.PayInvoicePortal.Core.Domain.Statistic;
 using Lykke.Service.PayInvoicePortal.Core.Services;
 using Lykke.Service.RateCalculator.Client;
-using Lykke.Service.RateCalculator.Client.AutorestClient.Models;
 using Microsoft.Extensions.Caching.Memory;
-using Microsoft.Extensions.Options;
+using Lykke.Service.PayInternal.Client.Models.SupervisorMembership;
 
 namespace Lykke.Service.PayInvoicePortal.Services
 {
@@ -508,6 +506,85 @@ namespace Lykke.Service.PayInvoicePortal.Services
                 SummaryStatistic = summaryStatistic.Values,
                 Rates = rateDictionary,
                 HasErrorsInStatistic = rateDictionary.ContainsValue(0)
+            };
+
+            if (status.Count > 0)
+            {
+                source.Items = result
+                    .Where(o => status.Contains(o.Status))
+                    .Skip(skip)
+                    .Take(take)
+                    .ToList();
+            }
+            else
+            {
+                source.Items = result
+                    .Skip(skip)
+                    .Take(take)
+                    .ToList();
+            }
+
+            foreach (InvoiceStatus value in Enum.GetValues(typeof(InvoiceStatus)))
+                source.CountPerStatus[value] = result.Count(o => o.Status == value);
+
+            return source;
+        }
+
+        public async Task<InvoiceSource> GetSupervisingAsync(
+            string merchantId,
+            string employeeId,
+            IReadOnlyList<InvoiceStatus> status,
+            Period period,
+            string searchValue,
+            string sortField,
+            bool sortAscending,
+            int skip,
+            int take)
+        {
+            MerchantsSupervisorMembershipResponse membership =
+                await _payInternalClient.GetSupervisorMembershipWithMerchantsAsync(employeeId);
+
+            var invoiceslist = new List<InvoiceModel>();
+
+            if (membership?.Merchants.Any() ?? false)
+            {
+                foreach (var merchant in membership.Merchants)
+                {
+                    var invoices = await _payInvoiceClient.GetMerchantInvoicesAsync(merchant);
+
+                    invoiceslist.AddRange(invoices);
+                }
+            }
+
+            var baseAssetIdTuple = await _baseAssetCache.GetOrAddAsync
+            (
+                $"BaseAssetId-{merchantId}",
+                async x =>
+                {
+                    var baseAssetIdResponse = await GetBaseAssetId(merchantId);
+                    return new Tuple<string>(baseAssetIdResponse);
+                },
+                _cacheExpirationPeriods.BaseAsset
+            );
+
+            var baseAssetId = baseAssetIdTuple.Item1;
+
+            Asset baseAsset = await _lykkeAssetsResolver.TryGetAssetAsync(baseAssetId);
+
+            IReadOnlyList<Invoice> result =
+                await FilterAsync(invoiceslist, merchantId, period, searchValue, sortField, sortAscending);
+
+            var source = new InvoiceSource
+            {
+                Total = result.Count,
+                CountPerStatus = new Dictionary<InvoiceStatus, int>(),
+                Balance = 0,
+                BaseAsset = baseAssetId,
+                BaseAssetAccuracy = baseAsset.Accuracy,
+                MainStatistic = new Dictionary<InvoiceStatus, double>(),
+                SummaryStatistic = Enumerable.Empty<SummaryStatisticModel>(),
+                Rates = new Dictionary<string, double>(),
+                HasErrorsInStatistic = false
             };
 
             if (status.Count > 0)
