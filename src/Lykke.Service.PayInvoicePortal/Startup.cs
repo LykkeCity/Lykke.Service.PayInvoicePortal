@@ -48,7 +48,11 @@ namespace Lykke.Service.PayInvoicePortal
             {
                 var appSettings = Configuration.LoadSettings<AppSettings>();
                 
-                services.AddMvc();
+                services.AddMvc()
+                    .AddJsonOptions(options =>
+                    {
+                        options.SerializerSettings.Converters.Add(new Newtonsoft.Json.Converters.StringEnumConverter());
+                    });
 
                 services.AddAuthentication(opts =>
                     {

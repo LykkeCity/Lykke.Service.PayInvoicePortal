@@ -129,6 +129,11 @@
                             </div>
                             <div class="dropdown__container">
                                 <ul class="dropdown__nav">
+                                    @if (!string.IsNullOrWhiteSpace(User.GetName()))
+                                    {
+                                        <li><a href="javascript:;" style="color:#000;cursor:default;">@User.GetName().ToUpper()</a></li>
+                                    }
+
                                     @if (User.IsSupervisor())
                                     {
                                         <li><a href="@Url.Action("Index", "Supervising")">All invoices</a></li>

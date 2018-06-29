@@ -17,6 +17,7 @@
 
             getAssets: getAssets,
             getPaymentAssets: getPaymentAssets,
+            getPaymentAssetsOfMerchant: getPaymentAssetsOfMerchant,
 
             getBalance: getBalance,
 
@@ -28,6 +29,9 @@
 
             getInvoice: getInvoice,
             getInvoices: getInvoices,
+            getIncomingInvoices: getIncomingInvoices,
+            getSumToPay: getSumToPay,
+            payInvoices: payInvoices,
             getSupervisingInvoices: getSupervisingInvoices,
             saveInvoice: saveInvoice,
             updateInvoice: updateInvoice,
@@ -64,6 +68,10 @@
                 merchantId: merchantId,
                 settlementAssetId: settlementAssetId
             });
+        }
+
+        function getPaymentAssetsOfMerchant() {
+            return get("paymentAssetsOfMerchant");
         }
 
         // Balances
@@ -123,6 +131,28 @@
                 });
         }
 
+        function getIncomingInvoices(searchValue, period, statuses, skip, take) {
+            return get('incomingInvoices',
+                {
+                    searchValue: searchValue,
+                    period: period,
+                    statuses: statuses,
+                    skip: skip,
+                    take: take
+                });
+        }
+
+        function getSumToPay(invoicesIds, assetForPay) {
+            return get('incomingInvoices/sum', {
+                invoicesIds: invoicesIds,
+                assetForPay: assetForPay
+            });
+        }
+
+        function payInvoices(model) {
+            return post('incomingInvoices/pay', model);
+        }
+
         function getSupervisingInvoices(searchValue, period, status, sortField, sortAscending, skip, take) {
             return get('invoices/supervising',
                 {
@@ -179,7 +209,7 @@
                     deferred.resolve(data);
                 })
                 .error(function (data, status, headers, config) {
-                    deferred.reject('Error: ' + status);
+                    deferred.reject(data, status);
                 });
 
             return deferred.promise;
@@ -193,7 +223,7 @@
                     deferred.resolve(data);
                 })
                 .error(function (data, status, headers, config) {
-                    deferred.reject('Error: ' + status);
+                    deferred.reject(data, status);
                 });
 
             return deferred.promise;
@@ -207,7 +237,7 @@
                     deferred.resolve(data);
                 })
                 .error(function (data, status, headers, config) {
-                    deferred.reject('Error: ' + status);
+                    deferred.reject(data, status);
                 });
 
             return deferred.promise;
@@ -224,7 +254,7 @@
                     deferred.resolve(data);
                 })
                 .error(function (data, status, headers, config) {
-                    deferred.reject('Error: ' + status);
+                    deferred.reject(data, status);
                 });
 
             return deferred.promise;

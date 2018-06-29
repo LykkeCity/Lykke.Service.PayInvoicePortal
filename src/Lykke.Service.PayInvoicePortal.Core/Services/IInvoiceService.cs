@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using Lykke.Service.PayInvoice.Client.Models.File;
 using Lykke.Service.PayInvoice.Client.Models.Invoice;
 using Lykke.Service.PayInvoicePortal.Core.Domain;
+using Lykke.Service.PayInvoicePortal.Core.Domain.Incoming;
 
 namespace Lykke.Service.PayInvoicePortal.Core.Services
 {
@@ -35,6 +36,14 @@ namespace Lykke.Service.PayInvoicePortal.Core.Services
             string searchValue,
             string sortField,
             bool sortAscending,
+            int skip,
+            int take);
+
+        Task<IncomingInvoicesSource> GetIncomingAsync(
+            string merchantId,
+            IReadOnlyList<InvoiceStatus> statuses,
+            Period period,
+            string searchValue,
             int skip,
             int take);
 

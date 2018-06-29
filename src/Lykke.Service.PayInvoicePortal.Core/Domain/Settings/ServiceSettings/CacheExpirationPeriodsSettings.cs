@@ -8,5 +8,6 @@ namespace Lykke.Service.PayInvoicePortal.Core.Domain.Settings.ServiceSettings
     {
         public TimeSpan BaseAsset { get; set; }
         public TimeSpan Rate { get; set; }
+        public TimeSpan MerchantName { get; set; }
     }
 }

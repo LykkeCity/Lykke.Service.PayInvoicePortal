@@ -22,6 +22,8 @@
 
 @await Html.PartialAsync("/Views/Partials/InvoiceInfo.cshtml")
 
+@await Html.PartialAsync("Partials/InvoicesNav")
+
 <article class="content"
          data-ng-controller="invoicesCtrl as vm"
          ng-cloak>

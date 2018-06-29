@@ -50,6 +50,10 @@ namespace Lykke.Service.PayInvoicePortal.Services
             builder.RegisterType<LykkeAssetsResolver>()
                 .As<ILykkeAssetsResolver>()
                 .WithParameter(TypedParameter.From(_assetsMap));
+
+            builder.RegisterType<MerchantService>()
+                .As<IMerchantService>()
+                .WithParameter(TypedParameter.From(_cacheExpirationPeriods));
         }
     }
 }
