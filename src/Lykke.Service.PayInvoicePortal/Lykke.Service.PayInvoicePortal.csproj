@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.Web">
   <PropertyGroup>
-    <TargetFramework>netcoreapp2.0</TargetFramework>
+    <TargetFramework>netcoreapp2.1</TargetFramework>
     <AssemblyName>Lykke.Service.PayInvoicePortal</AssemblyName>
     <RootNamespace>Lykke.Service.PayInvoicePortal</RootNamespace>
     <Version>1.0.0</Version>
