@@ -131,7 +131,12 @@
                   data-ng-show="vm.view.hasInvoices && vm.model.selectedInvoices.length">
                 <div class="row">
                     <div class="col-sm-3 col-md-4">
-                        <h5>Select <span class="_invoices_count">{{vm.model.selectedInvoices.length}}</span> invoices</h5>
+                        <h5>
+                            <span>Select </span>
+                            <span class="_invoices_count">{{vm.model.selectedInvoices.length}} </span>
+                            <span ng-show="vm.model.selectedInvoices.length === 1">invoice</span>
+                            <span ng-hide="vm.model.selectedInvoices.length === 1">invoices</span>
+                        </h5>
                     </div>
                     <div class="col-xs-4 col-sm-5 col-md-4  text-right">
                         <label for="sum_to_pay" class="control-label">Total amount</label>

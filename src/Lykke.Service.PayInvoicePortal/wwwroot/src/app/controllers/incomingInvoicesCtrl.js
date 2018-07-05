@@ -78,6 +78,7 @@
             isPayLoading: false,
             get isPayDisabled() {
                 return vm.view.isPayLoading
+                    || !vm.model.assetForPay
                     || !(vm.model.sumToPay > 0 && vm.model.sumToPay <= calculatedSumToPay);
             },
             canBeSelected: canBeSelected
