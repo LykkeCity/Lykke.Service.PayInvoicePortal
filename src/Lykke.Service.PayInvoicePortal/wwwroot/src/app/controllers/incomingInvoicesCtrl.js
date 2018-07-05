@@ -12,13 +12,14 @@
 
         var calculatedSumToPay = 0;
         var assetForPayLsKey = 'incomingInvoices_assetForPay';
+        var emptySelectSource = [{id:'', title:'Nothing selected'}];
 
         vm.events = {
             invoicesPaid: undefined
         };
 
         vm.model = {
-            paymentAssets: [],
+            paymentAssets: emptySelectSource,
             baseAsset: '',
             invoices: [],
             selectedInvoices: [],
@@ -90,7 +91,8 @@
             apiSvc.getPaymentAssetsOfMerchant()
                 .then(
                     function(data) {
-                        vm.model.paymentAssets = data || [];
+                        if (data && data.length)
+                            vm.model.paymentAssets = data;
                     },
                     function(error) {
                         $log.error(error);
@@ -190,8 +192,8 @@
 
             if (savedAssetForPay && vm.model.paymentAssets.filter(function(item) { return item.id === savedAssetForPay; }).length) {
                 vm.model.assetForPay = savedAssetForPay;
-            } else {
-                vm.model.assetForPay = vm.model.baseAsset;
+            } else if (vm.model.paymentAssets.length) {
+                vm.model.assetForPay = data.baseAsset || vm.model.paymentAssets[0].id;
             }
             $rootScope.$broadcast('changeSelectPicker');
 
