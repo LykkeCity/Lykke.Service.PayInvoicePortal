@@ -113,7 +113,7 @@ namespace Lykke.Service.PayInvoicePortal.Services
                 .GroupBy(o => o.Status)
                 .Where(o => !_excludeStatusesFromHistory.Contains(o.Key))
                 .SelectMany(o => _getOnlyFirstStatusesFromHistory.Contains(o.Key) 
-                    ? new List<HistoryItemModel> { o.OrderByDescending(s => s.Date).First() }
+                    ? new List<HistoryItemModel> { o.OrderBy(s => s.Date).First() }
                     : o.ToList())
                 .OrderBy(o => o.Date)
                 .ToList();
