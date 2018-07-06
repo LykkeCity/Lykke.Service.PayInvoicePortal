@@ -84,7 +84,7 @@
                 return value;
 
             var parts = author.split(' ');
-            
+
             if (parts.length > 0)
                 value = value + parts[0][0].toUpperCase();
 
@@ -97,7 +97,7 @@
         function init(data) {
             apply(data);
         }
-        
+
         function canEdit() {
             return vm.model.status === 'Draft';
         }
@@ -166,7 +166,7 @@
                 if (item.paidDate)
                     item.paidDate = $window.moment(item.paidDate);
             });
-            
+
 
             vm.model.history = data.history;
 
@@ -175,7 +175,7 @@
             vm.form.allowDelete = data.status === 'Draft' || data.status === 'Unpaid';
             vm.form.showBcnLink = vm.model.walletAddress
                 && ['InProgress', 'Paid', 'Underpaid', 'Overpaid', 'LatePaid', 'RefundInProgress', 'Refunded', 'NotConfirmed', 'InternalError'].indexOf(vm.model.status) > -1;
-            vm.form.isEthereumPaymentAsset = data.paymentAssetNetwork === BlockchainType.Ethereum;
+            vm.form.isEthereumPaymentAsset = data.paymentAssetNetwork.indexOf(BlockchainType.Ethereum) > -1;
         }
 
         function update() {

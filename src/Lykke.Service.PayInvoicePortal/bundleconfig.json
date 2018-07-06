@@ -2,6 +2,8 @@
   {
     "outputFileName": "wwwroot/css/style.css",
     "inputFiles": [
+      // must not include as we have own custom styles 
+      // "wwwroot/lib/bootstrap-select/dist/css/bootstrap-select.css",
       "wwwroot/src/css/vendor/**/*.css",
       "wwwroot/src/css/style.css",
       "wwwroot/src/css/style-custom.css"
@@ -33,6 +35,7 @@
       "wwwroot/lib/fastclick/lib/fastclick.js",
       "wwwroot/lib/moment/moment.js",
       "wwwroot/lib/bootstrap/dist/js/bootstrap.js",
+      "wwwroot/lib/bootstrap-select/dist/js/bootstrap-select.js",
       "wwwroot/lib/angular/angular.js",
       "wwwroot/lib/ng-file-upload/ng-file-upload.js",
       "wwwroot/lib/eonasdan-bootstrap-datetimepicker/src/js/bootstrap-datetimepicker.js",

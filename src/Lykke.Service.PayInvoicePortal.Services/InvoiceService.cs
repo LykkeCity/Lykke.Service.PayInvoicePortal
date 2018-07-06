@@ -23,6 +23,7 @@ using Lykke.Service.PayInvoicePortal.Core.Services;
 using Lykke.Service.RateCalculator.Client;
 using Microsoft.Extensions.Caching.Memory;
 using Lykke.Service.PayInternal.Client.Models.SupervisorMembership;
+using Lykke.Service.PayInvoicePortal.Core.Domain.Incoming;
 
 namespace Lykke.Service.PayInvoicePortal.Services
 {
@@ -30,12 +31,17 @@ namespace Lykke.Service.PayInvoicePortal.Services
     {
         private const string DefaultBaseAssetId = "CHF";
 
-        private readonly HashSet<InvoiceStatus> _excludeStatuses = new HashSet<InvoiceStatus>
+        private readonly HashSet<InvoiceStatus> _excludeStatusesFromHistory = new HashSet<InvoiceStatus>
         {
             InvoiceStatus.InProgress,
             InvoiceStatus.RefundInProgress
         };
-
+        private readonly HashSet<InvoiceStatus> _getOnlyFirstStatusesFromHistory = new HashSet<InvoiceStatus>
+        {
+            InvoiceStatus.Unpaid
+        };
+        private readonly IMerchantService _merchantService;
+        private readonly IAssetService _assetService;
         private readonly IPayInvoiceClient _payInvoiceClient;
         private readonly IPayInternalClient _payInternalClient;
         private readonly IRateCalculatorClient _rateCalculatorClient;
@@ -46,6 +52,8 @@ namespace Lykke.Service.PayInvoicePortal.Services
         private readonly OnDemandDataCache<Tuple<string>> _baseAssetCache;
 
         public InvoiceService(
+            IMerchantService merchantService,
+            IAssetService assetService,
             IPayInvoiceClient payInvoiceClient,
             IPayInternalClient payInternalClient,
             IRateCalculatorClient rateCalculatorClient,
@@ -54,6 +62,8 @@ namespace Lykke.Service.PayInvoicePortal.Services
             CacheExpirationPeriodsSettings cacheExpirationPeriods,
             ILog log)
         {
+            _merchantService = merchantService;
+            _assetService = assetService;
             _payInvoiceClient = payInvoiceClient;
             _payInternalClient = payInternalClient;
             _rateCalculatorClient = rateCalculatorClient;
@@ -101,8 +111,10 @@ namespace Lykke.Service.PayInvoicePortal.Services
 
             history = history
                 .GroupBy(o => o.Status)
-                .Where(o => !_excludeStatuses.Contains(o.Key))
-                .Select(o => o.OrderByDescending(s => s.Date).First())
+                .Where(o => !_excludeStatusesFromHistory.Contains(o.Key))
+                .SelectMany(o => _getOnlyFirstStatusesFromHistory.Contains(o.Key) 
+                    ? new List<HistoryItemModel> { o.OrderBy(s => s.Date).First() }
+                    : o.ToList())
                 .OrderBy(o => o.Date)
                 .ToList();
 
@@ -530,6 +542,35 @@ namespace Lykke.Service.PayInvoicePortal.Services
             return source;
         }
 
+        public async Task<IncomingInvoicesSource> GetIncomingAsync(
+            string merchantId,
+            IReadOnlyList<InvoiceStatus> statuses,
+            Period period,
+            string searchValue,
+            int skip,
+            int take)
+        {
+            IReadOnlyList<string> groupMerchants = await _merchantService.GetGroupMerchantsAsync(merchantId);
+
+            var invoices = await _payInvoiceClient.GetByFilter(groupMerchants, new string[] { merchantId }, statuses.Select(x => x.ToString()), null, null, null, null);
+
+            IReadOnlyList<IncomingInvoiceListItem> result =
+                await FilterInboxAsync(invoices, merchantId, period, searchValue);
+
+            var source = new IncomingInvoicesSource
+            {
+                Total = result.Count,
+                CountPerStatus = new Dictionary<InvoiceStatus, int>(),
+                Items = result.Skip(skip).Take(take).ToList(),
+                BaseAsset = await GetBaseAssetId(merchantId)
+            };
+
+            foreach (InvoiceStatus value in Enum.GetValues(typeof(InvoiceStatus)))
+                source.CountPerStatus[value] = result.Count(o => o.Status == value);
+
+            return source;
+        }
+
         public async Task<InvoiceSource> GetSupervisingAsync(
             string merchantId,
             string employeeId,
@@ -611,17 +652,7 @@ namespace Lykke.Service.PayInvoicePortal.Services
 
         private async Task<string> GetBaseAssetId(string merchantId)
         {
-            var baseAssetId = string.Empty;
-
-            try
-            {
-                var merchantSetting = await _payInvoiceClient.GetMerchantSettingAsync(merchantId);
-                baseAssetId = merchantSetting.BaseAsset;
-            }
-            catch (ErrorResponseException ex) when (ex.StatusCode == HttpStatusCode.NotFound)
-            {
-                baseAssetId = DefaultBaseAssetId;
-            }
+            var baseAssetId = await _assetService.GetBaseAssetId(merchantId) ?? string.Empty;
 
             return baseAssetId;
         }
@@ -645,18 +676,7 @@ namespace Lykke.Service.PayInvoicePortal.Services
                 query = query.OrderByDescending(o => o.CreatedDate);
             }
 
-            if (period != Period.AllTime)
-            {
-                DateTime dateFrom = DateTime.UtcNow.Date.AddDays(1 - DateTime.UtcNow.Day);
-
-                if (period == Period.LastMonth)
-                    dateFrom = dateFrom.AddMonths(-1);
-
-                if (period == Period.LastThreeMonths)
-                    dateFrom = dateFrom.AddMonths(-3);
-
-                query = query.Where(i => i.DueDate >= dateFrom);
-            }
+            query = FilterByPeriod(period, query);
 
             if (!string.IsNullOrWhiteSpace(searchValue))
             {
@@ -689,6 +709,66 @@ namespace Lykke.Service.PayInvoicePortal.Services
             }
 
             return items;
+        }
+
+        private async Task<IReadOnlyList<IncomingInvoiceListItem>> FilterInboxAsync(
+            IEnumerable<InvoiceModel> invoices,
+            string merchantId,
+            Period period,
+            string searchValue)
+        {
+            var query = invoices.AsQueryable();
+
+            query = query.OrderByDescending(o => o.CreatedDate);
+
+            query = FilterByPeriod(period, query);
+
+            if (!string.IsNullOrWhiteSpace(searchValue))
+            {
+                searchValue = searchValue.ToLower();
+                query = query.Where(o => (o.Number ?? string.Empty).ToLower().Contains(searchValue));
+            }
+
+            var items = new List<IncomingInvoiceListItem>();
+
+            foreach (InvoiceModel invoice in query)
+            {
+                Asset settlementAsset = await _lykkeAssetsResolver.TryGetAssetAsync(invoice.SettlementAssetId);
+
+                items.Add(new IncomingInvoiceListItem
+                {
+                    Id = invoice.Id,
+                    Number = invoice.Number,
+                    MerchantName = await _merchantService.GetMerchantNameAsync(invoice.MerchantId),
+                    Amount = invoice.Amount,
+                    DueDate = invoice.DueDate,
+                    Status = invoice.Status,
+                    SettlementAsset = settlementAsset?.DisplayId,
+                    SettlementAssetAccuracy  = settlementAsset?.Accuracy ?? 0,
+                    CreatedDate = invoice.CreatedDate,
+                    Dispute = invoice.Dispute
+                });
+            }
+
+            return items;
+        }
+
+        private static IQueryable<InvoiceModel> FilterByPeriod(Period period, IQueryable<InvoiceModel> query)
+        {
+            if (period != Period.AllTime)
+            {
+                DateTime dateFrom = DateTime.UtcNow.Date.AddDays(1 - DateTime.UtcNow.Day);
+
+                if (period == Period.LastMonth)
+                    dateFrom = dateFrom.AddMonths(-1);
+
+                if (period == Period.LastThreeMonths)
+                    dateFrom = dateFrom.AddMonths(-3);
+
+                query = query.Where(i => i.DueDate >= dateFrom);
+            }
+
+            return query;
         }
     }
 }

@@ -1,0 +1,191 @@
+﻿@using Microsoft.AspNetCore.Html
+
+@{
+    ViewData["Title"] = "Incoming invoices";
+}
+
+@await Html.PartialAsync("Partials/InvoicesNav")
+
+<article class="content"
+         data-ng-controller="incomingInvoicesCtrl as vm"
+         ng-cloak>
+    <div data-ng-show="vm.view.isFirstLoading"
+         class="main-page-loader">
+        <div class="spinner spinner--inline">
+            <div class="spinner__inside"></div>
+        </div>
+    </div>
+
+    <section class="section section--padding"
+             data-ng-hide="vm.model.isFirstLoading">
+        <div class="container">
+            <div class="invoices">
+                <div class="row">
+                    <div class="col-sm-6">
+                        <h3>Incoming Invoices</h3>
+                    </div>
+                </div>
+            </div>
+
+            <div class="invoice_filters">
+                <form>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="form_selectpicker form_selectpicker--period form-group">
+                                <label for="select_period" class="control-label">Date:</label>
+                                <select id="select_period"
+                                        class="selectpicker"
+                                        data-selectpicker
+                                        data-ng-model="vm.filter.period"
+                                        ng-options="period.id as period.title for period in vm.filter.periods"></select>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form_selectpicker form_selectpicker--status form-group">
+                                <label for="select_status" class="control-label">Status:</label>
+                                <select id="select_status"
+                                        class="selectpicker"
+                                        data-selectpicker
+                                        data-size="10"
+                                        data-ng-model="vm.filter.status"
+                                        ng-options="status.id as status.title for status in vm.filter.statuses"></select>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="search_filter">
+                                <div class="input-search input-search--index">
+                                    <button class="btn btn--icon">
+                                        <i class="icon icon--search"></i>
+                                    </button>
+                                    <input type="text" class="form-control form-control--search" placeholder="Search" data-ng-model="vm.filter.search" data-ng-model-options="{ debounce: 500 }">
+                                    <button class="btn btn--icon" data-ng-click="vm.filter.handlers.clearSearch()">
+                                        <i class="icon icon--cancel_round"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+            <div data-ng-show="vm.view.isLoading">
+                <div class="spinner">
+                    <div class="spinner__inside"></div>
+                </div>
+            </div>
+
+            <div data-ng-show="vm.view.hasInvoices">
+                <div class="table-responsive">
+                    <table class="table table_invoices" data-ng-hide="vm.view.showNoResults">
+                        <tr>
+                            <th class="_number" colspan="2">Invoice number, date</th>
+                            <th class="_client">Counterparty</th>
+                            <th class="_amount" style="text-align: right">Amount</th>
+                            <th class="_currency">Currency</th>
+                            <th class="_status">Status</th>
+                            <th class="_pay">Pay due date</th>
+                            <th class="_action"></th>
+                        </tr>
+                        <tbody>
+                            <tr data-ng-repeat="invoice in vm.model.invoices track by invoice.id">
+                                <td class="_checkbox">
+                                    <div class="checkbox" style="cursor: pointer;" ng-if="vm.view.canBeSelected(invoice.status)">
+                                        <input type="checkbox" id="checkbox_{{::invoice.id}}" class="checkbox__control" 
+                                               ng-model="invoice.isSelected" ng-change="vm.handlers.onSelected(invoice.id, invoice.isSelected)"
+                                               ng-disabled="vm.view.isPayLoading">
+                                        <label for="checkbox_{{::invoice.id}}" class="control-label checkbox__label"></label>
+                                    </div>
+                                </td>
+                                <td class="_number">
+                                    <span class="_title" data-id="{{::invoice.id}}">#{{::invoice.number}}</span>
+                                    <span class="_hint">{{::invoice.createdDate.format('l')}}</span>
+                                </td>
+                                <td class="_client">
+                                    <span class="_title">{{::invoice.merchantName}}</span>
+                                </td>
+                                <td class="_amount" style="text-align: right">{{::invoice.amount | nzcurrency : invoice.settlementAssetAccuracy}}</td>
+                                <td class="_currency">{{::invoice.settlementAsset}}</td>
+                                <td class="_status">
+                                    <span class="label" data-ng-class="vm.handlers.getStatusCss(invoice.status)">{{invoice.status}}</span>
+                                </td>
+                                <td class="_pay">{{::invoice.dueDate.format('l')}}</td>
+                                <td class="_action">
+                                    <div class="_status_text text--red" ng-if="invoice.dispute">
+                                        <i class="icon--warning_icn">
+                                            <span class="path1"><span class="path2"><span class="path3"></span></span></span>
+                                        </i>
+                                        Dispute
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div style="text-align: center;" data-ng-if="vm.view.canShowMore">
+                    <button class="btn btn--flat" data-ng-click="vm.handlers.showMore()">Show more</button>
+                </div>
+            </div>
+
+            <form class="bar_selected"
+                  ng-class="{'bar_selected--loading': vm.view.isPayLoading}"
+                  data-ng-show="vm.view.hasInvoices && vm.model.selectedInvoices.length">
+                <div class="row">
+                    <div class="col-sm-3 col-md-4">
+                        <h5>
+                            <span>Select </span>
+                            <span class="_invoices_count">{{vm.model.selectedInvoices.length}} </span>
+                            <span ng-show="vm.model.selectedInvoices.length === 1">invoice</span>
+                            <span ng-hide="vm.model.selectedInvoices.length === 1">invoices</span>
+                        </h5>
+                    </div>
+                    <div class="col-xs-4 col-sm-5 col-md-4  text-right">
+                        <label for="sum_to_pay" class="control-label">Total amount</label>
+                        <input id="sum_to_pay" type="number" class="form-control" 
+                               min="0" step="0.01"
+                               ng-model="vm.model.sumToPay" ng-disabled="vm.view.isPayLoading">
+                    </div>
+                    <div class="col-xs-4 col-sm-2">
+                        <label for="select_pay" class="control-label visible-xs">&nbsp;</label>
+                        <div id="select_pay" class="form_selectpicker" ng-disabled="vm.view.isPayLoading">
+                            <select class="selectpicker"
+                                    data-selectpicker
+                                    data-selectpicker-options="vm.model.paymentAssets"
+                                    data-size="10"
+                                    ng-model="vm.model.assetForPay"
+                                    ng-change="vm.handlers.onAssetChange()"
+                                    ng-options="asset.id as asset.title for asset in vm.model.paymentAssets">
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-xs-4 col-sm-2">
+                        <label class="control-label visible-xs">&nbsp;</label>
+                        <button class="btn brn--primary btn-block" type="button" 
+                                ng-click="vm.handlers.payInvoices()"
+                                ng-disabled="vm.view.isPayDisabled">Pay</button>
+                    </div>
+                </div>
+                @* ng-show="vm.view.isSumLoading" *@
+                <div class="bar_selected__overlay">
+                    <div class="spinner">
+                        <div class="spinner__inside"></div>
+                    </div>
+                </div>
+            </form>
+
+            <div data-ng-if="vm.view.showNoResults" class="invoices__empty_result empty_result">
+                <div class="empty_result__img-container">
+                    <img src="img/invoices-no-results.svg" />
+                </div>
+                <div class="empty_result__title">No search results</div>
+                <div class="empty_result__description">Sorry, we couldn't find any matches “{{vm.filter.search}}”. Try using another keyword.</div>
+            </div>
+
+            <div data-ng-if="!vm.view.hasInvoices" class="invoices__empty_result empty_result">
+                <div class="empty_result__img-container">
+                    <img src="img/invoices-empty.svg" />
+                </div>
+                <div class="empty_result__title">You don’t have incoming invoices</div>
+            </div>
+        </div>
+    </section>
+</article>

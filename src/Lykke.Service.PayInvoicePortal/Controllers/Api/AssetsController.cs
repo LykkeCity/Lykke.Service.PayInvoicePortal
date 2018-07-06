@@ -54,5 +54,17 @@ namespace Lykke.Service.PayInvoicePortal.Controllers.Api
 
             return Json(model);
         }
+
+        [Authorize]
+        [HttpGet]
+        [Route("/api/paymentAssetsOfMerchant")]
+        public async Task<IActionResult> GetPaymentAssetsOfMerchantAsync()
+        {
+            IReadOnlyDictionary<string, string> assets = await _assetService.GetPaymentAssetsAsync(User.GetMerchantId());
+
+            var model = assets.Select(o => new AssetItemViewModel(o.Key, o.Value));
+
+            return Json(model);
+        }
     }
 }

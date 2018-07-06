@@ -1,0 +1,10 @@
+﻿<div class="page_tab" data-ng-controller="invoicesNavCtrl as vm">
+    <div class="container">
+        <div class="page_tab__item" data-ng-class="{'page_tab__item--active': vm.model.isHome}">
+            <a href="/">My Invoices</a>
+        </div>
+        <div class="page_tab__item" data-ng-class="{'page_tab__item--active': vm.model.isIncoming}">
+            <a href="/incoming">Incoming Invoices</a>
+        </div>
+    </div>
+</div>

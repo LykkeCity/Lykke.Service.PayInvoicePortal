@@ -60,7 +60,6 @@
             ],
             periods: [
                 { id: 0, title: 'All time' },
-                { id: 1, title: 'Current month' },
                 { id: 2, title: 'Last month' },
                 { id: 3, title: 'Three month ago' }
             ],

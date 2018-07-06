@@ -15,6 +15,14 @@ namespace Lykke.Service.PayInvoicePortal.Extensions
         {
             return principal.Claims.First(u => u.Type == ClaimTypes.UserData).Value;
         }
+
+        public static string GetName(this ClaimsPrincipal principal)
+        {
+            var name = principal.Claims.First(u => u.Type == ClaimTypes.Name).Value;
+
+            return name;
+        }
+
         public static bool IsSupervisor(this ClaimsPrincipal principal)
         {
             if (principal.Claims.FirstOrDefault(u => u.Type == ClaimTypes.Actor) == null)

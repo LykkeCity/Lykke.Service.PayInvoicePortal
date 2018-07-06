@@ -222,12 +222,10 @@
             if (vm.model.paymentAssets.length) {
                 var network = getPaymentAssetNetwork();
 
-                switch (network) {
-                    case BlockchainType.Ethereum:
-                        setEthereumQrCodeData();
-                        break;
-                    default:
-                        setBitcoinQrCodeData();
+                if (network.indexOf(BlockchainType.Ethereum) > -1) {
+                    setEthereumQrCodeData();
+                } else {
+                    setBitcoinQrCodeData();
                 }
             }
 
