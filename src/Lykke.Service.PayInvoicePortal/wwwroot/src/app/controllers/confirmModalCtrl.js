@@ -11,11 +11,13 @@
         var vm = this;
 
         var defaultTitle = 'Please confirm';
+        var defaultTextYesBtn = 'Yes';
 
         vm.modal = {
             open: false,
             title: '',
             content: '',
+            textYesBtn: '',
             showYesBtn: false,
             yesAction: null,
             closeAction: null
@@ -51,6 +53,8 @@
             vm.modal.open = true;
             vm.modal.title = data.title ? data.title : defaultTitle;
             vm.modal.content = $sce.trustAsHtml(data.content);
+            vm.modal.textYesBtn = data.textYesBtn || defaultTextYesBtn;
+
             if (data.yesAction) {
                 vm.modal.showYesBtn = true;
                 vm.modal.yesAction = data.yesAction;

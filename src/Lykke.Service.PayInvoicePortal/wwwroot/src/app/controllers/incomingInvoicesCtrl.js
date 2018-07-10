@@ -5,9 +5,9 @@
         .module('app')
         .controller('incomingInvoicesCtrl', incomingInvoicesCtrl);
 
-        incomingInvoicesCtrl.$inject = ['$scope', '$window', '$rootScope', '$interval', '$log', 'apiSvc', 'statusSvc', 'confirmModalSvc'];
+        incomingInvoicesCtrl.$inject = ['$scope', '$window', '$rootScope', '$interval', '$log', 'apiSvc', 'statusSvc', 'confirmModalSvc', 'nzcurrencyFilter'];
 
-    function incomingInvoicesCtrl($scope, $window, $rootScope, $interval, $log, apiSvc, statusSvc, confirmModalSvc) {
+    function incomingInvoicesCtrl($scope, $window, $rootScope, $interval, $log, apiSvc, statusSvc, confirmModalSvc, nzcurrencyFilter) {
         var vm = this;
 
         var calculatedSumToPay = 0;
@@ -63,7 +63,7 @@
             showMore: showMore,
             onSelected: onSelected,
             onAssetChange: onAssetChange,
-            payInvoices: payInvoices
+            showPayInvoicesConfirm: showPayInvoicesConfirm
         };
 
         vm.view = {
@@ -317,6 +317,16 @@
             if (vm.model.selectedInvoices.length) {
                 getSumToPay();
             }
+        }
+
+        function showPayInvoicesConfirm() {
+            confirmModalSvc.open({
+                content: 'Pay ' + nzcurrencyFilter(vm.model.sumToPay, 3) + ' ' + vm.model.assetForPay + ' against the selected invoices?',
+                textYesBtn: 'Pay',
+                yesAction: function () {
+                    payInvoices();
+                }
+            });
         }
 
         function payInvoices() {
