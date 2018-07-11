@@ -10,10 +10,11 @@
         </div>
         <div class="modal_dialog__controls">
             <div class="pull-right">
-                <button class="btn btn--flat modal_dialog__btn"
+                <button class="btn modal_dialog__btn"
                         data-ng-if="vm.modal.showYesBtn"
-                        data-ng-click="vm.handlers.yes()">Yes</button>
+                        data-ng-click="vm.handlers.yes()">{{vm.modal.textYesBtn}}</button>
                 <button class="btn modal_dialog__cancel modal_dialog__btn"
+                        data-ng-class="{'btn--flat': vm.modal.showYesBtn}"
                         data-ng-click="vm.handlers.close()">
                     <span data-ng-show="vm.modal.showYesBtn">Cancel</span>
                     <span data-ng-hide="vm.modal.showYesBtn">OK</span>
