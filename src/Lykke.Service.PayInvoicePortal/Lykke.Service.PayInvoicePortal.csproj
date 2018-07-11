@@ -11,6 +11,7 @@
   </ItemGroup>
   <ItemGroup>
 		<PackageReference Include="AutoMapper" Version="7.0.1" />
+		<PackageReference Include="Lykke.MonitoringServiceApiCaller" Version="1.6.1" />
 		<PackageReference Include="Lykke.Service.EmailPartnerRouter.Client" Version="2.0.4" />
 	  <PackageReference Include="BuildBundlerMinifier" Version="2.8.391" />
 	  <PackageReference Include="BundlerMinifier.Core" Version="2.8.391" />
