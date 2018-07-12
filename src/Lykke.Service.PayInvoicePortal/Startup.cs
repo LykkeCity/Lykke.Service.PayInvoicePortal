@@ -19,11 +19,14 @@ using Lykke.Service.PayInvoicePortal.Core.Services;
 using Lykke.SettingsReader;
 using Lykke.SlackNotification.AzureQueue;
 using System.Net;
+using Lykke.MonitoringServiceApiCaller;
 
 namespace Lykke.Service.PayInvoicePortal
 {
     public class Startup
     {
+        private string _monitoringServiceUrl;
+
         public IHostingEnvironment Environment { get; }
         public IContainer ApplicationContainer { get; private set; }
         public IConfigurationRoot Configuration { get; }
@@ -99,6 +102,7 @@ namespace Lykke.Service.PayInvoicePortal
                 Log = CreateLogWithSlack(services, appSettings);
                 BlockchainExplorerUrl = appSettings.CurrentValue.PayInvoicePortal.BlockchainExplorerUrl;
                 EthereumBlockchainExplorerUrl = appSettings.CurrentValue.PayInvoicePortal.EthereumBlockchainExplorerUrl;
+                _monitoringServiceUrl = appSettings.CurrentValue.MonitoringServiceClient?.MonitoringServiceUrl;
 
                 builder.RegisterModule(new Repositories.AutofacModule(
                     appSettings.Nested(o => o.PayInvoicePortal.Db.SubscriptionConnectionString), Log));
@@ -162,6 +166,12 @@ namespace Lykke.Service.PayInvoicePortal
                 await ApplicationContainer.Resolve<IStartupManager>().StartAsync();
 
                 await Log.WriteMonitorAsync("", $"Env: {Program.EnvInfo}", "Started");
+
+                #if (!DEBUG)
+
+                await AutoRegistrationInMonitoring.RegisterAsync(Configuration, _monitoringServiceUrl, Log);
+
+                #endif
             }
             catch (Exception ex)
             {
