@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Threading.Tasks;
 using Common.Log;
+using Lykke.Common.Log;
 using Lykke.Service.Assets.Client.Models;
 using Lykke.Service.PayInternal.Client.Models;
 using Lykke.Service.PayInvoicePortal.Core.Services;
@@ -15,14 +16,11 @@ namespace Lykke.Service.PayInvoicePortal.Controllers.Api
     public class AssetsController : Controller
     {
         private readonly IAssetService _assetService;
-        private readonly ILog _log;
 
         public AssetsController(
-            IAssetService assetService,
-            ILog log)
+            IAssetService assetService)
         {
             _assetService = assetService;
-            _log = log;
         }
 
         [Authorize]

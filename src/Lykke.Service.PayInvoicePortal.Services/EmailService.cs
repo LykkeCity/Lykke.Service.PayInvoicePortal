@@ -13,6 +13,7 @@ using Lykke.Service.PayInvoice.Client;
 using Lykke.Service.PayInvoice.Client.Models.Invoice;
 using Lykke.Service.PayInvoicePortal.Core.Services;
 using Lykke.Service.PayInvoicePortal.Core.Extensions;
+using Lykke.Common.Log;
 
 namespace Lykke.Service.PayInvoicePortal.Services
 {
@@ -32,13 +33,13 @@ namespace Lykke.Service.PayInvoicePortal.Services
             IPayInternalClient payInternalClient,
             ILykkeAssetsResolver lykkeAssetsResolver,
             IEmailPartnerRouterClient emailPartnerRouterClient,
-            ILog log)
+            ILogFactory logFactory)
         {
             _payInvoiceClient = payInvoiceClient;
             _payInternalClient = payInternalClient;
             _lykkeAssetsResolver = lykkeAssetsResolver;
             _emailPartnerRouterClient = emailPartnerRouterClient;
-            _log = log;
+            _log = logFactory.CreateLog(this);
         }
 
         public async Task<bool> SendAsync(string invoiceId, string checkoutUrl, IReadOnlyList<string> addresses)
@@ -51,9 +52,9 @@ namespace Lykke.Service.PayInvoicePortal.Services
                 invoice = await _payInvoiceClient.GetInvoiceAsync(invoiceId);
                 merchant = await _payInternalClient.GetMerchantByIdAsync(invoice.MerchantId);
             }
-            catch (Exception exception)
+            catch (Exception ex)
             {
-                _log.WriteError(nameof(EmailService), new {invoiceId}, exception);
+                _log.Error(ex, new { invoiceId });
                 return false;
             }
 
@@ -83,9 +84,9 @@ namespace Lykke.Service.PayInvoicePortal.Services
                     Payload = payload
                 });
             }
-            catch (Exception exception)
+            catch (Exception ex)
             {
-                _log.WriteError(nameof(EmailService), new { invoiceId, template }, exception);
+                _log.Error(ex, new { invoiceId, template });
                 return false;
             }
 

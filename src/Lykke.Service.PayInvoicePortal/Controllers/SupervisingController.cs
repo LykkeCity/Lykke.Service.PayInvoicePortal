@@ -14,18 +14,15 @@ namespace Lykke.Service.PayInvoicePortal.Controllers
     public class SupervisingController : Controller
     {
         private readonly IInvoiceService _invoiceService;
-        private readonly ILog _log;
 
         public SupervisingController(
-            IInvoiceService invoiceService,
-            ILog log)
+            IInvoiceService invoiceService)
         {
             _invoiceService = invoiceService;
-            _log = log;
         }
 
         [HttpGet]
-        public async Task<IActionResult> Index()
+        public IActionResult Index()
         {
             var vm = new HomeViewModel();
 

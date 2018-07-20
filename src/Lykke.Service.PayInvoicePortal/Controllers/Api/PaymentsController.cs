@@ -3,9 +3,11 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using AutoMapper;
 using Common.Log;
+using Lykke.Common.Log;
 using Lykke.Service.PayInvoice.Client.Models.File;
 using Lykke.Service.PayInvoice.Client.Models.Invoice;
 using Lykke.Service.PayInvoicePortal.Core.Domain;
+using Lykke.Service.PayInvoicePortal.Core.Extensions;
 using Lykke.Service.PayInvoicePortal.Core.Services;
 using Lykke.Service.PayInvoicePortal.Models;
 using Lykke.Service.PayInvoicePortal.Models.Invoice;
@@ -22,10 +24,10 @@ namespace Lykke.Service.PayInvoicePortal.Controllers.Api
 
         public PaymentsController(
             IInvoiceService invoiceService,
-            ILog log)
+            ILogFactory logFactory)
         {
             _invoiceService = invoiceService;
-            _log = log.CreateComponentScope(nameof(PaymentsController));
+            _log = logFactory.CreateLog(this);
         }
 
         [HttpGet]
@@ -69,6 +71,8 @@ namespace Lykke.Service.PayInvoicePortal.Controllers.Api
             }
             catch (InvalidOperationException ex)
             {
+                _log.Error(ex, new { invoiceId, paymentAssetId });
+
                 return BadRequest(ex.Message);
             }
         }

@@ -1,5 +1,6 @@
 ﻿using System.Threading.Tasks;
 using Common.Log;
+using Lykke.Common.Log;
 using Lykke.Service.PayInvoicePortal.Core.Services;
 
 namespace Lykke.Service.PayInvoicePortal.Services
@@ -11,11 +12,8 @@ namespace Lykke.Service.PayInvoicePortal.Services
     
     public class ShutdownManager : IShutdownManager
     {
-        private readonly ILog _log;
-
-        public ShutdownManager(ILog log)
+        public ShutdownManager()
         {
-            _log = log;
         }
 
         public async Task StopAsync()

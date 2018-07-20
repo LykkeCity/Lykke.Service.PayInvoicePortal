@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using AutoMapper;
 using Common.Log;
+using Lykke.Common.Log;
 using Lykke.Service.PayInternal.Client.Models;
 using Lykke.Service.PayInvoicePortal.Core.Services;
 using Lykke.Service.PayInvoicePortal.Extensions;
@@ -18,16 +19,13 @@ namespace Lykke.Service.PayInvoicePortal.Controllers
     {
         private readonly IInvoiceService _invoiceService;
         private readonly IAssetService _assetService;
-        private readonly ILog _log;
 
         public InvoicesController(
             IInvoiceService invoiceService,
-            IAssetService assetService,
-            ILog log)
+            IAssetService assetService)
         {
             _invoiceService = invoiceService;
             _assetService = assetService;
-            _log = log;
         }
 
         [HttpGet]

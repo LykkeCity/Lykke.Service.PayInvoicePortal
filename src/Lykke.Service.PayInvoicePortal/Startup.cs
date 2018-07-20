@@ -20,6 +20,7 @@ using Lykke.SettingsReader;
 using Lykke.SlackNotification.AzureQueue;
 using System.Net;
 using Lykke.MonitoringServiceApiCaller;
+using Lykke.Common.Log;
 
 namespace Lykke.Service.PayInvoicePortal
 {
@@ -31,6 +32,7 @@ namespace Lykke.Service.PayInvoicePortal
         public IContainer ApplicationContainer { get; private set; }
         public IConfigurationRoot Configuration { get; }
         public ILog Log { get; private set; }
+        private IHealthNotifier HealthNotifier { get; set; }
 
         internal static string BlockchainExplorerUrl;
         internal static string EthereumBlockchainExplorerUrl;
@@ -99,25 +101,35 @@ namespace Lykke.Service.PayInvoicePortal
                 Mapper.AssertConfigurationIsValid();
 
                 var builder = new ContainerBuilder();
-                Log = CreateLogWithSlack(services, appSettings);
+
+                services.AddLykkeLogging(
+                    appSettings.ConnectionString(x => x.PayInvoicePortal.Db.LogsConnectionString),
+                    "PayInvoicePortalLog",
+                    appSettings.CurrentValue.SlackNotifications.AzureQueue.ConnectionString,
+                    appSettings.CurrentValue.SlackNotifications.AzureQueue.QueueName);
+
                 BlockchainExplorerUrl = appSettings.CurrentValue.PayInvoicePortal.BlockchainExplorerUrl;
                 EthereumBlockchainExplorerUrl = appSettings.CurrentValue.PayInvoicePortal.EthereumBlockchainExplorerUrl;
                 _monitoringServiceUrl = appSettings.CurrentValue.MonitoringServiceClient?.MonitoringServiceUrl;
 
                 builder.RegisterModule(new Repositories.AutofacModule(
-                    appSettings.Nested(o => o.PayInvoicePortal.Db.SubscriptionConnectionString), Log));
+                    appSettings.Nested(o => o.PayInvoicePortal.Db.SubscriptionConnectionString)));
                 builder.RegisterModule(new Services.AutofacModule(
                     appSettings.CurrentValue.PayInvoicePortal.CacheExpirationPeriods,
                     appSettings.CurrentValue.AssetsMap));
-                builder.RegisterModule(new AutofacModule(appSettings, services, Log));
+                builder.RegisterModule(new AutofacModule(appSettings, services));
                 builder.Populate(services);
                 ApplicationContainer = builder.Build();
+
+                Log = ApplicationContainer.Resolve<ILogFactory>().CreateLog(this);
+
+                HealthNotifier = ApplicationContainer.Resolve<IHealthNotifier>();
 
                 return new AutofacServiceProvider(ApplicationContainer);
             }
             catch (Exception ex)
             {
-                Log?.WriteFatalErrorAsync(nameof(Startup), nameof(ConfigureServices), "", ex).GetAwaiter().GetResult();
+                Log?.Critical(ex);
                 throw;
             }
         }
@@ -136,7 +148,7 @@ namespace Lykke.Service.PayInvoicePortal
                     app.UseExceptionHandler("/Error");
                 }
                 
-                app.UseLykkeMiddleware("PayInvoicePortal", ex => new { Message = "Technical problem" });
+                app.UseLykkeMiddleware( ex => new { Message = "Technical problem" });
                 
                 app.UseStatusCodePagesWithReExecute("/Error/{0}");
                 app.UseStaticFiles();
@@ -148,11 +160,11 @@ namespace Lykke.Service.PayInvoicePortal
 
                 appLifetime.ApplicationStarted.Register(() => StartApplication().GetAwaiter().GetResult());
                 appLifetime.ApplicationStopping.Register(() => StopApplication().GetAwaiter().GetResult());
-                appLifetime.ApplicationStopped.Register(() => CleanUp().GetAwaiter().GetResult());
+                appLifetime.ApplicationStopped.Register(CleanUp);
             }
             catch (Exception ex)
             {
-                Log?.WriteFatalErrorAsync(nameof(Startup), nameof(Configure), "", ex).GetAwaiter().GetResult();
+                Log?.Critical(ex);
                 throw;
             }
         }
@@ -165,7 +177,7 @@ namespace Lykke.Service.PayInvoicePortal
 
                 await ApplicationContainer.Resolve<IStartupManager>().StartAsync();
 
-                await Log.WriteMonitorAsync("", $"Env: {Program.EnvInfo}", "Started");
+                HealthNotifier?.Notify("Started");
 
                 #if (!DEBUG)
 
@@ -175,7 +187,7 @@ namespace Lykke.Service.PayInvoicePortal
             }
             catch (Exception ex)
             {
-                await Log.WriteFatalErrorAsync(nameof(Startup), nameof(StartApplication), "", ex);
+                Log?.Critical(ex);
                 throw;
             }
         }
@@ -190,24 +202,18 @@ namespace Lykke.Service.PayInvoicePortal
             }
             catch (Exception ex)
             {
-                if (Log != null)
-                {
-                    await Log.WriteFatalErrorAsync(nameof(Startup), nameof(StopApplication), "", ex);
-                }
+                Log?.Critical(ex);
                 throw;
             }
         }
 
-        private async Task CleanUp()
+        private void CleanUp()
         {
             try
             {
                 // NOTE: Service can't recieve and process requests here, so you can destroy all resources
 
-                if (Log != null)
-                {
-                    await Log.WriteMonitorAsync("", $"Env: {Program.EnvInfo}", "Terminating");
-                }
+                HealthNotifier?.Notify("Terminating");
 
                 ApplicationContainer.Dispose();
             }
@@ -215,52 +221,11 @@ namespace Lykke.Service.PayInvoicePortal
             {
                 if (Log != null)
                 {
-                    await Log.WriteFatalErrorAsync(nameof(Startup), nameof(CleanUp), "", ex);
+                    Log.Critical(ex);
                     (Log as IDisposable)?.Dispose();
                 }
                 throw;
             }
-        }
-        
-        private static ILog CreateLogWithSlack(IServiceCollection services, IReloadingManager<AppSettings> settings)
-        {
-            var consoleLogger = new LogToConsole();
-            var aggregateLogger = new AggregateLogger();
-
-            aggregateLogger.AddLog(consoleLogger);
-
-            var dbLogConnectionStringManager = settings.Nested(x => x.PayInvoicePortal.Db.LogsConnectionString);
-            var dbLogConnectionString = dbLogConnectionStringManager.CurrentValue;
-
-            if (string.IsNullOrEmpty(dbLogConnectionString))
-            {
-                consoleLogger.WriteWarningAsync(nameof(Startup), nameof(CreateLogWithSlack), "Table loggger is not inited").Wait();
-                return aggregateLogger;
-            }
-
-            if (dbLogConnectionString.StartsWith("${") && dbLogConnectionString.EndsWith("}"))
-                throw new InvalidOperationException($"LogsConnString {dbLogConnectionString} is not filled in settings");
-
-            var persistenceManager = new LykkeLogToAzureStoragePersistenceManager(
-                AzureTableStorage<LogEntity>.Create(dbLogConnectionStringManager, "PayInvoicePortalLog", consoleLogger),
-                consoleLogger);
-
-            // Creating slack notification service, which logs own azure queue processing messages to aggregate log
-            var slackService = services.UseSlackNotificationsSenderViaAzureQueue(settings.CurrentValue.SlackNotifications.AzureQueue, aggregateLogger);
-
-            var slackNotificationsManager = new LykkeLogToAzureSlackNotificationsManager(slackService, consoleLogger);
-
-            // Creating azure storage logger, which logs own messages to concole log
-            var azureStorageLogger = new LykkeLogToAzureStorage(
-                persistenceManager,
-                slackNotificationsManager,
-                consoleLogger);
-
-            azureStorageLogger.Start();
-
-            aggregateLogger.AddLog(azureStorageLogger);
-
-            return aggregateLogger;
         }
     }
 }

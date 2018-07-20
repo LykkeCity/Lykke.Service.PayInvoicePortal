@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Common.Log;
+using Lykke.Common.Log;
 using Microsoft.AspNetCore.Http;
 
 namespace Lykke.Service.PayInvoicePortal
@@ -10,10 +11,10 @@ namespace Lykke.Service.PayInvoicePortal
         private readonly RequestDelegate _next;
         private readonly ILog _log;
 
-        public ApiTraceMiddleware(RequestDelegate next, ILog log)
+        public ApiTraceMiddleware(RequestDelegate next, ILogFactory logFactory)
         {
             _next = next;
-            _log = log;
+            _log = logFactory.CreateLog(this);
         }
 
         public async Task Invoke(HttpContext context)
@@ -25,7 +26,7 @@ namespace Lykke.Service.PayInvoicePortal
             }
             catch (Exception ex)
             {
-                await _log.WriteErrorAsync(request.Host.ToString(), request.Path, ex);
+                _log.Error(ex);
                 throw;
             }
         }

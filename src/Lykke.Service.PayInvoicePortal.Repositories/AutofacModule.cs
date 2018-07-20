@@ -1,6 +1,7 @@
 ﻿using Autofac;
 using AzureStorage.Tables;
 using Common.Log;
+using Lykke.Common.Log;
 using Lykke.Service.PayInvoicePortal.Core.Repositories;
 using Lykke.SettingsReader;
 
@@ -9,21 +10,20 @@ namespace Lykke.Service.PayInvoicePortal.Repositories
     public class AutofacModule : Module
     {
         private readonly IReloadingManager<string> _subscriptionConnectionString;
-        private readonly ILog _log;
 
-        public AutofacModule(IReloadingManager<string> subscriptionConnectionString, ILog log)
+        public AutofacModule(
+            IReloadingManager<string> subscriptionConnectionString)
         {
             _subscriptionConnectionString = subscriptionConnectionString;
-            _log = log;
         }
 
         protected override void Load(ContainerBuilder builder)
         {
-            builder.RegisterInstance<ISubscriberRepository>(
+            builder.Register(c =>
                 new SubscriberRepository(
-                    AzureTableStorage<SubscriberEntity>.Create(_subscriptionConnectionString,
-                        "LykkeSubscribers", _log))
-            ).SingleInstance();
+                    AzureTableStorage<SubscriberEntity>.Create(_subscriptionConnectionString, "LykkeSubscribers", c.Resolve<ILogFactory>())))
+                .As<ISubscriberRepository>()
+                .SingleInstance();
         }
     }
 }

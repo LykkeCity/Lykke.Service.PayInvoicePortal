@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Common;
 using Common.Log;
+using Lykke.Common.Log;
 using Lykke.Service.PayInvoice.Client.Models.Invoice;
 using Lykke.Service.PayInvoicePortal.Core.Domain;
 using Lykke.Service.PayInvoicePortal.Core.Services;
@@ -20,12 +21,11 @@ namespace Lykke.Service.PayInvoicePortal.Controllers.Api
     public class ExportController : Controller
     {
         private readonly IInvoiceService _invoiceService;
-        private readonly ILog _log;
 
-        public ExportController(IInvoiceService invoiceService, ILog log)
+        public ExportController(
+            IInvoiceService invoiceService)
         {
             _invoiceService = invoiceService;
-            _log = log;
         }
 
         [HttpGet]
