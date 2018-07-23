@@ -33,13 +33,13 @@
   {
     "BlockchainExplorerUrl": "${PayInvoicePortal-BlockchainExplorerUrl}:[Tag]",
     "EthereumBlockchainExplorerUrl": "${PayInvoicePortal-EthereumBlockchainExplorerUrl}",
-    "UserLoginTime": "${PayInvoicePortal-BlockchainExplorerUrl}",
-    "AssetsCacheExpirationPeriod": "${PayInvoicePortal-BlockchainExplorerUrl}",
+    "UserLoginTime": "${PayInvoicePortal-UserLoginTime}",
+    "AssetsCacheExpirationPeriod": "${PayInvoicePortal-AssetsCacheExpirationPeriod}",
     "CacheExpirationPeriods": 
     {
-      "BaseAsset": "${PayInvoicePortal-BlockchainExplorerUrl}",
-      "Rate": "${PayInvoicePortal-BlockchainExplorerUrl}",
-      "MerchantName": "${PayInvoicePortal-BlockchainExplorerUrl}"
+      "BaseAsset": "${PayInvoicePortal-CacheExpirationPeriods-BaseAsset}",
+      "Rate": "${PayInvoicePortal-CacheExpirationPeriods-Rate}",
+      "MerchantName": "${PayInvoicePortal-CacheExpirationPeriods-MerchantName}"
     },
     "Db": 
     {
