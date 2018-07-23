@@ -1,6 +1,7 @@
 ﻿using System;
 using Autofac;
 using Common.Log;
+using Lykke.Common.Log;
 using Lykke.Service.Assets.Client;
 using Lykke.Service.Balances.Client;
 using Lykke.Service.EmailPartnerRouter.Client;
@@ -17,12 +18,12 @@ namespace Lykke.Service.PayInvoicePortal
     public class AutofacModule : Module
     {
         private readonly IReloadingManager<AppSettings> _settings;
-        private readonly ILog _log;
 
-        public AutofacModule(IReloadingManager<AppSettings> settings, IServiceCollection services, ILog log)
+        public AutofacModule(
+            IReloadingManager<AppSettings> settings,
+            IServiceCollection services)
         {
             _settings = settings;
-            _log = log;
 
             services.RegisterAssetsClient(AssetServiceSettings.Create(
                 new Uri(settings.CurrentValue.AssetsServiceClient.ServiceUrl),
@@ -31,15 +32,11 @@ namespace Lykke.Service.PayInvoicePortal
 
         protected override void Load(ContainerBuilder builder)
         {
-            builder.RegisterInstance(_log)
-                .As<ILog>()
-                .SingleInstance();
-            
             builder.RegisterInstance(new PayInvoiceClient(_settings.CurrentValue.PayInvoiceServiceClient))
                 .As<IPayInvoiceClient>()
                 .SingleInstance();
             
-            builder.RegisterInstance(new PayAuthClient(_settings.CurrentValue.PayAuthServiceClient, _log))
+            builder.RegisterInstance(new PayAuthClient(_settings.CurrentValue.PayAuthServiceClient))
                 .As<IPayAuthClient>()
                 .SingleInstance();
 
@@ -51,13 +48,7 @@ namespace Lykke.Service.PayInvoicePortal
                 .As<IEmailPartnerRouterClient>()
                 .SingleInstance();
 
-            builder.RegisterInstance(new BalancesClient(_settings.CurrentValue.BalancesServiceClient.ServiceUrl, _log))
-                .As<IBalancesClient>()
-                .SingleInstance();
-
-            builder.RegisterInstance(new RateCalculatorClient(_settings.CurrentValue.RateCalculatorServiceClient.ServiceUrl, _log))
-                .As<IRateCalculatorClient>()
-                .SingleInstance();
+            builder.RegisterRateCalculatorClient(_settings.CurrentValue.RateCalculatorServiceClient.ServiceUrl);
         }
     }
 }

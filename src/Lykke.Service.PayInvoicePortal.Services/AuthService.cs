@@ -2,10 +2,12 @@
 using System.Threading.Tasks;
 using Common;
 using Common.Log;
+using Lykke.Common.Log;
 using Lykke.Service.PayAuth.Client;
 using Lykke.Service.PayAuth.Client.Models.Employees;
 using Lykke.Service.PayInvoice.Client;
 using Lykke.Service.PayInvoice.Client.Models.Employee;
+using Lykke.Service.PayInvoicePortal.Core.Extensions;
 using Lykke.Service.PayInvoicePortal.Core.Services;
 
 namespace Lykke.Service.PayInvoicePortal.Services
@@ -19,11 +21,11 @@ namespace Lykke.Service.PayInvoicePortal.Services
         public AuthService(
             IPayAuthClient payAuthClient,
             IPayInvoiceClient payInvoiceClient,
-            ILog log)
+            ILogFactory logFactory)
         {
             _payAuthClient = payAuthClient;
             _payInvoiceClient = payInvoiceClient;
-            _log = log;
+            _log = logFactory.CreateLog(this);
         }
 
         public async Task<EmployeeModel> ValidateAsync(string email, string password)
@@ -34,16 +36,15 @@ namespace Lykke.Service.PayInvoicePortal.Services
             {
                 response = await _payAuthClient.ValidatePasswordAsync(email, password);
             }
-            catch (Exception exception)
+            catch (Exception ex)
             {
-                _log.WriteError(nameof(ValidateAsync), new {email = email.SanitizeEmail()}, exception);
+                _log.Error(ex);
                 return null;
             }
 
             if (!response.Success)
             {
-                _log.WriteWarning(nameof(ValidateAsync), new {email = email.SanitizeEmail()},
-                    "The e-mail or password you entered incorrect.");
+                _log.Warning("The e-mail or password you entered incorrect.");
                 return null;
             }
 
@@ -51,14 +52,13 @@ namespace Lykke.Service.PayInvoicePortal.Services
             {
                 return await _payInvoiceClient.GetEmployeeAsync(response.EmployeeId);
             }
-            catch (Exception exception)
+            catch (Exception ex)
             {
-                _log.WriteError(nameof(ValidateAsync), new
+                _log.Error(ex, new
                     {
                         response.MerchantId,
                         response.EmployeeId
-                    },
-                    exception);
+                    });
 
                 return null;
             }

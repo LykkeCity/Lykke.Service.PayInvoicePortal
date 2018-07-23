@@ -24,6 +24,9 @@ using Lykke.Service.RateCalculator.Client;
 using Microsoft.Extensions.Caching.Memory;
 using Lykke.Service.PayInternal.Client.Models.SupervisorMembership;
 using Lykke.Service.PayInvoicePortal.Core.Domain.Incoming;
+using Lykke.Common.Log;
+using Lykke.Service.PayInvoicePortal.Services.Extensions;
+using Lykke.Service.PayInvoicePortal.Core.Extensions;
 
 namespace Lykke.Service.PayInvoicePortal.Services
 {
@@ -60,7 +63,7 @@ namespace Lykke.Service.PayInvoicePortal.Services
             ILykkeAssetsResolver lykkeAssetsResolver,
             IMemoryCache memoryCache,
             CacheExpirationPeriodsSettings cacheExpirationPeriods,
-            ILog log)
+            ILogFactory logFactory)
         {
             _merchantService = merchantService;
             _assetService = assetService;
@@ -71,7 +74,7 @@ namespace Lykke.Service.PayInvoicePortal.Services
             _cacheExpirationPeriods = cacheExpirationPeriods;
             _ratesCache = new OnDemandDataCache<Tuple<double>>(memoryCache);
             _baseAssetCache = new OnDemandDataCache<Tuple<string>>(memoryCache);
-            _log = log.CreateComponentScope(nameof(InvoiceService));
+            _log = logFactory.CreateLog(this);
         }
 
         public async Task<Invoice> GetByIdAsync(string invoiceId)
@@ -219,7 +222,7 @@ namespace Lykke.Service.PayInvoicePortal.Services
             }
             catch (Exception ex)
             {
-                _log.WriteError(nameof(GetPaymentDetailsAsync), invoice, ex);
+                _log.Error(ex, invoice.Sanitize());
                 throw;
             }
 
@@ -425,7 +428,7 @@ namespace Lykke.Service.PayInvoicePortal.Services
 
                 if (rate == 0)
                 {
-                    _log.WriteWarning(nameof(GetAsync), null, $"No rates from {assetId} to {baseAssetId}");
+                    _log.Warning($"No rates from {assetId} to {baseAssetId}");
                 }
 
                 rateDictionary.Add(assetId, rate);

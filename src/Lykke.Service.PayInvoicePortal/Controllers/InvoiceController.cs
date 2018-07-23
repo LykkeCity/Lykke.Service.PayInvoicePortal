@@ -15,14 +15,11 @@ namespace Lykke.Service.PayInvoicePortal.Controllers
     public class InvoiceController : Controller
     {
         private readonly IInvoiceService _invoiceService;
-        private readonly ILog _log;
 
         public InvoiceController(
-            IInvoiceService invoiceService,
-            ILog log)
+            IInvoiceService invoiceService)
         {
             _invoiceService = invoiceService;
-            _log = log;
         }
         
         [HttpGet]

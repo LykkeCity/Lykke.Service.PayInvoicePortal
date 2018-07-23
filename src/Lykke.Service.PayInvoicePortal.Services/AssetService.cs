@@ -4,12 +4,14 @@ using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using Common.Log;
+using Lykke.Common.Log;
 using Lykke.Service.Assets.Client.Models;
 using Lykke.Service.PayInternal.Client;
 using Lykke.Service.PayInternal.Client.Exceptions;
 using Lykke.Service.PayInternal.Client.Models;
 using Lykke.Service.PayInternal.Client.Models.Asset;
 using Lykke.Service.PayInvoice.Client;
+using Lykke.Service.PayInvoicePortal.Core.Extensions;
 using Lykke.Service.PayInvoicePortal.Core.Services;
 
 namespace Lykke.Service.PayInvoicePortal.Services
@@ -25,12 +27,12 @@ namespace Lykke.Service.PayInvoicePortal.Services
             IPayInternalClient payInternalClient,
             IPayInvoiceClient payInvoiceClient,
             ILykkeAssetsResolver lykkeAssetsResolver,
-            ILog log)
+            ILogFactory logFactory)
         {
             _payInternalClient = payInternalClient;
             _payInvoiceClient = payInvoiceClient;
             _lykkeAssetsResolver = lykkeAssetsResolver;
-            _log = log.CreateComponentScope(nameof(AssetService));
+            _log = logFactory.CreateLog(this);
         }
 
         public async Task<string> GetBaseAssetId(string merchantId)
@@ -65,9 +67,9 @@ namespace Lykke.Service.PayInvoicePortal.Services
                     result.TryAdd(assetId, asset?.DisplayId ?? assetId);
                 }
             }
-            catch (Exception exception)
+            catch (Exception ex)
             {
-                _log.WriteError(nameof(GetSettlementAssetsAsync), new {merchantId}, exception);
+                _log.Error(ex, new { merchantId });
             }
 
             return result;
@@ -90,9 +92,9 @@ namespace Lykke.Service.PayInvoicePortal.Services
                 }
 
             }
-            catch (Exception exception)
+            catch (Exception ex)
             {
-                _log.WriteError(nameof(GetPaymentAssetsAsync), new { merchantId, settlementAssetId }, exception);
+                _log.Error(ex, new { merchantId, settlementAssetId });
             }
 
             return result;
@@ -136,7 +138,7 @@ namespace Lykke.Service.PayInvoicePortal.Services
             }
             catch (DefaultErrorResponseException ex) when (ex.StatusCode == HttpStatusCode.NotFound)
             {
-                _log.WriteError(nameof(GetPaymentAssetsAsync), new { merchantId }, ex);
+                _log.Error(ex, new { merchantId });
             }
 
             return result;
@@ -154,9 +156,9 @@ namespace Lykke.Service.PayInvoicePortal.Services
 
                 result = response.ToDictionary(x => x.AssetDisplayId, x => x.Network);
             }
-            catch (Exception exception)
+            catch (Exception ex)
             {
-                _log.WriteError(nameof(GetAssetsNetworkAsync), null, exception);
+                _log.Error(ex);
             }
 
             return result;
