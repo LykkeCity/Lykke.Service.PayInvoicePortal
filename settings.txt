@@ -1,0 +1,67 @@
+{
+  "AssetsMap": 
+  {
+    "Values": ${LykkePay-AssetsMap-Values}:[Json],
+    "InvoiceCreationPairs": ${LykkePay-AssetsMap-InvoiceCreationPairs}:[Json]
+  },
+  "AssetsServiceClient": 
+  {
+    "ServiceUrl": "${AssetsServiceUrl}",
+    "ExpirationPeriod": "${AssetsServiceExpirationPeriod}"
+  },
+  "BalancesServiceClient": 
+  {
+    "ServiceUrl": "${BalancesServiceUrl}"
+  },
+  "EmailPartnerRouterServiceClient": 
+  {
+    "ServiceUrl": "${EmailPartnerRouterServiceUrl}"
+  },
+  "MonitoringServiceClient": 
+  {
+    "MonitoringServiceUrl": "${MonitoringServiceUrl}"
+  },
+  "PayAuthServiceClient": 
+  {
+    "ServiceUrl": "${PayAuthServiceUrl}:[Tag]"
+  },
+  "PayInternalServiceClient": 
+  {
+    "ServiceUrl": "${PayInternalServiceUrl}:[Tag]"
+  },
+  "PayInvoicePortal": 
+  {
+    "BlockchainExplorerUrl": "${PayInvoicePortal-BlockchainExplorerUrl}:[Tag]",
+    "EthereumBlockchainExplorerUrl": "${PayInvoicePortal-EthereumBlockchainExplorerUrl}",
+    "UserLoginTime": "${PayInvoicePortal-BlockchainExplorerUrl}",
+    "AssetsCacheExpirationPeriod": "${PayInvoicePortal-BlockchainExplorerUrl}",
+    "CacheExpirationPeriods": 
+    {
+      "BaseAsset": "${PayInvoicePortal-BlockchainExplorerUrl}",
+      "Rate": "${PayInvoicePortal-BlockchainExplorerUrl}",
+      "MerchantName": "${PayInvoicePortal-BlockchainExplorerUrl}"
+    },
+    "Db": 
+    {
+      "SubscriptionConnectionString": "${PayInvoicePortal-SubscriptionConnString}:[AzureTableStorage, Tag]",
+      "LogsConnectionString": "${PayInvoicePortal-LogsConnString}:[AzureTableStorage, Tag]"
+    }
+  },
+  "PayInvoiceServiceClient": 
+  {
+    "ServiceUrl": "${PayInvoiceServiceUrl}:[Tag]"
+  },
+  "RateCalculatorServiceClient": 
+  {
+    "ServiceUrl": "${RateCalculatorServiceUrl}:[Tag]"
+  },
+  "SlackNotifications": 
+  {
+    "AzureQueue": 
+    {
+      "ConnectionString": "${SlackNotificationsConnString}:[AzureTableStorage]",
+      "QueueName": "slack-notifications"
+    },
+    "ThrottlingLimitSeconds": ${SlackNotificationsThrottlingLimit}
+  }
+}
