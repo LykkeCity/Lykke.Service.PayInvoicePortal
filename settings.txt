@@ -32,7 +32,7 @@
   "PayInvoicePortal": 
   {
     "BlockchainExplorerUrl": "${PayInvoicePortal-BlockchainExplorerUrl}:[Tag]",
-    "EthereumBlockchainExplorerUrl": "${PayInvoicePortal-EthereumBlockchainExplorerUrl}",
+    "EthereumBlockchainExplorerUrl": "${PayInvoicePortal-EthereumBlockchainExplorerUrl}:[Tag]",
     "UserLoginTime": "${PayInvoicePortal-UserLoginTime}",
     "AssetsCacheExpirationPeriod": "${PayInvoicePortal-AssetsCacheExpirationPeriod}",
     "CacheExpirationPeriods": 
