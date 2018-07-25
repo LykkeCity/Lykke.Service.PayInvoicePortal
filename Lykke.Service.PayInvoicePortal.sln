@@ -17,7 +17,13 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lykke.Service.PayInvoicePor
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "2. Repositories", "2. Repositories", "{8F82FBD3-ACDE-4336-B8DD-327512D1124A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lykke.Service.PayInvoicePortal.Repositories", "src\Lykke.Service.PayInvoicePortal.Repositories\Lykke.Service.PayInvoicePortal.Repositories.csproj", "{89C34484-D638-4FF8-BF03-581558558631}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lykke.Service.PayInvoicePortal.Repositories", "src\Lykke.Service.PayInvoicePortal.Repositories\Lykke.Service.PayInvoicePortal.Repositories.csproj", "{89C34484-D638-4FF8-BF03-581558558631}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{6537C244-5CBD-418C-8BA2-792CFC1173A1}"
+	ProjectSection(SolutionItems) = preProject
+		.gitignore = .gitignore
+		settings.txt = settings.txt
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
