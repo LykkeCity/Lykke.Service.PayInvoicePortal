@@ -89,7 +89,7 @@
                         <tbody>
                             <tr data-ng-repeat="invoice in vm.model.invoices track by invoice.id">
                                 <td class="_checkbox">
-                                    <div class="checkbox" style="cursor: pointer;" ng-if="vm.view.canBeSelected(invoice.status)">
+                                    <div class="checkbox" style="cursor: pointer;" ng-if="vm.view.canBeSelected(invoice.status, invoice.dispute)">
                                         <input type="checkbox" id="checkbox_{{::invoice.id}}" class="checkbox__control" 
                                                ng-model="invoice.isSelected" ng-change="vm.handlers.onSelected(invoice.id, invoice.isSelected)"
                                                ng-disabled="vm.view.isPayLoading">

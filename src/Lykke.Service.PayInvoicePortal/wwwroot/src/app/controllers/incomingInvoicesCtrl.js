@@ -228,7 +228,7 @@
 
                     // check whether invoice was selected
                     if (selectedInvoicesDictionary[invoice.id]) {
-                        if (canBeSelected(invoice.status)) {
+                        if (canBeSelected(invoice.status, invoice.dispute)) {
                             invoice.isSelected = true;
                         } else {
                             // mark to remove invoice from selected because status was changed
@@ -400,8 +400,8 @@
             }
         }
 
-        function canBeSelected(invoiceStatus) {
-            return (invoiceStatus === 'Unpaid' || invoiceStatus === 'Underpaid')
+        function canBeSelected(invoiceStatus, invoiceDispute) {
+            return (invoiceStatus === 'Unpaid' || invoiceStatus === 'Underpaid') && !invoiceDispute;
         }
     }
 })();
