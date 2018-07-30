@@ -71,7 +71,7 @@ namespace Lykke.Service.PayInvoicePortal.Controllers.Api
             }
             catch (InvalidOperationException ex)
             {
-                _log.Error(ex, new { invoiceId, paymentAssetId });
+                _log.ErrorWithDetails(ex, new { invoiceId, paymentAssetId });
 
                 return BadRequest(ex.Message);
             }

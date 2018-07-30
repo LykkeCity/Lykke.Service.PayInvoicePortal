@@ -222,7 +222,7 @@ namespace Lykke.Service.PayInvoicePortal.Services
             }
             catch (Exception ex)
             {
-                _log.Error(ex, invoice.Sanitize());
+                _log.ErrorWithDetails(ex, invoice.Sanitize());
                 throw;
             }
 

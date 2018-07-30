@@ -54,7 +54,7 @@ namespace Lykke.Service.PayInvoicePortal.Services
             }
             catch (Exception ex)
             {
-                _log.Error(ex, new
+                _log.ErrorWithDetails(ex, new
                     {
                         response.MerchantId,
                         response.EmployeeId
