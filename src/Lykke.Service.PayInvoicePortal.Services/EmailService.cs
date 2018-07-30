@@ -54,7 +54,7 @@ namespace Lykke.Service.PayInvoicePortal.Services
             }
             catch (Exception ex)
             {
-                _log.Error(ex, new { invoiceId });
+                _log.ErrorWithDetails(ex, new { invoiceId });
                 return false;
             }
 
@@ -86,7 +86,7 @@ namespace Lykke.Service.PayInvoicePortal.Services
             }
             catch (Exception ex)
             {
-                _log.Error(ex, new { invoiceId, template });
+                _log.ErrorWithDetails(ex, new { invoiceId, template });
                 return false;
             }
 

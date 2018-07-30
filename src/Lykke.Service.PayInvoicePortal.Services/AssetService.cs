@@ -69,7 +69,7 @@ namespace Lykke.Service.PayInvoicePortal.Services
             }
             catch (Exception ex)
             {
-                _log.Error(ex, new { merchantId });
+                _log.ErrorWithDetails(ex, new { merchantId });
             }
 
             return result;
@@ -94,7 +94,7 @@ namespace Lykke.Service.PayInvoicePortal.Services
             }
             catch (Exception ex)
             {
-                _log.Error(ex, new { merchantId, settlementAssetId });
+                _log.ErrorWithDetails(ex, new { merchantId, settlementAssetId });
             }
 
             return result;
@@ -138,7 +138,7 @@ namespace Lykke.Service.PayInvoicePortal.Services
             }
             catch (DefaultErrorResponseException ex) when (ex.StatusCode == HttpStatusCode.NotFound)
             {
-                _log.Error(ex, new { merchantId });
+                _log.ErrorWithDetails(ex, new { merchantId });
             }
 
             return result;
