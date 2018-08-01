@@ -3139,7 +3139,7 @@ input[type="number"]::-webkit-outer-spin-button, input[type="number"]::-webkit-i
 
 .form_selectpicker .btn-group.open .bs-caret:before { -webkit-transform: rotate(180deg); -moz-transform: rotate(180deg); -ms-transform: rotate(180deg); -o-transform: rotate(180deg); transform: rotate(180deg); }
 
-.form_selectpicker[disabled] .btn.dropdown-toggle { background: #EBEDEF !important; color: rgba(63, 77, 96, 0.3) !important; opacity: 1; }
+.form_selectpicker[disabled] .btn.dropdown-toggle { background: #EBEDEF !important; color: rgba(63, 77, 96, 0.3) !important; cursor: default; opacity: 1; }
 
 .form_selectpicker .btn.dropdown-toggle { font-weight: normal; border: 1px solid #CFD2D7; border-radius: 4px !important; width: 100% !important; outline: none; background: transparent; padding-left: 12px; padding-right: 30px; font-size: 16px; font-size: 1rem; height: 50px; height: 3.125rem; padding-right: 45px; padding-right: 2.8125rem; }
 
@@ -3348,9 +3348,9 @@ input[type="number"]::-webkit-outer-spin-button, input[type="number"]::-webkit-i
 
 .invoice_info__select { position: relative; display: inline-block; vertical-align: middle; top: -1px; }
 
-.invoice_info__select .btn-group .btn { padding-right: 20px; }
+.invoice_info__select .bootstrap-select .dropdown-toggle { padding-right: 20px; }
 
-.invoice_info__select .bootstrap-select.btn-group .dropdown-toggle .caret { border: none; width: 20px; height: 20px; display: block; position: absolute; background-image: url(../img/select-cur.svg); background-position: center; background-repeat: no-repeat; top: 3px; }
+.invoice_info__select .bootstrap-select .dropdown-toggle .caret { border: none; width: 20px; height: 100%; display: block; position: absolute; background-image: url(../img/select-cur.svg); background-position: center; background-repeat: no-repeat; top: -1px; right: 0; }
 
 .invoice_info__loader { overflow: hidden; border: solid 1px #e6e8ea; border-radius: 4px; padding: 8px 15px 8px 66px; position: relative; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; height: 54px; }
 
