@@ -41,7 +41,8 @@ namespace Lykke.Service.PayInvoicePortal.Services
         };
         private readonly HashSet<InvoiceStatus> _getOnlyFirstStatusesFromHistory = new HashSet<InvoiceStatus>
         {
-            InvoiceStatus.Unpaid
+            InvoiceStatus.Unpaid,
+            InvoiceStatus.Draft
         };
         private readonly IMerchantService _merchantService;
         private readonly IAssetService _assetService;
