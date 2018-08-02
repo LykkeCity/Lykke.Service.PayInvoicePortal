@@ -10,7 +10,11 @@
     function confirmModalSvc($rootScope) {
         var service = {
             open: open,
-            excludeClickClassList: getExcludeClickClassList()
+            excludeClickClassList: getExcludeClickClassList(),
+            constants: {
+                errorTitle: 'Error occured',
+                errorCommonMessage: 'Please try again or contact support.'
+            }
         };
 
         return service;

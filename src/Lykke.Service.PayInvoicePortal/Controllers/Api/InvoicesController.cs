@@ -3,17 +3,22 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
 using AutoMapper;
 using Common.Log;
+using Lykke.Common.Api.Contract.Responses;
 using Lykke.Common.Log;
+using Lykke.Service.PayInvoice.Client;
 using Lykke.Service.PayInvoice.Client.Models.File;
 using Lykke.Service.PayInvoicePortal.Core.Domain;
+using Lykke.Service.PayInvoicePortal.Core.Extensions;
 using Lykke.Service.PayInvoicePortal.Core.Services;
 using Lykke.Service.PayInvoicePortal.Extensions;
 using Lykke.Service.PayInvoicePortal.Models;
 using Lykke.Service.PayInvoicePortal.Models.Invoices;
 using Lykke.Service.PayInvoicePortal.Models.Invoices.Statistic;
+using Lykke.Service.PayInvoicePortal.Services.Extensions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -25,11 +30,14 @@ namespace Lykke.Service.PayInvoicePortal.Controllers.Api
     public class InvoicesController : Controller
     {
         private readonly IInvoiceService _invoiceService;
+        private readonly ILog _log;
 
         public InvoicesController(
-            IInvoiceService invoiceService)
+            IInvoiceService invoiceService,
+            ILogFactory logFactory)
         {
             _invoiceService = invoiceService;
+            _log = logFactory.CreateLog(this);
         }
 
         [HttpGet]
@@ -139,9 +147,13 @@ namespace Lykke.Service.PayInvoicePortal.Controllers.Api
 
             return Json(model);
         }
+
         [HttpPost]
+        [ProducesResponseType(typeof(ErrorResponse), (int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> AddAsync(CreateInvoiceModel model, IFormFileCollection files)
         {
+            Invoice invoice = null;
+
             var request = new PayInvoice.Client.Models.Invoice.CreateInvoiceModel
             {
                 MerchantId = User.GetMerchantId(),
@@ -155,7 +167,14 @@ namespace Lykke.Service.PayInvoicePortal.Controllers.Api
                 Note = model.Note
             };
 
-            Invoice invoice = await _invoiceService.CreateAsync(request, model.IsDraft);
+            try
+            {
+                invoice = await _invoiceService.CreateAsync(request, model.IsDraft);
+            }
+            catch (InvalidOperationException ex)
+            {
+                return BadRequest(ErrorResponse.Create(ex.Message));
+            }
 
             if (files != null)
             {
@@ -182,6 +201,7 @@ namespace Lykke.Service.PayInvoicePortal.Controllers.Api
         }
 
         [HttpPut]
+        [ProducesResponseType(typeof(ErrorResponse), (int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> UpdateAsync([FromBody]UpdateInvoiceModel model)
         {
             var invoice = new PayInvoice.Client.Models.Invoice.UpdateInvoiceModel
@@ -204,7 +224,7 @@ namespace Lykke.Service.PayInvoicePortal.Controllers.Api
             }
             catch (InvalidOperationException ex)
             {
-                return BadRequest(ex.Message);
+                return BadRequest(ErrorResponse.Create(ex.Message));
             }
 
             var result = await GetInvoiceModelById(invoice.Id);

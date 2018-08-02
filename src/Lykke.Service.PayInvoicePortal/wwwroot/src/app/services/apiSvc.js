@@ -273,7 +273,7 @@
                     deferred.resolve(response.data);
                 },
                 function (response) {
-                    deferred.reject(response);
+                    deferred.reject(response.data);
                 },
                 function (evt) {
                 });

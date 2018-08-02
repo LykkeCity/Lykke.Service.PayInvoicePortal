@@ -163,10 +163,17 @@
                     function (data) {
                         close();
                         isDraft ? $rootScope.$broadcast("invoiceDraftCreated", data) : $rootScope.$broadcast("invoiceGenerated", data);
-                        vm.form.blocked = false;
                     },
                     function (error) {
                         $log.error(error);
+
+                        confirmModalSvc.open({
+                            title: confirmModalSvc.constants.errorTitle,
+                            content: confirmModalSvc.constants.errorCommonMessage
+                        });
+                    })
+                .finally(
+                    function () {
                         vm.form.blocked = false;
                     });
         }
