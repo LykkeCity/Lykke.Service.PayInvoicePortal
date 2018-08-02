@@ -23,6 +23,14 @@
     <section class="section section--lead"
              data-ng-hide="vm.model.isFirstLoading">
         <div class="container">
+            <div class="profile_info">
+                <div class="row">
+                    <div class="col-sm-12">
+                        <div class="profile_info__header">Supervising mode</div>
+                    </div>
+                </div>
+            </div>
+
             <div class="row" data-ng-show="vm.view.hasInvoices">
                 <div class="col-sm-6">
                     <h3>Invoices</h3>
@@ -89,6 +97,13 @@
                     </div>
                 </div>
             </div>
+
+            <div data-ng-show="vm.view.isLoading">
+                <div class="spinner">
+                    <div class="spinner__inside"></div>
+                </div>
+            </div>
+
             <div class="tab-content" data-ng-show="vm.view.hasInvoices">
                 <div class="tab-pane active">
                     <div class="table-responsive">

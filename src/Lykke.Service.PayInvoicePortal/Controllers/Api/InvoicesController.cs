@@ -108,6 +108,9 @@ namespace Lykke.Service.PayInvoicePortal.Controllers.Api
         [HttpGet]
         [Route("/api/invoices/supervising")]
         public async Task<IActionResult> GetSupervisingInvoicesAsync(
+            string searchValue,
+            Period period,
+            List<PayInvoice.Client.Models.Invoice.InvoiceStatus> status,
             string sortField,
             bool sortAscending,
             int skip,
@@ -117,9 +120,9 @@ namespace Lykke.Service.PayInvoicePortal.Controllers.Api
             InvoiceSource source = await _invoiceService.GetSupervisingAsync(
                 User.GetMerchantId(),
                 User.GetEmployeeId(),
-                new List<PayInvoice.Client.Models.Invoice.InvoiceStatus>(),
-                Period.AllTime,
-                "",
+                status,
+                period,
+                searchValue,
                 sortField,
                 sortAscending,
                 skip,
