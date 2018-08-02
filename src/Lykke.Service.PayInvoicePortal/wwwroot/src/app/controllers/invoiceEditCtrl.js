@@ -190,18 +190,25 @@
 
             apiSvc.updateInvoice(model)
                 .then(
-                function (data) {
-                    close();
-                    onChanged();
-                    if (isDraft === false) {
-                        $rootScope.$broadcast('invoiceGenerated', data);
-                    }
-                    vm.form.blocked = false;
-                },
-                function (error) {
-                    $log.error(error);
-                    vm.form.blocked = false;
-                });
+                    function (data) {
+                        close();
+                        onChanged();
+                        if (isDraft === false) {
+                            $rootScope.$broadcast('invoiceGenerated', data);
+                        }
+                    },
+                    function (error) {
+                        $log.error(error);
+
+                        confirmModalSvc.open({
+                            title: confirmModalSvc.constants.errorTitle,
+                            content: confirmModalSvc.constants.errorCommonMessage
+                        });
+                    })
+                .finally(
+                    function () {
+                        vm.form.blocked = false;
+                    });
         }
 
         function upload(files) {

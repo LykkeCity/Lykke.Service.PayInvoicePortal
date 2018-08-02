@@ -322,10 +322,19 @@ namespace Lykke.Service.PayInvoicePortal.Services
 
             InvoiceModel invoice;
 
-            if (draft)
-                invoice = await _payInvoiceClient.CreateDraftInvoiceAsync(model);
-            else
-                invoice = await _payInvoiceClient.CreateInvoiceAsync(model);
+            try
+            {
+                if (draft)
+                    invoice = await _payInvoiceClient.CreateDraftInvoiceAsync(model);
+                else
+                    invoice = await _payInvoiceClient.CreateInvoiceAsync(model);
+            }
+            catch (ErrorResponseException ex)
+            {
+                _log.ErrorWithDetails(ex, new { model = model.Sanitize(), draft });
+
+                throw new InvalidOperationException(ex.Message);
+            }
 
             Asset settlementAsset = await _lykkeAssetsResolver.TryGetAssetAsync(invoice.SettlementAssetId);
 
@@ -359,6 +368,8 @@ namespace Lykke.Service.PayInvoicePortal.Services
             }
             catch (ErrorResponseException ex)
             {
+                _log.ErrorWithDetails(ex, new { model = model.Sanitize(), draft });
+
                 throw new InvalidOperationException(ex.Message);
             }
         }
