@@ -82,8 +82,8 @@
 
         // Export
 
-        function exportToCsv(searchValue, period, status, sortField, sortAscending) {
-            var url = getUrl('export');
+        function exportToCsv(searchValue, period, status, sortField, sortAscending, isSupervising) {
+            var url = isSupervising ? getUrl('export/supervising') : getUrl('export');
 
             url = url + "?searchValue=" + (searchValue || '');
             url = url + "&period=" + period;

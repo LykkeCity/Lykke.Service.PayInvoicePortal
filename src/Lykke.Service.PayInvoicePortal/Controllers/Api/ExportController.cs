@@ -20,11 +20,14 @@ namespace Lykke.Service.PayInvoicePortal.Controllers.Api
     [Route("/api/export")]
     public class ExportController : Controller
     {
+        private readonly IMerchantService _merchantService;
         private readonly IInvoiceService _invoiceService;
 
         public ExportController(
+            IMerchantService merchantService,
             IInvoiceService invoiceService)
         {
+            _merchantService = merchantService;
             _invoiceService = invoiceService;
         }
 
@@ -61,6 +64,58 @@ namespace Lykke.Service.PayInvoicePortal.Controllers.Api
                     DueDate = o.DueDate.ToIsoDateTime(),
                     CreatedDate = o.CreatedDate.ToIsoDateTime()
                 }));
+
+                content = stringWriter.ToString();
+            }
+
+            return File(new MemoryStream(Encoding.UTF8.GetBytes(content)), "text/csv", "invoices.csv");
+        }
+
+        [HttpGet]
+        [Route("supervising")]
+        public async Task<IActionResult> GetSupervisingAsync(
+            string searchValue,
+            Period period,
+            List<InvoiceStatus> status,
+            string sortField,
+            bool sortAscending)
+        {
+            InvoiceSource source = await _invoiceService.GetSupervisingAsync(
+                User.GetMerchantId(),
+                User.GetEmployeeId(),
+                status,
+                period,
+                searchValue,
+                sortField,
+                sortAscending,
+                0,
+                int.MaxValue);
+
+            string content;
+
+            using (TextWriter stringWriter = new StringWriter())
+            {
+                var svcWriter = new CsvHelper.CsvWriter(stringWriter);
+
+                var records = new List<InvoiceSupervisingCsvRowModel>();
+
+                foreach (var invoice in source.Items)
+                {
+                    records.Add(new InvoiceSupervisingCsvRowModel
+                    {
+                        Creator = await _merchantService.GetMerchantNameAsync(invoice.MerchantId),
+                        Number = invoice.Number,
+                        ClientName = invoice.ClientName,
+                        ClientEmail = invoice.ClientEmail,
+                        Amount = invoice.Amount,
+                        Currency = invoice.SettlementAsset.DisplayId,
+                        Status = invoice.Status.ToString(),
+                        DueDate = invoice.DueDate.ToIsoDateTime(),
+                        CreatedDate = invoice.CreatedDate.ToIsoDateTime()
+                    });
+                }
+
+                svcWriter.WriteRecords(records);
 
                 content = stringWriter.ToString();
             }

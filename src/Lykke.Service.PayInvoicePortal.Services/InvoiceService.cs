@@ -177,7 +177,7 @@ namespace Lykke.Service.PayInvoicePortal.Services
             IEnumerable<InvoiceModel> allInvoices = await _payInvoiceClient.GetMerchantInvoicesAsync(merchantId);
 
             IReadOnlyList<Invoice> result =
-                await FilterAsync(allInvoices, merchantId, period, searchValue, sortField, sortAscending);
+                await FilterAsync(allInvoices, period, searchValue, sortField, sortAscending);
 
             if (status.Count > 0)
             {
@@ -509,7 +509,7 @@ namespace Lykke.Service.PayInvoicePortal.Services
             #endregion
 
             IReadOnlyList<Invoice> result =
-                await FilterAsync(allInvoices, merchantId, period, searchValue, sortField, sortAscending);
+                await FilterAsync(allInvoices, period, searchValue, sortField, sortAscending);
 
             var source = new InvoiceSource
             {
@@ -617,7 +617,7 @@ namespace Lykke.Service.PayInvoicePortal.Services
             Asset baseAsset = await _lykkeAssetsResolver.TryGetAssetAsync(baseAssetId);
 
             IReadOnlyList<Invoice> result =
-                await FilterAsync(invoiceslist, merchantId, period, searchValue, sortField, sortAscending);
+                await FilterAsync(invoiceslist, period, searchValue, sortField, sortAscending);
 
             var source = new InvoiceSource
             {
@@ -663,7 +663,6 @@ namespace Lykke.Service.PayInvoicePortal.Services
 
         private async Task<IReadOnlyList<Invoice>> FilterAsync(
             IEnumerable<InvoiceModel> invoices,
-            string merchantId,
             Period period,
             string searchValue,
             string sortField,
@@ -698,6 +697,7 @@ namespace Lykke.Service.PayInvoicePortal.Services
                 items.Add(new Invoice
                 {
                     Id = invoice.Id,
+                    MerchantId = invoice.MerchantId,
                     Number = invoice.Number,
                     ClientEmail = invoice.ClientEmail,
                     ClientName = invoice.ClientName,

@@ -1,4 +1,4 @@
-(function () {
+﻿(function () {
     'use strict';
 
     angular
@@ -90,6 +90,7 @@
         };
 
         vm.view = {
+            isLoading: false,
             isSearching: false,
             get showNoResults() {
                 return showNoResults();
@@ -110,9 +111,13 @@
                     if (newValue !== oldValue) {
                         vm.view.isSearching = true;
                         resetPage();
-                        loadInvocies().finally(function() {
-                            vm.view.isSearching = false;
-                        });
+                        vm.model.isSupervising ?
+                            loadSupervisingInvocies().finally(function () {
+                                vm.view.isSearching = false;
+                            }) :
+                            loadInvocies().finally(function () {
+                                vm.view.isSearching = false;
+                            });
                     }
                 }
             );
@@ -121,7 +126,7 @@
                 function (newValue, oldValue) {
                     if (newValue !== oldValue) {
                         resetPage();
-                        loadInvocies();
+                        vm.model.isSupervising ? loadSupervisingInvocies() : loadInvocies();
                     }
                 }
             );
@@ -129,7 +134,7 @@
                 function () { return vm.filter.status; },
                 function (newValue, oldValue) {
                     if (newValue !== oldValue) {
-                        loadInvocies();
+                        vm.model.isSupervising ? loadSupervisingInvocies() : loadInvocies();
                     }
                 }
             );
@@ -161,6 +166,8 @@
         }
 
         function loadInvocies() {
+            vm.view.isLoading = true;
+
             return apiSvc.getInvoices(vm.filter.search,
                     vm.filter.period,
                     getFilterStatuses(),
@@ -169,28 +176,36 @@
                     0,
                     vm.pager.pageSize * vm.pager.page)
                 .then(
-                    function(data) {
+                    function (data) {
                         updateData(data);
                     },
-                    function(error) {
+                    function (error) {
                         $log.error(error);
-                    });
+                    })
+                .finally(function () {
+                    vm.view.isLoading = false;
+                });
         }
 
         function loadSupervisingInvocies() {
+            vm.view.isLoading = true;
+
             return apiSvc.getSupervisingInvoices(vm.filter.search,
-                vm.filter.period,
-                getFilterStatuses(),
-                vm.filter.sortField,
-                vm.filter.sortAscending,
-                0,
-                vm.pager.pageSize * vm.pager.page)
+                    vm.filter.period,
+                    getFilterStatuses(),
+                    vm.filter.sortField,
+                    vm.filter.sortAscending,
+                    0,
+                    vm.pager.pageSize * vm.pager.page)
                 .then(
-                function (data) {
-                    updateData(data);
-                },
-                function (error) {
-                    $log.error(error);
+                    function (data) {
+                        updateData(data);
+                    },
+                    function (error) {
+                        $log.error(error);
+                    })
+                .finally(function () {
+                    vm.view.isLoading = false;
                 });
         }
 
@@ -253,7 +268,8 @@
                 getFilterStatuses(),
                 vm.filter.sortField,
                 vm.filter.sortAscending,
-                0);
+                vm.model.isSupervising
+            );
         }
 
         function resetFilter() {
