@@ -33,7 +33,7 @@
   {
     "BlockchainExplorerUrl": "${PayInvoicePortal-BlockchainExplorerUrl}:[Tag]",
     "EthereumBlockchainExplorerUrl": "${PayInvoicePortal-EthereumBlockchainExplorerUrl}:[Tag]",
-    "ApiaryDocsDomain": "lykkepaydev",
+    "ApiaryDocsDomain": "${PayInvoicePortal-ApiaryDocsDomain}",
     "UserLoginTime": "${PayInvoicePortal-UserLoginTime}",
     "AssetsCacheExpirationPeriod": "${PayInvoicePortal-AssetsCacheExpirationPeriod}",
     "CacheExpirationPeriods": 
