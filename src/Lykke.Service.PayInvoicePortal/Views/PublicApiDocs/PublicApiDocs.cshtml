@@ -1,0 +1,48 @@
+﻿@{
+    ViewData["Title"] = "PayAPI documentation";
+}
+<article class="content">
+
+    <div class="lykkepay-api-docs__header">
+        <h2>PayAPI documentation</h2>
+        <div class="loader-absolute-wrapper">
+            <div>
+                <div class="spinner">
+                    <div class="spinner__inside"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="lykkepay-api-docs__embed"></div>
+
+    <script src="https://api.apiary.io/seeds/embed.js"></script>
+    <script>
+        $(document).ready(function () {
+            var docsWrapper = $('.lykkepay-api-docs__embed');
+            // console.log(window.innerHeight, docsWrapper[0].offsetTop);
+            docsWrapper.height(window.innerHeight - docsWrapper[0].offsetTop);
+
+            var embed = new Apiary.Embed({
+                subdomain: '@ViewBag.ApiaryDocsDomain',
+                preferences: {
+                    console: true, // Allow console, set to `false` to disable
+                    collapseMachineColumnByDefault: false, // Collapse the machine column by default
+                    displayUriParametersInHumanColumn: false, // Display URI parameters
+                    displayHttpMethods: true, // Display names of HTTP methods
+                    permalinks: true, // Allow linking into the embedded API Project
+                },
+                hosts: [
+                    'production',
+                    'mock'
+                ],
+                element: '.lykkepay-api-docs__embed'
+            });
+
+            embed.onReady(function (iframeElement, event) {
+                // manage your loading indicator here
+                $('.loader-absolute-wrapper').hide();
+            });
+        });
+    </script>
+</article>
