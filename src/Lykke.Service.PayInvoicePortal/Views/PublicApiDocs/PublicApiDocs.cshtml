@@ -1,0 +1,64 @@
+﻿@{
+    ViewData["Title"] = "PayAPI documentation";
+}
+<article class="content">
+
+    <div class="lykkepay-api-docs__header">
+        <div class="loader-absolute-wrapper">
+            <div>
+                <div class="spinner">
+                    <div class="spinner__inside"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="lykkepay-api-docs__embed"></div>
+
+    <script src="https://api.apiary.io/seeds/embed.js"></script>
+    <script>
+        // disable calculations for footer
+        window.isFooterHidden = true;
+
+        $(document).ready(function () {
+            // hide footer
+            $('body').css({
+                paddingBottom: 0
+            });
+            $('.footer').hide();
+
+            // update embed height
+            var docsWrapper = $('.lykkepay-api-docs__embed');
+            var updateEmbedHeight = function () {
+                var correlationForHeaderHeight = 2;
+                docsWrapper.height(window.innerHeight - docsWrapper[0].offsetTop - correlationForHeaderHeight);
+            };
+            updateEmbedHeight();
+
+            var lazyUpdateEmbedHeight = _.debounce(updateEmbedHeight, 300);
+            $(window).on('resize', lazyUpdateEmbedHeight);
+
+            // load documentation
+            var embed = new Apiary.Embed({
+                subdomain: '@ViewBag.ApiaryDocsDomain',
+                preferences: {
+                    console: true, // Allow console, set to `false` to disable
+                    collapseMachineColumnByDefault: false, // Collapse the machine column by default
+                    displayUriParametersInHumanColumn: false, // Display URI parameters
+                    displayHttpMethods: true, // Display names of HTTP methods
+                    permalinks: true, // Allow linking into the embedded API Project
+                },
+                hosts: [
+                    'production',
+                    'mock'
+                ],
+                element: '.lykkepay-api-docs__embed'
+            });
+
+            embed.onReady(function (iframeElement, event) {
+                // manage your loading indicator here
+                $('.loader-absolute-wrapper').hide();
+            });
+        });
+    </script>
+</article>

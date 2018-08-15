@@ -1,0 +1,83 @@
+AssetsMap: 
+    Values: 
+        settings-key: LykkePay-AssetsMap-Values
+        types: [Json]
+    InvoiceCreationPairs: 
+        settings-key: LykkePay-AssetsMap-InvoiceCreationPairs
+        types: [Json]
+
+AssetsServiceClient: 
+    ServiceUrl: 
+        settings-key: AssetsServiceUrl
+    ExpirationPeriod: 
+        settings-key: AssetsServiceExpirationPeriod
+
+BalancesServiceClient: 
+    ServiceUrl: 
+        settings-key: BalancesServiceUrl
+
+EmailPartnerRouterServiceClient: 
+    ServiceUrl: 
+        settings-key: EmailPartnerRouterServiceUrl
+
+MonitoringServiceClient: 
+    MonitoringServiceUrl: 
+        settings-key: MonitoringServiceUrl
+
+PayAuthServiceClient: 
+    ServiceUrl: 
+        settings-key: PayAuthServiceUrl
+        types: [Tag]
+
+PayInternalServiceClient: 
+    ServiceUrl: 
+        settings-key: PayInternalServiceUrl
+        types: [Tag]
+  
+PayInvoicePortal: 
+    BlockchainExplorerUrl: 
+        settings-key: PayInvoicePortal-BlockchainExplorerUrl
+        types: [Tag]
+    EthereumBlockchainExplorerUrl: 
+        settings-key: PayInvoicePortal-EthereumBlockchainExplorerUrl
+        types: [Tag]
+    ApiaryDocsDomain: 
+        settings-key: PayInvoicePortal-ApiaryDocsDomain
+    UserLoginTime: 
+        settings-key: PayInvoicePortal-UserLoginTime
+    AssetsCacheExpirationPeriod: 
+        settings-key: PayInvoicePortal-AssetsCacheExpirationPeriod
+    CacheExpirationPeriods: 
+        BaseAsset: 
+            settings-key: PayInvoicePortal-CacheExpirationPeriods-BaseAsset
+        Rate: 
+            settings-key: PayInvoicePortal-CacheExpirationPeriods-Rate
+        MerchantName: 
+            settings-key: PayInvoicePortal-CacheExpirationPeriods-MerchantName
+    Db:
+        SubscriptionConnectionString: 
+            settings-key: PayInvoicePortal-SubscriptionConnString
+            types: [AzureTableStorage, Tag]
+        LogsConnectionString: 
+            settings-key: PayInvoicePortal-LogsConnString
+            types: [AzureTableStorage, Tag]
+
+PayInvoiceServiceClient: 
+    ServiceUrl: 
+        settings-key: PayInvoiceServiceUrl
+        types: [Tag]
+  
+RateCalculatorServiceClient: 
+    ServiceUrl: 
+        settings-key: RateCalculatorServiceUrl
+        types: [Tag]
+  
+SlackNotifications: 
+    AzureQueue: 
+        ConnectionString: 
+            settings-key: SlackNotificationsConnString
+            types: [AzureTableStorage]
+        QueueName: slack-notifications
+    ThrottlingLimitSeconds: 
+        settings-key: SlackNotificationsThrottlingLimit
+  

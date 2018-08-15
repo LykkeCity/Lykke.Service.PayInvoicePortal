@@ -43,6 +43,8 @@ function initResize() {
 }
 
 function adjuctFooter() {
+    if (window.isFooterHidden) return;
+
     $('body').css({
         paddingBottom: $('footer').outerHeight()
     });

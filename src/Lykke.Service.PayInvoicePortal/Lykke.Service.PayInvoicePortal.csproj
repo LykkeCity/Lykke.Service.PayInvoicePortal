@@ -48,6 +48,9 @@
     <Content Update="Views\IncomingInvoices\Index.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>
+    <Content Update="Views\PublicApiDocs\PublicApiDocs.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
     <Content Update="Views\Shared\Partials\InvoicesNav.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>
@@ -326,6 +329,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="AppCode" />
+    <Folder Include="Models\PublicApiDocs\" />
     <Folder Include="wwwroot\src\css\scss\" />
   </ItemGroup>
   <ItemGroup>
