@@ -20,12 +20,14 @@
     @* https://github.com/madskristensen/BundlerMinifier/blob/master/README.md#bundleconfigjson *@
     <environment include="Development">
         <link rel="stylesheet" type="text/css" href="~/css/style.css" asp-append-version="true">
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.9.1/underscore.js"></script>
         <script type="text/javascript" src="~/js/vendors.js" asp-append-version="true"></script>
         <script type="text/javascript" src="/js/functions.js" asp-append-version="true"></script>
         <script type="text/javascript" src="~/js/app.js" asp-append-version="true"></script>
     </environment>
     <environment include="Staging,Production">
         <link rel="stylesheet" type="text/css" href="~/css/style.min.css" asp-append-version="true">
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.9.1/underscore-min.js"></script>
         <script type="text/javascript" src="~/js/vendors.min.js" asp-append-version="true"></script>
         <script type="text/javascript" src="/js/functions.js" asp-append-version="true"></script>
         <script type="text/javascript" src="~/js/app.min.js" asp-append-version="true"></script>
@@ -44,7 +46,7 @@
         ga('send', 'pageview');
     </script>
 </head>
-<body class="footer_in_view" style="padding-bottom: 414.384px;" data-ng-class="{'body--menu_opened': $root.blur || $root.modalOpened}">
+<body class="footer_in_view" data-ng-class="{'body--menu_opened': $root.blur || $root.modalOpened}">
     
     @await Html.PartialAsync("/Views/Partials/ConfirmModal.cshtml")
     <div class="header_container">
