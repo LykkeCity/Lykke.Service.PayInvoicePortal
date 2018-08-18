@@ -1,75 +1,83 @@
 ﻿@{
     ViewData["Title"] = "Sign request";
 }
+
 <article class="content">
-    <h3>Sign request</h3>
-    <div style="text-align: center">
-        <div class="spinner">
-            <div class="spinner__inside"></div>
-        </div>
-    </div>
-    <div class="row">
-        <div class="col-md-8">
+    <section class="section section--padding">
+        <div class="container">
+            <div class="row">
+                <h3>Sign request</h3>
+            </div>
+            
+            <div class="row">
+                <div class="col-md-8 automargin">
 
-            <form action="" enctype="multipart/form-data" method="post" class="" onsubmit="event.preventDefault();">
+                    <form action="" enctype="multipart/form-data" method="post" class="" onsubmit="event.preventDefault();">
 
-                <div class="form-group">
-                    <label class="control-label" for="number">Lykke-Merchant-Id</label>
-                    <input name="lykkeMerchantId" type="text" require placeholder="" class="form-control" data-ng-model="vm.model.lykkeMerchantId" data-ng-class="{'error': vm.form.errors.lykkeMerchantId}">
-                </div>
+                        <div class="form-group">
+                            <label class="control-label" for="number">Lykke-Merchant-Id</label>
+                            <input name="lykkeMerchantId" type="text" require placeholder="" class="form-control" data-ng-model="vm.model.lykkeMerchantId" data-ng-class="{'error': vm.form.errors.lykkeMerchantId}">
+                        </div>
 
-                <div class="form-group">
-                    <label class="control-label" for="name">ApiKey</label>
-                    <input name="apiKey" type="text" require placeholder="" class="form-control" data-ng-model="vm.model.apiKey" data-ng-class="{'error': vm.form.errors.apiKey}">
-                </div>
+                        <div class="form-group">
+                            <label class="control-label" for="name">ApiKey</label>
+                            <input name="apiKey" type="text" require placeholder="" class="form-control" data-ng-model="vm.model.apiKey" data-ng-class="{'error': vm.form.errors.apiKey}">
+                        </div>
 
-                <div class="form_header">
-                    <button type="button" class="btn btn-sm btn-primary pull-right"
-                            ngf-select="vm.handlers.addFiles($files)"
-                            accept=".pem"
-                            ngf-multiple="false">
-                        Add
-                    </button>
-                    <h5>Rsa private key (.pem)</h5>
-                </div>
-                <div class="attachment_list">
-                    <div class="asset_link_list" data-ng-show="vm.model.files && vm.model.files.length > 0">
-                        <div class="asset_link asset_link--alt" data-ng-repeat="file in vm.model.files">
-                            <div class="asset_link__icon">
-                                <div class="asset_icon asset_icon--red" data-ng-bind="vm.handlers.getFileExtension(file.name)"></div>
+                        <div class="form_header">
+                            <button type="button" class="btn btn-sm btn-primary pull-right"
+                                    ngf-select="vm.handlers.addFiles($files)"
+                                    accept=".pem"
+                                    ngf-multiple="false">
+                                Add
+                            </button>
+                            <h5>Rsa private key (.pem)</h5>
+                        </div>
+                        <div class="attachment_list">
+                            <div class="asset_link_list" data-ng-show="vm.model.files && vm.model.files.length > 0">
+                                <div class="asset_link asset_link--alt" data-ng-repeat="file in vm.model.files">
+                                    <div class="asset_link__icon">
+                                        <div class="asset_icon asset_icon--red" data-ng-bind="vm.handlers.getFileExtension(file.name)"></div>
+                                    </div>
+                                    <div class="asset_link__action">
+                                        <button class="btn btn--icon" data-ng-click="vm.handlers.deleteFile(file)">
+                                            <i class="btn__svg_icon svg_icon svg_icon--delete"></i>
+                                        </button>
+                                    </div>
+                                    <div class="asset_link__info">
+                                        <div class="asset_link__title" data-ng-bind="file.name"></div>
+                                        <div class="asset_link__desc" data-ng-bind="vm.handlers.getFileSize(file.size)"></div>
+                                    </div>
+                                </div>
                             </div>
-                            <div class="asset_link__action">
-                                <button class="btn btn--icon" data-ng-click="vm.handlers.deleteFile(file)">
-                                    <i class="btn__svg_icon svg_icon svg_icon--delete"></i>
-                                </button>
-                            </div>
-                            <div class="asset_link__info">
-                                <div class="asset_link__title" data-ng-bind="file.name"></div>
-                                <div class="asset_link__desc" data-ng-bind="vm.handlers.getFileSize(file.size)"></div>
-                            </div>
+                            <div class="hint" data-ng-show="!vm.model.files || vm.model.files.length === 0">No file selected</div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="control-label" for="body">Body</label>
+                            <textarea name="body" class="form-control" style="resize: vertical" data-ng-model="vm.model.body"></textarea>
+                        </div>
+
+                        <div class="form-group">
+                            <button class="btn btn-block" name="button" type="submit" data-ng-click="vm.handlers.generate()" data-ng-disabled="vm.form.blocked">Submit</button>
+                        </div>
+
+                    </form>
+
+                    <div style="text-align: center">
+                        <div class="spinner">
+                            <div class="spinner__inside"></div>
                         </div>
                     </div>
-                    <div class="hint" data-ng-show="!vm.model.files || vm.model.files.length === 0">No file selected</div>
-                </div>
-
-                <div class="form-group">
-                    <label class="control-label" for="body">Body</label>
-                    <textarea name="body" class="form-control" data-ng-model="vm.model.body"></textarea>
-                </div>
-
+                    
                     <div class="form-group">
-                        <button class="btn btn-block" name="button" type="submit" data-ng-click="vm.handlers.generate()" data-ng-disabled="vm.form.blocked">Submit</button>
+                        <label class="control-label" for="result">Result</label>
+                        <textarea name="result" class="form-control" style="resize: vertical" data-ng-model="vm.model.result"></textarea>
                     </div>
-                
-
-            </form>
-
-            <div class="form-group">
-                <label class="control-label" for="result">Result</label>
-                <textarea name="result" class="form-control" data-ng-model="vm.model.result"></textarea>
+                </div>
             </div>
         </div>
-    </div>
+    </section>
 
     <script>
         $(document).ready(function () {

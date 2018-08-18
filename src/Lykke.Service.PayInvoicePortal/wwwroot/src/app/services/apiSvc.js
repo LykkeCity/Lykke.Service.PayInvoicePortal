@@ -37,6 +37,8 @@
             updateInvoice: updateInvoice,
             deleteInvoice: deleteInvoice,
 
+            signRequest: signRequest,
+
             getPaymentDetails: getPaymentDetails,
             refreshPaymentDetails: refreshPaymentDetails,
             getPaymentStatus: getPaymentStatus,
@@ -176,6 +178,11 @@
 
         function deleteInvoice(invoiceId) {
             return remove('invoices/' + invoiceId, {});
+        }
+
+        // Sign request
+        function signRequest(model, files) {
+            return upload('signRequest', model, files);
         }
 
         // Paymnets
