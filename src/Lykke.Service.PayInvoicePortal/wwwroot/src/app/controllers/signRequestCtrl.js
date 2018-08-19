@@ -5,13 +5,17 @@
         .module('app')
         .controller('signRequestCtrl', signRequestCtrl);
 
-    signRequestCtrl.$inject = ['$scope', '$window', '$log', '$rootScope', '$interval', 'apiSvc', 'statusSvc', 'fileSvc', 'confirmModalSvc'];
+    signRequestCtrl.$inject = ['$log', 'apiSvc', 'fileSvc', 'confirmModalSvc'];
 
-    function signRequestCtrl($scope, $window, $log, $rootScope, apiSvc, fileSvc, confirmModalSvc) {
+    function signRequestCtrl($log, apiSvc, fileSvc, confirmModalSvc) {
         var vm = this;
 
         vm.view = {
             isLoading: false
+        };
+
+        vm.form = {
+            errors: []
         };
 
         vm.model = {
@@ -23,16 +27,15 @@
         };
 
         vm.handlers = {
+            init: init,
             submit: submit,
             addFiles: addFiles,
             getFileExtension: fileSvc.getExtension,
-            getFileSize: fileSvc.getSize,
-            getFile: getFile
+            getFileSize: fileSvc.getSize
         };
 
-        activate();
-
-        function activate() {
+        function init(merchantId) {
+            vm.model.lykkeMerchantId = merchantId;
         }
 
         function validate() {
@@ -58,15 +61,15 @@
                 return;
 
             vm.view.isLoading = true;
+            vm.model.result = '';
 
-            var model =
-                {
-                    lykkeMerchantId: vm.model.lykkeMerchantId,
-                    apiKey: vm.model.apiKey,
-                    body: vm.model.body
-                };
+            var model = {
+                lykkeMerchantId: vm.model.lykkeMerchantId,
+                apiKey: vm.model.apiKey,
+                body: vm.model.body
+            };
 
-            apiSvc.signRequest(model, vm.model.files)
+            apiSvc.signRequest(model, vm.model.files[0])
                 .then(
                     function (data) {
                         vm.model.result = data.signedBody;
@@ -76,13 +79,38 @@
 
                         confirmModalSvc.open({
                             title: confirmModalSvc.constants.errorTitle,
-                            content: confirmModalSvc.constants.errorCommonMessage
+                            content: 'Unable to sign request with provided data. Please review input data or contact support.'
                         });
                     })
                 .finally(
                     function () {
                         vm.view.isLoading = false;
                     });
+        }
+
+        function addFiles(files) {
+            if (!files || files.length === 0)
+                return;
+
+            var valid = true;
+            angular.forEach(files, function (file, key) {
+                valid = valid && fileSvc.validate(file, ['pem']);
+            });
+
+            if (!valid) {
+                confirmModalSvc.open({
+                    title: 'Invalid file',
+                    content: "Check that file is correct and has extension .pem"
+                });
+
+                return;
+            }
+
+            vm.model.files.length = 0;
+
+            angular.forEach(files, function (file, key) {
+                vm.model.files.push(file);
+            });
         }
     }
 })();

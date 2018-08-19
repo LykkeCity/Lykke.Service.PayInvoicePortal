@@ -181,8 +181,8 @@
         }
 
         // Sign request
-        function signRequest(model, files) {
-            return upload('signRequest', model, files);
+        function signRequest(model, file) {
+            return upload('signRequest', model, file, 'file');
         }
 
         // Paymnets
@@ -267,13 +267,13 @@
             return deferred.promise;
         }
 
-        function upload(action, model, files) {
+        function upload(action, model, files, fileFormDataName) {
             var deferred = $q.defer();
 
             Upload.upload({
                 url: getUrl(action),
                 file: files,
-                fileFormDataName: 'files',
+                fileFormDataName: fileFormDataName || 'files',
                 fields: model
             }).then(
                 function(response) {

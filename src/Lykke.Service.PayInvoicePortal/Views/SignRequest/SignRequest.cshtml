@@ -1,84 +1,112 @@
 ﻿@{
     ViewData["Title"] = "Sign request";
 }
-
-<article class="content">
+<article class="content"
+         ng-controller="signRequestCtrl as vm"
+         ng-init="vm.handlers.init('@ViewBag.MerchantId')"
+         ng-cloak>
     <section class="section section--padding">
         <div class="container">
             <div class="row">
                 <h3>Sign request</h3>
             </div>
-            
-            <div class="row">
+
+            <div class="sign-request row">
                 <div class="col-md-8 automargin">
-
-                    <form action="" enctype="multipart/form-data" method="post" class="" onsubmit="event.preventDefault();">
-
+                    <form enctype="multipart/form-data" onsubmit="event.preventDefault();" novalidate>
                         <div class="form-group">
                             <label class="control-label" for="number">Lykke-Merchant-Id</label>
-                            <input name="lykkeMerchantId" type="text" require placeholder="" class="form-control" data-ng-model="vm.model.lykkeMerchantId" data-ng-class="{'error': vm.form.errors.lykkeMerchantId}">
+                            <input name="lykkeMerchantId"
+                                   type="text"
+                                   required
+                                   class="form-control"
+                                   data-ng-model="vm.model.lykkeMerchantId"
+                                   data-ng-class="{'error': vm.form.errors.lykkeMerchantId && !vm.model.lykkeMerchantId}">
                         </div>
 
                         <div class="form-group">
                             <label class="control-label" for="name">ApiKey</label>
-                            <input name="apiKey" type="text" require placeholder="" class="form-control" data-ng-model="vm.model.apiKey" data-ng-class="{'error': vm.form.errors.apiKey}">
+                            <input name="apiKey"
+                                   type="text"
+                                   required
+                                   class="form-control"
+                                   data-ng-model="vm.model.apiKey"
+                                   data-ng-class="{'error': vm.form.errors.apiKey && !vm.model.apiKey}">
                         </div>
 
-                        <div class="form_header">
-                            <button type="button" class="btn btn-sm btn-primary pull-right"
-                                    ngf-select="vm.handlers.addFiles($files)"
-                                    accept=".pem"
-                                    ngf-multiple="false">
-                                Add
-                            </button>
-                            <h5>Rsa private key (.pem)</h5>
-                        </div>
-                        <div class="attachment_list">
-                            <div class="asset_link_list" data-ng-show="vm.model.files && vm.model.files.length > 0">
-                                <div class="asset_link asset_link--alt" data-ng-repeat="file in vm.model.files">
-                                    <div class="asset_link__icon">
-                                        <div class="asset_icon asset_icon--red" data-ng-bind="vm.handlers.getFileExtension(file.name)"></div>
-                                    </div>
-                                    <div class="asset_link__action">
-                                        <button class="btn btn--icon" data-ng-click="vm.handlers.deleteFile(file)">
-                                            <i class="btn__svg_icon svg_icon svg_icon--delete"></i>
-                                        </button>
-                                    </div>
-                                    <div class="asset_link__info">
-                                        <div class="asset_link__title" data-ng-bind="file.name"></div>
-                                        <div class="asset_link__desc" data-ng-bind="vm.handlers.getFileSize(file.size)"></div>
+                        <div class="form-group sign-request__file">
+                            <div class="form_header">
+                                <button type="button" class="btn btn-sm btn--default pull-right"
+                                        ngf-select="vm.handlers.addFiles($files)"
+                                        accept=".pem"
+                                        ngf-multiple="false">
+                                    Add
+                                </button>
+                                <h5>Rsa private key (.pem)</h5>
+                            </div>
+
+                            <div class="attachment_list" data-ng-class="{'error': vm.form.errors.files && !vm.model.files.length}">
+                                <div class="asset_link_list" data-ng-show="vm.model.files && vm.model.files.length > 0">
+                                    <div class="asset_link asset_link--alt" data-ng-repeat="file in vm.model.files">
+                                        <div class="asset_link__icon">
+                                            <div class="asset_icon asset_icon--green" data-ng-bind="vm.handlers.getFileExtension(file.name)"></div>
+                                        </div>
+                                        <div class="asset_link__info">
+                                            <div class="asset_link__title" data-ng-bind="file.name" style="max-width: 100%"></div>
+                                            <div class="asset_link__desc" data-ng-bind="vm.handlers.getFileSize(file.size)"></div>
+                                        </div>
                                     </div>
                                 </div>
+                                <div class="hint" data-ng-show="!vm.model.files || !vm.model.files.length">No file added</div>
                             </div>
-                            <div class="hint" data-ng-show="!vm.model.files || vm.model.files.length === 0">No file selected</div>
                         </div>
 
                         <div class="form-group">
                             <label class="control-label" for="body">Body</label>
-                            <textarea name="body" class="form-control" style="resize: vertical" data-ng-model="vm.model.body"></textarea>
+                            <textarea name="body"
+                                      class="form-control"
+                                      required
+                                      placeholder="paste here the path for GET or the body for POST/PUT..."
+                                      style="resize: vertical"
+                                      data-ng-model="vm.model.body"
+                                      data-ng-class="{'error': vm.form.errors.body && !vm.model.body}"></textarea>
                         </div>
 
-                        <div class="form-group">
-                            <button class="btn btn-block" name="button" type="submit" data-ng-click="vm.handlers.generate()" data-ng-disabled="vm.form.blocked">Submit</button>
+                        <div class="form-group clearfix">
+                            <button class="btn btn--default pull-right" 
+                                    name="button" 
+                                    type="submit" 
+                                    data-ng-click="vm.handlers.submit()" 
+                                    data-ng-disabled="vm.view.isLoading">Submit</button>
                         </div>
-
                     </form>
-
-                    <div style="text-align: center">
+                    <div ng-show="vm.view.isLoading">
                         <div class="spinner">
                             <div class="spinner__inside"></div>
                         </div>
                     </div>
-                    
+
                     <div class="form-group">
-                        <label class="control-label" for="result">Result</label>
-                        <textarea name="result" class="form-control" style="resize: vertical" data-ng-model="vm.model.result"></textarea>
+                        <label class="control-label" for="result">Result to put in request header <i>Lykke-Merchant-Sign</i></label>
+                        <div style="position: relative">
+                            <textarea name="result" 
+                                      class="form-control" 
+                                      style="resize: vertical" 
+                                      data-ng-model="vm.model.result" 
+                                      ng-disabled="!vm.model.result"></textarea>
+                            <button class="btn btn--icon" 
+                                    type="button" 
+                                    data-copy="vm.model.result" 
+                                    data-title="Copied!"
+                                    style="position: absolute; top: 0; right: 0">
+                                <i class="btn__svg_icon svg_icon svg_icon--copy"></i>
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </section>
-
     <script>
         $(document).ready(function () {
 
