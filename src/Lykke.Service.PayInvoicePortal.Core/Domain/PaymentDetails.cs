@@ -1,6 +1,6 @@
 ﻿using System;
 using Lykke.Service.Assets.Client.Models;
-using Lykke.Service.PayInternal.Client.Models.Merchant;
+using Lykke.Service.PayMerchant.Client.Models;
 using Lykke.Service.PayInvoice.Client.Models.Invoice;
 
 namespace Lykke.Service.PayInvoicePortal.Core.Domain
