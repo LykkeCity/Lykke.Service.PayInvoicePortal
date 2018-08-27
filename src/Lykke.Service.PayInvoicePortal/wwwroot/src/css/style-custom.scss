@@ -3,6 +3,19 @@
     z-index: 1006;
 }
 
+.header_actions {
+    &__signin {
+        float: left;
+        line-height: 42px;
+        margin-left: 15px;
+
+        @media (max-width: 767px) {
+            line-height: 34px;
+            margin-left: 8px;
+        }
+    }
+}
+
 .main-page-loader {
     text-align: center;
     height: 500px;
@@ -68,11 +81,50 @@ input[type=number]::-webkit-outer-spin-button {
 }
 
 .sign-request {
-    &__file {
-        > .attachment_list {
-            &.error {
-                border: 2px solid #ff3e2e;
-            }
+    &__open-button {
+        position: fixed;
+        bottom: 40px;
+        right: 40px;
+        letter-spacing: 1.5px;
+        border-radius: 7px;
+        font-size: 13px;
+        padding: 12px 20px;
+    }
+
+    &__hint {
+        font-size: 13px;
+        color: #8c94a0;
+        margin-top: 8px;
+    }
+
+    &__submit {
+        padding-left: 30px;
+        padding-right: 30px;
+    }
+
+    &__result {
+        border-color: transparent !important;
+    }
+
+    .sidebar_menu__body {
+        .control-label {
+            color: #111111;
+            font-weight: 600;
         }
+
+        textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+    }
+}
+
+.svg_icon {
+    &--disabled {
+        opacity: 0.3
+    }
+
+    &--approve {
+        background-image: url(../img/approve.svg?v=2);
     }
 }

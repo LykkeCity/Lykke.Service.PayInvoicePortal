@@ -2760,11 +2760,11 @@ ol.list_styled li:before { content: counter(step-counter); background-color: #33
 
 .breadcrumbs_item--current { color: rgba(63, 77, 96, 0.6); }
 
-.sidebar_menu--right { left: auto; right: 0; background-color: #fff; z-index: 1005; max-width: 100%; display: none; width: 550px; width: 34.375rem; -webkit-transform: translate(0, 0); -moz-transform: translate(0, 0); -ms-transform: translate(0, 0); -o-transform: translate(0, 0); transform: translate(0, 0); }
+.sidebar_menu--right { left: auto; right: 0; background-color: #fff; z-index: 1005; max-width: 100%; width: 550px; width: 34.375rem; -webkit-transform: translate(100%, 0); -moz-transform: translate(100%, 0); -ms-transform: translate(100%, 0); -o-transform: translate(100%, 0); transform: translate(100%, 0); }
 
 .sidebar_menu--right h3 { font-family: "Proxima Nova", "Segoe UI", Roboto, "Droid Sans", "Helvetica Neue", Arial, sans-serif; font-weight: 600; font-size: 28px; font-size: 1.75rem; margin-bottom: 15px; margin-bottom: 0.9375rem; }
 
-.sidebar_menu--right.sidebar_menu--open { display: block; }
+.sidebar_menu--right.sidebar_menu--open { -webkit-transform: translate(0, 0); -moz-transform: translate(0, 0); -ms-transform: translate(0, 0); -o-transform: translate(0, 0); transform: translate(0, 0); }
 
 .sidebar_menu--right .sidebar_menu__header { padding: 0; border-bottom: 0; margin: 0; position: static; margin-bottom: 30px; margin-bottom: 1.875rem; }
 

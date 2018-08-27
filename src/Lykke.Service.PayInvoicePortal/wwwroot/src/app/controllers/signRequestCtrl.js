@@ -5,13 +5,14 @@
         .module('app')
         .controller('signRequestCtrl', signRequestCtrl);
 
-    signRequestCtrl.$inject = ['$log', 'apiSvc', 'fileSvc', 'confirmModalSvc'];
+    signRequestCtrl.$inject = ['$log', '$rootScope', 'apiSvc', 'fileSvc', 'confirmModalSvc'];
 
-    function signRequestCtrl($log, apiSvc, fileSvc, confirmModalSvc) {
+    function signRequestCtrl($log, $rootScope, apiSvc, fileSvc, confirmModalSvc) {
         var vm = this;
 
         vm.view = {
-            isLoading: false
+            isLoading: false,
+            isSidebarVisible: false
         };
 
         vm.form = {
@@ -21,7 +22,7 @@
         vm.model = {
             lykkeMerchantId: '',
             apiKey: '',
-            files: [],
+            rsaPrivateKey: '',
             body: '',
             result: ''
         };
@@ -29,13 +30,13 @@
         vm.handlers = {
             init: init,
             submit: submit,
-            addFiles: addFiles,
-            getFileExtension: fileSvc.getExtension,
-            getFileSize: fileSvc.getSize
+            open: open,
+            close: close
         };
 
-        function init(merchantId) {
-            vm.model.lykkeMerchantId = merchantId;
+        function init(data) {
+            vm.model.lykkeMerchantId = data.merchantId;
+            vm.model.apiKey = data.apiKey;
         }
 
         function validate() {
@@ -43,7 +44,7 @@
 
             vm.form.errors['lykkeMerchantId'] = !vm.model.lykkeMerchantId;
             vm.form.errors['apiKey'] = !vm.model.apiKey;
-            vm.form.errors['files'] = !vm.model.files.length;
+            vm.form.errors['rsaPrivateKey'] = !vm.model.rsaPrivateKey;
             vm.form.errors['body'] = !vm.model.body;
 
             for (var key in vm.form.errors) {
@@ -66,10 +67,11 @@
             var model = {
                 lykkeMerchantId: vm.model.lykkeMerchantId,
                 apiKey: vm.model.apiKey,
+                rsaPrivateKey: vm.model.rsaPrivateKey,
                 body: vm.model.body
             };
 
-            apiSvc.signRequest(model, vm.model.files[0])
+            apiSvc.signRequest(model)
                 .then(
                     function (data) {
                         vm.model.result = data.signedBody;
@@ -88,29 +90,14 @@
                     });
         }
 
-        function addFiles(files) {
-            if (!files || files.length === 0)
-                return;
+        function open() {
+            $rootScope.blur = true;
+            vm.view.isSidebarVisible = true;
+        }
 
-            var valid = true;
-            angular.forEach(files, function (file, key) {
-                valid = valid && fileSvc.validate(file, ['pem']);
-            });
-
-            if (!valid) {
-                confirmModalSvc.open({
-                    title: 'Invalid file',
-                    content: "Check that file is correct and has extension .pem"
-                });
-
-                return;
-            }
-
-            vm.model.files.length = 0;
-
-            angular.forEach(files, function (file, key) {
-                vm.model.files.push(file);
-            });
+        function close() {
+            $rootScope.blur = false;
+            vm.view.isSidebarVisible = false;
         }
     }
 })();

@@ -13,13 +13,10 @@ using Lykke.Service.PayInternal.Client.Exceptions;
 using Lykke.Service.PayInvoicePortal.Core.Extensions;
 using Lykke.Service.PayInvoicePortal.Models.SignRequest;
 using LykkePay.Common.Validation;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Lykke.Service.PayInvoicePortal.Controllers.Api
 {
-    [Authorize]
     [Route("api/signrequest")]
     public class SignRequestController : Controller
     {
@@ -40,13 +37,8 @@ namespace Lykke.Service.PayInvoicePortal.Controllers.Api
 
         [HttpPost]
         [ValidateModel]
-        public async Task<IActionResult> SignRequest(SignRequestModel model, IFormFile file)
+        public async Task<IActionResult> SignRequest([FromBody] SignRequestModel model)
         {
-            if (file == null || file.Length == 0)
-            {
-                return BadRequest(ErrorResponse.Create("Empty file"));
-            }
-
             try
             {
                 var merchant = await _payInternalClient.GetMerchantByIdAsync(model.LykkeMerchantId);
@@ -54,9 +46,7 @@ namespace Lykke.Service.PayInvoicePortal.Controllers.Api
                 if (model.ApiKey != merchant.ApiKey)
                     throw new InvalidOperationException("Invalid api key for merchant.");
 
-                var fileContent = await file.OpenReadStream().ToBytesAsync();
-                var privateKey = Encoding.UTF8.GetString(fileContent, 0, fileContent.Length);
-                var rsa = privateKey.CreateRsa();
+                var rsa = model.RsaPrivateKey.CreateRsa();
 
                 var signedBody = Convert.ToBase64String(
                     rsa.SignData(
@@ -87,13 +77,13 @@ namespace Lykke.Service.PayInvoicePortal.Controllers.Api
             }
             catch (DefaultErrorResponseException ex)
             {
-                _log.ErrorWithDetails(ex, model);
+                _log.ErrorWithDetails(ex, model.Sanitize());
 
                 return BadRequest(ErrorResponse.Create(ex.Message));
             }
             catch (Exception ex)
             {
-                _log.ErrorWithDetails(ex, model);
+                _log.ErrorWithDetails(ex, model.Sanitize());
 
                 return BadRequest(ErrorResponse.Create("Unable to sign with provided data."));
             }

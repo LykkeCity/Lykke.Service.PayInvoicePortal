@@ -181,8 +181,8 @@
         }
 
         // Sign request
-        function signRequest(model, file) {
-            return upload('signRequest', model, file, 'file');
+        function signRequest(model) {
+            return post('signRequest', model);
         }
 
         // Paymnets
