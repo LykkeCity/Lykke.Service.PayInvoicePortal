@@ -80,4 +80,9 @@ SlackNotifications:
         QueueName: slack-notifications
     ThrottlingLimitSeconds: 
         settings-key: SlackNotificationsThrottlingLimit
+
+PayMerchantServiceClient:
+    ServiceUrl:
+        settings-key: PayMerchantServiceUrl
+        types: [Tag]
   

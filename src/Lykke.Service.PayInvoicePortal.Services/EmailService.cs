@@ -3,17 +3,16 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Common.Log;
-using Lykke.Service.Assets.Client;
 using Lykke.Service.Assets.Client.Models;
 using Lykke.Service.EmailPartnerRouter.Client;
 using Lykke.Service.EmailPartnerRouter.Contracts;
-using Lykke.Service.PayInternal.Client;
-using Lykke.Service.PayInternal.Client.Models.Merchant;
+using Lykke.Service.PayMerchant.Client.Models;
 using Lykke.Service.PayInvoice.Client;
 using Lykke.Service.PayInvoice.Client.Models.Invoice;
 using Lykke.Service.PayInvoicePortal.Core.Services;
 using Lykke.Service.PayInvoicePortal.Core.Extensions;
 using Lykke.Common.Log;
+using Lykke.Service.PayMerchant.Client;
 
 namespace Lykke.Service.PayInvoicePortal.Services
 {
@@ -23,22 +22,22 @@ namespace Lykke.Service.PayInvoicePortal.Services
         private const string EmailTemplateWithoutNote = "PaymentRequestedWithoutNoteTemplate";
 
         private readonly IPayInvoiceClient _payInvoiceClient;
-        private readonly IPayInternalClient _payInternalClient;
         private readonly ILykkeAssetsResolver _lykkeAssetsResolver;
         private readonly IEmailPartnerRouterClient _emailPartnerRouterClient;
+        private readonly IPayMerchantClient _payMerchantClient;
         private readonly ILog _log;
 
         public EmailService(
             IPayInvoiceClient payInvoiceClient,
-            IPayInternalClient payInternalClient,
             ILykkeAssetsResolver lykkeAssetsResolver,
             IEmailPartnerRouterClient emailPartnerRouterClient,
-            ILogFactory logFactory)
+            ILogFactory logFactory, 
+            IPayMerchantClient payMerchantClient)
         {
             _payInvoiceClient = payInvoiceClient;
-            _payInternalClient = payInternalClient;
             _lykkeAssetsResolver = lykkeAssetsResolver;
             _emailPartnerRouterClient = emailPartnerRouterClient;
+            _payMerchantClient = payMerchantClient;
             _log = logFactory.CreateLog(this);
         }
 
@@ -50,7 +49,7 @@ namespace Lykke.Service.PayInvoicePortal.Services
             try
             {
                 invoice = await _payInvoiceClient.GetInvoiceAsync(invoiceId);
-                merchant = await _payInternalClient.GetMerchantByIdAsync(invoice.MerchantId);
+                merchant = await _payMerchantClient.Api.GetByIdAsync(invoice.MerchantId);
             }
             catch (Exception ex)
             {

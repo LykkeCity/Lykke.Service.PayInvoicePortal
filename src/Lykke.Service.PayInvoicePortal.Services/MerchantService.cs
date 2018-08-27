@@ -1,30 +1,28 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using Lykke.Common.Cache;
-using Lykke.Service.PayInternal.Client;
-using Lykke.Service.PayInternal.Client.Models.MerchantGroups;
+using Lykke.Service.PayMerchant.Client.Models;
 using Lykke.Service.PayInvoicePortal.Core.Domain.Settings.ServiceSettings;
 using Lykke.Service.PayInvoicePortal.Core.Services;
+using Lykke.Service.PayMerchant.Client;
 using Microsoft.Extensions.Caching.Memory;
 
 namespace Lykke.Service.PayInvoicePortal.Services
 {
     public class MerchantService : IMerchantService
     {
-        private readonly IPayInternalClient _payInternalClient;
+        private readonly IPayMerchantClient _payMerchantClient;
         private readonly CacheExpirationPeriodsSettings _cacheExpirationPeriods;
         private readonly OnDemandDataCache<string> _merchantNamesCache;
 
         public MerchantService(
-            IPayInternalClient payInternalClient,
             IMemoryCache memoryCache,
-            CacheExpirationPeriodsSettings cacheExpirationPeriods)
+            CacheExpirationPeriodsSettings cacheExpirationPeriods, 
+            IPayMerchantClient payMerchantClient)
         {
-            _payInternalClient = payInternalClient;
             _cacheExpirationPeriods = cacheExpirationPeriods;
+            _payMerchantClient = payMerchantClient;
             _merchantNamesCache = new OnDemandDataCache<string>(memoryCache);
         }
 
@@ -34,7 +32,7 @@ namespace Lykke.Service.PayInvoicePortal.Services
                 (
                     $"MerchantName-{merchantId}",
                     async x => {
-                        var merchant = await _payInternalClient.GetMerchantByIdAsync(merchantId);
+                        var merchant = await _payMerchantClient.Api.GetByIdAsync(merchantId);
                         return merchant.DisplayName;
                     },
                     _cacheExpirationPeriods.MerchantName
@@ -44,7 +42,7 @@ namespace Lykke.Service.PayInvoicePortal.Services
         }
         public async Task<IReadOnlyList<string>> GetGroupMerchantsAsync(string merchantId)
         {
-            MerchantsByUsageResponse response = await _payInternalClient.GetMerchantsByUsageAsync(
+            MerchantsByUsageResponse response = await _payMerchantClient.GroupsApi.GetMerchantsByUsageAsync(
                 new GetMerchantsByUsageRequest
                 {
                     MerchantId = merchantId,

@@ -1,17 +1,14 @@
 ﻿using System;
 using Autofac;
-using Common.Log;
-using Lykke.Common.Log;
 using Lykke.Service.Assets.Client;
-using Lykke.Service.Balances.Client;
 using Lykke.Service.EmailPartnerRouter.Client;
 using Lykke.Service.PayAuth.Client;
 using Lykke.Service.PayInternal.Client;
 using Lykke.Service.PayInvoice.Client;
 using Lykke.Service.PayInvoicePortal.Settings;
+using Lykke.Service.PayMerchant.Client;
 using Lykke.Service.RateCalculator.Client;
 using Lykke.SettingsReader;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace Lykke.Service.PayInvoicePortal
 {
@@ -20,18 +17,17 @@ namespace Lykke.Service.PayInvoicePortal
         private readonly IReloadingManager<AppSettings> _settings;
 
         public AutofacModule(
-            IReloadingManager<AppSettings> settings,
-            IServiceCollection services)
+            IReloadingManager<AppSettings> settings)
         {
             _settings = settings;
-
-            services.RegisterAssetsClient(AssetServiceSettings.Create(
-                new Uri(settings.CurrentValue.AssetsServiceClient.ServiceUrl),
-                settings.CurrentValue.PayInvoicePortal.AssetsCacheExpirationPeriod));
         }
 
         protected override void Load(ContainerBuilder builder)
         {
+            builder.RegisterAssetsClient(AssetServiceSettings.Create(
+                new Uri(_settings.CurrentValue.AssetsServiceClient.ServiceUrl),
+                _settings.CurrentValue.PayInvoicePortal.AssetsCacheExpirationPeriod));
+
             builder.RegisterInstance(new PayInvoiceClient(_settings.CurrentValue.PayInvoiceServiceClient))
                 .As<IPayInvoiceClient>()
                 .SingleInstance();
@@ -49,6 +45,8 @@ namespace Lykke.Service.PayInvoicePortal
                 .SingleInstance();
 
             builder.RegisterRateCalculatorClient(_settings.CurrentValue.RateCalculatorServiceClient.ServiceUrl);
+
+            builder.RegisterPayMerchantClient(_settings.CurrentValue.PayMerchantServiceClient, null);
         }
     }
 }
