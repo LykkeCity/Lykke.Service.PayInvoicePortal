@@ -8,6 +8,7 @@ using Common.Log;
 using Lykke.Common.Log;
 using Lykke.Service.PayInternal.Client;
 using Lykke.Service.PayInvoicePortal.Extensions;
+using Lykke.Service.PayMerchant.Client;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Lykke.Service.PayInvoicePortal.Controllers
@@ -15,14 +16,14 @@ namespace Lykke.Service.PayInvoicePortal.Controllers
     [Route("payapidocs")]
     public class PublicApiDocsController : Controller
     {
-        private readonly IPayInternalClient _payInternalClient;
+        private readonly IPayMerchantClient _payMerchantClient;
         private readonly ILog _log;
 
         public PublicApiDocsController(
-            IPayInternalClient payInternalClient,
+            IPayMerchantClient payMerchantClient,
             ILogFactory logFactory)
         {
-            _payInternalClient = payInternalClient;
+            _payMerchantClient = payMerchantClient;
             _log = logFactory.CreateLog(this);
         }
 
@@ -38,7 +39,7 @@ namespace Lykke.Service.PayInvoicePortal.Controllers
             try
             {
                 ViewBag.MerchantId = User.GetMerchantId();
-                var merchant = await _payInternalClient.GetMerchantByIdAsync(ViewBag.MerchantId);
+                var merchant = await _payMerchantClient.Api.GetByIdAsync(ViewBag.MerchantId);
                 ViewBag.ApiKey = merchant.ApiKey;
             }
             catch (Exception e)
