@@ -12,6 +12,7 @@ using Lykke.Service.PayInternal.Client;
 using Lykke.Service.PayInternal.Client.Exceptions;
 using Lykke.Service.PayInvoicePortal.Core.Extensions;
 using Lykke.Service.PayInvoicePortal.Models.SignRequest;
+using Lykke.Service.PayMerchant.Client;
 using LykkePay.Common.Validation;
 using Microsoft.AspNetCore.Mvc;
 
@@ -22,16 +23,16 @@ namespace Lykke.Service.PayInvoicePortal.Controllers.Api
     {
         public const string SystemId = "LykkePay";
         private readonly IPayAuthClient _payAuthClient;
-        private readonly IPayInternalClient _payInternalClient;
+        private readonly IPayMerchantClient _payMerchantClient;
         private readonly ILog _log;
 
         public SignRequestController(
             IPayAuthClient payAuthClient,
-            IPayInternalClient payInternalClient,
+            IPayMerchantClient payMerchantClient,
             ILogFactory logFactory)
         {
             _payAuthClient = payAuthClient;
-            _payInternalClient = payInternalClient;
+            _payMerchantClient = payMerchantClient;
             _log = logFactory.CreateLog(this);
         }
 
@@ -41,7 +42,7 @@ namespace Lykke.Service.PayInvoicePortal.Controllers.Api
         {
             try
             {
-                var merchant = await _payInternalClient.GetMerchantByIdAsync(model.LykkeMerchantId);
+                var merchant = await _payMerchantClient.Api.GetByIdAsync(model.LykkeMerchantId);
 
                 if (model.ApiKey != merchant.ApiKey)
                     throw new InvalidOperationException("Invalid api key for merchant.");
