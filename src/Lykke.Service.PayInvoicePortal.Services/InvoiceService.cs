@@ -9,7 +9,7 @@ using Lykke.Common.Cache;
 using Lykke.Service.Assets.Client.Models;
 using Lykke.Service.PayInternal.Client;
 using Lykke.Service.PayInternal.Client.Models.Markup;
-using Lykke.Service.PayInternal.Client.Models.Merchant;
+using Lykke.Service.PayMerchant.Client.Models;
 using Lykke.Service.PayInternal.Client.Models.Order;
 using Lykke.Service.PayInternal.Client.Models.PaymentRequest;
 using Lykke.Service.PayInvoice.Client;
@@ -27,6 +27,7 @@ using Lykke.Service.PayInvoicePortal.Core.Domain.Incoming;
 using Lykke.Common.Log;
 using Lykke.Service.PayInvoicePortal.Services.Extensions;
 using Lykke.Service.PayInvoicePortal.Core.Extensions;
+using Lykke.Service.PayMerchant.Client;
 
 namespace Lykke.Service.PayInvoicePortal.Services
 {
@@ -48,6 +49,7 @@ namespace Lykke.Service.PayInvoicePortal.Services
         private readonly IAssetService _assetService;
         private readonly IPayInvoiceClient _payInvoiceClient;
         private readonly IPayInternalClient _payInternalClient;
+        private readonly IPayMerchantClient _payMerchantClient;
         private readonly IRateCalculatorClient _rateCalculatorClient;
         private readonly ILykkeAssetsResolver _lykkeAssetsResolver;
         private readonly CacheExpirationPeriodsSettings _cacheExpirationPeriods;
@@ -64,7 +66,8 @@ namespace Lykke.Service.PayInvoicePortal.Services
             ILykkeAssetsResolver lykkeAssetsResolver,
             IMemoryCache memoryCache,
             CacheExpirationPeriodsSettings cacheExpirationPeriods,
-            ILogFactory logFactory)
+            ILogFactory logFactory, 
+            IPayMerchantClient payMerchantClient)
         {
             _merchantService = merchantService;
             _assetService = assetService;
@@ -73,6 +76,7 @@ namespace Lykke.Service.PayInvoicePortal.Services
             _rateCalculatorClient = rateCalculatorClient;
             _lykkeAssetsResolver = lykkeAssetsResolver;
             _cacheExpirationPeriods = cacheExpirationPeriods;
+            _payMerchantClient = payMerchantClient;
             _ratesCache = new OnDemandDataCache<Tuple<double>>(memoryCache);
             _baseAssetCache = new OnDemandDataCache<Tuple<string>>(memoryCache);
             _log = logFactory.CreateLog(this);
@@ -203,7 +207,7 @@ namespace Lykke.Service.PayInvoicePortal.Services
             if (invoice.DueDate <= DateTime.UtcNow || invoice.Status == InvoiceStatus.Removed)
                 return null;
 
-            Task<MerchantModel> merchantTask = _payInternalClient.GetMerchantByIdAsync(invoice.MerchantId);
+            Task<MerchantModel> merchantTask = _payMerchantClient.Api.GetByIdAsync(invoice.MerchantId);
 
             Task<MarkupResponse> markupForMerchantTask = 
                 _payInternalClient.ResolveMarkupByMerchantAsync(invoice.MerchantId, $"{invoice.PaymentAssetId}{invoice.SettlementAssetId}");

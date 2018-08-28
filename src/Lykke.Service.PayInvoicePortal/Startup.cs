@@ -119,7 +119,7 @@ namespace Lykke.Service.PayInvoicePortal
                 builder.RegisterModule(new Services.AutofacModule(
                     appSettings.CurrentValue.PayInvoicePortal.CacheExpirationPeriods,
                     appSettings.CurrentValue.AssetsMap));
-                builder.RegisterModule(new AutofacModule(appSettings, services));
+                builder.RegisterModule(new AutofacModule(appSettings));
                 builder.Populate(services);
                 ApplicationContainer = builder.Build();
 
