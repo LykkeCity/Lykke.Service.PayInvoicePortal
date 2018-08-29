@@ -37,6 +37,8 @@
             updateInvoice: updateInvoice,
             deleteInvoice: deleteInvoice,
 
+            signRequest: signRequest,
+
             getPaymentDetails: getPaymentDetails,
             refreshPaymentDetails: refreshPaymentDetails,
             getPaymentStatus: getPaymentStatus,
@@ -178,6 +180,11 @@
             return remove('invoices/' + invoiceId, {});
         }
 
+        // Sign request
+        function signRequest(model) {
+            return post('signRequest', model);
+        }
+
         // Paymnets
 
         function getPaymentDetails(invoiceId) {
@@ -260,13 +267,13 @@
             return deferred.promise;
         }
 
-        function upload(action, model, files) {
+        function upload(action, model, files, fileFormDataName) {
             var deferred = $q.defer();
 
             Upload.upload({
                 url: getUrl(action),
                 file: files,
-                fileFormDataName: 'files',
+                fileFormDataName: fileFormDataName || 'files',
                 fields: model
             }).then(
                 function(response) {

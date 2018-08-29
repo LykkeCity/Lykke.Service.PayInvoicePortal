@@ -1,0 +1,107 @@
+﻿@using Common
+
+@{
+    var initModelJson = new { merchantId = ViewBag.MerchantId, apiKey = ViewBag.ApiKey}.ToJson();
+}
+
+<div class="sign-request sidebar_menu sidebar_menu--right"
+     ng-class="{'sidebar_menu--open': vm.view.isSidebarVisible}"
+     ng-init="vm.handlers.init(@initModelJson)"
+     data-click-outside="vm.handlers.close()"
+     data-exclude="sign-request__open-button"
+     ng-cloak>
+    <div class="sidebar_breadcrumbs">
+        <button class="btn btn--icon btn_close_menu"
+                ng-click="vm.handlers.close()">
+            <i class="icon icon--close"></i>
+        </button>
+        <div class="breadcrumbs_item">Documentation</div>
+        <i class="icon icon--chevron-thin-right"></i>
+        <div class="breadcrumbs_item breadcrumbs_item--current">Sign request</div>
+    </div>
+    <div class="sidebar_menu__body">
+        <div class="sidebar_menu__header">
+            <div class="invoice_form__title">Sign request</div>
+        </div>
+        <form onsubmit="event.preventDefault();" novalidate>
+            <div class="form-group">
+                <label class="control-label">Lykke Merchant</label>
+                <input name="lykkeMerchantId"
+                       type="text"
+                       required
+                       class="form-control"
+                       ng-model="vm.model.lykkeMerchantId"
+                       ng-class="{'error': vm.form.errors.lykkeMerchantId && !vm.model.lykkeMerchantId}">
+            </div>
+            <div class="form-group">
+                <label class="control-label">API Key</label>
+                <input name="apiKey"
+                       type="text"
+                       required
+                       class="form-control"
+                       ng-model="vm.model.apiKey"
+                       ng-class="{'error': vm.form.errors.apiKey && !vm.model.apiKey}">
+            </div>
+            <div class="form-group">
+                <label class="control-label">Merchant Secret</label>
+                <textarea name="body"
+                          class="form-control"
+                          required
+                          ng-model="vm.model.rsaPrivateKey"
+                          ng-class="{'error': vm.form.errors.rsaPrivateKey && !vm.model.rsaPrivateKey}"></textarea>
+            </div>
+            <div class="form-group">
+                <label class="control-label">Body</label>
+                <div style="position: relative">
+                    <textarea name="body"
+                              class="form-control"
+                              required
+                              ng-model="vm.model.body"
+                              ng-class="{'error': vm.form.errors.body && !vm.model.body}"></textarea>
+                    <div class="btn--icon"
+                            style="position: absolute; top: 0; right: 0">
+                        <i class="svg_icon svg_icon--approve"
+                           ng-class="{'svg_icon--disabled': !vm.model.body}"></i>
+                    </div>
+                </div>
+                <div class="sign-request__hint">Paste here the path for GET or the body for POST/PUT</div>
+            </div>
+            <div class="form-group clearfix">
+                <button class="btn btn--default pull-right sign-request__submit"
+                        type="submit"
+                        ng-click="vm.handlers.submit()"
+                        ng-disabled="vm.view.isLoading">
+                    Submit
+                </button>
+            </div>
+        </form>
+        <div ng-show="vm.view.isLoading">
+            <div class="spinner">
+                <div class="spinner__inside"></div>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="control-label">Result to put in request header Lykke-Merchant-Sign</label>
+            <div style="position: relative">
+                <textarea name="result"
+                          class="form-control sign-request__result"
+                          ng-model="vm.model.result"
+                          disabled="disabled"></textarea>
+                <button class="btn btn--icon"
+                        copy="vm.model.result"
+                        title="Copied!"
+                        style="position: absolute; top: 0; right: 0"
+                        ng-disabled="!vm.model.result">
+                    <i class="svg_icon svg_icon--copy"
+                       ng-class="{'svg_icon--disabled': !vm.model.result}"></i>
+                </button>
+            </div>
+        </div>
+        <div class="sidebar_menu__footer">
+            <div class="form-group">
+                <button class="btn btn-block btn--default btn_close_menu"
+                        ng-click="vm.handlers.close()">Close</button>
+            </div>
+        </div>
+    </div>
+</div>

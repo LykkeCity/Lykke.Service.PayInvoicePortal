@@ -22,6 +22,7 @@
     <PackageReference Include="Lykke.Service.PayMerchant.Client" Version="1.0.4" />
     <PackageReference Include="Lykke.SettingsReader" Version="4.0.1" />
     <PackageReference Include="Lykke.SlackNotification.AzureQueue" Version="2.0.5" />
+    <PackageReference Include="LykkePay.Common" Version="1.0.2" />
     <PackageReference Include="Microsoft.ApplicationInsights.AspNetCore" Version="2.4.1" />
     <PackageReference Include="Microsoft.AspNetCore" Version="2.1.3" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication" Version="2.1.2" />
@@ -49,7 +50,10 @@
     <Content Update="Views\IncomingInvoices\Index.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>
-    <Content Update="Views\PublicApiDocs\PublicApiDocs.cshtml">
+    <Content Update="Views\PublicApiDocs\Partials\SignRequest.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
+    <Content Update="Views\PublicApiDocs\PublicApiDocsAsync.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>
     <Content Update="Views\Shared\Partials\InvoicesNav.cshtml">

@@ -34,11 +34,13 @@
             }
         }
 
-        function validate(file) {
+        function validate(file, validExtensions, maxSizeInMB) {
             if (!file)
                 return false;
 
-            if (file.size > 5242880)
+            maxSizeInMB = maxSizeInMB || 5;
+
+            if (file.size === 0 || file.size > maxSizeInMB * 1048576)
                 return false;
 
             var extension = getExtension(file.name);
@@ -46,7 +48,9 @@
             if (!extension)
                 return false;
 
-            return ['jpg', 'jpeg', 'png','pdf', 'doc', 'docx', 'xls', 'xlsx', 'rtf'].indexOf(extension.toLowerCase()) >= 0;
+            validExtensions = validExtensions || ['jpg', 'jpeg', 'png','pdf', 'doc', 'docx', 'xls', 'xlsx', 'rtf'];
+
+            return validExtensions.indexOf(extension.toLowerCase()) >= 0;
         }
 
         function getError() {
