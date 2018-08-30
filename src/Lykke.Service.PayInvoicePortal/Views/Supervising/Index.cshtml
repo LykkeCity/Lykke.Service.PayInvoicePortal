@@ -10,6 +10,11 @@
 
 }
 
+@if (User.Identity.IsAuthenticated)
+{
+    @await Html.PartialAsync("Partials/InvoicesNav")
+}
+
 <article class="content"
          data-ng-controller="invoicesCtrl as vm"
          data-ng-init="vm.model.init({isSupervising:true})"

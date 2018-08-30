@@ -4,6 +4,11 @@
     ViewData["Title"] = "Incoming invoices";
 }
 
+@if (User.Identity.IsAuthenticated)
+{
+    @await Html.PartialAsync("Partials/InvoicesNav")
+}
+
 <article class="content"
          data-ng-controller="incomingInvoicesCtrl as vm"
          ng-cloak>

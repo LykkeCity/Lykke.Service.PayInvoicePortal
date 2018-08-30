@@ -10,6 +10,12 @@
     const string partialPathOther = "/Views/Partials/HistoryRowTemplateOther.cshtml";
     const string partialPathError = "/Views/Partials/HistoryRowTemplateError.cshtml";
 }
+
+@if (User.Identity.IsAuthenticated)
+{
+    @await Html.PartialAsync("Partials/InvoicesNav")
+}
+
 <div data-ng-controller="invoiceEditCtrl as vm" ng-cloak>
     @await Html.PartialAsync("Partials/InvoiceEditTemplate", new InvoiceEditTemplateModel { IsNewInvoice = false })
 </div>
