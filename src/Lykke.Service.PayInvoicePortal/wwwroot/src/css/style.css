@@ -3771,7 +3771,8 @@ tbody.collapse.in { display: table-row-group; }
 
 .label--rounded.label--gray { color: #8c94a0; background-color: #ebedef; font-weight: 600 !important; position: relative; top: -1px; font-size: 13px !important; font-size: 0.8125rem !important; padding-left: 15px !important; padding-left: 0.9375rem !important; padding-right: 15px !important; padding-right: 0.9375rem !important; }
 
-@media (min-width: 1200px) { .container { max-width: 1240px; } }
+@media (min-width: 1200px) { .container { max-width: 1240px; }
+  .header .container, .header_nav .container, .site_nav .container { max-width: 1130px; } }
 
 .section__subtitle { line-height: 1.33; color: #657180; font-size: 30px; font-size: 1.875rem; margin-top: 5px; margin-top: 0.3125rem; margin-bottom: 65px; margin-bottom: 4.0625rem; }
 
@@ -3785,8 +3786,6 @@ tbody.collapse.in { display: table-row-group; }
 
 .header_nav__list { float: left; padding: 13px 0 11px; padding: 0.8125rem 0 0.6875rem; margin-left: -14px; margin-left: -0.875rem; }
 
-.header_nav .container { max-width: 1250px; }
-
 .header_nav .nav_list__item { text-transform: uppercase; font-weight: 600; letter-spacing: 2px; letter-spacing: 0.125rem; }
 
 .header_nav .nav_list__item .icon { margin-top: -5px; margin-bottom: -5px; }
@@ -3798,13 +3797,13 @@ tbody.collapse.in { display: table-row-group; }
 
 .nav_list { white-space: nowrap; }
 
-.nav_list__item { color: #8c94a0; display: inline-block; vertical-align: middle; position: relative; font-size: 15px; font-size: 0.9375rem; }
+.nav_list__item { color: #111111; display: inline-block; vertical-align: middle; position: relative; font-size: 15px; font-size: 0.9375rem; }
 
 .nav_list__item > a { color: inherit; display: block; padding: 10px 13px; padding: 0.625rem 0.8125rem; }
 
-.nav_list__item > a:hover { color: #111111; }
+.nav_list__item > a:hover { color: #0388ef; }
 
-.nav_list__item--active > a { color: #111111 !important; }
+.nav_list__item--active > a { color: #0388ef !important; }
 
 @media all and (min-width: 768px) { .nav_list__item:hover .submenu { opacity: 1; visibility: visible; pointer-events: all; }
   .nav_list__item > a:hover + .submenu { opacity: 1; visibility: visible; pointer-events: all; } }
