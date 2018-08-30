@@ -1,11 +1,10 @@
 ﻿@using Lykke.Service.PayInvoicePortal.Models.Auth
 @model SignInViewModel
 @{
-    ViewData["Title"] = "Invoices for live";
+    ViewData["Title"] = "Sign in";
 }
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
-
-<article class="content">
+@*<article class="content">
     <section class="section section--lead">
         <div class="container">
             <div class="row">
@@ -16,7 +15,6 @@
                                 <h1 class="section__title">LykkePay</h1>
                                 <p>Invoice your customers over the world in Crypto<br /> and FIAT currencies and receive payments in<br /> asset of choice.</p>
                             </div>
-
                             @using (Html.BeginForm(null, null, new { Model.ReturnUrl }, FormMethod.Post, true, new { @class = "form form_register" }))
                             {
                                 <h4>Sign in</h4>
@@ -45,44 +43,43 @@
                                 </div>
                             }
                         </div>
-                        <div class="col-md-6 col-md-offset-1">
-                            <div class="features_list">
-                                <div class="features_item">
-                                    <div class="features_item__img">
-                                        <img src="/img/balance_icn.svg" alt="balance" width="82px">
-                                    </div>
-                                    <div class="features_item__content">
-                                        <div class="features_item__title">Balance</div>
-                                        <div class="features_item__text">
-                                            See the account balance updated immediately
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="features_item">
-                                    <div class="features_item__img">
-                                        <img src="/img/refund_icn.svg" alt="refund" width="82px">
-                                    </div>
-                                    <div class="features_item__content">
-                                        <div class="features_item__title">Refund</div>
-                                        <div class="features_item__text">
-                                            No matter what digital wallet is used, If something goes wrong we will give a refund
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="features_item">
-                                    <div class="features_item__img">
-                                        <img src="/img/multiple_icn.svg" alt="multiple" width="82px">
-                                    </div>
-                                    <div class="features_item__content">
-                                        <div class="features_item__title">Multiple</div>
-                                        <div class="features_item__text">
-                                            Accept multiple crypto currencies that can be immediately exchanged to an asset of choice
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</article>*@
+<article class="content">
+    <section class="section section--lead">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6 automargin">
+                @using (Html.BeginForm(null, null, new {Model.ReturnUrl}, FormMethod.Post, true, new {@class = "form form_register"}))
+                {
+                    <div class="form_title">
+                        <h2>Welcome back</h2>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="email" class="control-label">Email address</label>
+                        <div class="input-group">
+                            <input type="email" asp-for="Login" id="email" class="form-control" pattern="[A-z0-9._%+-]+@@[A-z0-9.-]+\.[a-z]{2,}$" title="[text@text.domain]">
                         </div>
                     </div>
+                    <div class="form-group">
+                        <label for="password" class="control-label">Password</label>
+                        <div class="input-group">
+                            <input type="password" asp-for="Password" id="password" class="form-control">
+                        </div>
+                        @if (!ViewData.ModelState.IsValid)
+                        {
+                            <div class="hint hint--error">The username or password you entered is incorrect</div>
+                        }
+                    </div>
+                    <div class="submit-group">
+                        <button class="btn btn--primary" type="submit">Sign In</button>
+                    </div>
+                }
                 </div>
             </div>
         </div>

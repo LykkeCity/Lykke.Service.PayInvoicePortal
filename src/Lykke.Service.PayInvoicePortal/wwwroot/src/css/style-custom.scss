@@ -3,6 +3,11 @@
     z-index: 1006;
 }
 
+body {
+    /* space for footer to exclude scroll flickering */
+    padding-bottom: 1200px;
+}
+
 .header_actions {
     &__signin {
         float: left;

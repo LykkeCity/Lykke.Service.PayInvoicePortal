@@ -41,6 +41,8 @@ PayInvoicePortal:
     EthereumBlockchainExplorerUrl: 
         settings-key: PayInvoicePortal-EthereumBlockchainExplorerUrl
         types: [Tag]
+    PortalTestnetUrl:
+        settings-key: PayInvoicePortal-PortalTestnetUrl
     ApiaryDocsDomain: 
         settings-key: PayInvoicePortal-ApiaryDocsDomain
     UserLoginTime: 

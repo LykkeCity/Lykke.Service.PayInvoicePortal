@@ -37,6 +37,7 @@ namespace Lykke.Service.PayInvoicePortal
         internal static string BlockchainExplorerUrl;
         internal static string EthereumBlockchainExplorerUrl;
         internal static string ApiaryDocsDomain;
+        public static string PortalTestnetUrl;
 
         public Startup(IHostingEnvironment env)
         {
@@ -69,7 +70,7 @@ namespace Lykke.Service.PayInvoicePortal
                     .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme, o =>
 
                     {
-                        o.LoginPath = new PathString("/welcome");
+                        o.LoginPath = new PathString("/auth/signin");
                         o.ExpireTimeSpan = appSettings.CurrentValue.PayInvoicePortal.UserLoginTime;
                         o.Events.OnRedirectToLogin = (context) =>
                         {
@@ -111,6 +112,7 @@ namespace Lykke.Service.PayInvoicePortal
 
                 BlockchainExplorerUrl = appSettings.CurrentValue.PayInvoicePortal.BlockchainExplorerUrl;
                 EthereumBlockchainExplorerUrl = appSettings.CurrentValue.PayInvoicePortal.EthereumBlockchainExplorerUrl;
+                PortalTestnetUrl = appSettings.CurrentValue.PayInvoicePortal.PortalTestnetUrl;
                 ApiaryDocsDomain = appSettings.CurrentValue.PayInvoicePortal.ApiaryDocsDomain;
                 _monitoringServiceUrl = appSettings.CurrentValue.MonitoringServiceClient?.MonitoringServiceUrl;
 
@@ -157,7 +159,7 @@ namespace Lykke.Service.PayInvoicePortal
                 app.UseAuthentication();
                 app.UseMvc(routes =>
                 {
-                    routes.MapRoute("default", "{controller=Home}/{action=Index}/{id?}");
+                    routes.MapRoute("default", "{controller=Welcome}/{action=Welcome}/{id?}");
                 });
 
                 appLifetime.ApplicationStarted.Register(() => StartApplication().GetAwaiter().GetResult());

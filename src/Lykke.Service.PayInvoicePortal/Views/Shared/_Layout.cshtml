@@ -47,118 +47,70 @@
     </script>
 </head>
 <body class="footer_in_view" data-ng-class="{'body--menu_opened': $root.blur || $root.modalOpened}">
-    
+
     @await Html.PartialAsync("/Views/Partials/ConfirmModal.cshtml")
     <div class="header_container">
         <header class="header">
             <div class="container">
-                <div class="header__logo header_logo">
-                    <a href="/">
-                        <img class="header_logo__img" src="/img/lykke_new.svg" height="36" alt="lykke_logo">
-                    </a>
-                </div>
-                <div class="header__actions header_actions pull-right">
-                    <div class="header_actions__services">
-                        <button class="btn btn--icon _open_submenu" type="button">
-                            <i class="icon icon--services"></i>
-                            <span>Services</span>
-                        </button>
-                        <menu class="header_submenu submenu">
-                            <div class="submenu_list">
-                                <ul class="main_projects_list">
-                                    <li class="main_projects_list__item">
-                                        <a href="https://www.lykke.com/" target="_blank" class="main_projects_list__link">
-                                            <div class="main_projects_list__img">
-                                                <img src="/img/services/lykke_wallet_icon.svg" alt="lykke_wallet_logo" width="40">
-                                            </div>
-                                            <div class="main_projects_list__content">
-                                                <div class="main_projects_list__title">Lykke Wallet</div>
-                                                <div class="main_projects_list__text">
-                                                    Trade FX and Digital Assets
-                                                </div>
-                                            </div>
-                                        </a>
-                                    </li>
-                                    <li class="main_projects_list__item">
-                                        <a href="https://streams.lykke.com/" target="_blank" class="main_projects_list__link">
-                                            <div class="main_projects_list__img">
-                                                <img src="/img/services/streams_icon.svg" alt="streams_logo" width="40">
-                                            </div>
-                                            <div class="main_projects_list__content">
-                                                <div class="main_projects_list__title">Lykke Streams</div>
-                                                <div class="main_projects_list__text">
-                                                    Competition platform. Is helping the great ideas to meet the bright minds
-                                                </div>
-                                            </div>
-                                        </a>
-                                    </li>
-                                    <li class="main_projects_list__item">
-                                        <a href="https://blockchainexplorer.lykke.com/" target="_blank" class="main_projects_list__link">
-                                            <div class="main_projects_list__img">
-                                                <img src="/img/services/blockchain_explorer_icon.svg" alt="bl_explorer_logo" width="40">
-                                            </div>
-                                            <div class="main_projects_list__content">
-                                                <div class="main_projects_list__title">Blockchain Explorer</div>
-                                                <div class="main_projects_list__text">
-                                                    Explore the Blockchain. Search transaction, assets, addresses or blocks
-                                                </div>
-                                            </div>
-                                        </a>
-                                    </li>
-                                </ul>
-                                <ul class="social">
-                                    <li><a href="https://www.facebook.com/LykkeCity" target="_blank" class="social__item" rel="noopener noreferrer"><i class="icon icon--fb_simple"></i></a></li>
-                                    <li><a href="https://twitter.com/LykkeCity" target="_blank" class="social__item" rel="noopener noreferrer"><i class="icon icon--tw"></i></a></li>
-                                    <li><a href="http://instagram.com/lykkecity" target="_blank" class="social__item" rel="noopener noreferrer"><i class="icon icon--instagram"></i></a></li>
-                                    <li><a href="https://www.youtube.com/c/LykkeX" target="_blank" class="social__item" rel="noopener noreferrer"><i class="icon icon--youtube"></i></a></li>
-                                    <li><a href="https://www.linkedin.com/company/lykke" target="_blank" class="social__item" rel="noopener noreferrer"><i class="icon icon--linkedin-icn"></i></a></li>
-                                    <li><a href="https://www.reddit.com/r/lykke/" target="_blank" class="social__item" rel="noopener noreferrer"><i class="icon icon--reddit"></i></a></li>
-                                    <li><a href="https://t.co/TmjMYnQD7T" target="_blank" class="social__item" rel="noopener noreferrer"><i class="icon icon--telegram"></i></a></li>
-                                    <li><a href="https://t.me/LykkeDev" target="_blank" class="social__item" rel="noopener noreferrer"><i class="icon icon--telegram_dev"></i></a></li>
-                                </ul>
-                            </div>
-                        </menu>
+                <div class="header_wrapper">
+                    <div class="header__logo header_logo">
+                        <a href="/">
+                            <img class="header_logo__img" src="/img/lykke_exchange_spot_logo.svg" height="36" alt="lykke_logo">
+                            <div class="header_logo__title">Lykke Pay</div>
+                        </a>
                     </div>
-                    @if (ViewContext.HttpContext.User.Identity.IsAuthenticated)
-                    {
-                        <div class="header_actions__login header_login">
-                            <div class="header_user dropdown__control">
-                                <a href="javascript:;">
-                                    <div class="header_user__img">
-                                        <img src="/img/user_default.svg" width="40" alt="user_image">
-                                    </div>
+                    <div class="header__actions header_actions pull-right">
+                        @if (ViewContext.HttpContext.User.Identity.IsAuthenticated)
+                        {
+                            <div class="header_actions__login header_login">
+                                <div class="header_user dropdown__control">
+                                    <a href="javascript:;">
+                                        <div class="header_user__img">
+                                            <img src="/img/user_default.svg" width="40" alt="user_image">
+                                        </div>
+                                    </a>
+                                </div>
+                                <div class="dropdown__container">
+                                    <ul class="dropdown__nav">
+                                        @if (!string.IsNullOrWhiteSpace(User.GetName()))
+                                        {
+                                            <li><a href="javascript:;" style="color: #000; cursor: default;">@User.GetName().ToUpper()</a></li>
+                                        }
+                                        @if (User.IsSupervisor())
+                                        {
+                                            <li><a href="@Url.Action("Index", "Supervising")">All invoices</a></li>
+                                        }
+                                        <li><a href="@Url.Action("SignOut", "Auth")">Sign Out</a></li>
+                                    </ul>
+                                </div>
+                            </div>
+
+                            <div class="header_actions__logout visible-xs">
+                                <a href="@Url.Action("SignOut", "Auth")" class="btn btn--icon btn_logout">
+                                    <i class="icon icon--exit"></i>
                                 </a>
                             </div>
-                            <div class="dropdown__container">
-                                <ul class="dropdown__nav">
-                                    @if (!string.IsNullOrWhiteSpace(User.GetName()))
-                                    {
-                                        <li><a href="javascript:;" style="color:#000;cursor:default;">@User.GetName().ToUpper()</a></li>
-                                    }
-
-                                    @if (User.IsSupervisor())
-                                    {
-                                        <li><a href="@Url.Action("Index", "Supervising")">All invoices</a></li>
-                                    }
-                                    <li><a href="@Url.Action("SignOut", "Auth")">Sign Out</a></li>
-                                </ul>
-                            </div>
-                        </div>
-
-                        <div class="header_actions__logout visible-xs">
-                            <a href="@Url.Action("SignOut", "Auth")" class="btn btn--icon btn_logout">
-                                <i class="icon icon--exit"></i>
-                            </a>
-                        </div>
-                    }
-                    else
-                    {
-                        <div class="header_actions__signin">
-                            <a href="@Url.Action("SignIn", "Auth", new { returnUrl = Context.Request.Path })">
-                                Sign in
-                            </a>
-                        </div>
-                    }
+                        }
+                        else
+                        {
+                            if (!Url.Action("SignIn", "Auth").Equals(Context.Request.Path, StringComparison.InvariantCultureIgnoreCase))
+                            {
+                                <div class="header_actions__login header_login">
+                                    <a href="@Url.Action("SignIn", "Auth", new {returnUrl = Context.Request.Path.Value == "/" ? string.Empty : Context.Request.Path.Value})">
+                                        <div class="header_login__title">Sign in</div>
+                                    </a>
+                                </div>
+                            }
+                            @*TODO:
+                            <div class="header_actions__signup header_signup">
+                                <div class="header_user">
+                                    <a href="javascript:void(0)">
+                                        <div class="header_login__title">Sign up</div>
+                                    </a>
+                                </div>
+                            </div>*@
+                        }
+                    </div>
                 </div>
             </div>
             <div class="header_search">
@@ -182,6 +134,10 @@
             </div>
         </header>
     </div>
+    @if (User.Identity.IsAuthenticated)
+    {
+        @await Html.PartialAsync("Partials/InvoicesNav")
+    }
     @RenderBody()
     <footer class="footer">
         <div class="footer__top">
