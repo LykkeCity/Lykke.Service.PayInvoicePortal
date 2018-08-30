@@ -11,7 +11,7 @@
         var vm = this;
 
         vm.model = {
-            isHome: $window.location.pathname === '/',
+            isHome: $window.location.pathname === '/payments',
             isIncoming: $window.location.pathname === '/incoming'
         };
     }
