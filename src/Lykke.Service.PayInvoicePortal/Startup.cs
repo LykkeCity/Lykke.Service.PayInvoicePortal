@@ -37,6 +37,7 @@ namespace Lykke.Service.PayInvoicePortal
         internal static string BlockchainExplorerUrl;
         internal static string EthereumBlockchainExplorerUrl;
         internal static string ApiaryDocsDomain;
+        public static string PortalTestnetUrl;
 
         public Startup(IHostingEnvironment env)
         {
@@ -111,6 +112,7 @@ namespace Lykke.Service.PayInvoicePortal
 
                 BlockchainExplorerUrl = appSettings.CurrentValue.PayInvoicePortal.BlockchainExplorerUrl;
                 EthereumBlockchainExplorerUrl = appSettings.CurrentValue.PayInvoicePortal.EthereumBlockchainExplorerUrl;
+                PortalTestnetUrl = appSettings.CurrentValue.PayInvoicePortal.PortalTestnetUrl;
                 ApiaryDocsDomain = appSettings.CurrentValue.PayInvoicePortal.ApiaryDocsDomain;
                 _monitoringServiceUrl = appSettings.CurrentValue.MonitoringServiceClient?.MonitoringServiceUrl;
 

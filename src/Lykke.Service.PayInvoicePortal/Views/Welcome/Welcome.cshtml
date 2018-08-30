@@ -1,4 +1,5 @@
-﻿@{
+﻿@using Lykke.Service.PayInvoicePortal
+@{
     ViewData["Title"] = "Lykke Pay";
 }
 
@@ -28,16 +29,19 @@
                                 </div>
                             </a>
                         </div>
-                        <div class="asset_link asset_link--simple">
-                            <a href="">
-                                <div class="asset_link__icon">
-                                    <i class="icon icon--download_alt"></i>
-                                </div>
-                                <div class="asset_link__info">
-                                    <div class="asset_link__title">Sandbox</div>
-                                </div>
-                            </a>
-                        </div>
+                        @if (!string.IsNullOrEmpty(Startup.PortalTestnetUrl))
+                        {
+                            <div class="asset_link asset_link--simple">
+                                <a href="@Startup.PortalTestnetUrl" target="_blank">
+                                    <div class="asset_link__icon">
+                                        <i class="icon icon--download_alt"></i>
+                                    </div>
+                                    <div class="asset_link__info">
+                                        <div class="asset_link__title">Sandbox</div>
+                                    </div>
+                                </a>
+                            </div>
+                        }
                     </div>
 
                     <div class="features_list">
