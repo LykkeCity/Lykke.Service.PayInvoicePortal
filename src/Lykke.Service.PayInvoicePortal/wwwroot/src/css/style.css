@@ -3211,6 +3211,14 @@ input[type="number"]::-webkit-outer-spin-button, input[type="number"]::-webkit-i
 
 .form_selectpicker .dropdown-menu > .active > a, .form_selectpicker .dropdown-menu > .active > a:hover, .form_selectpicker .dropdown-menu > .active > a:focus { color: #3f4d60; }
 
+.form_title { padding: 0; margin: 0; border: 0; margin-bottom: 60px; margin-bottom: 3.75rem; }
+
+.form_title h2 { margin-bottom: 15px; margin-bottom: 0.9375rem; }
+
+.form_title p { margin-bottom: -15px; margin-bottom: -0.9375rem; }
+
+.btn--primary[disabled] { color: #8c94a0 !important; background-color: #f7f8f9 !important; }
+
 .pie { position: relative; width: 36px; height: 36px; overflow: hidden; border-radius: 100%; background-color: #f3f4f5; -webkit-transform: translate3d(0, 0, 0); -moz-transform: translate3d(0, 0, 0); -ms-transform: translate3d(0, 0, 0); -o-transform: translate3d(0, 0, 0); transform: translate3d(0, 0, 0); }
 
 .pie--orange .pie_circle-right, .pie--orange .pie_circle-left { background-color: #ffae2c; }
