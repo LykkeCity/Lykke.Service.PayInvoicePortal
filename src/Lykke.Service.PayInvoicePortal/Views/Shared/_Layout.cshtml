@@ -134,10 +134,6 @@
             </div>
         </header>
     </div>
-    @if (User.Identity.IsAuthenticated)
-    {
-        @await Html.PartialAsync("Partials/InvoicesNav")
-    }
     @RenderBody()
     <footer class="footer">
         <div class="footer__top">

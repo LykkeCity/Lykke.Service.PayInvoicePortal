@@ -2,6 +2,11 @@
     ViewData["Title"] = "PayAPI documentation";
 }
 
+@if (User.Identity.IsAuthenticated)
+{
+    @await Html.PartialAsync("Partials/InvoicesNav")
+}
+
 <div data-ng-controller="signRequestCtrl as vm" ng-cloak>
     @await Html.PartialAsync("Partials/SignRequest")
     <button class="btn btn--primary sign-request__open-button"
