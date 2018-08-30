@@ -3103,21 +3103,29 @@ ol.list_styled li:before { content: counter(step-counter); background-color: #33
 
 .submit-group .btn { max-width: 100%; }
 
-.form_register .form-group { margin-bottom: 20px; margin-bottom: 1.25rem; }
+.form_register .form-group, .form_signup .form-group { margin-bottom: 30px; margin-bottom: 1.875rem; }
 
-.form_register .submit-group { margin-top: 30px; margin-top: 1.875rem; }
+.form_register .form-group--inline, .form_signup .form-group--inline { margin-top: -5px; margin-top: -0.3125rem; }
 
-.form_register .input-group .form-control { padding-right: 50px; padding-right: 3.125rem; }
+.form_register .form-group p, .form_signup .form-group p { font-size: 16px; font-size: 1rem; margin-top: 12px; margin-top: 0.75rem; }
 
-.form_register .input-group .form-control + .input-group-addon { left: auto; cursor: pointer; right: 5px; right: 0.3125rem; }
+.form_register .form-group p a, .form_signup .form-group p a { font-weight: 600; }
 
-.form_register .hint { margin: 10px 0; margin: 0.625rem 0; }
+.form_register .submit-group, .form_signup .submit-group { margin-top: 60px; margin-top: 3.75rem; }
 
-.form_register .icon--hide_password { color: #3f4d60; }
+.form_register .submit-group .btn, .form_signup .submit-group .btn { min-width: 135px; max-width: 100%; }
 
-.form_register .btn--flat { border-radius: 0; padding: 0 !important; margin: 15px 0 0; margin: 0.9375rem 0 0; }
+.form_register .input-group .form-control, .form_signup .input-group .form-control { padding-right: 50px; padding-right: 3.125rem; }
 
-@media all and (max-width: 991px) { .form_register { margin-bottom: 100px; margin-bottom: 6.25rem; } }
+.form_register .input-group .form-control + .input-group-addon, .form_signup .input-group .form-control + .input-group-addon { left: auto; cursor: pointer; right: 5px; right: 0.3125rem; }
+
+.form_register .hint, .form_signup .hint { margin: 10px 0; margin: 0.625rem 0; }
+
+.form_register .icon--hide_password, .form_signup .icon--hide_password { color: #3f4d60; }
+
+.form_register .btn--flat, .form_signup .btn--flat { border-radius: 0; padding: 3px 0 !important; font-size: 16px; font-size: 1rem; }
+
+@media all and (max-width: 991px) { .form_register, .form_signup { margin-bottom: 100px; margin-bottom: 6.25rem; } }
 
 .input-group { position: relative; }
 
