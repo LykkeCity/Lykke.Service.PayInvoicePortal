@@ -36,7 +36,7 @@
             responseError: function(rejection) {
                 if (rejection.status === 401) {
                     var path = $location.path();
-                    $window.location.href = '/welcome' + path && path.length ? '?ReturnUrl=' + path : '';
+                    $window.location.href = '/auth/signin' + path && path.length ? '?ReturnUrl=' + path : '';
                 }
                 return $q.reject(rejection);
             }

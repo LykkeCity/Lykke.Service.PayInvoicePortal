@@ -13,7 +13,7 @@ using Lykke.Service.PayInternal.Client.Models.SupervisorMembership;
 
 namespace Lykke.Service.PayInvoicePortal.Controllers
 {
-    [Route("welcome")]
+    [Route("auth")]
     public class AuthController : Controller
     {
         private readonly IAuthService _authService;
@@ -28,6 +28,7 @@ namespace Lykke.Service.PayInvoicePortal.Controllers
         }
 
         [HttpGet]
+        [Route("signin")]
         public IActionResult SignIn(string returnUrl)
         {
             if (User.Identity.IsAuthenticated)
@@ -40,6 +41,7 @@ namespace Lykke.Service.PayInvoicePortal.Controllers
         }
 
         [HttpPost]
+        [Route("signin")]
         public async Task<IActionResult> SignIn(SignInViewModel model)
         {
             var vm = new SignInViewModel
@@ -86,7 +88,7 @@ namespace Lykke.Service.PayInvoicePortal.Controllers
         public async Task<IActionResult> SignOut()
         {
             await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
-            return RedirectToAction("SignIn", "Auth");
+            return RedirectToAction("Welcome", "Welcome");
         }
     }
 }

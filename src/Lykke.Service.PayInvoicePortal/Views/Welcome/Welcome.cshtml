@@ -1,0 +1,91 @@
+﻿@{
+    ViewData["Title"] = "Lykke Pay";
+}
+
+<article class="content">
+    <section class="section section--padding">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8 automargin">
+                    <div class="header_logo header_logo--big">
+                        <img class="header_logo__img" src="img/lykke_exchange_spot_logo.svg" height="36" alt="lykke_logo">
+                        <div class="header_logo__title">Lykke Pay</div>
+                    </div>
+
+                    <p class="section__subtitle">
+                        Accept payment from your customers over the world in&nbsp;Crypto and FIAT currencies, receive settlement in&nbsp;asset of&nbsp;choice to&nbsp;your wallet or&nbsp;Bank account
+                    </p>
+
+                    <div class="index_actions">
+                        @*TODO: <a href="" class="btn btn--primary">Create account</a>*@
+                        <div class="asset_link asset_link--simple">
+                            <a href="@Url.Action("PublicApiDocsAsync", "PublicApiDocs")">
+                                <div class="asset_link__icon">
+                                    <i class="icon icon--document"></i>
+                                </div>
+                                <div class="asset_link__info">
+                                    <div class="asset_link__title">Documentation</div>
+                                </div>
+                            </a>
+                        </div>
+                        <div class="asset_link asset_link--simple">
+                            <a href="">
+                                <div class="asset_link__icon">
+                                    <i class="icon icon--download_alt"></i>
+                                </div>
+                                <div class="asset_link__info">
+                                    <div class="asset_link__title">Sandbox</div>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="features_list">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="features_item">
+                                    <div class="features_item__img">
+                                        <img src="img/balance_icn.svg" alt="balance" width="80px">
+                                    </div>
+                                    <div class="features_item__content">
+                                        <div class="features_item__title">Balance</div>
+                                        <div class="features_item__text">
+                                            See the account balance updated immediately
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="features_item">
+                                    <div class="features_item__img">
+                                        <img src="img/multiple_icn.svg" alt="multiple" width="80px">
+                                    </div>
+                                    <div class="features_item__content">
+                                        <div class="features_item__title">Multiple</div>
+                                        <div class="features_item__text">
+                                            Accept multiple crypto currencies receive an asset of choice
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="features_item">
+                                    <div class="features_item__img">
+                                        <img src="img/refund_icn.svg" alt="refund" width="80px">
+                                    </div>
+                                    <div class="features_item__content">
+                                        <div class="features_item__title">Refund</div>
+                                        <div class="features_item__text">
+                                            Refund is available in Crypto and FIAT currencies
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+</article>
