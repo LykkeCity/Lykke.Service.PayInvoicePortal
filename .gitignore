@@ -21,9 +21,14 @@
 /packages/
 /target/
 **/aspnet_client/
+
+# Front
 **/wwwroot/lib/
 **/wwwroot/css/
 **/wwwroot/js/
+**/node_modules
+**/wwwroot/ng2/dist
+**/wwwroot/ng2/e2e
 
 # IDEs
 *[Rr]e[Ss]harper*
@@ -58,6 +63,5 @@ _NCrunch_*
 
 #some test
 .vs
-node_modules
 **/launchSettings.json
 **/appsettings.*.json
