@@ -1,28 +1,33 @@
 AssetsMap: 
     Values: 
         settings-key: LykkePay-AssetsMap-Values
-        types: [Json]
+        types: [Json, Tag]
     InvoiceCreationPairs: 
         settings-key: LykkePay-AssetsMap-InvoiceCreationPairs
-        types: [Json]
+        types: [Json, Tag]
 
 AssetsServiceClient: 
     ServiceUrl: 
         settings-key: AssetsServiceUrl
+        types: [Tag]
     ExpirationPeriod: 
         settings-key: AssetsServiceExpirationPeriod
+        types: [Tag]
 
 BalancesServiceClient: 
     ServiceUrl: 
         settings-key: BalancesServiceUrl
+        types: [Tag]
 
 EmailPartnerRouterServiceClient: 
     ServiceUrl: 
         settings-key: EmailPartnerRouterServiceUrl
+        types: [Tag]
 
 MonitoringServiceClient: 
     MonitoringServiceUrl: 
         settings-key: MonitoringServiceUrl
+        types: [Tag]
 
 PayAuthServiceClient: 
     ServiceUrl: 
@@ -43,19 +48,26 @@ PayInvoicePortal:
         types: [Tag]
     PortalTestnetUrl:
         settings-key: PayInvoicePortal-PortalTestnetUrl
+        types: [Tag]
     ApiaryDocsDomain: 
         settings-key: PayInvoicePortal-ApiaryDocsDomain
+        types: [Tag]
     UserLoginTime: 
         settings-key: PayInvoicePortal-UserLoginTime
+        types: [Tag]
     AssetsCacheExpirationPeriod: 
         settings-key: PayInvoicePortal-AssetsCacheExpirationPeriod
+        types: [Tag]
     CacheExpirationPeriods: 
         BaseAsset: 
             settings-key: PayInvoicePortal-CacheExpirationPeriods-BaseAsset
+            types: [Tag]
         Rate: 
             settings-key: PayInvoicePortal-CacheExpirationPeriods-Rate
+            types: [Tag]
         MerchantName: 
             settings-key: PayInvoicePortal-CacheExpirationPeriods-MerchantName
+            types: [Tag]
     Db:
         SubscriptionConnectionString: 
             settings-key: LykkePayDataConnString
