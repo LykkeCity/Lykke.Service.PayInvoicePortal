@@ -58,10 +58,10 @@ PayInvoicePortal:
             settings-key: PayInvoicePortal-CacheExpirationPeriods-MerchantName
     Db:
         SubscriptionConnectionString: 
-            settings-key: PayInvoicePortal-SubscriptionConnString
+            settings-key: LykkePayDataConnString
             types: [AzureTableStorage, Tag]
         LogsConnectionString: 
-            settings-key: PayInvoicePortal-LogsConnString
+            settings-key: LykkePayLogsConnString
             types: [AzureTableStorage, Tag]
 
 PayInvoiceServiceClient: 
