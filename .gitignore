@@ -29,6 +29,7 @@
 **/node_modules
 **/wwwroot/ng2/dist
 **/wwwroot/ng2/e2e
+**/wwwroot/ng2/src/fonts
 
 # IDEs
 *[Rr]e[Ss]harper*

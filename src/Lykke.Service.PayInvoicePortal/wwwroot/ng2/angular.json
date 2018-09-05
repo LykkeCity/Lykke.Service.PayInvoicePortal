@@ -20,11 +20,14 @@
             "tsConfig": "src/tsconfig.app.json",
             "assets": [
               "src/favicon.ico",
-              "src/assets"
+              "src/assets",
+              "src/fonts",
+              "src/testNotExistFolder"
             ],
             "styles": [
               "src/styles.css"
             ],
+            "extractCss": true,
             "scripts": []
           },
           "configurations": {
@@ -36,13 +39,12 @@
                 }
               ],
               "optimization": true,
-              "outputHashing": "all",
               "sourceMap": false,
               "extractCss": true,
               "namedChunks": false,
               "aot": true,
               "extractLicenses": true,
-              "vendorChunk": false,
+              "vendorChunk": true,
               "buildOptimizer": true
             }
           }

@@ -146,6 +146,14 @@ namespace Lykke.Service.PayInvoicePortal
                 {
                     app.UseDeveloperExceptionPage();
                     app.UseBrowserLink();
+                    app.UseCors(corsBuilder =>
+                    {
+                        corsBuilder
+                            .AllowAnyHeader()
+                            .AllowAnyMethod()
+                            .AllowAnyOrigin()
+                            .AllowCredentials();
+                    });
                 }
                 else
                 {

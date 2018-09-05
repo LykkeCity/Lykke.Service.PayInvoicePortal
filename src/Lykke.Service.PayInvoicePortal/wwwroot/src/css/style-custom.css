@@ -6,6 +6,9 @@ body {
   /* space for footer to exclude scroll flickering */
   padding-bottom: 1200px; }
 
+[hidden] {
+  display: none !important; }
+
 .header_actions__signin {
   float: left;
   line-height: 42px;
