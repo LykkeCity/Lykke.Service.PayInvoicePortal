@@ -48,7 +48,7 @@ PayInvoicePortal:
         types: [Tag]
     PortalTestnetUrl:
         settings-key: PayInvoicePortal-PortalTestnetUrl
-        types: [Tag]
+        types: [Tag,Optional]
     ApiaryDocsDomain: 
         settings-key: PayInvoicePortal-ApiaryDocsDomain
         types: [Tag]
