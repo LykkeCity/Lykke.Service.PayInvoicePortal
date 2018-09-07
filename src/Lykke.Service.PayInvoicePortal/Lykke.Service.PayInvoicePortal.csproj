@@ -56,10 +56,16 @@
     <Content Update="Views\PublicApiDocs\PublicApiDocsAsync.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>
+    <Content Update="Views\Shared\Partials\ng2scripts.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
     <Content Update="Views\Shared\Partials\InvoicesNav.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>
     <Content Update="Views\Welcome\Welcome.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
+    <Content Update="Views\User\ResetPassword.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>
     <Content Update="wwwroot\favicon.ico">
@@ -348,6 +354,9 @@
 	<Target Name="PrepublishScript" BeforeTargets="PrepareForPublish">
 		<Exec Command="bower install --allow-root" />
 		<Exec Command="dotnet bundle" />
+	  <Exec Command="(node -v &amp;&amp; npm -v &amp;&amp; yarn -v &amp;&amp; ng -v)" />
+	  <Exec Command="(cd wwwroot/ng2 &amp;&amp; yarn)" />
+	  <Exec Command="(cd wwwroot/ng2 &amp;&amp; ng build)" />
 	</Target>
 	<ItemGroup>
 		<DotNetCliToolReference Include="BundlerMinifier.Core" Version="2.6.362" />

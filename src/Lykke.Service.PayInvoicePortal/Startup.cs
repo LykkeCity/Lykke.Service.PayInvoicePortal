@@ -146,6 +146,14 @@ namespace Lykke.Service.PayInvoicePortal
                 {
                     app.UseDeveloperExceptionPage();
                     app.UseBrowserLink();
+                    app.UseCors(corsBuilder =>
+                    {
+                        corsBuilder
+                            .AllowAnyHeader()
+                            .AllowAnyMethod()
+                            .AllowAnyOrigin()
+                            .AllowCredentials();
+                    });
                 }
                 else
                 {
@@ -160,6 +168,7 @@ namespace Lykke.Service.PayInvoicePortal
                 app.UseMvc(routes =>
                 {
                     routes.MapRoute("default", "{controller=Welcome}/{action=Welcome}/{id?}");
+                    routes.MapRoute("testng2", "ng2/dist/lykkepay/index.html");
                 });
 
                 appLifetime.ApplicationStarted.Register(() => StartApplication().GetAwaiter().GetResult());

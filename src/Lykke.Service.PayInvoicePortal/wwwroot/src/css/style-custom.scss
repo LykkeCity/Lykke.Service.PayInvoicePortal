@@ -8,6 +8,10 @@ body {
     padding-bottom: 1200px;
 }
 
+[hidden] {
+    display: none !important;
+}
+
 .header_actions {
     &__signin {
         float: left;
