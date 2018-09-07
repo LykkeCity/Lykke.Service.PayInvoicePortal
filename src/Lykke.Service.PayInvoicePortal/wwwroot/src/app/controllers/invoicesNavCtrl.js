@@ -14,5 +14,13 @@
             isHome: $window.location.pathname === '/payments',
             isIncoming: $window.location.pathname === '/incoming'
         };
+
+        vm.handlers = {
+            isPath: isPath
+        };
+
+        function isPath(path) {
+            return $window.location.pathname === path;
+        }
     }
 })();
