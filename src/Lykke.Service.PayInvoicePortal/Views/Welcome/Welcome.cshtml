@@ -3,6 +3,11 @@
     ViewData["Title"] = "Lykke Pay";
 }
 
+@if (User.Identity.IsAuthenticated)
+{
+    @await Html.PartialAsync("Partials/InvoicesNav")
+}
+
 <article class="content">
     <section class="section section--padding">
         <div class="container">
