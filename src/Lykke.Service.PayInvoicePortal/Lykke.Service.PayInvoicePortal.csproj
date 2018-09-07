@@ -354,9 +354,9 @@
 	<Target Name="PrepublishScript" BeforeTargets="PrepareForPublish">
 		<Exec Command="bower install --allow-root" />
 		<Exec Command="dotnet bundle" />
-	  <Exec Command="(node -v &amp;&amp; npm -v &amp;&amp; yarn -v &amp;&amp; ng -v)" />
+	  <Exec Command="(npm -v &amp;&amp; yarn -v &amp;&amp; ng -v)" />
 	  <Exec Command="(cd wwwroot/ng2 &amp;&amp; yarn)" />
-	  <Exec Command="(cd wwwroot/ng2 &amp;&amp; ng build)" />
+	  <Exec Command="(cd wwwroot/ng2 &amp;&amp; ng build --prod)" />
 	</Target>
 	<ItemGroup>
 		<DotNetCliToolReference Include="BundlerMinifier.Core" Version="2.6.362" />
