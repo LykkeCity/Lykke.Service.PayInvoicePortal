@@ -18,8 +18,8 @@ namespace Lykke.Service.PayInvoicePortal.Services
 {
     public class EmailService : IEmailService
     {
-        private const string EmailTemplate = "PaymentRequestedTemplate";
-        private const string EmailTemplateWithoutNote = "PaymentRequestedWithoutNoteTemplate";
+        private const string EmailTemplate = "lykkepay_invoice_notes";
+        private const string EmailTemplateWithoutNote = "lykkepay_invoice";
 
         private readonly IPayInvoiceClient _payInvoiceClient;
         private readonly ILykkeAssetsResolver _lykkeAssetsResolver;
@@ -61,13 +61,12 @@ namespace Lykke.Service.PayInvoicePortal.Services
 
             var payload = new Dictionary<string, string>
             {
+                {"UserName", invoice.ClientName},
                 {"InvoiceNumber", invoice.Number},
-                {"Company", merchant.DisplayName},
-                {"ClientFullName", invoice.ClientName},
-                {"AmountToBePaid", invoice.Amount.ToStringNoZeros(settlementAsset.Accuracy)},
-                {"SettlementCurrency", settlementAsset.DisplayId},
-                {"DueDate", invoice.DueDate.ToString("d")},
-                {"CheckoutLink", checkoutUrl},
+                {"AmountToPay", invoice.Amount.ToStringNoZeros(settlementAsset.Accuracy)},
+                {"AmountToPayAsset", settlementAsset.DisplayId},
+                {"InvoiceDueDate", invoice.DueDate.ToString("d")},
+                {"InvoiceUrl", checkoutUrl},
                 {"Note", invoice.Note},
                 {"Year", DateTime.Today.Year.ToString()}
             };
