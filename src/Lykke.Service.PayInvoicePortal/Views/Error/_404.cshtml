@@ -2,6 +2,11 @@
     ViewData["Title"] = "Error";
 }
 
+@if (User.Identity.IsAuthenticated)
+{
+    @await Html.PartialAsync("Partials/InvoicesNav")
+}
+
 <article class="content">
     <section class="section section--lead">
         <div class="container">

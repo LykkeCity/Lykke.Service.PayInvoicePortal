@@ -1,13 +1,13 @@
 ﻿<div class="header_nav_container" data-ng-controller="invoicesNavCtrl as vm">
-    <nav class="header_nav" style="padding-top: 89px;">
+    <nav class="header_nav">
         <div class="header_nav__inner">
             <div class="container header_menu_container">
                 <ul class="header_nav__list nav_list">
                     <li class="nav_list__item" data-ng-class="::{'nav_list__item--active': vm.model.isHome}">
-                        <a href="@Url.Action("Index", "Home")">My Invoices</a>
+                        <a href="@Url.Action("Index", "Home")">Payments</a>
                     </li>
-                    <li class="nav_list__item" data-ng-class="::{'nav_list__item--active': vm.model.isIncoming}">
-                        <a href="@Url.Action("Index", "IncomingInvoices")">Incoming Invoices</a>
+                    <li class="nav_list__item" data-ng-class="::{'nav_list__item--active': vm.handlers.isPath('@Url.Action("PublicApiDocsAsync", "PublicApiDocs")')}">
+                        <a href="@Url.Action("PublicApiDocsAsync", "PublicApiDocs")">Documentation</a>
                     </li>
                 </ul>
             </div>
