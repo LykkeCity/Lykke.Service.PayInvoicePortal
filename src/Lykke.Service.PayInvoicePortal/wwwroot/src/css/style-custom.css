@@ -1,6 +1,5 @@
-﻿.menu_overlay--open,
-.modal_dialog {
-  z-index: 1006; }
+﻿.menu_overlay--open {
+  z-index: 9999999; }
 
 body {
   /* space for footer to exclude scroll flickering */
