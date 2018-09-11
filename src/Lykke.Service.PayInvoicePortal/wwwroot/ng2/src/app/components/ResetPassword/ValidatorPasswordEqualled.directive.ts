@@ -30,8 +30,8 @@ export class ValidatorPasswordEqualledDirective implements Validator {
 const ValidatorPasswordEqualled: ValidatorFn = (
   control: FormGroup
 ): ValidationErrors | null => {
-  const password = control.get(nameof(() => this.password));
-  const reenterPassword = control.get(nameof(() => this.reenterPassword));
+  const password = control.get('password');
+  const reenterPassword = control.get('reenterPassword');
 
   const error =
     password && reenterPassword && password.value !== reenterPassword.value

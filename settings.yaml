@@ -44,7 +44,7 @@ PayInvoicePortal:
         settings-key: PayInvoicePortal-BlockchainExplorerUrl
         types: [Tag]
     EthereumBlockchainExplorerUrl: 
-        settings-key: PayInvoicePortal-EthereumBlockchainExplorerUrl
+        settings-key: LykkePayEthereumBlockchainExplorerUrl
         types: [Tag]
     PortalTestnetUrl:
         settings-key: PayInvoicePortal-PortalTestnetUrl
