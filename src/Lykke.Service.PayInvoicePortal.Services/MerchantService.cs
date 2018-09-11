@@ -42,7 +42,7 @@ namespace Lykke.Service.PayInvoicePortal.Services
         }
         public async Task<IReadOnlyList<string>> GetGroupMerchantsAsync(string merchantId)
         {
-            MerchantsByUsageResponse response = await _payMerchantClient.GroupsApi.GetMerchantsByUsageAsync(
+            MerchantsByUsageResponse response = await _payMerchantClient.Groups.GetMerchantsByUsageAsync(
                 new GetMerchantsByUsageRequest
                 {
                     MerchantId = merchantId,

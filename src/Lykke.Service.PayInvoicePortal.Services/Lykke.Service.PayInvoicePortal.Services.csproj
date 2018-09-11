@@ -12,7 +12,7 @@
     <PackageReference Include="Lykke.Service.Balances.Client" Version="1.1.2" />
     <PackageReference Include="Lykke.Service.PayAuth.Client" Version="1.1.2" />
     <PackageReference Include="Lykke.Service.EmailPartnerRouter.Client" Version="2.0.4" />
-    <PackageReference Include="Lykke.Service.PayMerchant.Client" Version="1.0.4" />
+    <PackageReference Include="Lykke.Service.PayMerchant.Client" Version="1.0.7" />
     <PackageReference Include="Lykke.Service.RateCalculator.Client" Version="1.2.0" />
     <PackageReference Include="System.Linq.Dynamic.Core" Version="1.0.8.16" />
   </ItemGroup>

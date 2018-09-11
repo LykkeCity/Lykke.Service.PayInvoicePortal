@@ -35,6 +35,9 @@ PayInternalServiceClient:
         types: [Tag]
   
 PayInvoicePortal: 
+    EnableSignup: 
+        settings-key: PayInvoicePortal-EnableSignup
+        types: [Tag, Optional]
     BlockchainExplorerUrl: 
         settings-key: PayInvoicePortal-BlockchainExplorerUrl
         types: [Tag]
