@@ -15,6 +15,8 @@
 
             sendEmail: sendEmail,
 
+            resetPassword: resetPassword,
+
             getAssets: getAssets,
             getPaymentAssets: getPaymentAssets,
             getPaymentAssetsOfMerchant: getPaymentAssetsOfMerchant,
@@ -57,6 +59,12 @@
 
         function sendEmail(model) {
             return post('email', model);
+        }
+
+        // User
+
+        function resetPassword(model) {
+            return post('resetPassword', model);
         }
 
         // Assets
