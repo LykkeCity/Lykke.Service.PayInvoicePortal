@@ -12,6 +12,7 @@ using Lykke.Service.PayInvoice.Client.Models.Invoice;
 using Lykke.Service.PayInvoicePortal.Core.Services;
 using Lykke.Service.PayInvoicePortal.Core.Extensions;
 using Lykke.Common.Log;
+using Lykke.Service.PayInvoicePortal.Core;
 using Lykke.Service.PayMerchant.Client;
 
 namespace Lykke.Service.PayInvoicePortal.Services
@@ -77,6 +78,7 @@ namespace Lykke.Service.PayInvoicePortal.Services
             {
                 await _emailPartnerRouterClient.Send(new SendEmailCommand
                 {
+                    ApplicationId = Constants.EmailApplicationId,
                     EmailAddresses = addresses.ToArray(),
                     Template = template,
                     Payload = payload
