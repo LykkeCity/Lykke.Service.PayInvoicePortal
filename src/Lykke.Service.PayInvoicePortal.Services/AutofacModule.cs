@@ -8,13 +8,16 @@ namespace Lykke.Service.PayInvoicePortal.Services
     public class AutofacModule : Module
     {
         private readonly CacheExpirationPeriodsSettings _cacheExpirationPeriods;
+        private readonly bool _enableSignup;
         private readonly AssetsMapSettings _assetsMap;
 
         public AutofacModule(
             CacheExpirationPeriodsSettings cacheExpirationPeriods,
+            bool enableSignup,
             AssetsMapSettings assetsMap)
         {
             _cacheExpirationPeriods = cacheExpirationPeriods;
+            _enableSignup = enableSignup;
             _assetsMap = assetsMap;
         }
 
@@ -54,6 +57,10 @@ namespace Lykke.Service.PayInvoicePortal.Services
             builder.RegisterType<MerchantService>()
                 .As<IMerchantService>()
                 .WithParameter(TypedParameter.From(_cacheExpirationPeriods));
+
+            builder.RegisterType<SignupService>()
+                .As<ISignupService>()
+                .WithParameter(TypedParameter.From(_enableSignup));
         }
     }
 }

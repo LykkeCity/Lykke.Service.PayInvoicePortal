@@ -23,7 +23,10 @@
                     </p>
 
                     <div class="index_actions">
-                        @*TODO: <a href="" class="btn btn--primary">Create account</a>*@
+                        @if (Startup.EnableSignup)
+                        {
+                            <a href="@Url.Action("Signup", "Signup")" class="btn btn--primary">Create account</a>
+                        }
                         <div class="asset_link asset_link--simple">
                             <a href="@Url.Action("PublicApiDocsAsync", "PublicApiDocs")">
                                 <div class="asset_link__icon">

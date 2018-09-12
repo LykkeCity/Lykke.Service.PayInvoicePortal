@@ -1,0 +1,19 @@
+﻿@{
+    ViewData["Title"] = "Password reset or creation";
+}
+
+<article class="content">
+    <section class="section section--lead">
+        <div class="container">
+            <div class="row">
+                <div class="col-sm-8 col-md-6 automargin">
+                    <lp-signup></lp-signup>
+                </div>
+            </div>
+        </div>
+    </section>
+</article>
+
+@section Scripts {
+    @await Html.PartialAsync("Partials/ng2scripts")
+}
