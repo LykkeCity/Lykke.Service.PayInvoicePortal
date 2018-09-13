@@ -102,7 +102,7 @@
                                     </a>
                                 </div>
                             }
-                            if (Startup.EnableSignup || !Url.Action("Signup", "Signup").Equals(Context.Request.Path))
+                            if (Startup.EnableSignup && !Url.Action("Signup", "Signup").Equals(Context.Request.Path))
                             {
                                 <div class="header_actions__signup header_signup">
                                     <div class="header_user">
