@@ -1,0 +1,184 @@
+<form class="form form_signup"
+      #signupForm="ngForm"
+      novalidate>
+
+  <div class="form_title">
+    <h2>Create your account</h2>
+  </div>
+
+  <div class="form-group">
+    <label class="control-label">Organization name</label>
+    <div class="input-group"
+         [ngClass]="{'input-group--error': org.invalid && (org.touched || org.dirty)}">
+      <input type="text"
+             class="form-control"
+             autofocus
+             required
+             minlength="3"
+             maxlength="1000"
+             name="org"
+             #org="ngModel"
+             [(ngModel)]="model.merchantName">
+    </div>
+    <div *ngIf="(org.touched || org.dirty)">
+      <div class="hint hint--error"
+           *ngIf="org.errors?.required">Required</div>
+      <div class="hint hint--error"
+           *ngIf="org.errors?.minlength">Minimum length is 3 characters</div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-sm-6">
+      <div class="form-group">
+        <label class="control-label">First name</label>
+        <div class="input-group"
+             [ngClass]="{'input-group--error': fname.invalid && (fname.touched || fname.dirty)}">
+          <input type="text"
+                 class="form-control"
+                 name="fname"
+                 required
+                 maxlength="255"
+                 #fname="ngModel"
+                 [(ngModel)]="model.employeeFirstName">
+        </div>
+        <div *ngIf="(fname.touched || fname.dirty)">
+          <div class="hint hint--error"
+               *ngIf="fname.errors?.required">Required</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-sm-6">
+      <div class="form-group">
+        <label class="control-label">Last name</label>
+        <div class="input-group"
+             [ngClass]="{'input-group--error': lname.invalid && (lname.touched || lname.dirty)}">
+          <input type="text"
+                 class="form-control"
+                 name="lname"
+                 required
+                 maxlength="255"
+                 #lname="ngModel"
+                 [(ngModel)]="model.employeeLastName">
+        </div>
+        <div *ngIf="(lname.touched || lname.dirty)">
+          <div class="hint hint--error"
+               *ngIf="lname.errors?.required">Required</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="form-group">
+    <label class="control-label">Email address</label>
+    <div class="input-group"
+         [ngClass]="{'input-group--error': email.invalid && (email.touched || email.dirty)}">
+      <input type="email"
+             class="form-control"
+             required
+             maxlength="255"
+             name="email"
+             lpEmail
+             #email="ngModel"
+             [(ngModel)]="model.employeeEmail">
+    </div>
+    <div *ngIf="(email.touched || email.dirty)">
+      <div class="hint hint--error"
+           *ngIf="email.errors?.required">Required</div>
+      <div class="hint hint--error"
+           *ngIf="!email.errors?.required && email.errors?.email">Email has not a valid format (text@text.domain)</div>
+    </div>
+  </div>
+
+  <div class="form-group">
+    <label class="control-label">Password</label>
+    <div class="input-group"
+         [ngClass]="{'input-group--error': password.invalid && (password.touched || password.dirty)}">
+      <input type="{{view.isVisiblePassword ? 'text' : 'password'}}"
+             class="form-control"
+             required
+             minlength="6"
+             maxlength="128"
+             name="password"
+             #password="ngModel"
+             [(ngModel)]="model.employeePassword">
+      <i class="icon icon--hide input-group-addon"
+         *ngIf="!view.isVisiblePassword"
+         (click)="onToggleVisibilityPassword()"></i>
+      <i class="icon icon--show input-group-addon"
+         *ngIf="view.isVisiblePassword"
+         (click)="onToggleVisibilityPassword()"></i>
+    </div>
+    <div *ngIf="(password.touched || password.dirty)">
+      <div class="hint hint--error"
+           *ngIf="password.errors?.required">Required</div>
+      <div class="hint hint--error"
+           *ngIf="password.errors?.minlength">Minimum length is 6 characters</div>
+    </div>
+  </div>
+
+  <div class="form-group form-group--inline">
+    <div class="checkbox">
+      <input type="checkbox"
+             class="checkbox__control"
+             name="agreeCheckbox"
+             required
+             requiredTrue
+             #agreeCheckbox="ngModel"
+             [(ngModel)]="view.agreeCheckbox">
+      <label class="control-label checkbox__label"
+             (click)="view.agreeCheckbox = !view.agreeCheckbox">
+        <span>I agree with</span>
+      </label>
+      <span class="control-label">
+        <a href="https://lykke.com/terms_of_use"
+           target="_blank"> Terms of Use</a>
+      </span>
+      <span> and </span>
+      <span class="control-label">
+        <a href="https://lykke.com/privacy_policy"
+           target="_blank">Privacy Policy</a>
+      </span>
+    </div>
+  </div>
+  <div class="hint--error"
+       *ngIf="validation.merchantExistError">
+    Merchant with this company name has been registered already. Please contact to company account holder if you are an
+    employee of the company; or contact to Lykke support if believe your company name is used by a 3rd party by
+    mistake.
+  </div>
+  <div class="hint--error"
+       *ngIf="validation.emailExistError">
+    Email is already in use.
+  </div>
+  <div class="hint--error"
+       *ngIf="validation.hasModelErrors">
+    <div class="form-group">Please correct input data and try again.</div>
+    <div class="form-group"
+         *ngIf="validation.modelErrors.MerchantName"><b>Organization name:</b>
+      {{validation.modelErrors['MerchantName'][0]}}</div>
+    <div class="form-group"
+         *ngIf="validation.modelErrors.EmployeeEmail"><b>Email address:</b>
+      {{validation.modelErrors['EmployeeEmail'][0]}}</div>
+  </div>
+  <div class="hint--error"
+       *ngIf="validation.unexpectedError">
+    Unexprected error occured, please contact support.
+  </div>
+
+  <div class="submit-group">
+    <button class="btn btn--primary"
+            type="submit"
+            (click)="onSubmit()"
+            [hidden]="view.isLoading"
+            [disabled]="view.isLoading || signupForm.invalid">
+      Create account
+    </button>
+    <div *ngIf="view.isLoading">
+      <div class="spinner">
+        <div class="spinner__inside"></div>
+      </div>
+    </div>
+  </div>
+</form>

@@ -5,11 +5,16 @@ import { FormsModule } from '@angular/forms';
 
 import { ResetPasswordComponent } from './components/ResetPassword/ResetPassword';
 import { ValidatorPasswordEqualledDirective } from './components/ResetPassword/ValidatorPasswordEqualled.directive';
+import { SignupComponent } from './components/Signup/Signup';
 
 import { ResetPasswordApi } from './services/api/ResetPasswordApi';
+import { SignupApi } from './services/api/SignupApi';
+import { EmailValidatorDirective } from './directives/validators/EmailValidator.directive';
 
 @NgModule({
   declarations: [
+    SignupComponent,
+    EmailValidatorDirective,
     ResetPasswordComponent,
     ValidatorPasswordEqualledDirective
   ],
@@ -19,9 +24,11 @@ import { ResetPasswordApi } from './services/api/ResetPasswordApi';
     HttpClientModule
   ],
   providers: [
+    SignupApi,
     ResetPasswordApi
   ],
   entryComponents: [
+    SignupComponent,
     ResetPasswordComponent
   ]
 })
@@ -33,6 +40,7 @@ export class AppModule {
     // with their selectors (html host elements)
     const options = {};
 
+    options[SignupComponent.Selector] = SignupComponent;
     options[ResetPasswordComponent.Selector] = ResetPasswordComponent;
 
     // tslint:disable-next-line:no-shadowed-variable
