@@ -9,6 +9,7 @@ namespace Lykke.Service.PayInvoicePortal.Settings.ServiceSettings
     {
         public string BlockchainExplorerUrl { get; set; }
         public string EthereumBlockchainExplorerUrl { get; set; }
+        [Optional]
         public string PortalTestnetUrl { get; set; }
         public string ApiaryDocsDomain { get; set; }
         public TimeSpan UserLoginTime { get; set; }
