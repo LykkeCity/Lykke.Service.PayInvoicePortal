@@ -8,7 +8,8 @@
 
   <div class="form-group">
     <label class="control-label">Organization name</label>
-    <div class="input-group">
+    <div class="input-group"
+         [ngClass]="{'input-group--error': org.invalid && (org.touched || org.dirty)}">
       <input type="text"
              class="form-control"
              autofocus
@@ -31,7 +32,8 @@
     <div class="col-sm-6">
       <div class="form-group">
         <label class="control-label">First name</label>
-        <div class="input-group">
+        <div class="input-group"
+             [ngClass]="{'input-group--error': fname.invalid && (fname.touched || fname.dirty)}">
           <input type="text"
                  class="form-control"
                  name="fname"
@@ -50,7 +52,8 @@
     <div class="col-sm-6">
       <div class="form-group">
         <label class="control-label">Last name</label>
-        <div class="input-group">
+        <div class="input-group"
+             [ngClass]="{'input-group--error': lname.invalid && (lname.touched || lname.dirty)}">
           <input type="text"
                  class="form-control"
                  name="lname"
@@ -69,7 +72,8 @@
 
   <div class="form-group">
     <label class="control-label">Email address</label>
-    <div class="input-group">
+    <div class="input-group"
+         [ngClass]="{'input-group--error': email.invalid && (email.touched || email.dirty)}">
       <input type="email"
              class="form-control"
              required
@@ -83,7 +87,7 @@
       <div class="hint hint--error"
            *ngIf="email.errors?.required">Required</div>
       <div class="hint hint--error"
-           *ngIf="email.errors?.email">Email has not a valid format (text@text.domain)</div>
+           *ngIf="!email.errors?.required && email.errors?.email">Email has not a valid format (text@text.domain)</div>
     </div>
   </div>
 
@@ -152,9 +156,11 @@
        *ngIf="validation.hasModelErrors">
     <div class="form-group">Please correct input data and try again.</div>
     <div class="form-group"
-         *ngIf="validation.modelErrors.MerchantName"><b>Organization name:</b> {{validation.modelErrors['MerchantName'][0]}}</div>
+         *ngIf="validation.modelErrors.MerchantName"><b>Organization name:</b>
+      {{validation.modelErrors['MerchantName'][0]}}</div>
     <div class="form-group"
-         *ngIf="validation.modelErrors.EmployeeEmail"><b>Email address:</b> {{validation.modelErrors['EmployeeEmail'][0]}}</div>
+         *ngIf="validation.modelErrors.EmployeeEmail"><b>Email address:</b>
+      {{validation.modelErrors['EmployeeEmail'][0]}}</div>
   </div>
   <div class="hint--error"
        *ngIf="validation.unexpectedError">
