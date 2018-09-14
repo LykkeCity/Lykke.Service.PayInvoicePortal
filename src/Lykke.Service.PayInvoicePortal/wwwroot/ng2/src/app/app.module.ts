@@ -4,15 +4,19 @@ import { HttpClientModule } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
 
 import { ResetPasswordComponent } from './components/ResetPassword/ResetPassword';
-import { ValidatorPasswordEqualledDirective } from './components/ResetPassword/ValidatorPasswordEqualled.directive';
-import { SignupComponent } from './components/Signup/Signup';
-
 import { ResetPasswordApi } from './services/api/ResetPasswordApi';
+import { ValidatorPasswordEqualledDirective } from './components/ResetPassword/ValidatorPasswordEqualled.directive';
+
+import { SignupComponent } from './components/Signup/Signup';
 import { SignupApi } from './services/api/SignupApi';
 import { EmailValidatorDirective } from './directives/validators/EmailValidator.directive';
 
+import { SettingsComponent } from './components/Settings/Settings';
+import { SettingsApi } from './services/api/SettingsApi';
+
 @NgModule({
   declarations: [
+    SettingsComponent,
     SignupComponent,
     EmailValidatorDirective,
     ResetPasswordComponent,
@@ -24,10 +28,12 @@ import { EmailValidatorDirective } from './directives/validators/EmailValidator.
     HttpClientModule
   ],
   providers: [
+    SettingsApi,
     SignupApi,
     ResetPasswordApi
   ],
   entryComponents: [
+    SettingsComponent,
     SignupComponent,
     ResetPasswordComponent
   ]
@@ -40,6 +46,7 @@ export class AppModule {
     // with their selectors (html host elements)
     const options = {};
 
+    options[SettingsComponent.Selector] = SettingsComponent;
     options[SignupComponent.Selector] = SignupComponent;
     options[ResetPasswordComponent.Selector] = ResetPasswordComponent;
 
