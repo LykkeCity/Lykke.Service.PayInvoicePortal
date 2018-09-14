@@ -20,14 +20,14 @@ export class BaseApi {
       this.httpOptions.params = params;
     }
 
-    return this.http.get(url, this.httpOptions);
+    return this.http.get(this.url(url), this.httpOptions);
   }
 
   put(url, model): Observable<any> {
     return this.http.put(this.url(url), model, this.httpOptions);
   }
 
-  post(url, model): Observable<any> {
+  post(url, model = null): Observable<any> {
     return this.http.post(this.url(url), model, this.httpOptions);
   }
 
