@@ -61,22 +61,41 @@
                     <div class="col-md-8 col-sm-7">
                         <div class="profile_summary">
                             <div class="profile_info__header">
-                                Received
-                                <button class="profile_info__header_help"
-                                        data-ng-click="vm.statistic.handlers.openSummaryStatistic()">
+                                Received 0.00 {{vm.model.baseAsset}}
+                                <button class="profile_info__header_help _payments_summary_btn" style="display: none">
                                     <i class="btn__svg_icon svg_icon svg_icon--help"></i>
                                 </button>
                             </div>
+                            <div class="profile_info__link" style="display: none">
+                                <a href="volatility.html">Volatility shield</a>
+                            </div>
                             <div class="profile_summary__list clearfix">
                                 <div class="profile_summary__left">
-                                    @await StatItemAsync("Paid")
-                                    @await StatItemAsync("Unpaid")
-                                    @await StatItemAsync("PastDue")
+                                    <div class="profile_summary__item clearfix">
+                                        <div class="profile_summary__status_name">
+                                            Settled 
+                                            <a href="#" style="display: none" class="btn btn--icon"><i class="icon icon--help_outline"></i></a>
+                                        </div>
+                                        <div class="profile_summary__status_value">0.00 {{vm.model.baseAsset}}</div>
+                                    </div>
+                                    <div class="profile_summary__item clearfix">
+                                        <div class="profile_summary__status_name">Commission</div>
+                                        <div class="profile_summary__status_value">0.00 {{vm.model.baseAsset}}</div>
+                                    </div>
                                 </div>
                                 <div class="profile_summary__right">
-                                    @await StatItemAsync("Underpaid")
-                                    @await StatItemAsync("Overpaid")
-                                    @await StatItemAsync("LatePaid")
+                                    <div class="profile_summary__item clearfix">
+                                        <div class="profile_summary__status_name">
+                                            Unresolved
+                                        </div>
+                                        <div class="profile_summary__status_value">0.00 {{vm.model.baseAsset}}</div>
+                                    </div>
+                                    <div class="profile_summary__item clearfix">
+                                        <div class="profile_summary__status_name">
+                                            Refunded
+                                        </div>
+                                        <div class="profile_summary__status_value">0.00 {{vm.model.baseAsset}}</div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
