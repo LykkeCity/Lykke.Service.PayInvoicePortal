@@ -10,6 +10,6 @@
     <PackageReference Include="Lykke.Service.Assets.Client" Version="4.4.0" />
 		<PackageReference Include="Lykke.Service.PayInternal.Client" Version="2.0.23" />
 		<PackageReference Include="Lykke.Service.PayInvoice.Client" Version="5.2.0" />
-		<PackageReference Include="Lykke.Service.PayMerchant.Client" Version="1.0.4" />
+		<PackageReference Include="Lykke.Service.PayMerchant.Client" Version="1.0.7" />
 	</ItemGroup>
 </Project>

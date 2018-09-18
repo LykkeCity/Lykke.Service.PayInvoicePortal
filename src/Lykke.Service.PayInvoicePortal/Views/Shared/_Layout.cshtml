@@ -1,4 +1,5 @@
-﻿@using Lykke.Service.PayInvoicePortal.Extensions
+﻿@using Lykke.Service.PayInvoicePortal
+@using Lykke.Service.PayInvoicePortal.Extensions
 @inject Microsoft.ApplicationInsights.AspNetCore.JavaScriptSnippet JavaScriptSnippet
 <!DOCTYPE html>
 @* Support from IE11 *@
@@ -56,7 +57,13 @@
                     <div class="header__logo header_logo">
                         <a href="/">
                             <img class="header_logo__img" src="/img/lykke_exchange_spot_logo.svg" height="36" alt="lykke_logo">
-                            <div class="header_logo__title">Lykke Pay</div>
+                            <div class="header_logo__title">
+                                Lykke Pay
+                                @if (string.IsNullOrEmpty(Startup.PortalTestnetUrl))
+                                {
+                                  <span style="color:red">Sandbox</span>
+                                }
+                            </div>
                         </a>
                     </div>
                     <div class="header__actions header_actions pull-right">
@@ -101,14 +108,16 @@
                                     </a>
                                 </div>
                             }
-                            @*TODO:
-                            <div class="header_actions__signup header_signup">
-                                <div class="header_user">
-                                    <a href="javascript:void(0)">
-                                        <div class="header_login__title">Sign up</div>
-                                    </a>
+                            if (Startup.EnableSignup && !Url.Action("Signup", "Signup").Equals(Context.Request.Path))
+                            {
+                                <div class="header_actions__signup header_signup">
+                                    <div class="header_user">
+                                        <a href="@Url.Action("Signup", "Signup")">
+                                            <div class="header_login__title">Sign up</div>
+                                        </a>
+                                    </div>
                                 </div>
-                            </div>*@
+                            }
                         }
                     </div>
                 </div>
