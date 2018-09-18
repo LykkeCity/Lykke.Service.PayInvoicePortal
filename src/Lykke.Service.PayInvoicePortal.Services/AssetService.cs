@@ -18,6 +18,7 @@ namespace Lykke.Service.PayInvoicePortal.Services
 {
     public class AssetService : IAssetService
     {
+        private const string DefaultBaseAssetId = "CHF";
         private readonly IPayInternalClient _payInternalClient;
         private readonly IPayInvoiceClient _payInvoiceClient;
         private readonly ILykkeAssetsResolver _lykkeAssetsResolver;
@@ -49,6 +50,11 @@ namespace Lykke.Service.PayInvoicePortal.Services
             }
 
             return baseAssetId;
+        }
+
+        public string GetDefaultBaseAssetId()
+        {
+            return DefaultBaseAssetId;
         }
 
         public async Task<IReadOnlyDictionary<string, string>> GetSettlementAssetsAsync(string merchantId)
