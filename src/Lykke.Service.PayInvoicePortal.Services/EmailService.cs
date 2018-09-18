@@ -69,7 +69,8 @@ namespace Lykke.Service.PayInvoicePortal.Services
                 {"InvoiceDueDate", invoice.DueDate.ToString("d")},
                 {"InvoiceUrl", checkoutUrl},
                 {"Note", invoice.Note},
-                {"Year", DateTime.Today.Year.ToString()}
+                {"Year", DateTime.Today.Year.ToString()},
+                {"MerchantName", merchant.DisplayName ?? merchant.Name}
             };
 
             string template = string.IsNullOrEmpty(invoice.Note) ? EmailTemplateWithoutNote : EmailTemplate;
