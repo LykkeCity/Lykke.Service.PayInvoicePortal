@@ -13,9 +13,11 @@ import { EmailValidatorDirective } from './directives/validators/EmailValidator.
 
 import { SettingsComponent } from './components/Settings/Settings';
 import { SettingsApi } from './services/api/SettingsApi';
+import { SelectPickerComponent } from './components/SelectPicker/SelectPicker';
 
 @NgModule({
   declarations: [
+    SelectPickerComponent,
     SettingsComponent,
     SignupComponent,
     EmailValidatorDirective,

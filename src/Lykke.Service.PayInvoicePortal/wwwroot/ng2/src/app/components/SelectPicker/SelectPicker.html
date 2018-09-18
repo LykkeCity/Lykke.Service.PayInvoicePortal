@@ -1,0 +1,14 @@
+<div class="form_selectpicker"
+     [attr.disabled]="disabled ? 'disabled' : null">
+  <select class="selectpicker"
+          #selectpicker
+          data-size="10"
+          [attr.data-live-search]="selectpickerOptions.length > 10"
+          [attr.data-live-search-placeholder]="placeholder"
+          [attr.disabled]="disabled ? 'disabled' : null"
+          (ngModelChange)="onChangedSelectedItem($event)"
+          [(ngModel)]="selectedItem">
+    <option [value]="item.id"
+            *ngFor="let item of selectpickerOptions">{{item.title}}</option>
+  </select>
+</div>

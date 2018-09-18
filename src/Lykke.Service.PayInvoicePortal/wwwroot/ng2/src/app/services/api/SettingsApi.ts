@@ -8,6 +8,10 @@ export class SettingsApi extends BaseApi {
     return this.get('api/settings');
   }
 
+  setBaseAsset(model): Observable<any> {
+    return this.post('api/settings/baseAsset', model);
+  }
+
   generateRsaKeys(): Observable<any> {
     return this.post('api/settings/generateRsaKeys');
   }

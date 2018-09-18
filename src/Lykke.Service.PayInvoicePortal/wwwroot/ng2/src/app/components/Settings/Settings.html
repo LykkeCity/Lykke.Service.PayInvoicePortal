@@ -47,22 +47,20 @@
 
     <p>The asset used to display total balance of all your paid and unpaid invoices.</p>
 
-    <!-- TODO: make new component -->
     <div class="form-group">
       <label class="control-label">Asset</label>
-      <div class="form_selectpicker">
-        <select data-selectpicker=""
-                data-size="10"
-                data-live-search="false"
-                data-live-search-placeholder="Asset name"
-                data-tabindex="-98">
-          <option label="USD"
-                  value="string:USD">USD</option>
-          <option label="EUR_dev"
-                  value="string:EUR">EUR_dev</option>
-          <option label="CHF_dev"
-                  value="string:CHF">CHF_dev</option>
-        </select>
+      <lp-selectpicker (ngModelChange)="onChangedBaseAssetId($event)"
+                       [(ngModel)]="model.baseAssetId"
+                       [selectpickerOptions]="model.availableBaseAssets"
+                       [revertPreviousItemTrigger]="revertBaseAssetTrigger"
+                       [disabled]="view.isLoadingChangeAsset"
+                       placeholder="Asset name"></lp-selectpicker>
+      <div class="hint--error"
+           *ngIf="errors.baseAssetId">Error occured during update, please contact support.</div>
+      <div *ngIf="view.isLoadingChangeAsset" style="margin-top: 7px">
+        <div class="spinner" style="height: 40px; width: 40px">
+          <div class="spinner__inside"></div>
+        </div>
       </div>
     </div>
 
@@ -77,11 +75,6 @@
                readonly>
         <!-- TODO: make copy to clipboard -->
         <i class="icon icon--copy input-group-addon"></i>
-      </div>
-    </div>
-    <div *ngIf="view.isLoadingChangeAsset">
-      <div class="spinner">
-        <div class="spinner__inside"></div>
       </div>
     </div>
 
