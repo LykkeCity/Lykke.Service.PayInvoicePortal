@@ -7,6 +7,7 @@ namespace Lykke.Service.PayInvoicePortal.Core.Services
     public interface IAssetService
     {
         Task<string> GetBaseAssetId(string merchantId);
+        string GetDefaultBaseAssetId();
         Task<IReadOnlyDictionary<string, string>> GetSettlementAssetsAsync(string merchantId);
         Task<IReadOnlyDictionary<string, string>> GetPaymentAssetsAsync(string merchantId, string settlementAssetId);
         Task<IReadOnlyDictionary<string, string>> GetPaymentAssetsAsync(string merchantId);

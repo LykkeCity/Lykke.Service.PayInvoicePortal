@@ -5,6 +5,7 @@
     <RootNamespace>Lykke.Service.PayInvoicePortal</RootNamespace>
     <Version>1.0.0</Version>
     <LangVersion>7.1</LangVersion>
+    <TypeScriptCompileBlocked>True</TypeScriptCompileBlocked>
   </PropertyGroup>
   <ItemGroup>
     <None Include="Views\Auth\SignIn.cshtml" />
@@ -343,7 +344,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="AppCode" />
-    <Folder Include="Controllers\Api\User\" />
     <Folder Include="Models\PublicApiDocs\" />
     <Folder Include="wwwroot\src\css\scss\" />
   </ItemGroup>
