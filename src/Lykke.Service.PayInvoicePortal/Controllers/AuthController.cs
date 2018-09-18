@@ -70,6 +70,7 @@ namespace Lykke.Service.PayInvoicePortal.Controllers
                 new Claim(ClaimTypes.Sid, employee.Id),
                 new Claim(ClaimTypes.UserData, employee.MerchantId),
                 new Claim(ClaimTypes.Actor, isSupervisor.ToString()),
+                new Claim(ClaimTypes.Email, employee.Email),
                 new Claim(ClaimTypes.Name, $"{employee.FirstName} {employee.LastName}")
             };
 
