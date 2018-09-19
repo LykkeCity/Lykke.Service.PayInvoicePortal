@@ -61,7 +61,6 @@ export class ConfirmModalComponent implements OnDestroy {
   }
 
   private openModal(data: IConfirmModalDataModel): void {
-    console.log('data', data)
     this.renderer.addClass(document.body, this.cssClassForBody);
     this.view.open = true;
     this.model.title = data.title || this.defaultTitle;

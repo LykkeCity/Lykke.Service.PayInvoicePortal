@@ -75,8 +75,8 @@
                class="form-control form-control--readonly"
                value="{{model.merchantId}}"
                readonly>
-        <!-- TODO: make copy to clipboard -->
-        <i class="icon icon--copy input-group-addon"></i>
+        <i class="icon icon--copy input-group-addon"
+           [lpCopyText]="model.merchantId"></i>
       </div>
     </div>
 
@@ -87,8 +87,8 @@
                class="form-control form-control--readonly"
                value="{{model.merchantApiKey}}"
                readonly>
-        <!-- TODO: make copy to clipboard -->
-        <i class="icon icon--copy input-group-addon"></i>
+        <i class="icon icon--copy input-group-addon"
+           [lpCopyText]="model.merchantApiKey"></i>
       </div>
     </div>
 
@@ -100,8 +100,8 @@
                   class="form-control form-control--readonly"
                   readonly
                   [ngModel]="model.rsaPrivateKey"></textarea>
-        <!-- TODO: make copy to clipboard -->
-        <i class="icon icon--copy input-group-addon"></i>
+        <i class="icon icon--copy input-group-addon"
+           [lpCopyText]="model.rsaPrivateKey"></i>
       </div>
 
       <div class="hint">Please be aware, we don’t store Merchant Secret on our servers. Every time you push ‘Generate
