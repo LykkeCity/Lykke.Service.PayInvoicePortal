@@ -19,6 +19,7 @@ import { SelectPickerComponent } from './components/SelectPicker/SelectPicker';
 
 import { ConfirmModalComponent } from './components/ConfirmModal/ConfirmModal';
 import { ConfirmModalService } from './services/ConfirmModalService';
+import { CopyTextDirective } from './directives/CopyText.directive';
 
 @NgModule({
   declarations: [
@@ -28,6 +29,7 @@ import { ConfirmModalService } from './services/ConfirmModalService';
     SignupComponent,
     EmailValidatorDirective,
     ResetPasswordComponent,
+    CopyTextDirective,
     ValidatorPasswordEqualledDirective
   ],
   imports: [
