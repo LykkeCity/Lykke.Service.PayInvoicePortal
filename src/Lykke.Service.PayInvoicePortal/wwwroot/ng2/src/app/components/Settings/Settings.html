@@ -57,8 +57,10 @@
                        placeholder="Asset name"></lp-selectpicker>
       <div class="hint--error"
            *ngIf="errors.baseAssetId">Error occured during update, please contact support.</div>
-      <div *ngIf="view.isLoadingChangeAsset" style="margin-top: 7px">
-        <div class="spinner" style="height: 40px; width: 40px">
+      <div *ngIf="view.isLoadingChangeAsset"
+           style="margin-top: 7px">
+        <div class="spinner"
+             style="height: 40px; width: 40px">
           <div class="spinner__inside"></div>
         </div>
       </div>
@@ -124,8 +126,8 @@
 
     <p>Permanently delete your account and all of your content.</p>
 
-    <!-- TODO: make delete account -->
-    <button class="btn btn--flat btn--red">
+    <button class="btn btn--flat btn--red"
+            (click)="deleteAccount()">
       <i class="icon icon--trash"></i>
       Delete your account
     </button>

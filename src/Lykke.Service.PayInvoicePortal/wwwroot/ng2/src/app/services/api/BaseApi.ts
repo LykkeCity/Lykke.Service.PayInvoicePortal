@@ -7,15 +7,18 @@ import { Observable } from 'rxjs';
 export class BaseApi {
   constructor(private http: HttpClient) {}
 
-  readonly baseApiUrl: string = environment.production ? '/' : 'http://localhost:54081/';
+  protected readonly baseApiUrl: string = environment.production
+    ? '/'
+    : 'http://localhost:54081/';
 
-  readonly httpOptions = {
+  private readonly httpOptions = {
     headers: new HttpHeaders(),
     withCredentials: environment.production ? false : true,
     params: new HttpParams()
   };
 
-  get(url, params?): Observable<any> {
+  protected get(url, params?): Observable<any> {
+    this.httpOptions.params = null;
     if (params) {
       this.httpOptions.params = params;
     }
@@ -23,12 +26,21 @@ export class BaseApi {
     return this.http.get(this.url(url), this.httpOptions);
   }
 
-  put(url, model): Observable<any> {
+  protected put(url, model?): Observable<any> {
     return this.http.put(this.url(url), model, this.httpOptions);
   }
 
-  post(url, model = null): Observable<any> {
+  protected post(url, model?): Observable<any> {
     return this.http.post(this.url(url), model, this.httpOptions);
+  }
+
+  protected delete(url, params?): Observable<any> {
+    this.httpOptions.params = null;
+    if (params) {
+      this.httpOptions.params = params;
+    }
+
+    return this.http.delete(this.url(url), this.httpOptions);
   }
 
   private url(url: string) {

@@ -11,6 +11,7 @@ using Lykke.Service.Assets.Client.Models;
 using Lykke.Service.PayAuth.Client;
 using Lykke.Service.PayAuth.Client.Models.GenerateRsaKeys;
 using Lykke.Service.PayInvoice.Client;
+using Lykke.Service.PayInvoice.Client.Models.Employee;
 using Lykke.Service.PayInvoice.Client.Models.MerchantSetting;
 using Lykke.Service.PayInvoice.Core.Domain;
 using Lykke.Service.PayInvoicePortal.Constants;
@@ -70,8 +71,7 @@ namespace Lykke.Service.PayInvoicePortal.Controllers.Api.User
             {
                 var merchant = await _payMerchantClient.Api.GetByIdAsync(merchantId);
 
-                //TODO: getting public key info
-                //var publicKeyInfo = await _payAuthClient.GetById
+                var publicKeyInfo = await _payAuthClient.GetPayAuthInformationAsync(merchantId);
 
                 var baseAssetId = await _assetService.GetBaseAssetId(merchantId);
 
@@ -94,7 +94,7 @@ namespace Lykke.Service.PayInvoicePortal.Controllers.Api.User
                     BaseAssetId = baseAssetId,
                     MerchantId = merchantId,
                     MerchantApiKey = merchant.ApiKey,
-                    HasPublicKey = false //TODO
+                    HasPublicKey = !string.IsNullOrEmpty(publicKeyInfo.RsaPublicKey)
                 };
 
                 return Ok(settings);
@@ -163,9 +163,9 @@ namespace Lykke.Service.PayInvoicePortal.Controllers.Api.User
             }
         }
 
-        [HttpPost]
+        [HttpDelete]
         [Route("delete")]
-        [ProducesResponseType((int)HttpStatusCode.OK)]
+        [ProducesResponseType((int)HttpStatusCode.NoContent)]
         [ProducesResponseType(typeof(ErrorResponse), (int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> Delete()
         {
@@ -174,7 +174,11 @@ namespace Lykke.Service.PayInvoicePortal.Controllers.Api.User
 
             try
             {
-                //TODO make call to mark deleted
+                await _payInvoiceClient.MarkEmployeeDeletedAsync(new MarkEmployeeDeletedRequest
+                {
+                    MerchantId = merchantId,
+                    EmployeeId = employeeId
+                });
             }
             catch (Exception e)
             {
@@ -183,12 +187,9 @@ namespace Lykke.Service.PayInvoicePortal.Controllers.Api.User
                 return BadRequest(ErrorResponse.Create(PayInvoicePortalApiErrorCodes.UnexpectedError));
             }
 
-            if (User.Identity.IsAuthenticated)
-            {
-                await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
-            }
+            await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
 
-            return Ok();
+            return NoContent();
         }
     }
 }

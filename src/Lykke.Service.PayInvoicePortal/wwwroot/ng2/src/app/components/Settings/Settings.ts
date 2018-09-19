@@ -1,8 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 import { SettingsApi } from '../../services/api/SettingsApi';
-import { ROUTE_CHANGE_PASSWORD_PAGE } from '../../constants/routes';
+import {
+  ROUTE_CHANGE_PASSWORD_PAGE,
+  ROUTE_WELCOME_PAGE
+} from '../../constants/routes';
 import { SettingsModel } from './SettingsModel';
 import { AssetItemViewModel } from '../../models/AssetItemViewModels';
+import { ConfirmModalService } from '../../services/ConfirmModalService';
 
 @Component({
   selector: SettingsComponent.Selector,
@@ -15,7 +19,10 @@ export class SettingsComponent implements OnInit {
   view = new View();
   errors = new Errors();
   revertBaseAssetTrigger = 0;
-  constructor(private api: SettingsApi) {}
+  constructor(
+    private api: SettingsApi,
+    private confirmModalService: ConfirmModalService
+  ) {}
   ngOnInit(): void {
     this.view.isLoading = true;
 
@@ -97,6 +104,26 @@ export class SettingsComponent implements OnInit {
         this.view.isLoadingGenerateRsaKeys = false;
       }
     );
+  }
+
+  deleteAccount(): void {
+    this.confirmModalService.openModal({
+      content: 'Are you sure to delete account?',
+      yesAction: () => {
+        this.view.isLoadingDeleteAccount = true;
+
+        this.api.deleteAccount().subscribe(
+          res => {
+            location.href = ROUTE_WELCOME_PAGE;
+          },
+          error => {
+            console.error(error);
+            this.confirmModalService.showErrorModal();
+            this.view.isLoadingDeleteAccount = false;
+          }
+        );
+      }
+    });
   }
 }
 

@@ -1,0 +1,21 @@
+<div *ngIf="view.open">
+  <aside class="menu_overlay menu_overlay--open"
+         (click)="overlayClick($event)"></aside>
+  <div class="modal_dialog modal_dialog--open">
+    <div class="modal_dialog__title">{{model.title}}</div>
+    <div class="modal_dialog__text">{{model.content}}</div>
+    <div class="modal_dialog__controls">
+      <div class="pull-right">
+        <button class="btn modal_dialog__btn"
+                *ngIf="view.showYesBtn"
+                (click)="yes()">{{model.textYesBtn}}</button>
+        <button class="btn modal_dialog__cancel modal_dialog__btn"
+                [ngClass]="{'btn--flat': view.showYesBtn}"
+                (click)="close()">
+          <span *ngIf="view.showYesBtn">Cancel</span>
+          <span *ngIf="!view.showYesBtn">OK</span>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

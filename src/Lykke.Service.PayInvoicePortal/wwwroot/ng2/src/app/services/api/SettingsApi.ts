@@ -15,4 +15,8 @@ export class SettingsApi extends BaseApi {
   generateRsaKeys(): Observable<any> {
     return this.post('api/settings/generateRsaKeys');
   }
+
+  deleteAccount(): Observable<any> {
+    return this.delete('api/settings/delete');
+  }
 }

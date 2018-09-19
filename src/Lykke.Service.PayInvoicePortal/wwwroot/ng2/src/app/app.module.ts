@@ -1,7 +1,9 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule, ApplicationRef } from '@angular/core';
-import { HttpClientModule } from '@angular/common/http';
+import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
+
+import { AuthInterceptor } from './interceptors/AuthInterceptor';
 
 import { ResetPasswordComponent } from './components/ResetPassword/ResetPassword';
 import { ResetPasswordApi } from './services/api/ResetPasswordApi';
@@ -15,8 +17,12 @@ import { SettingsComponent } from './components/Settings/Settings';
 import { SettingsApi } from './services/api/SettingsApi';
 import { SelectPickerComponent } from './components/SelectPicker/SelectPicker';
 
+import { ConfirmModalComponent } from './components/ConfirmModal/ConfirmModal';
+import { ConfirmModalService } from './services/ConfirmModalService';
+
 @NgModule({
   declarations: [
+    ConfirmModalComponent,
     SelectPickerComponent,
     SettingsComponent,
     SignupComponent,
@@ -30,11 +36,14 @@ import { SelectPickerComponent } from './components/SelectPicker/SelectPicker';
     HttpClientModule
   ],
   providers: [
+    ConfirmModalService,
     SettingsApi,
     SignupApi,
-    ResetPasswordApi
+    ResetPasswordApi,
+    { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },
   ],
   entryComponents: [
+    ConfirmModalComponent,
     SettingsComponent,
     SignupComponent,
     ResetPasswordComponent
@@ -48,6 +57,7 @@ export class AppModule {
     // with their selectors (html host elements)
     const options = {};
 
+    options[ConfirmModalComponent.Selector] = ConfirmModalComponent;
     options[SettingsComponent.Selector] = SettingsComponent;
     options[SignupComponent.Selector] = SignupComponent;
     options[ResetPasswordComponent.Selector] = ResetPasswordComponent;
