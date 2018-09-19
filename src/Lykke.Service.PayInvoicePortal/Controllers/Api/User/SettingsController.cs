@@ -70,8 +70,7 @@ namespace Lykke.Service.PayInvoicePortal.Controllers.Api.User
             {
                 var merchant = await _payMerchantClient.Api.GetByIdAsync(merchantId);
 
-                //TODO: getting public key info
-                //var publicKeyInfo = await _payAuthClient.GetById
+                var publicKeyInfo = await _payAuthClient.GetPayAuthInformationAsync(merchantId);
 
                 var baseAssetId = await _assetService.GetBaseAssetId(merchantId);
 
@@ -94,7 +93,7 @@ namespace Lykke.Service.PayInvoicePortal.Controllers.Api.User
                     BaseAssetId = baseAssetId,
                     MerchantId = merchantId,
                     MerchantApiKey = merchant.ApiKey,
-                    HasPublicKey = false //TODO
+                    HasPublicKey = !string.IsNullOrEmpty(publicKeyInfo.RsaPublicKey)
                 };
 
                 return Ok(settings);
