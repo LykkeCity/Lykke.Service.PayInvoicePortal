@@ -6,6 +6,9 @@
                     <li class="nav_list__item" data-ng-class="::{'nav_list__item--active': vm.model.isHome}">
                         <a href="@Url.Action("Index", "Home")">Payments</a>
                     </li>
+                    <li class="nav_list__item" data-ng-class="::{'nav_list__item--active': vm.handlers.isPath('@Url.Action("Settings", "Settings")')}">
+                        <a href="@Url.Action("Settings", "Settings")">Settings</a>
+                    </li>
                     <li class="nav_list__item" data-ng-class="::{'nav_list__item--active': vm.handlers.isPath('@Url.Action("PublicApiDocsAsync", "PublicApiDocs")')}">
                         <a href="@Url.Action("PublicApiDocsAsync", "PublicApiDocs")">API</a>
                     </li>

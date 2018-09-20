@@ -55,7 +55,6 @@ namespace Lykke.Service.PayInvoicePortal.Services
         private readonly CacheExpirationPeriodsSettings _cacheExpirationPeriods;
         private readonly ILog _log;
         private readonly OnDemandDataCache<Tuple<double>> _ratesCache;
-        private readonly OnDemandDataCache<Tuple<string>> _baseAssetCache;
 
         public InvoiceService(
             IMerchantService merchantService,
@@ -78,7 +77,6 @@ namespace Lykke.Service.PayInvoicePortal.Services
             _cacheExpirationPeriods = cacheExpirationPeriods;
             _payMerchantClient = payMerchantClient;
             _ratesCache = new OnDemandDataCache<Tuple<double>>(memoryCache);
-            _baseAssetCache = new OnDemandDataCache<Tuple<string>>(memoryCache);
             _log = logFactory.CreateLog(this);
         }
 
@@ -278,8 +276,8 @@ namespace Lykke.Service.PayInvoicePortal.Services
                 ExchangeRate = order.ExchangeRate,
                 DeltaSpread = markupForMerchant.DeltaSpread > 0,
                 Pips = markupForMerchant.Pips + paymentRequest.MarkupPips,
-                Percents = markupForMerchant.DeltaSpread + markupForMerchant.Percent + (decimal)paymentRequest.MarkupPercent,
-                Fee = markupForMerchant.FixedFee + (decimal)paymentRequest.MarkupFixedFee,
+                Percents = markupForMerchant.DeltaSpread + markupForMerchant.Percent + paymentRequest.MarkupPercent,
+                Fee = markupForMerchant.FixedFee + paymentRequest.MarkupFixedFee,
                 DueDate = invoice.DueDate,
                 Note = invoice.Note,
                 WalletAddress = paymentRequest.WalletAddress,
@@ -400,16 +398,7 @@ namespace Lykke.Service.PayInvoicePortal.Services
         {
             IEnumerable<InvoiceModel> allInvoices = await _payInvoiceClient.GetMerchantInvoicesAsync(merchantId);
 
-            var baseAssetIdTuple = await _baseAssetCache.GetOrAddAsync
-                (
-                    $"BaseAssetId-{merchantId}",
-                    async x => {
-                        var baseAssetIdResponse = await GetBaseAssetId(merchantId);
-                        return new Tuple<string>(baseAssetIdResponse);
-                    },
-                    _cacheExpirationPeriods.BaseAsset
-                );
-            var baseAssetId = baseAssetIdTuple.Item1;
+            var baseAssetId = await GetBaseAssetId(merchantId);
             Asset baseAsset = await _lykkeAssetsResolver.TryGetAssetAsync(baseAssetId);
 
             #region Statistic
@@ -616,21 +605,6 @@ namespace Lykke.Service.PayInvoicePortal.Services
                 }
             }
 
-            var baseAssetIdTuple = await _baseAssetCache.GetOrAddAsync
-            (
-                $"BaseAssetId-{merchantId}",
-                async x =>
-                {
-                    var baseAssetIdResponse = await GetBaseAssetId(merchantId);
-                    return new Tuple<string>(baseAssetIdResponse);
-                },
-                _cacheExpirationPeriods.BaseAsset
-            );
-
-            var baseAssetId = baseAssetIdTuple.Item1;
-
-            Asset baseAsset = await _lykkeAssetsResolver.TryGetAssetAsync(baseAssetId);
-
             IReadOnlyList<Invoice> result =
                 await FilterAsync(invoiceslist, period, searchValue, sortField, sortAscending);
 
@@ -639,8 +613,6 @@ namespace Lykke.Service.PayInvoicePortal.Services
                 Total = result.Count,
                 CountPerStatus = new Dictionary<InvoiceStatus, int>(),
                 Balance = 0,
-                BaseAsset = baseAssetId,
-                BaseAssetAccuracy = baseAsset.Accuracy,
                 MainStatistic = new Dictionary<InvoiceStatus, double>(),
                 SummaryStatistic = Enumerable.Empty<SummaryStatisticModel>(),
                 Rates = new Dictionary<string, double>(),
@@ -671,7 +643,7 @@ namespace Lykke.Service.PayInvoicePortal.Services
 
         private async Task<string> GetBaseAssetId(string merchantId)
         {
-            var baseAssetId = await _assetService.GetBaseAssetId(merchantId) ?? string.Empty;
+            var baseAssetId = await _assetService.GetBaseAssetId(merchantId) ?? _assetService.GetDefaultBaseAssetId();
 
             return baseAssetId;
         }

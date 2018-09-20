@@ -54,7 +54,7 @@ namespace Lykke.Service.PayInvoicePortal.Controllers
 
             EmployeeModel employee = await _authService.ValidateAsync(model.Login, model.Password);
 
-            if (employee == null)
+            if (employee == null || employee.IsDeleted)
             {
                 ModelState.AddModelError(string.Empty, "The e-mail or password you entered incorrect.");
                 return View(vm);
@@ -70,6 +70,7 @@ namespace Lykke.Service.PayInvoicePortal.Controllers
                 new Claim(ClaimTypes.Sid, employee.Id),
                 new Claim(ClaimTypes.UserData, employee.MerchantId),
                 new Claim(ClaimTypes.Actor, isSupervisor.ToString()),
+                new Claim(ClaimTypes.Email, employee.Email),
                 new Claim(ClaimTypes.Name, $"{employee.FirstName} {employee.LastName}")
             };
 

@@ -1,0 +1,141 @@
+<div *ngIf="view.isLoading"
+     class="main-page-loader">
+  <div class="spinner">
+    <div class="spinner__inside"></div>
+  </div>
+</div>
+
+<div class="page_settings"
+     *ngIf="view.isContentLoaded">
+  <h2 class="page__title">{{model.merchantDisplayName}}</h2>
+
+  <div class="form_settings">
+    <h3>Account</h3>
+
+    <div class="form-group">
+      <label class="control-label">Full name</label>
+      <div class="input-group">
+        <input type="text"
+               class="form-control form_settings__info"
+               disabled
+               [ngModel]="model.employeeFullname">
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label class="control-label">Email address</label>
+      <div class="input-group">
+        <input type="text"
+               class="form-control form_settings__info"
+               disabled
+               [ngModel]="model.employeeEmail">
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label class="control-label">Password</label>
+      <div class="input-group ">
+        <input type="password"
+               class="form-control"
+               disabled
+               value="••••••••">
+      </div>
+      <button (click)="goToChangePassword()"
+              class="btn btn--flat">Change password</button>
+    </div>
+
+    <h3>Primary asset</h3>
+
+    <p>The asset used to display total balance of all your paid and unpaid invoices.</p>
+
+    <div class="form-group">
+      <label class="control-label">Asset</label>
+      <lp-selectpicker (ngModelChange)="onChangedBaseAssetId($event)"
+                       [(ngModel)]="model.baseAssetId"
+                       [selectpickerOptions]="model.availableBaseAssets"
+                       [revertPreviousItemTrigger]="revertBaseAssetTrigger"
+                       [disabled]="view.isLoadingChangeAsset"
+                       placeholder="Asset name"></lp-selectpicker>
+      <div class="hint--error"
+           *ngIf="errors.baseAssetId">Error occured during update, please contact support.</div>
+      <div *ngIf="view.isLoadingChangeAsset"
+           style="margin-top: 7px">
+        <div class="spinner"
+             style="height: 40px; width: 40px">
+          <div class="spinner__inside"></div>
+        </div>
+      </div>
+    </div>
+
+    <h3>API key</h3>
+
+    <div class="form-group">
+      <label class="control-label">Merchant ID</label>
+      <div class="input-group">
+        <input type="text"
+               class="form-control form-control--readonly"
+               value="{{model.merchantId}}"
+               readonly>
+        <i class="icon icon--copy input-group-addon"
+           [lpCopyText]="model.merchantId"></i>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label class="control-label">Merchant API key</label>
+      <div class="input-group">
+        <input type="text"
+               class="form-control form-control--readonly"
+               value="{{model.merchantApiKey}}"
+               readonly>
+        <i class="icon icon--copy input-group-addon"
+           [lpCopyText]="model.merchantApiKey"></i>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label class="control-label">Merchant Secret</label>
+      <div class="input-group"
+           *ngIf="view.showRsaPrivateKey">
+        <textarea type="text"
+                  class="form-control form-control--readonly"
+                  readonly
+                  [ngModel]="model.rsaPrivateKey"></textarea>
+        <i class="icon icon--copy input-group-addon"
+           [lpCopyText]="model.rsaPrivateKey"></i>
+      </div>
+
+      <div class="hint">Please be aware, we don’t store Merchant Secret on our servers. Every time you push ‘Generate
+        new’, new key is generated, the previous key becomes obsolete.</div>
+
+      <button class="btn btn--primary"
+              type="button"
+              *ngIf="!model.hasPublicKey && !view.isLoadingGenerateRsaKeys"
+              (click)="generateRsaKeys()">Generate</button>
+      <button class="btn btn--default"
+              type="button"
+              *ngIf="model.hasPublicKey && !view.isLoadingGenerateRsaKeys"
+              (click)="generateRsaKeys()">Re-generate</button>
+      <div *ngIf="view.isLoadingGenerateRsaKeys">
+        <div class="spinner">
+          <div class="spinner__inside"></div>
+        </div>
+      </div>
+    </div>
+
+    <h3>Delete account</h3>
+
+    <p>Permanently delete your account and all of your content.</p>
+
+    <button class="btn btn--flat btn--red"
+            (click)="deleteAccount()">
+      <i class="icon icon--trash"></i>
+      Delete your account
+    </button>
+    <div *ngIf="view.isLoadingDeleteAccount">
+      <div class="spinner">
+        <div class="spinner__inside"></div>
+      </div>
+    </div>
+  </div>
+</div>
