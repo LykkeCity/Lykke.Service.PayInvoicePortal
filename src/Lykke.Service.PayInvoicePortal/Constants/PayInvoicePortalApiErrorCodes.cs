@@ -28,6 +28,14 @@ namespace Lykke.Service.PayInvoicePortal.Constants
             public const string EmployeeEmailExist = nameof(EmployeeEmailExist);
         }
 
+        public static class ChangePassword
+        {
+            /// <summary>
+            /// Current password is invalid
+            /// </summary>
+            public const string InvalidCurrentPassword = nameof(InvalidCurrentPassword);
+        }
+
         /// <summary>
         /// Unexpected error - contacting support and investigation required
         /// </summary>
