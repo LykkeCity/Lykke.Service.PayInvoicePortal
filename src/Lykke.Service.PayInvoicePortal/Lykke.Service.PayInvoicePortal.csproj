@@ -63,6 +63,9 @@
     <Content Update="Views\Shared\Partials\InvoicesNav.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>
+    <Content Update="Views\User\ChangePassword.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
     <Content Update="Views\Welcome\Welcome.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>

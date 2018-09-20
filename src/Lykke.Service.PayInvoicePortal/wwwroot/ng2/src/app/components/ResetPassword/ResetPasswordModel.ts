@@ -1,4 +1,4 @@
 export class ResetPasswordModel {
-  public password = '';
-  public reenterPassword: '';
+  password: string;
+  reenterPassword: string;
 }

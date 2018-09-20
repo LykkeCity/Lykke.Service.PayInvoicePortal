@@ -5,6 +5,8 @@ import { FormsModule } from '@angular/forms';
 
 import { AuthInterceptor } from './interceptors/AuthInterceptor';
 
+import { ChangePasswordComponent } from './components/ChangePassword/ChangePassword';
+import { ValidatorOldPasswordNotEqualledDirective } from './components/ChangePassword/ValidatorOldPasswordNotEqualled.directive';
 import { ResetPasswordComponent } from './components/ResetPassword/ResetPassword';
 import { ResetPasswordApi } from './services/api/ResetPasswordApi';
 import { ValidatorPasswordEqualledDirective } from './components/ResetPassword/ValidatorPasswordEqualled.directive';
@@ -20,9 +22,11 @@ import { SelectPickerComponent } from './components/SelectPicker/SelectPicker';
 import { ConfirmModalComponent } from './components/ConfirmModal/ConfirmModal';
 import { ConfirmModalService } from './services/ConfirmModalService';
 import { CopyTextDirective } from './directives/CopyText.directive';
+import { ChangePasswordApi } from './services/api/ChangePasswordApi';
 
 @NgModule({
   declarations: [
+    ChangePasswordComponent,
     ConfirmModalComponent,
     SelectPickerComponent,
     SettingsComponent,
@@ -30,6 +34,7 @@ import { CopyTextDirective } from './directives/CopyText.directive';
     EmailValidatorDirective,
     ResetPasswordComponent,
     CopyTextDirective,
+    ValidatorOldPasswordNotEqualledDirective,
     ValidatorPasswordEqualledDirective
   ],
   imports: [
@@ -39,12 +44,14 @@ import { CopyTextDirective } from './directives/CopyText.directive';
   ],
   providers: [
     ConfirmModalService,
+    ChangePasswordApi,
     SettingsApi,
     SignupApi,
     ResetPasswordApi,
     { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },
   ],
   entryComponents: [
+    ChangePasswordComponent,
     ConfirmModalComponent,
     SettingsComponent,
     SignupComponent,
@@ -59,6 +66,7 @@ export class AppModule {
     // with their selectors (html host elements)
     const options = {};
 
+    options[ChangePasswordComponent.Selector] = ChangePasswordComponent;
     options[ConfirmModalComponent.Selector] = ConfirmModalComponent;
     options[SettingsComponent.Selector] = SettingsComponent;
     options[SignupComponent.Selector] = SignupComponent;
