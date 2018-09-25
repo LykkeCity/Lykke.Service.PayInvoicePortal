@@ -19,8 +19,10 @@ using Lykke.Service.PayInvoicePortal.Core.Services;
 using Lykke.SettingsReader;
 using Lykke.SlackNotification.AzureQueue;
 using System.Net;
+using Common;
 using Lykke.MonitoringServiceApiCaller;
 using Lykke.Common.Log;
+using Lykke.Service.PayInvoicePortal.Settings.ServiceSettings;
 
 namespace Lykke.Service.PayInvoicePortal
 {
@@ -38,6 +40,7 @@ namespace Lykke.Service.PayInvoicePortal
         internal static string EthereumBlockchainExplorerUrl;
         internal static string ApiaryDocsDomain;
         public static string PortalTestnetUrl;
+        public static DeploymentEnvironment DeploymentEnvironment;
         public static bool EnableSignup;
 
         public Startup(IHostingEnvironment env)
@@ -114,6 +117,7 @@ namespace Lykke.Service.PayInvoicePortal
                 BlockchainExplorerUrl = appSettings.CurrentValue.PayInvoicePortal.BlockchainExplorerUrl;
                 EthereumBlockchainExplorerUrl = appSettings.CurrentValue.PayInvoicePortal.EthereumBlockchainExplorerUrl;
                 PortalTestnetUrl = appSettings.CurrentValue.PayInvoicePortal.PortalTestnetUrl;
+                DeploymentEnvironment = appSettings.CurrentValue.PayInvoicePortal.DeploymentEnvironment.ParseEnum(DeploymentEnvironment.Prod);
                 EnableSignup = appSettings.CurrentValue.PayInvoicePortal.EnableSignup;
                 ApiaryDocsDomain = appSettings.CurrentValue.PayInvoicePortal.ApiaryDocsDomain;
                 _monitoringServiceUrl = appSettings.CurrentValue.MonitoringServiceClient?.MonitoringServiceUrl;
