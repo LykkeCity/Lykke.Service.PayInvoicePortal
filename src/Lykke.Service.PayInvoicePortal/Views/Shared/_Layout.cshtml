@@ -87,9 +87,13 @@
                             <img class="header_logo__img" src="/img/lykke_exchange_spot_logo.svg" height="36" alt="lykke_logo">
                             <div class="header_logo__title">
                                 Lykke Pay
-                                @if (string.IsNullOrEmpty(Startup.PortalTestnetUrl))
+                                @if (Startup.DeploymentEnvironment == DeploymentEnvironment.Test)
                                 {
-                                  <span style="color:red">Sandbox</span>
+                                    <span style="color:red">Test</span>
+                                }
+                                else if (string.IsNullOrEmpty(Startup.PortalTestnetUrl))
+                                {
+                                    <span style="color:red">Sandbox</span>
                                 }
                             </div>
                         </a>
