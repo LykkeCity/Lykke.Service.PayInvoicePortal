@@ -3630,9 +3630,7 @@ tbody.collapse.in { display: table-row-group; }
 
 .header_actions__login, .header_actions__signup { margin-left: 20px; margin-left: 1.25rem; }
 
-.header_actions__login a, .header_actions__signup a { color: #0388ef; }
-
-.header_actions__signup a { color: #fff; }
+.header_actions__signup a { color: #0388ef; }
 
 .header_logo { margin-top: 0; margin-top: 0; }
 
