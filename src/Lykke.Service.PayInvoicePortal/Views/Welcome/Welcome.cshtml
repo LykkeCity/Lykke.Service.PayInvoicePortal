@@ -1,6 +1,9 @@
 ﻿@using Lykke.Service.PayInvoicePortal
+@using Lykke.Service.PayInvoicePortal.Settings.ServiceSettings
 @{
-    ViewData["Title"] = "Lykke Pay";
+    ViewData["Title"] = Startup.DeploymentEnvironment == DeploymentEnvironment.Prod
+        ? "Accept Bitcoin, Ether and other crypto payments"
+        : string.Empty;
 }
 
 @if (User.Identity.IsAuthenticated)

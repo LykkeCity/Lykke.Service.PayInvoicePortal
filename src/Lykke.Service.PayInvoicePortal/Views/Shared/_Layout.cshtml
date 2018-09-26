@@ -1,6 +1,29 @@
 ﻿@using Lykke.Service.PayInvoicePortal
 @using Lykke.Service.PayInvoicePortal.Extensions
+@using Lykke.Service.PayInvoicePortal.Settings.ServiceSettings
 @inject Microsoft.ApplicationInsights.AspNetCore.JavaScriptSnippet JavaScriptSnippet
+
+@{
+    var pageTitle = ViewData["Title"].ToString();
+
+    var titlePostfix = "Lykke Pay";
+
+    switch (Startup.DeploymentEnvironment)
+    {
+        case DeploymentEnvironment.Dev:
+            titlePostfix += " Dev";
+            break;
+        case DeploymentEnvironment.Test:
+            titlePostfix += " Test";
+            break;
+        case DeploymentEnvironment.Sandbox:
+            titlePostfix += " Sandbox";
+            break;
+    }
+
+    ViewData["Title"] = !string.IsNullOrEmpty(pageTitle) ? $"{pageTitle} | {titlePostfix}" : titlePostfix;
+}
+
 <!DOCTYPE html>
 @* Support from IE11 *@
 <html class="no-js" data-ng-app="app">
@@ -9,6 +32,11 @@
     <meta http-equiv="X-UA-Compatible" content="IE=Edge">
     
     <title>@ViewData["Title"]</title>
+    
+    @if (Startup.DeploymentEnvironment != DeploymentEnvironment.Prod)
+    {
+        <meta name="robots" content="noindex"/>
+    }
     
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 
@@ -59,9 +87,13 @@
                             <img class="header_logo__img" src="/img/lykke_exchange_spot_logo.svg" height="36" alt="lykke_logo">
                             <div class="header_logo__title">
                                 Lykke Pay
-                                @if (string.IsNullOrEmpty(Startup.PortalTestnetUrl))
+                                @if (Startup.DeploymentEnvironment == DeploymentEnvironment.Test)
                                 {
-                                  <span style="color:red">Sandbox</span>
+                                    <span style="color:red">Test</span>
+                                }
+                                else if (string.IsNullOrEmpty(Startup.PortalTestnetUrl))
+                                {
+                                    <span style="color:red">Sandbox</span>
                                 }
                             </div>
                         </a>
