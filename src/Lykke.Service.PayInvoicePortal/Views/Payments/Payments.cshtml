@@ -1,17 +1,7 @@
-﻿@using Newtonsoft.Json
-@using Newtonsoft.Json.Serialization
-@using Microsoft.AspNetCore.Html
-@using Lykke.Service.PayInvoicePortal.Models.Invoices
-@using Lykke.Service.PayInvoicePortal.Models.Home.Template
+﻿@using Lykke.Service.PayInvoicePortal.Models.Invoices
 
-@model Lykke.Service.PayInvoicePortal.Models.Home.HomeViewModel
 @{
-    ViewData["Title"] = "Invoices";
-
-    async Task<IHtmlContent> StatItemAsync(string status)
-    {
-        return await Html.PartialAsync("Partials/HomeStatisticItem", new HomeStatisticItemModel(status));
-    }
+    ViewData["Title"] = "Payments";
 }
 
 @if (User.Identity.IsAuthenticated)
@@ -22,8 +12,6 @@
 <div data-ng-controller="invoiceCtrl as vm" ng-cloak>
     @await Html.PartialAsync("Partials/InvoiceEditTemplate", new InvoiceEditTemplateModel { IsNewInvoice = true })
 </div>
-
-@await Html.PartialAsync("Partials/HomeSummaryStatistic")
 
 @await Html.PartialAsync("/Views/Partials/InvoiceInfo.cshtml")
 
@@ -42,109 +30,16 @@
             <div class="profile_info">
                 <div class="row">
                     <div class="col-md-4 col-sm-5">
-                        <div class="profile_balance">
-                            <div class="profile_info__header">Lykke Pay balance</div>
-                            <div class="profile_balance__value">
-                                @* TODO: make calculation for overpaid, underpaid, latepaid *@
-                                @*<span class="profile_balance__number">{{vm.model.balance | nzcurrency : vm.baseAssetAccuracy}}</span>*@
-                                <span class="profile_balance__number">0.00</span>
-                                <span class="profile_balance__currency">{{vm.model.baseAsset}}</span>
-                            </div>
-                            <div class="profile_controls">
-                                <button class="btn _create_invoice_btn" data-ng-click="vm.handlers.create()">
-                                    <i class="btn__svg_icon svg_icon svg_icon--add svg_icon--margin"></i>
-                                    New invoice
-                                </button>
-                            </div>
-                        </div>
+                        
                     </div>
                     <div class="col-md-8 col-sm-7">
-                        <div class="profile_summary">
-                            <div class="profile_info__header">
-                                Received 0.00 {{vm.model.baseAsset}}
-                                <button class="profile_info__header_help _payments_summary_btn" style="display: none">
-                                    <i class="btn__svg_icon svg_icon svg_icon--help"></i>
-                                </button>
-                            </div>
-                            <div class="profile_info__link" style="display: none">
-                                <a href="volatility.html">Volatility shield</a>
-                            </div>
-                            <div class="profile_summary__list clearfix">
-                                <div class="profile_summary__left">
-                                    <div class="profile_summary__item clearfix">
-                                        <div class="profile_summary__status_name">
-                                            Settled 
-                                            <a href="#" style="display: none" class="btn btn--icon"><i class="icon icon--help_outline"></i></a>
-                                        </div>
-                                        <div class="profile_summary__status_value">0.00 {{vm.model.baseAsset}}</div>
-                                    </div>
-                                    <div class="profile_summary__item clearfix">
-                                        <div class="profile_summary__status_name">Commission</div>
-                                        <div class="profile_summary__status_value">0.00 {{vm.model.baseAsset}}</div>
-                                    </div>
-                                </div>
-                                <div class="profile_summary__right">
-                                    <div class="profile_summary__item clearfix">
-                                        <div class="profile_summary__status_name">
-                                            Unresolved
-                                        </div>
-                                        <div class="profile_summary__status_value">0.00 {{vm.model.baseAsset}}</div>
-                                    </div>
-                                    <div class="profile_summary__item clearfix">
-                                        <div class="profile_summary__status_name">
-                                            Refunded
-                                        </div>
-                                        <div class="profile_summary__status_value">0.00 {{vm.model.baseAsset}}</div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                        
                     </div>
                 </div>
             </div>
-            <div class="row" data-ng-show="vm.view.hasInvoices">
-                <div class="col-sm-6">
-                    <h3>Invoices</h3>
-                </div>
-                <div class="col-sm-6 clearfix">
-                    <div class="invoice_controls">
-                        <button class="invoice_controls__btn btn btn--flat btn--default btn-sm pull-left" type="button"
-                                data-ng-click="vm.handlers.exportToCsv()">
-                            <i class="btn__svg_icon svg_icon svg_icon--download svg_icon--margin"></i>
-                            CSV file
-                        </button>
-                    </div>
-                </div>
-            </div>
-            <div class="invoice_nav" data-ng-show="vm.view.hasInvoices" data-ng-if="!vm.model.isFirstLoading">
-                <button class="invoice_nav__search btn btn--icon" data-ng-click="vm.filter.handlers.toggle()">
-                    <i class="icon icon--search"></i>
-                </button>
-                <div class="invoice_tabs" tabs-carousel>
-                    <button class="invoice_tabs__arrow invoice_tabs__arrow--left"></button>
-                    <div class="invoice_tabs__carousel owl-carousel">
-                        <div class="invoice_tabs__item">
-                            <a class="invoice_tabs__tab invoice_tabs__tab--active"
-                               href="javascript:;"
-                               data-ng-class="{'invoice_tabs__tab--active': !vm.filter.status}"
-                               data-ng-click="vm.filter.handlers.clearStatus()">
-                                <span>All &middot; {{vm.filter.total}}</span>
-                            </a>
-                        </div>
-                        <div class="invoice_tabs__item"
-                             data-ng-repeat="status in vm.filter.statuses"
-                             data-ng-show="status.count > 0">
-                            <a class="invoice_tabs__tab"
-                               href="javascript:;"
-                               data-ng-class="{'invoice_tabs__tab--active': vm.filter.status == status.id}"
-                               data-ng-click="vm.filter.handlers.selectStatus(status)">
-                                <span>{{status.title}} &middot; {{status.count}}</span>
-                            </a>
-                        </div>
-                    </div>
-                    <button class="invoice_tabs__arrow invoice_tabs__arrow--right"></button>
-                </div>
-            </div>
+            
+            
+            
             <div class="search_filter" data-ng-show="vm.view.hasInvoices"
                  data-ng-class="{'search_filter--show': vm.filter.show}">
                 <div class="row">

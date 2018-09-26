@@ -32,7 +32,7 @@ namespace Lykke.Service.PayInvoicePortal.Controllers
         public IActionResult SignIn(string returnUrl)
         {
             if (User.Identity.IsAuthenticated)
-               return RedirectToAction(nameof(HomeController.Index), "Home");
+               return RedirectToAction(nameof(PaymentsController.Index), "Home");
 
             return View(new SignInViewModel
             {
