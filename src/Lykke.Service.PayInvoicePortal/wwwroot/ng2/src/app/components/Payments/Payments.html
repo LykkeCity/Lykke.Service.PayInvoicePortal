@@ -1,84 +1,86 @@
-<article class="content"
-         data-ng-controller="invoicesCtrl as vm"
-         ng-cloak>
-  <div *ngIf="view.isFirstLoading"
-       class="main-page-loader">
-    <div class="spinner spinner--inline">
-      <div class="spinner__inside"></div>
+<div *ngIf="view.isFirstLoading"
+     class="main-page-loader">
+  <div class="spinner spinner--inline">
+    <div class="spinner__inside"></div>
+  </div>
+</div>
+
+<div class="container"
+     [hidden]="view.isFirstLoading">
+
+  <div class="profile_info">
+    <div class="row">
+      <div class="col-md-4 col-sm-5">
+        <lp-payments-balance [baseAsset]="model.baseAsset"></lp-payments-balance>
+      </div>
+      <div class="col-md-8 col-sm-7">
+        <lp-payments-statistic [baseAsset]="model.baseAsset"></lp-payments-statistic>
+      </div>
     </div>
   </div>
-  <section class="section section--lead"
-           [hidden]="view.isFirstLoading">
-    <div class="container">
-      <div class="profile_info">
-        <div class="row">
-          <div class="col-md-4 col-sm-5">
-            <lp-payments-balance [baseAsset]="model.baseAsset"></lp-payments-balance>
-          </div>
-          <div class="col-md-8 col-sm-7">
-            <lp-payments-statistic [baseAsset]="model.baseAsset"></lp-payments-statistic>
-          </div>
-        </div>
+
+  <div class="invoices"
+       *ngIf="view.hasPayments">
+    <div class="row">
+      <div class="col-sm-6">
+        <h3>Payments</h3>
       </div>
-
-      <div class="invoices">
-
-        <div class="row"
-             *ngIf="view.hasInvoices">
-          <div class="col-sm-6">
-            <h3>Payments</h3>
-          </div>
-          <div class="col-sm-6 clearfix">
-            <div class="invoice_controls">
-              <button class="invoice_controls__btn btn btn--flat btn--default btn-sm pull-left"
-                      type="button"
-                      (click)="handlers.exportToCsv()">
-                <i class="btn__svg_icon svg_icon svg_icon--download svg_icon--margin"></i>
-                CSV file
-              </button>
-            </div>
-          </div>
-        </div>
-
-        <div class="invoice_nav"
-             data-ng-show="vm.view.hasInvoices"
-             data-ng-if="!vm.model.isFirstLoading">
-          <button class="invoice_nav__search btn btn--icon"
-                  data-ng-click="vm.filter.handlers.toggle()">
-            <i class="icon icon--search"></i>
+      <div class="col-sm-6 clearfix">
+        <div class="invoice_controls">
+          <button class="invoice_controls__btn btn btn--flat btn--default btn-sm pull-left"
+                  type="button"
+                  (click)="exportToCsv()">
+            <i class="btn__svg_icon svg_icon svg_icon--download svg_icon--margin"></i>
+            CSV file
           </button>
-          <div class="invoice_tabs"
-               tabs-carousel>
-            <button class="invoice_tabs__arrow invoice_tabs__arrow--left"></button>
-            <div class="invoice_tabs__carousel owl-carousel">
-              <div class="invoice_tabs__item">
-                <a class="invoice_tabs__tab invoice_tabs__tab--active"
-                   href="javascript:;"
-                   data-ng-class="{'invoice_tabs__tab--active': !vm.filter.status}"
-                   data-ng-click="vm.filter.handlers.clearStatus()">
-                  <span>All &middot; {{vm.filter.total}}</span>
-                </a>
-              </div>
-              <div class="invoice_tabs__item"
-                   data-ng-repeat="status in vm.filter.statuses"
-                   data-ng-show="status.count > 0">
-                <a class="invoice_tabs__tab"
-                   href="javascript:;"
-                   data-ng-class="{'invoice_tabs__tab--active': vm.filter.status == status.id}"
-                   data-ng-click="vm.filter.handlers.selectStatus(status)">
-                  <span>{{status.title}} &middot; {{status.count}}</span>
-                </a>
-              </div>
-            </div>
-            <button class="invoice_tabs__arrow invoice_tabs__arrow--right"></button>
-          </div>
         </div>
-
-        <div class="invoice_nav">
-          <lp-payments-filter (filterChanged)="handlers.onFilterChanged($event)"></lp-payments-filter>
-        </div>
-
       </div>
     </div>
-  </section>
-</article>
+
+    <lp-payments-filter [filter]="filter"
+                        (filterChanged)="onFilterChanged($event)"></lp-payments-filter>
+
+    <div *ngIf="view.isLoading"
+         style="text-align: center">
+      <div class="spinner spinner--inline">
+        <div class="spinner__inside"></div>
+      </div>
+    </div>
+
+    <lp-payments-table [payments]="model.payments"
+                       [hasMorePayments]="view.hasMorePayments"
+                       (paymentRemovedEvent)="paymentRemoved($event)"
+                       (showMoreEvent)="showMore()"
+                       [showMoreLoading]="view.isShowMoreLoading"
+                       [hidden]="view.showNoResults || view.isLoading"></lp-payments-table>
+
+
+
+    <div *ngIf="view.showNoResults"
+         class="invoices__empty_result empty_result">
+      <div class="empty_result__img-container">
+        <img src="img/invoices-no-results.svg" />
+      </div>
+      <div class="empty_result__title">No search results</div>
+      <div class="empty_result__description"
+           *ngIf="!filter.searchText">
+        Sorry, we couldn't find any matches.
+      </div>
+      <div class="empty_result__description"
+           *ngIf="filter.searchText">
+        Sorry, we couldn't find any matches “{{filter.searchText}}”. Try using another keyword.
+      </div>
+    </div>
+  </div>
+
+  <div *ngIf="view.showNoInvoices"
+       class="invoices__empty_result empty_result">
+    <div class="empty_result__img-container">
+      <img src="img/invoices-empty.svg" />
+    </div>
+    <div class="empty_result__title">You don't have invoices yet</div>
+    <div class="empty_result__description">
+      Create the first one by clicking “New invoice” button.
+    </div>
+  </div>
+</div>

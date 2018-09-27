@@ -1,0 +1,105 @@
+<div class="table-responsive">
+  <table class="table table_invoices">
+    <thead>
+      <tr class="invoices__row">
+        <th class="_number invoices__cell">Invoice number, date</th>
+        <th class="_client invoices__cell">Client</th>
+        <th class="_amount invoices__cell"
+            style="text-align: right">Amount</th>
+        <th class="_currency invoices__cell">Currency</th>
+        <th class="_status invoices__cell">Status</th>
+        <th class="_pay invoices__cell">Pay due date</th>
+        <th class="_action"></th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr class="invoices__row"
+          *ngFor="let payment of payments; let index = index;"
+          attr.data-index="{{index}}">
+        <td class="_number">
+          <a *ngIf="payment.isInvoice"
+             href="{{'/invoices/' + payment.id}}">
+            <span class="_title">#{{payment.number}}</span>
+            <span class="_hint">{{payment.createdDate.format('l')}}</span>
+          </a>
+          <span *ngIf="!payment.isInvoice">
+            <span class="_title">
+              <span class="label label--rounded label--gray"
+                    style="margin-left: 0">API</span>
+            </span>
+            <span class="_hint">{{payment.createdDate.format('l')}}</span>
+          </span>
+        </td>
+        <td class="_client">
+          <a *ngIf="payment.isInvoice"
+             href="{{'/invoices/' + payment.id}}">
+            <span class="_title">{{payment.clientName}}</span>
+            <span class="_hint">{{payment.clientEmail}}</span>
+          </a>
+          <span *ngIf="!payment.isInvoice">
+            <span class="_title">—</span>
+          </span>
+        </td>
+        <td class="_amount"
+            style="text-align: right">
+          <a *ngIf="payment.isInvoice"
+             href="{{'/invoices/' + payment.id}}">
+            {{payment.amount | number : payment.settlementAsset ? '1.0-' + payment.settlementAsset.accuracy : null }}
+          </a>
+          <span *ngIf="!payment.isInvoice">
+            {{payment.amount | number : payment.settlementAsset ? '1.0-' + payment.settlementAsset.accuracy : null }}
+          </span>
+        </td>
+        <td class="_currency">
+          <a *ngIf="payment.isInvoice"
+             href="{{'/invoices/' + payment.id}}">{{payment.settlementAsset.displayId}}</a>
+          <span *ngIf="!payment.isInvoice">{{payment.settlementAsset.displayId}}</span>
+        </td>
+        <td class="_status">
+          <a *ngIf="payment.isInvoice"
+             href="{{'/invoices/' + payment.id}}">
+            <span class="label"
+                  [ngClass]="view.getStatusCss(payment.status)">{{payment.status}}</span>
+          </a>
+          <span *ngIf="!payment.isInvoice"
+                class="label"
+                [ngClass]="view.getStatusCss(payment.status)">{{payment.status}}</span>
+        </td>
+        <td class="_pay">
+          <a *ngIf="payment.isInvoice"
+             href="{{'/invoices/' + payment.id}}">{{payment.dueDate.format('l')}}</a>
+          <span *ngIf="!payment.isInvoice">{{payment.dueDate.format('l')}}</span>
+        </td>
+        <td class="_action"
+            style="cursor: auto">
+          <button class="btn btn--icon"
+                  type="button"
+                  [disabled]="!view.canRemove(payment) ? 'disabled' : null"
+                  (click)="remove(payment, index)"
+                  [hidden]="payment.isLoadingDeletePayment">
+            <i class="btn__svg_icon svg_icon svg_icon--delete"></i>
+          </button>
+          <div *ngIf="payment.isLoadingDeletePayment">
+            <div class="spinner"
+                 style="width: 34px; height: 34px;">
+              <div class="spinner__inside"></div>
+            </div>
+          </div>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+<div style="text-align: center;"
+     [hidden]="showMoreLoading"
+     *ngIf="hasMorePayments">
+  <button class="btn btn--flat"
+          (click)="showMore()">Show more</button>
+</div>
+
+<div *ngIf="showMoreLoading"
+     style="text-align: center">
+  <div class="spinner spinner--inline">
+    <div class="spinner__inside"></div>
+  </div>
+</div>

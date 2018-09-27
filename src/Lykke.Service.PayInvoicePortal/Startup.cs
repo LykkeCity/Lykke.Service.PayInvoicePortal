@@ -99,6 +99,7 @@ namespace Lykke.Service.PayInvoicePortal
                 Mapper.Initialize(cfg =>
                 {
                     cfg.AddProfiles(typeof(AutoMapperProfile));
+                    cfg.AddProfiles(typeof(Services.AutoMapperProfile));
                 });
 
                 Mapper.AssertConfigurationIsValid();

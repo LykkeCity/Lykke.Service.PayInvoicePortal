@@ -5,4 +5,7 @@ export class PagerModel {
     this.pageSize = pageSize;
     this.page = 1;
   }
+  resetPage(): void {
+    this.page = 1;
+  }
 }

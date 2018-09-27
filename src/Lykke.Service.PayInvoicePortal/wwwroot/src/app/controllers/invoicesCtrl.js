@@ -80,12 +80,8 @@
         vm.handlers = {
             exportToCsv: exportToCsv,
             getStatusCss: statusSvc.getStatusCss,
-            canRemove: canRemove,
-            remove: remove,
             showMore: showMore,
             canShowMore: canShowMore,
-            openDetails: openDetails,
-            sort: sort,
             create: create
         };
 
@@ -101,9 +97,8 @@
         activate();
 
         function activate() {
-            if (!vm.model.isSupervising)
-                loadInvocies();
-            else loadSupervisingInvocies();
+            if (vm.model.isSupervising)
+                loadSupervisingInvocies();
 
             $scope.$watch(
                 function () { return vm.filter.search; },
@@ -144,17 +139,8 @@
                     destroy();
                 });
 
-            vm.events.invoiceGenerated = $scope.$on('invoiceGenerated', function (evt, data) {
-                loadInvocies();
-                vm.view.hasInvoices = true;
-            });
-
-            vm.events.invoiceDraftCreated = $scope.$on('invoiceDraftCreated', function (evt, data) {
-                loadInvocies();
-                vm.view.hasInvoices = true;
-            });
-
-            $interval(loadInvocies, 5 * 60 * 1000);
+            if (vm.model.isSupervising)
+                $interval(loadSupervisingInvocies, 5 * 60 * 1000);
         }
 
         function destroy() {
@@ -163,28 +149,6 @@
 
             if (vm.events.invoiceDraftCreated)
                 vm.events.invoiceDraftCreated();
-        }
-
-        function loadInvocies() {
-            vm.view.isLoading = true;
-
-            return apiSvc.getInvoices(vm.filter.search,
-                    vm.filter.period,
-                    getFilterStatuses(),
-                    vm.filter.sortField,
-                    vm.filter.sortAscending,
-                    0,
-                    vm.pager.pageSize * vm.pager.page)
-                .then(
-                    function (data) {
-                        updateData(data);
-                    },
-                    function (error) {
-                        $log.error(error);
-                    })
-                .finally(function () {
-                    vm.view.isLoading = false;
-                });
         }
 
         function loadSupervisingInvocies() {
@@ -311,44 +275,6 @@
             return statuses;
         }
 
-        function sort(sortField) {
-            if (vm.filter.sortField === sortField)
-                vm.filter.sortAscending = !vm.filter.sortAscending;
-            else
-                vm.filter.sortAscending = true;
-
-            vm.filter.sortField = sortField;
-            loadInvocies();
-        }
-
-        function canRemove(invoice) {
-            return invoice && (invoice.status === 'Draft' || invoice.status === 'Unpaid');
-        }
-
-        function remove(invoice) {
-            if (!canRemove(invoice))
-                return;
-
-            confirmModalSvc.open({
-                content: 'Are you sure you want to remove this invoice "#' + invoice.number + '"?',
-                yesAction: function () {
-                    apiSvc.deleteInvoice(invoice.id)
-                        .then(
-                            function () {
-                                loadInvocies();
-                            },
-                            function (error) {
-                                $log.error(error);
-                            });
-                }
-            });
-        }
-
-        function openDetails(invoice) {
-            if (!vm.model.isSupervising)
-                $window.location.href = '/invoices/'+invoice.id;
-        }
-
         function create() {
             $rootScope.$broadcast('createInvoice', {});
         }
@@ -373,9 +299,8 @@
 
         function showMore() {
             vm.pager.page++;
-            if (!vm.model.isSupervising)
-                loadInvocies();
-            else loadSupervisingInvocies();
+            if (vm.model.isSupervising)
+                loadSupervisingInvocies();
         }
 
         function showNoResults() {

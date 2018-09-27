@@ -1,117 +1,235 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy, NgZone } from '@angular/core';
 import { PagerModel } from '../../models/PagerModel';
 import { ConfirmModalService } from '../../services/ConfirmModalService';
-import { PaymentsFilterModel } from './PaymentsFilter/PaymentsFilterModel';
+import { PaymentsFilterModel, PaymentsFilterLocalStorageKeys } from './PaymentsFilter/PaymentsFilterModel';
+import { PaymentModel } from '../../models/Payment/PaymentModel';
+import { PaymentsApi } from '../../services/api/PaymentsApi';
+import { interval, Subscription } from 'rxjs';
+import { AssetModel } from '../../models/AssetModel';
+import { PaymentsResponse } from './PaymentsResponse';
+
+declare const pubsubEvents: any;
+declare const moment: any;
 
 @Component({
   selector: PaymentsComponent.Selector,
   templateUrl: './Payments.html'
 })
-export class PaymentsComponent implements OnInit {
+export class PaymentsComponent implements OnInit, OnDestroy, IPaymentsHandlers {
   static readonly Selector = 'lp-payments';
 
   model = new PaymentsModel();
+  filter = new PaymentsFilterModel();
   view = new View();
-  hanlders = {
-    exportToCsv: this.exportToCsv,
-    remove: this.remove,
-    showMore: this.showMore
-  };
   pager = new PagerModel(20);
 
-  constructor(private confirmModalService: ConfirmModalService) {
-    this.view.handlers = {
-      getStatusCss: this.getStatusCss,
-      canRemove: this.canRemove
-    };
+  // reload every 5 minutes
+  private readonly reloadInterval = interval(5 * 60 * 1000);
+  private reloadSubscriber: Subscription;
+  private getPaymentsSubscriber: Subscription;
+
+  showMore(): void {
+    this.pager.page++;
+    this.loadPayments(LoadPaymentsCaller.ShowMore);
   }
 
-  ngOnInit() {}
-
-  private exportToCsv() {
-    console.log('exportToCsv');
+  onFilterChanged(filter: PaymentsFilterModel) {
+    this.loadPayments();
   }
 
-  private remove(payment: PaymentModel): void {
-    if (!this.canRemove(payment)) {
-      return;
+  paymentRemoved(index: number): void {
+    if (this.model.payments[index]) {
+      this.model.payments.splice(index, 1);
     }
+  }
 
-    this.confirmModalService.openModal({
-      content: `Are you sure you want to remove this invoice #${
-        payment.number
-      }?`,
-      yesAction: () => {
-        this.view.isLoadingDeletePayment = true;
-
-        // TODO:
-        // this.api.deletePayment(payment.id).subscribe(
-        //   res => {
-        //     //load
-        //   },
-        //   error => {
-        //     console.error(error);
-        //     this.confirmModalService.showErrorModal();
-        //     this.view.isLoadingDeletePayment = false;
-        //   }
-        // );
-      }
+  onInvoiceCreated(): void {
+    this.zone.run(() => {
+      this.loadPayments();
     });
   }
 
-  private showMore(): void {
-    console.log('showMore'); // TODO:
+  exportToCsv(): void {
+    const url = '/api/export/payments';
+
+    const period = `period=${this.filter.period}`;
+    const type = `type=${this.filter.type}`;
+    const statuses = `statuses=${this.filter.status}`;
+    const searchText = `searchText=${this.filter.searchText || ''}`;
+    const params = `?${period}&${type}&${statuses}&${searchText}`;
+
+    window.open(`${url}${params}`);
   }
 
-  private getStatusCss(status: string): string {
-    console.log(status); // TODO:
-    return null;
-  }
+  constructor(
+    private zone: NgZone,
+    private api: PaymentsApi,
+    private confirmModalService: ConfirmModalService
+  ) {}
 
-  private canRemove(payment: PaymentModel): boolean {
-    return (
-      payment &&
-      payment.type === PaymentType.Invoice &&
-      (payment.status === 'Draft' || payment.status === 'Unpaid')
+  ngOnInit(): void {
+    this.view.isLoadingBaseAsset = true;
+
+    this.api.getBaseAsset().subscribe(
+      res => {
+        this.model.baseAsset = res;
+        this.view.isLoadingBaseAsset = false;
+      },
+      error => {
+        console.error(error);
+        this.view.isLoadingBaseAsset = false;
+      }
     );
+
+    // init filter values
+    const period = localStorage.getItem(PaymentsFilterLocalStorageKeys.Period);
+    const type = localStorage.getItem(PaymentsFilterLocalStorageKeys.Type);
+    const status = localStorage.getItem(PaymentsFilterLocalStorageKeys.Status);
+    const searchText = localStorage.getItem(PaymentsFilterLocalStorageKeys.SearchText);
+
+    if (period) {
+      this.filter.period = Number(period);
+    }
+
+    if (type) {
+      this.filter.type = Number(type);
+    }
+
+    if (status) {
+      this.filter.status = status;
+    }
+
+    if (searchText) {
+      this.filter.searchText = searchText;
+    }
+
+    // load data and make subsriptions
+    this.loadPayments();
+
+    this.reloadSubscriber = this.reloadInterval.subscribe(_ =>
+      this.loadPayments()
+    );
+
+    if ((window as any).pubsubEvents) {
+      pubsubEvents.on('invoiceCreated', () => this.onInvoiceCreated());
+    }
   }
 
-  private onFilterChanged(filter: PaymentsFilterModel) {
-    console.log(filter); // TODO:
+  ngOnDestroy(): void {
+    if (this.reloadSubscriber) {
+      this.reloadSubscriber.unsubscribe();
+    }
+    if (this.getPaymentsSubscriber) {
+      this.getPaymentsSubscriber.unsubscribe();
+    }
+    if ((window as any).pubsubEvents) {
+      pubsubEvents.off('invoiceCreated');
+    }
+  }
+
+  private loadPayments(caller = LoadPaymentsCaller.Filter): void {
+    switch (caller) {
+      case LoadPaymentsCaller.ShowMore:
+        this.view.isShowMoreLoading = true;
+        break;
+      default:
+        this.view.isLoading = true;
+        break;
+    }
+
+    this.view.showNoResults = false;
+
+    const params = {
+      period: this.filter.period,
+      type: this.filter.type,
+      statuses: this.filter.status,
+      searchText: this.filter.searchText || '',
+      take: this.pager.pageSize * this.pager.page
+    };
+
+    if (this.getPaymentsSubscriber) {
+      this.getPaymentsSubscriber.unsubscribe();
+    }
+
+    this.getPaymentsSubscriber = this.api.getPayments(params).subscribe(
+      (res: PaymentsResponse) => {
+        this.model.payments = new Array<PaymentModel>();
+
+        for (let i = 0, l = res.payments.length; i < l; i++) {
+          const item = res.payments[i];
+
+          // need to initialize via constructor in order only getter properties exist
+          const payment = new PaymentModel(
+            item.id,
+            item.number,
+            moment(item.createdDate),
+            item.clientName,
+            item.clientEmail,
+            item.amount,
+            item.settlementAsset,
+            item.status,
+            moment(item.dueDate)
+          );
+
+          this.model.payments.push(payment);
+        }
+
+        this.view.hasMorePayments = res.hasMorePayments;
+
+        if (this.view.isFirstLoading) {
+          this.view.hasPayments = res.hasAnyPayment;
+          this.view.isFirstLoading = false;
+        }
+
+        if (res.payments.length === 0) {
+          this.view.showNoResults = true;
+        }
+
+        this.view.isShowMoreLoading = false;
+        this.view.isLoading = false;
+      },
+      error => {
+        console.error(error);
+        this.confirmModalService.showErrorModal();
+        this.view.isShowMoreLoading = false;
+        this.view.isLoading = false;
+      }
+    );
   }
 }
 
 class PaymentsModel {
-  baseAsset: null;
+  baseAsset: AssetModel;
   payments: PaymentModel[];
-}
-
-class PaymentModel {
-  id: string;
-  get type(): PaymentType {
-    return this.number ? PaymentType.Invoice : PaymentType.Api;
+  constructor() {
+    this.baseAsset = new AssetModel();
+    this.payments = [];
   }
-  number: string;
-  createdDate: Date;
-  clientName: string;
-  clientEmail: string;
-  amount: number;
-  settlementAsset: string;
-  settlementAssetAccuracy: number;
-  status: string;
-  dueDate: Date;
 }
 
-enum PaymentType {
-  Invoice,
-  Api
+interface IPaymentsHandlers {
+  showMore: () => void;
+  onFilterChanged: (_: any) => void;
+  paymentRemoved: (_: number) => void;
+  exportToCsv: () => void;
+}
+
+enum LoadPaymentsCaller {
+  Filter,
+  ShowMore
 }
 
 class View {
   isFirstLoading: boolean;
   isLoading: boolean;
-  isLoadingDeletePayment: boolean;
-  handlers: {};
+  isShowMoreLoading: boolean;
+  isLoadingBaseAsset: boolean;
+  hasPayments: boolean;
+  showNoResults: boolean;
+  hasMorePayments: boolean;
+  get showNoInvoices(): boolean {
+    return !this.isFirstLoading && !this.hasPayments;
+  }
   constructor() {
     this.isFirstLoading = true;
   }

@@ -1,4 +1,5 @@
 import { Component, Input } from '@angular/core';
+import { AssetModel } from '../../../models/AssetModel';
 
 @Component({
   selector: PaymentsStatisticComponent.Selector,
@@ -7,5 +8,5 @@ import { Component, Input } from '@angular/core';
 export class PaymentsStatisticComponent {
   static readonly Selector = 'lp-payments-statistic';
   @Input()
-  baseAsset: string;
+  baseAsset: AssetModel;
 }
