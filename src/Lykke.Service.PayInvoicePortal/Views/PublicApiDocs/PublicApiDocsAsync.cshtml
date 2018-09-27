@@ -63,9 +63,42 @@
                     displayHttpMethods: true, // Display names of HTTP methods
                     permalinks: true, // Allow linking into the embedded API Project
                 },
+                // https://help.apiary.io/tools/embed/#elements
+                theme: {
+                    tableOfContents: {
+                        section: {
+                            title: {
+                                text: {
+                                    color: '#0388ef'
+                                }
+                            }
+                        }
+                    },
+                    humanColumn: {
+                        content: {
+                            apiName: {
+                                borderBottom: '0px'
+                            },
+                            section: {
+                                title: {
+                                    text: {
+                                        color: '#0388ef'
+                                    }
+                                },
+                                resourceGroups: {
+                                    resourceGroup: {
+                                        name: {
+                                            borderBottom: '0px'
+                                        }
+                                    }
+                                }
+                            }
+                            
+                        }
+                    }
+                },
                 hosts: [
-                    'production',
-                    'mock'
+                    'production'
                 ],
                 element: '.lykkepay-api-docs__embed'
             });
