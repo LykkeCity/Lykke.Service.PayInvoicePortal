@@ -1,0 +1,104 @@
+﻿@using Lykke.Service.PayInvoicePortal.Models.Invoices
+
+@{
+    ViewData["Title"] = "Payments";
+}
+
+@if (User.Identity.IsAuthenticated)
+{
+    @await Html.PartialAsync("Partials/InvoicesNav")
+}
+
+<div data-ng-controller="invoiceNewCtrl as vm" ng-cloak>
+    @await Html.PartialAsync("Partials/InvoiceEditTemplate", new InvoiceEditTemplateModel { IsNewInvoice = true })
+</div>
+
+@await Html.PartialAsync("/Views/Partials/InvoiceInfo.cshtml")
+
+<article class="content"
+         data-ng-controller="invoicesCtrl as vm"
+         ng-cloak>
+    <section class="section section--lead">
+        <lp-payments></lp-payments>
+        <div class="container">
+            @*<div class="search_filter search_filter--show">
+                    <div class="row">
+                        <div class="col-xs-6 col-sm-3">
+                            <div class="form-group select">
+                                <select class="form-control" ng-model="vm.filter.period" ng-options="period.id as period.title for period in vm.filter.periods"></select>
+                            </div>
+                        </div>
+                        <div class="col-xs-9 col-sm-8">
+                            <div class="input-search input-search--index">
+                                <button class="btn btn--icon">
+                                    <img data-ng-show="vm.view.isSearching" src="img/processing.gif"/>
+                                    <i data-ng-hide="vm.view.isSearching" class="icon icon--search"></i>
+                                </button>
+                                <input type="text" class="form-control" placeholder="Number or client email..." data-ng-model="vm.filter.search" data-ng-model-options="{ debounce: 500 }">
+                                <button class="btn btn--icon" data-ng-click="vm.filter.handlers.clear()"><i class="icon icon--cancel_round"></i></button>
+                            </div>
+                        </div>
+                        <div class="col-xs-3 col-sm-1">
+                            <button type="button" class="btn btn--link" data-ng-click="vm.filter.handlers.close()">Cancel</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div data-ng-show="vm.view.isLoading">
+                    <div class="spinner">
+                        <div class="spinner__inside"></div>
+                    </div>
+                </div>
+
+                <div class="tab-content" data-ng-show="vm.view.hasInvoices">
+                    <div class="tab-pane active">
+                        <div class="table-responsive">
+                            <table class="table table_invoices" data-ng-hide="vm.view.showNoResults">
+                                <tr class="invoices__row" data-ng-hide="">
+                                    <th class="_number invoices__cell" data-ng-click="vm.handlers.sort('Number')">Invoice number, date</th>
+                                    <th class="_client invoices__cell" data-ng-click="vm.handlers.sort('ClientName')">Client</th>
+                                    <th class="_amount invoices__cell" data-ng-click="vm.handlers.sort('Amount')" style="text-align: right">Amount</th>
+                                    <th class="_currency invoices__cell" data-ng-click="vm.handlers.sort('SettlementAssetId')">Currency</th>
+                                    <th class="_status invoices__cell" data-ng-click="vm.handlers.sort('Status')">Status</th>
+                                    <th class="_pay invoices__cell" data-ng-click="vm.handlers.sort('DueDate')">Pay due date</th>
+                                    <th class="_action"></th>
+                                </tr>
+                                <tbody>
+                                <tr data-ng-repeat="invoice in vm.model.invoices" data-mt-navigate="::vm.handlers.openDetails(invoice)">
+                                    <td class="_number" style="cursor: pointer;">
+                                        <span class="_title"><a ng-href="{{::'/invoices/' + invoice.id}}">#{{::invoice.number}}</a></span>
+                                        <span class="_hint">{{::invoice.createdDate.format('l')}}</span>
+                                    </td>
+                                    <td class="_client" style="cursor: pointer;">
+                                        <span class="_title">{{::invoice.clientName}}</span>
+                                        <span class="_hint">{{::invoice.clientEmail}}</span>
+                                    </td>
+                                    <td class="_amount" style="cursor: pointer; text-align: right">{{::invoice.amount | nzcurrency : invoice.settlementAssetAccuracy}}</td>
+                                    <td class="_currency" style="cursor: pointer;">{{::invoice.settlementAsset}}</td>
+                                    <td class="_status" style="cursor: pointer;">
+                                        <span class="label" data-ng-class="::vm.handlers.getStatusCss(invoice.status)">{{::invoice.status}}</span>
+                                    </td>
+                                    <td class="_pay" style="cursor: pointer;">{{::invoice.dueDate.format('l')}}</td>
+                                    <td class="_action">
+                                        <button class="btn btn--icon" type="button"
+                                                data-ng-class="::{'btn--disabled': !vm.handlers.canRemove(invoice)}"
+                                                data-ng-disabled="::!vm.handlers.canRemove(invoice)"
+                                                data-ng-click="::vm.handlers.remove(invoice)">
+                                            <i class="btn__svg_icon svg_icon svg_icon--delete"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div style="text-align: center;" data-ng-if="vm.handlers.canShowMore()">
+                            <button class="btn btn--flat" data-ng-click="vm.handlers.showMore()">Show more</button>
+                        </div>
+                    </div>
+                </div>*@
+        </div>
+    </section>
+</article>
+@section Scripts {
+    @await Html.PartialAsync("Partials/ng2scripts")
+}

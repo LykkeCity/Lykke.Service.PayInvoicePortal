@@ -61,6 +61,9 @@ namespace Lykke.Service.PayInvoicePortal.Services
             builder.RegisterType<SignupService>()
                 .As<ISignupService>()
                 .WithParameter(TypedParameter.From(_enableSignup));
+
+            builder.RegisterType<PaymentsService>()
+                .As<IPaymentsService>();
         }
     }
 }

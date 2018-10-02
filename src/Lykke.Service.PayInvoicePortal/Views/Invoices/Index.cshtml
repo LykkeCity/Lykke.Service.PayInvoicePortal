@@ -29,8 +29,9 @@
     <section class="section section--padding">
         <div class="container">
             <div class="relative hidden-xs hidden-sm">
-                <a href="@Url.Action("Index", "Home")" class="btn_back">
-                    <img src="/img/back_icn.svg" width="30" height="12" alt="back">
+                <a onclick="history.go(-1)" class="btn btn--link btn_back" style="left: 0">
+                    <i class="icon icon--back_arrow"></i>
+                    Back
                 </a>
             </div>
             <div class="row">
