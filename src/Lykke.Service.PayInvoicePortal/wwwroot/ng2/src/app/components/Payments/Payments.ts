@@ -34,6 +34,7 @@ export class PaymentsComponent implements OnInit, OnDestroy, IPaymentsHandlers {
   }
 
   onFilterChanged(filter: PaymentsFilterModel) {
+    this.pager.resetPage();
     this.loadPayments();
   }
 

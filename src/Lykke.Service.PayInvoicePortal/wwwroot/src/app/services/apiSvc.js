@@ -196,19 +196,19 @@
         // Paymnets
 
         function getPaymentDetails(invoiceId) {
-            return get('payments/' + invoiceId, {});
+            return get('paymentDetails/' + invoiceId, {});
         }
 
         function refreshPaymentDetails(invoiceId) {
-            return get('payments/refresh/' + invoiceId, {});
+            return get('paymentDetails/refresh/' + invoiceId, {});
         }
 
         function getPaymentStatus(invoiceId) {
-            return get('payments/' + invoiceId + '/status', {});
+            return get('paymentDetails/' + invoiceId + '/status', {});
         }
 
         function changePaymentAsset(invoiceId, paymentAssetId) {
-            return post('payments/changeasset/' + invoiceId + '/' + paymentAssetId)
+            return post('paymentDetails/changeasset/' + invoiceId + '/' + paymentAssetId)
         }
 
         // Private
