@@ -1,0 +1,46 @@
+<div class="invoice_filters">
+  <div class="row">
+    <div class="col-sm-6 col-md-3">
+      <lp-selectpicker label="Period:"
+                       cssClasses="form_selectpicker--period"
+                       [(ngModel)]="model.period"
+                       (ngModelChange)="onChangedPeriod($event)"
+                       [selectpickerOptions]="model.periods"></lp-selectpicker>
+    </div>
+    <div class="col-sm-6 col-md-3">
+      <lp-selectpicker label="Type:"
+      disabled="true"
+                       cssClasses="form_selectpicker--type"
+                       [(ngModel)]="model.type"
+                       (ngModelChange)="onChangedType($event)"
+                       [selectpickerOptions]="model.types"></lp-selectpicker>
+    </div>
+    <div class="col-sm-6 col-md-3">
+      <lp-selectpicker label="Status:"
+                       cssClasses="form_selectpicker--status"
+                       [(ngModel)]="model.status"
+                       (ngModelChange)="onChangedStatus($event)"
+                       [selectpickerOptions]="model.statuses"></lp-selectpicker>
+    </div>
+    <div class="col-sm-6 col-md-3">
+      <div class="search_filter">
+        <div class="input-search input-search--index">
+          <button class="btn btn--icon">
+            <i class="icon icon--search"></i>
+          </button>
+          <input type="text"
+                 class="form-control form-control--search"
+                 placeholder="Search"
+                 name="searchText"
+                 [(ngModel)]="model.searchText"
+                 (ngModelChange)="onChangedSearch($event)"
+                 [lp-debounce]="500">
+          <button class="btn btn--icon"
+                  (click)="clearSearchText()">
+            <i class="icon icon--cancel_round"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

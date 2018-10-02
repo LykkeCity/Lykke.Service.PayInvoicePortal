@@ -2728,13 +2728,11 @@ ol.list_styled li:before { content: counter(step-counter); background-color: #33
 
 .table_invoices tr th { text-transform: none; font-weight: 600; border-bottom: 0; font-size: 18px; font-size: 1.125rem; }
 
-.table_invoices tr td, .table_invoices tr th { color: #3F4D60; padding: 12px 20px 12px 0; padding: 0.75rem 1.25rem 0.75rem 0; }
+.table_invoices tr td, .table_invoices tr th { color: #333333; padding: 12px 20px 12px 0; padding: 0.75rem 1.25rem 0.75rem 0; }
 
 .table_invoices tr td a, .table_invoices tr th a { color: inherit; }
 
 .table_invoices tr td { cursor: auto; }
-
-.table_invoices tr th { cursor: pointer; }
 
 .table_invoices ._checkbox { width: 10px; min-width: 0; vertical-align: top; padding-right: 16px; padding-right: 1rem; }
 
@@ -2880,7 +2878,7 @@ ol.list_styled li:before { content: counter(step-counter); background-color: #33
 
 @media all and (max-width: 480px) { .docs_item { margin-right: 0; margin-bottom: 15px; width: 100%; } }
 
-.attachment_list { margin-bottom: 50px; margin-bottom: 3.125rem; }
+.attachment_list { margin-bottom: 35px; margin-bottom: 2.1875rem; }
 
 .attachment_list .asset_link_list { margin-top: -20px; margin-top: -1.25rem; }
 
@@ -3064,11 +3062,15 @@ ol.list_styled li:before { content: counter(step-counter); background-color: #33
 
 @media all and (max-width: 543px) { .radio-group .radio { width: 50% !important; margin-bottom: 10px; } }
 
-.form-control.radio__label { height: 60px; height: 3.75rem; padding: 18px 18px 18px 55px; padding: 1.125rem 1.125rem 1.125rem 3.4375rem; }
+.radio__control:checked ~ .form-control.radio__label { box-shadow: inset 0 0 0 2px #0388ef !important; }
 
-.form-control.radio__label:after, .form-control.radio__label:before { left: 20px; left: 1.25rem; top: 18px; top: 1.125rem; }
+.form-control.radio__label { text-align: center; height: auto; color: #111111; font-weight: 600; border: 0 !important; box-shadow: inset 0 0 0 1px #CFD2D7 !important; padding: 30px 22px; padding: 1.875rem 1.375rem; }
+
+.form-control.radio__label:after, .form-control.radio__label:before { content: ''; display: none; }
 
 .form-control.radio__label:after { left: 27px; left: 1.6875rem; top: 25px; top: 1.5625rem; }
+
+.form-control.radio__label .icon { display: block; margin-right: 0; font-size: 30px; font-size: 1.875rem; margin-bottom: 5px; margin-bottom: 0.3125rem; }
 
 .form-control--select { cursor: pointer; }
 
@@ -3132,6 +3134,10 @@ ol.list_styled li:before { content: counter(step-counter); background-color: #33
 .input-group { position: relative; }
 
 .input-group--error:before { content: ''; border-radius: 100px; position: absolute; background-color: #ff3e2e; left: 0; width: 2px; width: 0.125rem; top: 8px; top: 0.5rem; bottom: 8px; bottom: 0.5rem; }
+
+.input-group--success:before { content: ''; border-radius: 100px; position: absolute; background-color: #13B72A; left: 0; width: 2px; width: 0.125rem; top: 8px; top: 0.5rem; bottom: 8px; bottom: 0.5rem; }
+
+.input-group--success .input-group-addon { color: #13B72A; cursor: default !important; }
 
 .input-group.form-control { display: table; width: 100%; }
 
@@ -3212,6 +3218,10 @@ input[type="number"]::-webkit-outer-spin-button, input[type="number"]::-webkit-i
 .form_selectpicker .dropdown-menu a { padding: 9px 15px; padding: 0.5625rem 0.9375rem; font-size: 16px; font-size: 1rem; }
 
 .form_selectpicker .dropdown-menu > .active > a, .form_selectpicker .dropdown-menu > .active > a:hover, .form_selectpicker .dropdown-menu > .active > a:focus { color: #3f4d60; }
+
+.checkboxes_group .row { margin-left: -5px; margin-right: -5px; }
+
+.checkboxes_group .row > div { padding-left: 5px; padding-right: 5px; }
 
 .form_title { padding: 0; margin: 0; border: 0; margin-bottom: 60px; margin-bottom: 3.75rem; }
 
@@ -3347,7 +3357,7 @@ input[type="number"]::-webkit-outer-spin-button, input[type="number"]::-webkit-i
 
 .modal_dialog { visibility: hidden; background: #fff; position: fixed; top: 7%; width: 470px; max-width: 100%; z-index: 9999999; left: 0; right: 0; margin: auto; box-shadow: 0 8px 40px 0 rgba(140, 147, 160, 0.6); border-radius: 8px; opacity: 0; padding: 40px 40px 40px; padding: 2.5rem 2.5rem 2.5rem; -webkit-transition: all 0.3s ease; -moz-transition: all 0.3s ease; -ms-transition: all 0.3s ease; -o-transition: all 0.3s ease; transition: all 0.3s ease; }
 
-@media all and (max-width: 543px) { .modal_dialog { width: auto; margin: 10px; } }
+@media all and (max-width: 543px) { .modal_dialog { width: auto !important; margin: 10px; } }
 
 .modal_dialog--open { top: 10%; visibility: visible; opacity: 1; }
 
@@ -3359,6 +3369,7 @@ input[type="number"]::-webkit-outer-spin-button, input[type="number"]::-webkit-i
 
 @media all and (max-width: 543px) { .modal_dialog__cancel { width: auto; } }
 
+.modal_dialog__controls { white-space: nowrap; }
 .menu_overlay { z-index: 99999; }
 
 .sidebar_menu { z-index: 999999; }
@@ -3510,7 +3521,7 @@ input[type="number"]::-webkit-outer-spin-button, input[type="number"]::-webkit-i
 
 .form_selectpicker--category .btn.dropdown-toggle { padding-left: 96px; padding-left: 6rem; }
 
-.form_selectpicker--period .btn.dropdown-toggle { padding-left: 60px; padding-left: 3.75rem; }
+.form_selectpicker--period .btn.dropdown-toggle { padding-left: 78px; padding-left: 4.875rem; }
 
 .form_selectpicker--status .btn.dropdown-toggle { padding-left: 75px; padding-left: 4.6875rem; }
 

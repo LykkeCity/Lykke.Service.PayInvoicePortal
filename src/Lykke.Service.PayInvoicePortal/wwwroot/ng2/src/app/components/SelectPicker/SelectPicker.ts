@@ -32,6 +32,10 @@ export class SelectPickerComponent
   implements AfterViewInit, ControlValueAccessor, OnChanges, AfterViewChecked {
   static readonly Selector = 'lp-selectpicker';
   @Input()
+  cssClasses?: string;
+  @Input()
+  label?: string;
+  @Input()
   placeholder?: string;
   @Input()
   disabled?: boolean;

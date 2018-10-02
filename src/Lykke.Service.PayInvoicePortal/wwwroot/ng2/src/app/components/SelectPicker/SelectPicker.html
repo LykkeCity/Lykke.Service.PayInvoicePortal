@@ -1,5 +1,7 @@
 <div class="form_selectpicker"
+     [ngClass]="cssClasses"
      [attr.disabled]="disabled ? 'disabled' : null">
+  <label *ngIf="label" class="control-label">{{label}}</label>
   <select class="selectpicker"
           #selectpicker
           data-size="10"

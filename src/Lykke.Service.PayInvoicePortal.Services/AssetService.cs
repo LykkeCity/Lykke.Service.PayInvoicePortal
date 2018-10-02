@@ -36,6 +36,15 @@ namespace Lykke.Service.PayInvoicePortal.Services
             _log = logFactory.CreateLog(this);
         }
 
+        public async Task<Asset> GetBaseAssetOrDefault(string merchantId)
+        {
+            var baseAssetId = await GetBaseAssetId(merchantId) ?? GetDefaultBaseAssetId();
+
+            Asset baseAsset = await _lykkeAssetsResolver.TryGetAssetAsync(baseAssetId);
+
+            return baseAsset;
+        }
+
         public async Task<string> GetBaseAssetId(string merchantId)
         {
             string baseAssetId;
