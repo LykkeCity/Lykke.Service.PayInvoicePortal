@@ -44,8 +44,7 @@ export class PaymentsFilterComponent implements OnInit, IPaymentFilterHandlers {
 
     localStorage.setItem(PaymentsFilterLocalStorageKeys.Type, type);
 
-    // TODO:
-    // this.emitFilterChanged();
+    this.emitFilterChanged();
   }
 
   onChangedStatus(status): void {
