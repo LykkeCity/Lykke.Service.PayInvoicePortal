@@ -8,7 +8,7 @@
 <div class="container"
      [hidden]="view.isFirstLoading">
 
-  <div class="profile_info">
+  <!-- <div class="profile_info">
     <div class="row">
       <div class="col-md-4 col-sm-5">
         <lp-payments-balance [baseAsset]="model.baseAsset"></lp-payments-balance>
@@ -17,13 +17,17 @@
         <lp-payments-statistic [baseAsset]="model.baseAsset"></lp-payments-statistic>
       </div>
     </div>
-  </div>
+  </div> -->
 
-  <div class="invoices"
+  <div class="payments"
        *ngIf="view.hasPayments">
-    <div class="row">
+    <div class="row payments_header">
       <div class="col-sm-6">
-        <h3>Payments</h3>
+        <h3 class="payments_header__title">Payments</h3>
+        <button class="btn payments_header__btn">
+          <i class="icon icon--add"></i>
+          New invoice
+        </button>
       </div>
       <div class="col-sm-6 clearfix">
         <div class="invoice_controls">

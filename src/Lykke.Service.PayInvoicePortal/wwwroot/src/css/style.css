@@ -2632,7 +2632,7 @@ hr { max-width: none; width: 100%; border: 0; border-bottom: 1px solid #ebedef; 
 
 .section.section--lead { padding: 90px 0; padding: 5.625rem 0; }
 
-.section.section--padding { padding: 60px 0; padding: 3.75rem 0; }
+.section.section--padding { padding: 40px 0; padding: 2.5rem 0; }
 
 @media all and (max-width: 767px) { .section.section--padding { padding: 30px 0; } }
 
@@ -3507,8 +3507,6 @@ input[type="number"]::-webkit-outer-spin-button, input[type="number"]::-webkit-i
 
 .invoice_refresh__a { font-weight: 600; }
 
-.invoice_filters { padding: 20px 0; padding: 1.25rem 0; }
-
 .invoice_filters .btn .icon { margin-right: 0 !important; }
 
 .invoice_filters .search_filter { display: block; margin-bottom: 10px; margin-bottom: 0.625rem; }
@@ -3550,6 +3548,12 @@ input[type="number"]::-webkit-outer-spin-button, input[type="number"]::-webkit-i
 .profile_controls .svg_icon { margin-top: -3px; margin-top: -0.1875rem; }
 
 .container { position: relative; }
+
+.payments_header { margin-bottom: 40px; margin-bottom: 2.5rem; }
+
+.payments_header__title { display: inline; font-size: 26px; font-size: 1.625rem; font-weight: 800; margin-bottom: 0; margin-right: 40px; margin-right: 2.5rem; vertical-align: middle; }
+
+.payments_header__btn { display: inline-block; padding-bottom: 10px; padding-bottom: 0.625rem; padding-top: 10px; padding-top: 0.625rem; }
 
 .page_settings .page__title { margin-bottom: 74px; margin-bottom: 4.625rem; }
 
