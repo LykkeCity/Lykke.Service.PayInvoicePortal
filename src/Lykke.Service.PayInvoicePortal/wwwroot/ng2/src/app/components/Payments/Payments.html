@@ -20,11 +20,11 @@
   </div> -->
 
   <div class="payments"
-       *ngIf="view.hasPayments">
+       [hidden]="!view.hasPayments">
     <div class="row payments_header">
       <div class="col-sm-6">
         <h3 class="payments_header__title">Payments</h3>
-        <button class="btn payments_header__btn">
+        <button class="btn payments_header__btn" data-ng-click="vm.handlers.create()">
           <i class="icon icon--add"></i>
           New invoice
         </button>
