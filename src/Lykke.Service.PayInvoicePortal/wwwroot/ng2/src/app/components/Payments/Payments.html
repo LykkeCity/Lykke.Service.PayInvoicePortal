@@ -19,27 +19,30 @@
     </div>
   </div> -->
 
-  <div class="payments"
-       [hidden]="!view.hasPayments">
-    <div class="row payments_header">
-      <div class="col-sm-6">
-        <h3 class="payments_header__title">Payments</h3>
-        <button class="btn payments_header__btn" data-ng-click="vm.handlers.create()">
-          <i class="icon icon--add"></i>
-          New invoice
+  <div class="row payments_header">
+    <div class="col-sm-6">
+      <h3 class="payments_header__title">Payments</h3>
+      <button class="btn payments_header__btn"
+              data-ng-click="vm.handlers.create()">
+        <i class="icon icon--add"></i>
+        New invoice
+      </button>
+    </div>
+    <div class="col-sm-6 clearfix">
+      <div class="invoice_controls"
+           [hidden]="!view.hasPayments">
+        <button class="invoice_controls__btn btn btn--flat btn--default btn-sm pull-left"
+                type="button"
+                (click)="exportToCsv()">
+          <i class="btn__svg_icon svg_icon svg_icon--download svg_icon--margin"></i>
+          CSV file
         </button>
       </div>
-      <div class="col-sm-6 clearfix">
-        <div class="invoice_controls">
-          <button class="invoice_controls__btn btn btn--flat btn--default btn-sm pull-left"
-                  type="button"
-                  (click)="exportToCsv()">
-            <i class="btn__svg_icon svg_icon svg_icon--download svg_icon--margin"></i>
-            CSV file
-          </button>
-        </div>
-      </div>
     </div>
+  </div>
+
+  <div class="payments"
+       [hidden]="!view.hasPayments">
 
     <lp-payments-filter [filter]="filter"
                         (filterChanged)="onFilterChanged($event)"></lp-payments-filter>
