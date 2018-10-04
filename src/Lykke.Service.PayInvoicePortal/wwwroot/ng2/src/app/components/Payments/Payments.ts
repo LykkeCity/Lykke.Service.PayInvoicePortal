@@ -177,8 +177,11 @@ export class PaymentsComponent implements OnInit, OnDestroy, IPaymentsHandlers {
 
         this.view.hasMorePayments = res.hasMorePayments;
 
-        if (this.view.isFirstLoading) {
+        if (res.hasAnyPayment) {
           this.view.hasPayments = res.hasAnyPayment;
+        }
+
+        if (this.view.isFirstLoading) {
           this.view.isFirstLoading = false;
         }
 
