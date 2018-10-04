@@ -1,12 +1,4 @@
-<div *ngIf="view.isFirstLoading"
-     class="main-page-loader">
-  <div class="spinner spinner--inline">
-    <div class="spinner__inside"></div>
-  </div>
-</div>
-
-<div class="container"
-     [hidden]="view.isFirstLoading">
+<div class="container">
 
   <!-- <div class="profile_info">
     <div class="row">
@@ -41,8 +33,15 @@
     </div>
   </div>
 
+  <div *ngIf="view.isFirstLoading"
+       class="main-page-loader">
+    <div class="spinner spinner--inline">
+      <div class="spinner__inside"></div>
+    </div>
+  </div>
+
   <div class="payments"
-       [hidden]="!view.hasPayments">
+       [hidden]="!view.hasPayments || view.isFirstLoading">
 
     <lp-payments-filter [filter]="filter"
                         (filterChanged)="onFilterChanged($event)"></lp-payments-filter>
