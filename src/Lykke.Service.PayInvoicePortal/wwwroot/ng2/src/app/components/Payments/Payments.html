@@ -41,6 +41,7 @@
   </div>
 
   <div class="payments"
+       [ngClass]="{'payments--more-space': model.payments.length < 3}"
        [hidden]="!view.hasPayments || view.isFirstLoading">
 
     <lp-payments-filter [filter]="filter"
