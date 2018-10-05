@@ -1,4 +1,4 @@
 export interface IItemViewModel {
-  id: string;
+  id: string | number;
   title: string;
 }

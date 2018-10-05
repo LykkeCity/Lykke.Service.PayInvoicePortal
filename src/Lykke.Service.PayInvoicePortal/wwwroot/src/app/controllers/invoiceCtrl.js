@@ -3,11 +3,11 @@
 
     angular
         .module('app')
-        .controller('invoiceCtrl', invoiceCtrl);
+        .controller('invoiceNewCtrl', invoiceNewCtrl);
 
-    invoiceCtrl.$inject = ['$scope', '$window', '$log', '$rootScope', '$interval', 'apiSvc', 'statusSvc', 'fileSvc', 'confirmModalSvc'];
+    invoiceNewCtrl.$inject = ['$scope', '$window', '$log', '$rootScope', '$interval', 'apiSvc', 'statusSvc', 'fileSvc', 'confirmModalSvc'];
 
-    function invoiceCtrl($scope, $window, $log, $rootScope, $interval, apiSvc, statusSvc, fileSvc, confirmModalSvc) {
+    function invoiceNewCtrl($scope, $window, $log, $rootScope, $interval, apiSvc, statusSvc, fileSvc, confirmModalSvc) {
         var vm = this;
 
         vm.events = {
@@ -45,7 +45,7 @@
         };
 
         activate();
-        
+
         function activate() {
             $scope.$on('$destroy',
                 function () {
@@ -163,6 +163,11 @@
                     function (data) {
                         close();
                         isDraft ? $rootScope.$broadcast("invoiceDraftCreated", data) : $rootScope.$broadcast("invoiceGenerated", data);
+
+                        // send event to ng2
+                        if (window.pubsubEvents) {
+                            window.pubsubEvents.emit('invoiceCreated');
+                        }
                     },
                     function (error) {
                         $log.error(error);

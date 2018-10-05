@@ -33,8 +33,6 @@ namespace Lykke.Service.PayInvoicePortal.Services
 {
     public class InvoiceService : IInvoiceService
     {
-        private const string DefaultBaseAssetId = "CHF";
-
         private readonly HashSet<InvoiceStatus> _excludeStatusesFromHistory = new HashSet<InvoiceStatus>
         {
             InvoiceStatus.InProgress,
@@ -386,170 +384,6 @@ namespace Lykke.Service.PayInvoicePortal.Services
             await _payInvoiceClient.DeleteInvoiceAsync(invoiceId);
         }
 
-        public async Task<InvoiceSource> GetAsync(
-            string merchantId,
-            IReadOnlyList<InvoiceStatus> status,
-            Period period,
-            string searchValue,
-            string sortField,
-            bool sortAscending,
-            int skip,
-            int take)
-        {
-            IEnumerable<InvoiceModel> allInvoices = await _payInvoiceClient.GetMerchantInvoicesAsync(merchantId);
-
-            var baseAssetId = await GetBaseAssetId(merchantId);
-            Asset baseAsset = await _lykkeAssetsResolver.TryGetAssetAsync(baseAssetId);
-
-            #region Statistic
-            var rateDictionary = new Dictionary<string, double>();
-
-            var allAssetIds = new List<string>();
-            allAssetIds.AddRange(allInvoices.Select(x => x.PaymentAssetId));
-            allAssetIds.AddRange(allInvoices.Select(x => x.SettlementAssetId));
-            allAssetIds = allAssetIds.Distinct().ToList();
-
-            foreach (var assetId in allAssetIds)
-            {
-                if (assetId == baseAssetId)
-                {
-                    rateDictionary.Add(assetId, 1);
-                    continue;
-                }
-
-                var rateTuple = await _ratesCache.GetOrAddAsync
-                (
-                    $"Rate-{assetId}-{baseAssetId}",
-                    async x => {
-                        var asset = await _lykkeAssetsResolver.TryGetAssetAsync(assetId);
-                        var rateResponse = asset == null || baseAsset == null ? 0 : await _rateCalculatorClient.GetAmountInBaseAsync(
-                            assetFrom: asset.Id, amount: 1d, assetTo: baseAsset.Id);
-                        return new Tuple<double>(rateResponse);
-                    },
-                    _cacheExpirationPeriods.Rate
-                );
-
-                var rate = rateTuple.Item1;
-
-                if (rate == 0)
-                {
-                    _log.Warning($"No rates from {assetId} to {baseAssetId}");
-                }
-
-                rateDictionary.Add(assetId, rate);
-            }
-
-            bool IsOtherPaidStatuses(InvoiceStatus invoiceStatus)
-            {
-                return invoiceStatus == InvoiceStatus.Overpaid
-                    || invoiceStatus == InvoiceStatus.Underpaid
-                    || invoiceStatus == InvoiceStatus.LatePaid;
-            }
-
-            var mainStatistic = new Dictionary<InvoiceStatus, double>();
-            var summaryStatistic = new Dictionary<InvoiceStatus, SummaryStatisticModel>();
-            var grouppedByStatus = allInvoices.GroupBy(x => x.Status);
-
-            double balance = 0;
-            
-            foreach (var group in grouppedByStatus)
-            {
-                var summaryStatisticGrouppedByAsset = new Dictionary<string, SummaryStatisticItemModel>();
-                
-                foreach (var invoice in group)
-                {
-                    var amount = IsOtherPaidStatuses(invoice.Status)
-                        ? (double)invoice.PaidAmount * rateDictionary[invoice.PaymentAssetId]
-                        : (double)invoice.Amount * rateDictionary[invoice.SettlementAssetId];
-
-                    if (mainStatistic.ContainsKey(invoice.Status))
-                    {
-                        mainStatistic[invoice.Status] += amount;
-                    }
-                    else
-                    {
-                        mainStatistic.Add(invoice.Status, amount);
-                    }
-
-                    //TODO make calculation for OtherPaidStatuses in balance task
-                    if (group.Key == InvoiceStatus.Paid
-                        || IsOtherPaidStatuses(group.Key))
-                    {
-                        balance += amount;
-                    }
-
-                    // summary
-                    if (summaryStatisticGrouppedByAsset.ContainsKey(invoice.SettlementAssetId))
-                    {
-                        var model = summaryStatisticGrouppedByAsset[invoice.SettlementAssetId];
-                        model.Total += invoice.Amount;
-                        model.Count++;
-                    }
-                    else
-                    {
-                        Asset settlementAsset = await _lykkeAssetsResolver.TryGetAssetAsync(invoice.SettlementAssetId);
-
-                        summaryStatisticGrouppedByAsset.Add(invoice.SettlementAssetId,
-                            new SummaryStatisticItemModel
-                            {
-                                Asset = settlementAsset?.DisplayId,
-                                AssetAccuracy = settlementAsset?.Accuracy ?? 2,
-                                Total = invoice.Amount,
-                                Count = 1
-                            });
-                    }
-                }
-
-                summaryStatistic.Add(group.Key,
-                    new SummaryStatisticModel
-                    {
-                        Status = group.Key.ToString(),
-                        Items = summaryStatisticGrouppedByAsset.OrderBy(x => x.Key).Select(x => x.Value)
-                    });
-            }
-
-            // order by status
-            summaryStatistic = summaryStatistic.OrderBy(x => x.Key).ToDictionary(x => x.Key, x => x.Value);
-            #endregion
-
-            IReadOnlyList<Invoice> result =
-                await FilterAsync(allInvoices, period, searchValue, sortField, sortAscending);
-
-            var source = new InvoiceSource
-            {
-                Total = result.Count,
-                CountPerStatus = new Dictionary<InvoiceStatus, int>(),
-                Balance = balance,
-                BaseAsset = baseAssetId,
-                BaseAssetAccuracy = baseAsset?.Accuracy ?? 2,
-                MainStatistic = mainStatistic,
-                SummaryStatistic = summaryStatistic.Values,
-                Rates = rateDictionary,
-                HasErrorsInStatistic = rateDictionary.ContainsValue(0)
-            };
-
-            if (status.Count > 0)
-            {
-                source.Items = result
-                    .Where(o => status.Contains(o.Status))
-                    .Skip(skip)
-                    .Take(take)
-                    .ToList();
-            }
-            else
-            {
-                source.Items = result
-                    .Skip(skip)
-                    .Take(take)
-                    .ToList();
-            }
-
-            foreach (InvoiceStatus value in Enum.GetValues(typeof(InvoiceStatus)))
-                source.CountPerStatus[value] = result.Count(o => o.Status == value);
-
-            return source;
-        }
-
         public async Task<IncomingInvoicesSource> GetIncomingAsync(
             string merchantId,
             IReadOnlyList<InvoiceStatus> statuses,
@@ -640,6 +474,8 @@ namespace Lykke.Service.PayInvoicePortal.Services
 
             return source;
         }
+
+        #region Private methods
 
         private async Task<string> GetBaseAssetId(string merchantId)
         {
@@ -749,7 +585,7 @@ namespace Lykke.Service.PayInvoicePortal.Services
             if (period != Period.AllTime)
             {
                 DateTime dateFrom = DateTime.UtcNow.Date.AddDays(1 - DateTime.UtcNow.Day);
-
+                
                 if (period == Period.LastMonth)
                     dateFrom = dateFrom.AddMonths(-1);
 
@@ -761,5 +597,7 @@ namespace Lykke.Service.PayInvoicePortal.Services
 
             return query;
         }
+
+        #endregion
     }
 }

@@ -136,3 +136,9 @@ input[type=number]::-webkit-outer-spin-button {
         background-image: url(../img/approve.svg?v=2);
     }
 }
+
+.payments {
+    &--more-space {
+        padding-bottom: 145px;
+    }
+}

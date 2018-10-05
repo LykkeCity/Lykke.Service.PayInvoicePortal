@@ -3,10 +3,15 @@ import { NgModule, ApplicationRef } from '@angular/core';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
 
+// common
 import { AuthInterceptor } from './interceptors/AuthInterceptor';
+import { CopyTextDirective } from './directives/CopyText.directive';
+import { DebounceDirective } from './directives/Debounce.directive';
 
 import { ChangePasswordComponent } from './components/ChangePassword/ChangePassword';
+import { ChangePasswordApi } from './services/api/ChangePasswordApi';
 import { ValidatorOldPasswordNotEqualledDirective } from './components/ChangePassword/ValidatorOldPasswordNotEqualled.directive';
+
 import { ResetPasswordComponent } from './components/ResetPassword/ResetPassword';
 import { ResetPasswordApi } from './services/api/ResetPasswordApi';
 import { ValidatorPasswordEqualledDirective } from './components/ResetPassword/ValidatorPasswordEqualled.directive';
@@ -21,11 +26,22 @@ import { SelectPickerComponent } from './components/SelectPicker/SelectPicker';
 
 import { ConfirmModalComponent } from './components/ConfirmModal/ConfirmModal';
 import { ConfirmModalService } from './services/ConfirmModalService';
-import { CopyTextDirective } from './directives/CopyText.directive';
-import { ChangePasswordApi } from './services/api/ChangePasswordApi';
+
+import { PaymentsComponent } from './components/Payments/Payments';
+import { PaymentsApi } from './services/api/PaymentsApi';
+import { PaymentsBalanceComponent } from './components/Payments/PaymentsBalance/PaymentsBalance';
+import { PaymentsFilterComponent } from './components/Payments/PaymentsFilter/PaymentsFilter';
+import { PaymentsStatisticComponent } from './components/Payments/PaymentsStatistic/PaymentsStatistic';
+import { PaymentsTableComponent } from './components/Payments/PaymentsTable/PaymentsTable';
+import { PaymentStatusCssService } from './services/Payment/PaymentStatusCssService';
 
 @NgModule({
   declarations: [
+    PaymentsComponent,
+    PaymentsBalanceComponent,
+    PaymentsFilterComponent,
+    PaymentsStatisticComponent,
+    PaymentsTableComponent,
     ChangePasswordComponent,
     ConfirmModalComponent,
     SelectPickerComponent,
@@ -34,6 +50,7 @@ import { ChangePasswordApi } from './services/api/ChangePasswordApi';
     EmailValidatorDirective,
     ResetPasswordComponent,
     CopyTextDirective,
+    DebounceDirective,
     ValidatorOldPasswordNotEqualledDirective,
     ValidatorPasswordEqualledDirective
   ],
@@ -43,7 +60,9 @@ import { ChangePasswordApi } from './services/api/ChangePasswordApi';
     HttpClientModule
   ],
   providers: [
+    PaymentStatusCssService,
     ConfirmModalService,
+    PaymentsApi,
     ChangePasswordApi,
     SettingsApi,
     SignupApi,
@@ -51,6 +70,7 @@ import { ChangePasswordApi } from './services/api/ChangePasswordApi';
     { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },
   ],
   entryComponents: [
+    PaymentsComponent,
     ChangePasswordComponent,
     ConfirmModalComponent,
     SettingsComponent,
@@ -66,6 +86,7 @@ export class AppModule {
     // with their selectors (html host elements)
     const options = {};
 
+    options[PaymentsComponent.Selector] = PaymentsComponent;
     options[ChangePasswordComponent.Selector] = ChangePasswordComponent;
     options[ConfirmModalComponent.Selector] = ConfirmModalComponent;
     options[SettingsComponent.Selector] = SettingsComponent;

@@ -1,11 +1,13 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
+using Lykke.Service.Assets.Client.Models;
 using Lykke.Service.PayInternal.Client.Models;
 
 namespace Lykke.Service.PayInvoicePortal.Core.Services
 {
     public interface IAssetService
     {
+        Task<Asset> GetBaseAssetOrDefault(string merchantId);
         Task<string> GetBaseAssetId(string merchantId);
         string GetDefaultBaseAssetId();
         Task<IReadOnlyDictionary<string, string>> GetSettlementAssetsAsync(string merchantId);
