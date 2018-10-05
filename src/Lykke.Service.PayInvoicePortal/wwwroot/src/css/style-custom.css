@@ -99,3 +99,5 @@ input[type=number]::-webkit-outer-spin-button {
 .svg_icon--approve {
   background-image: url(../img/approve.svg?v=2); }
 
+.payments--more-space {
+  padding-bottom: 145px; }
