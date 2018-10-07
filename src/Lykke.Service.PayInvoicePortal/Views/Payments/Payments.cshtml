@@ -1,0 +1,27 @@
+﻿@using Lykke.Service.PayInvoicePortal.Models.Invoices
+
+@{
+    ViewData["Title"] = "Payments";
+}
+
+@if (User.Identity.IsAuthenticated)
+{
+    @await Html.PartialAsync("Partials/InvoicesNav")
+}
+
+<div data-ng-controller="invoiceNewCtrl as vm" ng-cloak>
+    @await Html.PartialAsync("Partials/InvoiceEditTemplate", new InvoiceEditTemplateModel { IsNewInvoice = true })
+</div>
+
+@await Html.PartialAsync("/Views/Partials/InvoiceInfo.cshtml")
+
+<article class="content"
+         data-ng-controller="invoicesCtrl as vm"
+         ng-cloak>
+    <section class="section section--padding">
+        <lp-payments></lp-payments>
+    </section>
+</article>
+@section Scripts {
+    @await Html.PartialAsync("Partials/ng2scripts")
+}

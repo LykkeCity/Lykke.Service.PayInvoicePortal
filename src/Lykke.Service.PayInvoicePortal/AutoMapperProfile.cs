@@ -1,8 +1,13 @@
 ﻿using AutoMapper;
+using Lykke.Service.Assets.Client.Models;
 using Lykke.Service.PayInvoicePortal.Core.Domain;
+using Lykke.Service.PayInvoicePortal.Core.Domain.Payments;
 using Lykke.Service.PayInvoicePortal.Models;
+using Lykke.Service.PayInvoicePortal.Models.Assets;
 using Lykke.Service.PayInvoicePortal.Models.Invoice;
 using Lykke.Service.PayInvoicePortal.Models.Invoices;
+using Lykke.Service.PayInvoicePortal.Models.Payments;
+using PaymentsResponse = Lykke.Service.PayInvoicePortal.Models.Payments.PaymentsResponse;
 
 namespace Lykke.Service.PayInvoicePortal
 {
@@ -10,6 +15,12 @@ namespace Lykke.Service.PayInvoicePortal
     {
         public AutoMapperProfile()
         {
+            CreateMap<Asset, AssetModel>(MemberList.Destination);
+
+            CreateMap<Payment, PaymentModel>(MemberList.Destination);
+
+            CreateMap<Core.Domain.Payments.PaymentsResponse, PaymentsResponse>(MemberList.Destination);
+
             CreateMap<Invoice, ListItemModel>(MemberList.Destination)
                 .ForMember(dest => dest.Status,
                     opt => opt.MapFrom(src => src.Status.ToString()))

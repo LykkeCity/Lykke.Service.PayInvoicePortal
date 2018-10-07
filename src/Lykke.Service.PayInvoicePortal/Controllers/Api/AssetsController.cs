@@ -1,13 +1,13 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Common.Log;
-using Lykke.Common.Log;
+using AutoMapper;
 using Lykke.Service.Assets.Client.Models;
 using Lykke.Service.PayInternal.Client.Models;
 using Lykke.Service.PayInvoicePortal.Core.Services;
 using Lykke.Service.PayInvoicePortal.Extensions;
 using Lykke.Service.PayInvoicePortal.Models;
+using Lykke.Service.PayInvoicePortal.Models.Assets;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -21,6 +21,16 @@ namespace Lykke.Service.PayInvoicePortal.Controllers.Api
             IAssetService assetService)
         {
             _assetService = assetService;
+        }
+
+        [Authorize]
+        [HttpGet]
+        [Route("/api/assets/baseAsset")]
+        public async Task<IActionResult> GetBaseAssetId()
+        {
+            Asset baseAsset = await _assetService.GetBaseAssetOrDefault(User.GetMerchantId());
+
+            return Ok(Mapper.Map<AssetModel>(baseAsset));
         }
 
         [Authorize]

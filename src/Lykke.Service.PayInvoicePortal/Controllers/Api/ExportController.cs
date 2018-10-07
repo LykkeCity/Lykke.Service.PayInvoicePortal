@@ -8,6 +8,7 @@ using Common.Log;
 using Lykke.Common.Log;
 using Lykke.Service.PayInvoice.Client.Models.Invoice;
 using Lykke.Service.PayInvoicePortal.Core.Domain;
+using Lykke.Service.PayInvoicePortal.Core.Domain.Payments;
 using Lykke.Service.PayInvoicePortal.Core.Services;
 using Lykke.Service.PayInvoicePortal.Extensions;
 using Lykke.Service.PayInvoicePortal.Models.Invoices;
@@ -20,32 +21,39 @@ namespace Lykke.Service.PayInvoicePortal.Controllers.Api
     [Route("/api/export")]
     public class ExportController : Controller
     {
+        private readonly IPaymentsService _paymentsService;
         private readonly IMerchantService _merchantService;
         private readonly IInvoiceService _invoiceService;
 
         public ExportController(
+            IPaymentsService paymentsService,
             IMerchantService merchantService,
             IInvoiceService invoiceService)
         {
+            _paymentsService = paymentsService;
             _merchantService = merchantService;
             _invoiceService = invoiceService;
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetAsync(
-            string searchValue,
-            Period period,
-            List<InvoiceStatus> status,
-            string sortField,
-            bool sortAscending)
+        [Route("payments")]
+        public async Task<IActionResult> ExportPayments(
+            PaymentType type,
+            PaymentsFilterPeriod period,
+            List<PayInvoice.Client.Models.Invoice.InvoiceStatus> statuses,
+            string searchText
+        )
         {
-            IEnumerable<Invoice> invoices = await _invoiceService.GetAsync(
+            var paymentsResponse = await _paymentsService.GetByPaymentsFilter(
                 User.GetMerchantId(),
-                status,
+                type,
+                statuses,
                 period,
-                searchValue,
-                sortField,
-                sortAscending);
+                searchText,
+                null
+            );
+
+            IEnumerable<Payment> payments = paymentsResponse.Payments;
 
             string content;
 
@@ -53,7 +61,7 @@ namespace Lykke.Service.PayInvoicePortal.Controllers.Api
             {
                 var svcWriter = new CsvHelper.CsvWriter(stringWriter);
 
-                svcWriter.WriteRecords(invoices.Select(o => new InvoiceCsvRowModel
+                svcWriter.WriteRecords(payments.Select(o => new InvoiceCsvRowModel
                 {
                     Number = o.Number,
                     ClientName = o.ClientName,
@@ -68,7 +76,7 @@ namespace Lykke.Service.PayInvoicePortal.Controllers.Api
                 content = stringWriter.ToString();
             }
 
-            return File(new MemoryStream(Encoding.UTF8.GetBytes(content)), "text/csv", "invoices.csv");
+            return File(new MemoryStream(Encoding.UTF8.GetBytes(content)), "text/csv", "payments.csv");
         }
 
         [HttpGet]

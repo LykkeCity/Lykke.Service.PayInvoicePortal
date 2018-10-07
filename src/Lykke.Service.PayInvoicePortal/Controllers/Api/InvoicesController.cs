@@ -64,48 +64,6 @@ namespace Lykke.Service.PayInvoicePortal.Controllers.Api
         }
         
         [HttpGet]
-        public async Task<IActionResult> GetInvociesAsync(
-            string searchValue,
-            Period period,
-            List<PayInvoice.Client.Models.Invoice.InvoiceStatus> status,
-            string sortField,
-            bool sortAscending,
-            int skip,
-            int take)
-        {
-            InvoiceSource source = await _invoiceService.GetAsync(
-                User.GetMerchantId(),
-                status,
-                period,
-                searchValue,
-                sortField,
-                sortAscending,
-                skip,
-                take);
-
-            var model = new InvoicesGatheredInfoModel
-            {
-                List = new ListModel
-                {
-                    Total = source.Total,
-                    CountPerStatus = source.CountPerStatus.ToDictionary(o => o.Key.ToString(), o => o.Value),
-                    Items = Mapper.Map<List<ListItemModel>>(source.Items)
-                },
-                Balance = source.Balance,
-                BaseAsset = source.BaseAsset,
-                BaseAssetAccuracy = source.BaseAssetAccuracy,
-                Statistic = new StatisticModel
-                {
-                    MainStatistic = source.MainStatistic.ToDictionary(x => x.Key.ToString(), x => x.Value),
-                    SummaryStatistic = source.SummaryStatistic,
-                    Rates = source.Rates,
-                    HasErrorsInStatistic = source.HasErrorsInStatistic
-                }
-            };
-            
-            return Json(model);
-        }
-        [HttpGet]
         [Route("/api/invoices/supervising")]
         public async Task<IActionResult> GetSupervisingInvoicesAsync(
             string searchValue,

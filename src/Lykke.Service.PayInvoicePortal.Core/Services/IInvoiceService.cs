@@ -29,16 +29,6 @@ namespace Lykke.Service.PayInvoicePortal.Core.Services
 
         Task DeleteAsync(string invoiceId);
 
-        Task<InvoiceSource> GetAsync(
-            string merchantId,
-            IReadOnlyList<InvoiceStatus> status,
-            Period period,
-            string searchValue,
-            string sortField,
-            bool sortAscending,
-            int skip,
-            int take);
-
         Task<IncomingInvoicesSource> GetIncomingAsync(
             string merchantId,
             IReadOnlyList<InvoiceStatus> statuses,
