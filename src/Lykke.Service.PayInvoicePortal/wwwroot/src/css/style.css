@@ -3377,7 +3377,7 @@ input[type="number"]::-webkit-outer-spin-button, input[type="number"]::-webkit-i
 
 .invoice_header:after, .invoice_header:before { content: ""; display: table; clear: both; }
 
-.invoice_header .page__title { text-align: inherit; color: #111; }
+.invoice_header .page__title { text-align: inherit; color: #111; word-wrap: break-word; }
 
 .invoice_header ~ .asset_link_list .asset_link:first-child { border-top: 0; }
 
@@ -3385,7 +3385,7 @@ input[type="number"]::-webkit-outer-spin-button, input[type="number"]::-webkit-i
 
 .invoice_header__link { font-weight: 600; font-size: 24px; font-size: 1.5rem; }
 
-.invoice_header__link .btn { position: relative; }
+.invoice_header__link .btn { padding: 0; position: relative; }
 
 .invoice_header__link .btn .icon { top: -2px; top: -0.125rem; }
 
@@ -3481,6 +3481,8 @@ input[type="number"]::-webkit-outer-spin-button, input[type="number"]::-webkit-i
 
 .invoice_page .form_header { margin-top: 60px; margin-top: 3.75rem; }
 
+.invoice_page .attachment_list--download .asset_link__info .asset_link__title { max-width: 100%; }
+
 .invoice_buttons { margin: 54px 0; margin: 3.375rem 0; }
 
 .invoice_buttons .btn:first-child { min-width: 155px; }
@@ -3548,6 +3550,38 @@ input[type="number"]::-webkit-outer-spin-button, input[type="number"]::-webkit-i
 .profile_controls .svg_icon { margin-top: -3px; margin-top: -0.1875rem; }
 
 .container { position: relative; }
+
+.invoice_actions { position: absolute; right: 5px; top: 0; width: 140px; }
+
+.invoice_actions__qr { width: 140px; height: 140px; border-radius: 4px; background-color: rgba(255, 255, 255, 0); border: solid 1px #e6e8ea; margin-bottom: 20px; margin-bottom: 1.25rem; }
+
+.invoice_actions__qr img { width: 100%; }
+
+.invoice_actions__menu { border-radius: 12px; background-color: #ffffff; box-shadow: 0 4px 15px 0 rgba(101, 113, 128, 0.2), 0 2px 4px 0 rgba(140, 148, 160, 0.15); }
+
+.invoice_actions__menu .invoice_controls { float: none; }
+
+.invoice_actions__menu .invoice_controls__btn { float: none; width: 100%; display: block; font-weight: 600; letter-spacing: 1.5px; text-align: center; color: #111111; text-transform: uppercase; font-size: 13px; font-size: 0.8125rem; padding: 20px !important; padding: 1.25rem !important; }
+
+.invoice_actions__menu .invoice_controls__btn .icon { display: block; margin: 0 0 8px 0 !important; margin: 0 0 0.5rem 0 !important; }
+
+.invoice_actions__menu .invoice_controls__btn .icon--pay { font-size: 22px !important; font-size: 1.375rem !important; margin: 0 0 10px 0 !important; margin: 0 0 0.625rem 0 !important; }
+
+.invoice_actions__menu .invoice_controls__btn._delete_draft_invoice { color: #ff3e2e !important; }
+
+.invoice_actions__menu .invoice_controls__btn._delete_draft_invoice .icon { color: #ff3e2e; }
+
+@media all and (max-width: 991px) { .invoice_actions { position: relative; right: auto; width: 100%; overflow: hidden; }
+  .invoice_actions__qr { float: right; margin-left: 20px; margin-left: 1.25rem; }
+  .invoice_actions__menu { overflow: hidden; box-shadow: none; margin-top: 20px; margin-top: 1.25rem; }
+  .invoice_actions__menu .invoice_controls__btn { display: inline-block; width: auto; margin-right: 0 !important; } }
+
+@media all and (max-width: 767px) { .invoice_actions__menu { margin-top: 0; }
+  .invoice_actions__menu .invoice_controls__btn { padding: 10px !important; text-align: left; }
+  .invoice_actions__menu .invoice_controls__btn .icon { display: inline-block; margin-bottom: 0 !important; margin-right: 5px !important; } }
+
+@media all and (max-width: 480px) { .invoice_actions { margin-bottom: 20px; }
+  .invoice_actions__menu .invoice_controls__btn { display: block; } }
 
 .payments_header { margin-bottom: 40px; margin-bottom: 2.5rem; }
 

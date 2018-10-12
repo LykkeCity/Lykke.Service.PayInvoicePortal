@@ -18,6 +18,8 @@ namespace Lykke.Service.PayInvoicePortal.Models.Payments
         [JsonConverter(typeof(StringEnumConverter))]
         public InvoiceStatus Status { get; set; }
         public AssetModel SettlementAsset { get; set; }
+        public decimal PaidAmount { get; set; }
+        public string PaymentAssetId { get; set; }
         public DateTime CreatedDate { get; set; }
     }
 }

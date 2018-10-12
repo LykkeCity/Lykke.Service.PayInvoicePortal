@@ -101,3 +101,6 @@ input[type=number]::-webkit-outer-spin-button {
 
 .payments--more-space {
   padding-bottom: 145px; }
+
+.table_invoices .payment_paid_info {
+  display: none; }

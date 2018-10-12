@@ -35,8 +35,15 @@ import { PaymentsStatisticComponent } from './components/Payments/PaymentsStatis
 import { PaymentsTableComponent } from './components/Payments/PaymentsTable/PaymentsTable';
 import { PaymentStatusCssService } from './services/Payment/PaymentStatusCssService';
 
+import { InvoiceDetailsComponent } from './components/InvoiceDetails/InvoiceDetails';
+import { InvoicesApi } from './services/api/InvoicesApi';
+import { FileService } from './services/FileService';
+import { HistoryItemComponent } from './components/InvoiceDetails/History/HistoryItem';
+
 @NgModule({
   declarations: [
+    HistoryItemComponent,
+    InvoiceDetailsComponent,
     PaymentsComponent,
     PaymentsBalanceComponent,
     PaymentsFilterComponent,
@@ -60,8 +67,10 @@ import { PaymentStatusCssService } from './services/Payment/PaymentStatusCssServ
     HttpClientModule
   ],
   providers: [
+    FileService,
     PaymentStatusCssService,
     ConfirmModalService,
+    InvoicesApi,
     PaymentsApi,
     ChangePasswordApi,
     SettingsApi,
@@ -70,6 +79,7 @@ import { PaymentStatusCssService } from './services/Payment/PaymentStatusCssServ
     { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },
   ],
   entryComponents: [
+    InvoiceDetailsComponent,
     PaymentsComponent,
     ChangePasswordComponent,
     ConfirmModalComponent,
@@ -86,9 +96,12 @@ export class AppModule {
     // with their selectors (html host elements)
     const options = {};
 
+    // modal component should be first as it is global component
+    options[ConfirmModalComponent.Selector] = ConfirmModalComponent;
+    // other components
+    options[InvoiceDetailsComponent.Selector] = InvoiceDetailsComponent;
     options[PaymentsComponent.Selector] = PaymentsComponent;
     options[ChangePasswordComponent.Selector] = ChangePasswordComponent;
-    options[ConfirmModalComponent.Selector] = ConfirmModalComponent;
     options[SettingsComponent.Selector] = SettingsComponent;
     options[SignupComponent.Selector] = SignupComponent;
     options[ResetPasswordComponent.Selector] = ResetPasswordComponent;

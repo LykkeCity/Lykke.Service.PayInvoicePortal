@@ -54,6 +54,10 @@
           <a *ngIf="payment.isInvoice"
              href="{{'/invoices/' + payment.id}}">{{payment.settlementAsset.displayId}}</a>
           <span *ngIf="!payment.isInvoice">{{payment.settlementAsset.displayId}}</span>
+          <div class="payment_paid_info"
+               *ngIf="payment.paidAmount > 0">
+            {{payment.paidAmount}} {{payment.paymentAssetId}}
+          </div>
         </td>
         <td class="_status">
           <a *ngIf="payment.isInvoice"
