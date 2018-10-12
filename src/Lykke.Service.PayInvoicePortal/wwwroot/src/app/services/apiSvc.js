@@ -115,7 +115,7 @@
         }
 
         function getFile(invoiceId, fileId) {
-            $window.open(getUrl('files') + '/' + fileId + '?invoiceId=' + invoiceId);
+            $window.open(getUrl('files') + '/' + fileId + '/' + invoiceId);
         }
 
         function deleteFile(invoiceId, fileId) {

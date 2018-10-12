@@ -47,8 +47,7 @@ namespace Lykke.Service.PayInvoicePortal
 
             CreateMap<HistoryItem, HistoryItemModel>(MemberList.Destination)
                 .ForMember(dest => dest.Author,
-                    opt => opt.MapFrom(src =>
-                        src.Author != null ? $"{src.Author.FirstName} {src.Author.LastName}" : null))
+                    opt => opt.MapFrom(src => src.AuthorFullName))
                 .ForMember(dest => dest.Status,
                     opt => opt.MapFrom(src => src.Status.ToString()))
                 .ForMember(dest => dest.SettlementAsset,

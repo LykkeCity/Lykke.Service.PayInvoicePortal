@@ -1,6 +1,6 @@
 ﻿namespace Lykke.Service.PayInvoicePortal.Models.Invoices
 {
-    public class IndexViewModel
+    public class InvoiceDetailsResponse
     {
         public InvoiceModel Invoice { get; set; }
 

@@ -168,6 +168,8 @@ export class PaymentsComponent implements OnInit, OnDestroy, IPaymentsHandlers {
             item.clientEmail,
             item.amount,
             item.settlementAsset,
+            item.paidAmount,
+            item.paymentAssetId,
             item.status,
             moment(item.dueDate)
           );

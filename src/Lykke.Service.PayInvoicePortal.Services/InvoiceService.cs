@@ -53,6 +53,7 @@ namespace Lykke.Service.PayInvoicePortal.Services
         private readonly CacheExpirationPeriodsSettings _cacheExpirationPeriods;
         private readonly ILog _log;
         private readonly OnDemandDataCache<Tuple<double>> _ratesCache;
+        private readonly OnDemandDataCache<string> _employeeFullNameCache;
 
         public InvoiceService(
             IMerchantService merchantService,
@@ -75,6 +76,7 @@ namespace Lykke.Service.PayInvoicePortal.Services
             _cacheExpirationPeriods = cacheExpirationPeriods;
             _payMerchantClient = payMerchantClient;
             _ratesCache = new OnDemandDataCache<Tuple<double>>(memoryCache);
+            _employeeFullNameCache = new OnDemandDataCache<string>(memoryCache);
             _log = logFactory.CreateLog(this);
         }
 
@@ -126,12 +128,26 @@ namespace Lykke.Service.PayInvoicePortal.Services
 
             foreach (HistoryItemModel item in history)
             {
-                EmployeeModel employee = null;
+                var authorFullName = string.Empty;
 
                 if (!string.IsNullOrEmpty(item.ModifiedById))
                 {
-                    // TODO: use cache
-                    employee = await _payInvoiceClient.GetEmployeeAsync(item.ModifiedById);
+                    authorFullName = await _employeeFullNameCache.GetOrAddAsync
+                    (
+                        $"EmployeeFullNameCache-{item.ModifiedById}",
+                        async _ => {
+                            try
+                            {
+                                var employee = await _payInvoiceClient.GetEmployeeAsync(item.ModifiedById);
+                                return employee != null ? $"{employee.FirstName} {employee.LastName}" : string.Empty;
+                            }
+                            catch (Exception ex)
+                            {
+                                _log.Error(ex);
+                                return null;
+                            }
+                        }
+                    );
                 }
 
                 Asset historySettlementAsset = await _lykkeAssetsResolver.TryGetAssetAsync(item.SettlementAssetId);
@@ -139,7 +155,7 @@ namespace Lykke.Service.PayInvoicePortal.Services
 
                 items.Add(new HistoryItem
                 {
-                    Author = employee,
+                    AuthorFullName = authorFullName,
                     Status = item.Status,
                     PaymentAmount = item.PaymentAmount,
                     SettlementAmount = item.SettlementAmount,
