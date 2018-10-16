@@ -52,10 +52,12 @@
           <i class="icon icon--exchange"></i>
           Refresh
         </button>
-        <!-- <button class="btn btn--flat btn--default invoice_controls__btn _open_modal_share">
+        <button class="btn btn--flat btn--default invoice_controls__btn"
+                *ngIf="view.canShare"
+                (click)="share()">
           <i class="icon icon--share"></i>
           Share
-        </button> -->
+        </button>
         <button class="btn btn--flat btn--default invoice_controls__btn"
                 *ngIf="view.canEdit"
                 (click)="edit()">
@@ -211,3 +213,9 @@
     </div>
   </div>
 </div>
+
+<lp-invoice-details-share-dialog [show]="showShareDialog"
+                                 (closeDialog)="closeShareDialog()"
+                                 [invoiceId]="model.id"
+                                 [invoiceNumber]="model.number"
+                                 [invoiceCheckoutUrl]="view.invoiceCheckoutUrl"></lp-invoice-details-share-dialog>

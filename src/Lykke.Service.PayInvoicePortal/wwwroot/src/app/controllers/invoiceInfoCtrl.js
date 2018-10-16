@@ -19,7 +19,7 @@
             submited: false,
             errors: []
         };
-        
+
         vm.model = {
             id: '',
             status: '',
@@ -38,6 +38,7 @@
         vm.share = {
             email: '',
             sent: false,
+            isError: false,
             blocked: false,
             handler: undefined
         };
@@ -93,6 +94,7 @@
 
             vm.share.email = data.clientEmail;
             vm.share.sent = false;
+            vm.share.isError = false;
             vm.share.blocked = false;
 
             $rootScope.blur = true;
@@ -134,6 +136,8 @@
             if (!validate())
                 return;
 
+            vm.share.sent = false;
+            vm.share.isError = false;
             vm.share.blocked = true;
 
             var model = {
@@ -155,6 +159,7 @@
                     function (error) {
                         $log.error(error);
                         vm.share.blocked = false;
+                        vm.share.isError = true;
                     });
         }
 
