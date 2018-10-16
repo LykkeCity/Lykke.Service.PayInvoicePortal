@@ -25,6 +25,7 @@ namespace Lykke.Service.PayInvoicePortal.Services
         private readonly IPayInvoiceClient _payInvoiceClient;
         private readonly ILykkeAssetsResolver _lykkeAssetsResolver;
         private readonly OnDemandDataCache<Dictionary<string, BlockchainType>> _assetsNetworkCache;
+        private readonly OnDemandDataCache<Tuple<BlockchainType>> _assetBlockchainTypeCache;
         private readonly ILog _log;
 
         public AssetService(
@@ -38,6 +39,7 @@ namespace Lykke.Service.PayInvoicePortal.Services
             _payInvoiceClient = payInvoiceClient;
             _lykkeAssetsResolver = lykkeAssetsResolver;
             _assetsNetworkCache = new OnDemandDataCache<Dictionary<string, BlockchainType>>(memoryCache);
+            _assetBlockchainTypeCache = new OnDemandDataCache<Tuple<BlockchainType>>(memoryCache);
             _log = logFactory.CreateLog(this);
         }
 
@@ -165,7 +167,31 @@ namespace Lykke.Service.PayInvoicePortal.Services
 
         }
 
-        public async Task<IReadOnlyDictionary<string, BlockchainType>> GetAssetsNetworkAsync()
+        public async Task<BlockchainType> GetAssetNetworkAsync(string assetId)
+        {
+            var result = await _assetBlockchainTypeCache.GetOrAddAsync
+            (
+                $"AssetBlockchainTypeCache-{assetId}",
+                async _ =>
+                {
+                    try
+                    {
+                        var assetsNetwork = await GetAssetsNetworkAsync();
+
+                        return assetsNetwork.TryGetValue(assetId, out var network) ? new Tuple<BlockchainType>(network) : new Tuple<BlockchainType>(BlockchainType.None);
+                    }
+                    catch (Exception ex)
+                    {
+                        _log.Error(ex);
+                        return null;
+                    }
+                }
+            );
+
+            return result?.Item1 ?? BlockchainType.None;
+        }
+
+        private async Task<IReadOnlyDictionary<string, BlockchainType>> GetAssetsNetworkAsync()
         {
             var result = await _assetsNetworkCache.GetOrAddAsync
             (
@@ -183,7 +209,9 @@ namespace Lykke.Service.PayInvoicePortal.Services
                         _log.Error(ex);
                         return null;
                     }
-                }
+                },
+                // cache for a small period in order to foreach in memory on assets if any asset has not yet cached
+                TimeSpan.FromSeconds(1)
             );
 
             return result ?? new Dictionary<string, BlockchainType>();

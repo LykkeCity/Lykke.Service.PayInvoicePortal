@@ -104,9 +104,7 @@ namespace Lykke.Service.PayInvoicePortal.Controllers.Api
             invoice.Files = Mapper.Map<List<FileModel>>(filesTask.Result);
             invoice.History = Mapper.Map<List<HistoryItemModel>>(historyTask.Result);
 
-            IReadOnlyDictionary<string, BlockchainType> assetsNetwork = await _assetService.GetAssetsNetworkAsync();
-            invoice.PaymentAssetNetwork = assetsNetwork.TryGetValue(invoice.PaymentAsset, out var network)
-                ? network.ToString() : string.Empty;
+            invoice.PaymentAssetNetwork = (await _assetService.GetAssetNetworkAsync(invoice.PaymentAsset)).ToString();
 
             return invoice;
         }
