@@ -22,11 +22,13 @@ declare const moment: any;
   templateUrl: './InvoiceDetails.html'
 })
 export class InvoiceDetailsComponent
-  implements OnInit, IInvoiceDetailsHandlers {
+  implements OnInit, IInvoiceDetailsHandlers, IShareDialog {
   static readonly Selector = 'lp-invoice-details';
   model = new InvoiceModel();
 
   view = new View(this.paymentStatusCssService, this.fileService);
+
+  showShareDialog: boolean;
 
   onInvoiceUpdated(): void {
     this.zone.run(() => {
@@ -87,6 +89,14 @@ export class InvoiceDetailsComponent
 
   refresh(): void {
     this.loadInvoice();
+  }
+
+  share(): void {
+    this.showShareDialog = true;
+  }
+
+  closeShareDialog(): void {
+    this.showShareDialog = false;
   }
 
   edit(): void {
@@ -201,6 +211,8 @@ export class InvoiceDetailsComponent
     this.view.canRefresh =
       this.model.status !== PaymentStatus[PaymentStatus.Draft] &&
       this.model.status !== PaymentStatus[PaymentStatus.Removed];
+    this.view.canShare =
+      this.model.status === PaymentStatus[PaymentStatus.Unpaid];
     this.view.canEdit =
       this.model.status === PaymentStatus[PaymentStatus.Draft];
     this.view.canDelete =
@@ -229,6 +241,7 @@ export class InvoiceDetailsComponent
 interface IInvoiceDetailsHandlers {
   getFile: (_: FileModel) => void;
   refresh: () => void;
+  share: () => void;
   edit: () => void;
   delete: () => void;
 }
@@ -238,6 +251,11 @@ interface IViewHandlers {
   getStatusCss: (_: string) => string;
   getFileExtension: (_: string) => string;
   getFileSize: (_: number) => string;
+}
+
+interface IShareDialog {
+  showShareDialog: boolean;
+  closeShareDialog: () => void;
 }
 
 class View implements IViewHandlers {

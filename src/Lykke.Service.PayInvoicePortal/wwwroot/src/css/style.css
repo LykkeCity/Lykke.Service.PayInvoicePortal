@@ -2842,6 +2842,62 @@ ol.list_styled li:before { content: counter(step-counter); background-color: #33
 
 .index_actions .asset_link a { display: block; }
 
+.amsify-suggestags-area .amsify-suggestags-input-area-default { cursor: pointer; border: 1px solid #cccccc; min-height: 20px; padding: 8px 5px; }
+
+.amsify-suggestags-area .amsify-suggestags-input-area { text-align: left; height: auto; }
+
+.amsify-suggestags-area .amsify-suggestags-input-area:hover { cursor: text; }
+
+.amsify-suggestags-area .amsify-suggestags-input-area .amsify-suggestags-input { max-width: 200px; padding: 7px 4px 6px 4px; border: 0; }
+
+.amsify-suggestags-area .amsify-suggestags-input-area .amsify-suggestags-input:focus { outline: 0; }
+
+.amsify-focus { border-color: #66afe9; outline: 0; -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba(102, 175, 233, 0.6); box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba(102, 175, 233, 0.6); }
+
+.amsify-focus-light { border-color: #cacaca; outline: 0; -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba(189, 189, 189, 0.6); box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba(189, 189, 189, 0.6); }
+
+.amsify-suggestags-area .amsify-suggestags-label { cursor: pointer; min-height: 20px; }
+
+.amsify-toggle-suggestags { float: right; cursor: pointer; }
+
+.amsify-suggestags-area .amsify-suggestags-list { display: none; position: absolute; background: white; border: 1px solid #dedede; z-index: 1; }
+
+.amsify-suggestags-area .amsify-suggestags-list ul.amsify-list { list-style: none; padding: 3px 0px; max-height: 150px; overflow-y: auto; }
+
+.amsify-suggestags-area .amsify-suggestags-list ul.amsify-list li.amsify-list-item { text-align: left; cursor: pointer; padding: 0px 10px; }
+
+.amsify-suggestags-area .amsify-suggestags-list ul.amsify-list li.amsify-list-item:active { background: #717171; color: white; -moz-box-shadow: inset 0 0 10px #000000; -webkit-box-shadow: inset 0 0 10px #000000; box-shadow: inset 0 0 10px #000000; }
+
+.amsify-suggestags-area .amsify-suggestags-list ul.amsify-list li.amsify-list-group { text-align: left; padding: 0px 10px; font-weight: bold; }
+
+.amsify-suggestags-area .amsify-suggestags-list ul.amsify-list li.amsify-item-pad { padding-left: 30px; }
+
+.amsify-suggestags-area .amsify-suggestags-list ul.amsify-list li.amsify-item-noresult { display: none; color: #ff6060; font-weight: bold; text-align: center; }
+
+.amsify-suggestags-area .amsify-suggestags-list .amsify-select-input { display: none; }
+
+.amsify-suggestags-area .amsify-suggestags-list ul.amsify-list li.active { background: #d9d8d8; }
+
+.amsify-suggestags-area .amsify-suggestags-list ul.amsify-list li.amsify-item-pad.active { font-weight: normal; }
+
+.amsify-suggestags-input-area .amsify-select-tag { padding: 2px 7px; margin: 0px 4px 1px 0px; -webkit-border-radius: 2px; -moz-border-radius: 2px; border-radius: 2px; display: inline-block; position: relative; }
+
+.amsify-suggestags-input-area .amsify-select-tag.col-bg { border-radius: 100px; background-color: #f7f8f9; position: relative; padding: 5px 40px 5px 25px; padding: 0.3125rem 2.5rem 0.3125rem 1.5625rem; }
+
+.amsify-select-tag--error { -webkit-box-shadow: 0px 0px 5px #f00; box-shadow: 0px 0px 5px #f00; }
+
+.amsify-suggestags-input-area .amsify-select-tag:hover { background: #eee; }
+
+.amsify-suggestags-input-area .disabled.amsify-select-tag { background: #eaeaea; color: #b9b9b9; pointer-events: none; }
+
+.amsify-suggestags-input-area .flash.amsify-select-tag { background-color: #f57f7f; -webkit-transition: background-color 200ms linear; -ms-transition: background-color 200ms linear; transition: background-color 200ms linear; }
+
+.amsify-suggestags-input-area .amsify-remove-tag { cursor: pointer; position: absolute; right: 10px; right: 0.625rem; top: 5px; top: 0.3125rem; }
+
+.amsify-suggestags-input-area .amsify-remove-tag:before { /* use !important to prevent issues with browser extensions that change fonts */ font-family: 'icon' !important; speak: none; font-style: normal; font-weight: normal; font-variant: normal; text-transform: none; line-height: 1; display: inline-block; top: -1px; vertical-align: middle; /* Better Font Rendering =========== */ -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; content: "\e942"; color: #b2b8bf; position: relative; font-size: 20px; font-size: 1.25rem; }
+
+.amsify-suggestags-input-area { padding: 5px 20px 5px 50px; padding: 0.3125rem 1.25rem 0.3125rem 3.125rem; min-height: 50px; min-height: 3.125rem; }
+
 .features_list { margin: 30px 0; margin: 1.875rem 0; }
 
 .features_item { margin-bottom: 60px; margin-bottom: 3.75rem; }
@@ -2999,6 +3055,10 @@ ol.list_styled li:before { content: counter(step-counter); background-color: #33
 .form-control--readonly[readonly] { border-color: #f7f8f9 !important; background-color: #f7f8f9 !important; }
 
 .input-group .form-control { padding-right: 50px; padding-right: 3.125rem; }
+
+.input-group--suggest .control-label { position: absolute; line-height: 1.5; font-weight: normal; letter-spacing: normal; margin-bottom: 0; color: rgba(63, 77, 96, 0.6); left: 20px; left: 1.25rem; top: 12px; top: 0.75rem; font-size: 16px; font-size: 1rem; }
+
+.input-group--suggest .control-label ~ .amsify-suggestags-area .form-control { padding-left: 50px; padding-left: 3.125rem; padding-right: 20px; padding-right: 1.25rem; min-height: 50px; min-height: 3.125rem; }
 
 .checkbox__label, .checkbox label { color: #333333 !important; padding-top: 2px; padding-top: 0.125rem; padding-left: 35px; padding-left: 2.1875rem; }
 
@@ -3370,9 +3430,19 @@ input[type="number"]::-webkit-outer-spin-button, input[type="number"]::-webkit-i
 @media all and (max-width: 543px) { .modal_dialog__cancel { width: auto; } }
 
 .modal_dialog__controls { white-space: nowrap; }
+
 .menu_overlay { z-index: 99999; }
 
+.menu_overlay--open { visibility: visible; opacity: 1; }
+
 .sidebar_menu { z-index: 999999; }
+
+.modal_dialog_share { width: 570px; }
+
+.modal_dialog_share hr { margin: 30px 0; margin: 1.875rem 0; }
+
+.modal_dialog_share p { margin-bottom: 15px; margin-bottom: 0.9375rem; }
+
 .invoice_header { margin-bottom: 75px; margin-bottom: 4.6875rem; }
 
 .invoice_header:after, .invoice_header:before { content: ""; display: table; clear: both; }
