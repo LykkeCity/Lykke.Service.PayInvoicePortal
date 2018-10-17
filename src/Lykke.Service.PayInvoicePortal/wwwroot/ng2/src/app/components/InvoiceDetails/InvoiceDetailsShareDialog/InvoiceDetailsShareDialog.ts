@@ -84,7 +84,6 @@ export class InvoiceDetailsShareDialogComponent implements AfterViewInit {
 
   private afterAdd(value): void {
     this.zone.run(() => {
-      console.log('afterAdd', value);
       this.emailsValue.push(value);
       this.emails.markAsTouched();
       this.emails.setErrors(
@@ -97,7 +96,6 @@ export class InvoiceDetailsShareDialogComponent implements AfterViewInit {
 
   private afterRemove(value): void {
     this.zone.run(() => {
-      console.log('afterRemove', value);
       this.emailsValue.splice(this.emailsValue.indexOf(value), 1);
 
       if (this.emailsValue.length) {
@@ -153,11 +151,6 @@ export class InvoiceDetailsShareDialogComponent implements AfterViewInit {
   }
 
   private hasInvalidEmail(emails: string[]): boolean {
-    console.log(
-      'hasInvalidEmail',
-      emails,
-      emails.some(value => !isValidEmail(value))
-    );
     return emails.some(value => !isValidEmail(value));
   }
 }

@@ -42,10 +42,12 @@
     </div>
     <div class="invoice_actions__menu">
       <div class="invoice_controls">
-        <!-- <button class="btn btn--flat btn--default invoice_controls__btn _open_modal_refund">
+        <button class="btn btn--flat btn--default invoice_controls__btn"
+                *ngIf="view.canRefund"
+                (click)="openRefundDialog()">
           <i class="icon icon--send"></i>
           Refund
-        </button> -->
+        </button>
         <button class="btn btn--flat btn--default invoice_controls__btn"
                 *ngIf="view.canRefresh"
                 (click)="refresh()">
@@ -213,6 +215,12 @@
     </div>
   </div>
 </div>
+
+<lp-invoice-details-refund-dialog #refundDialog
+                                  [show]="showRefundDialog"
+                                  (closeDialog)="closeRefundDialog()"
+                                  [paymentRequestId]="model.paymentRequestId"
+                                  (refreshInvoice)="refresh()"></lp-invoice-details-refund-dialog>
 
 <lp-invoice-details-share-dialog [show]="showShareDialog"
                                  (closeDialog)="closeShareDialog()"
