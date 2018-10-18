@@ -1,3 +1,5 @@
+import { skip } from 'rxjs/operators';
+
 /** Returns the name of a namespace or variable reference at runtime. */
 export const nameof = (selector: () => any, fullname = false) => {
   const s = '' + selector;
@@ -60,4 +62,36 @@ export const isValidEmail = (email: string): boolean => {
   const result = /^[A-z]{2,}$/.test(lastDomain);
 
   return result;
+};
+
+export const getGuidFromPath = (currentPath: string, skippingPath: string): string => {
+  if (!currentPath || currentPath === '/') {
+    return null;
+  }
+
+  if (!skippingPath) {
+    return null;
+  }
+
+  if (skippingPath[skippingPath.length - 1] !== '/') {
+    skippingPath = skippingPath + '/';
+  }
+
+  if (currentPath.indexOf(skippingPath) !== 0) {
+    return null;
+  }
+
+  let leftPath = currentPath.substring(skippingPath.length);
+
+  if (!leftPath) {
+    return null;
+  }
+
+  if (leftPath.indexOf('/') > -1) {
+    leftPath = leftPath.replace('/', '');
+  }
+
+  const regexGuid = /^[0-9a-f]{8}-([0-9a-f]{4}-){3}[0-9a-f]{12}$/i;
+
+  return regexGuid.test(leftPath) ? leftPath : null;
 };

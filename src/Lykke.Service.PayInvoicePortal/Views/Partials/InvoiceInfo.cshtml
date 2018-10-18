@@ -79,17 +79,46 @@
                         <div class="asset_link__title">Share</div>
                         <div class="asset_link__desc">Send invoice to</div>
                         <div class="block_subscribe">
-                            <div class="form" id="share-form">
+                            <form name="shareForm" 
+                                  ng-submit="vm.handlers.share()"
+                                  class="form" id="share-form">
                                 <div class="form-group">
                                     <div class="input-group">
                                         <i class="icon icon--email"></i>
-                                        <input type="text" placeholder="E-mail address" class="form-control" data-ng-model="vm.share.email" data-ng-class="{'error': vm.form.errors.email}">
+                                        <input name="emails" 
+                                               type="text" placeholder="E-mail address" class="form-control" data-ng-model="vm.share.email" data-ng-class="{'error': vm.form.errors.email}">
+                                        <div ng-show="vm.share.blocked"
+                                             class="input-group-addon"
+                                             style="right: -5px">
+                                            <div class="spinner"
+                                                 style="width: 34px; height: 34px;">
+                                                <div class="spinner__inside"></div>
+                                            </div>
+                                        </div>
                                     </div>
                                     <button class="btn btn-sm btn--circle btn--primary" type="button" data-ng-click="vm.handlers.share()" data-ng-disabled="vm.share.blocked" data-tooltip data-trigger="vm.handlers.tooltipHandler(handler)" data-title="Email sent">
                                         <i class="icon icon--arrow-right-alt icon--arrow-right-alt"></i>
                                     </button>
                                 </div>
-                            </div>
+                                <div ng-show="shareForm.emails.$touched || shareForm.emails.$dirty"
+                                     class="hint">
+                                    You can enter multiple emails separated by comma
+                                </div>
+
+                                <div ng-show="vm.share.isError">
+                                    <div class="icon_circle_wrapper icon_circle_wrapper--error">!</div>
+                                    <span class="hint--error">
+                                        Error occured, please contact support.
+                                    </span>
+                                </div>
+
+                                <div ng-show="vm.share.sent">
+                                    <div class="icon_circle_wrapper">
+                                        <i class="icon icon--check_thin"></i>
+                                    </div>
+                                    <span>Successfully sent.</span>
+                                </div>
+                            </form>
                         </div>
                     </div>
                 </div>

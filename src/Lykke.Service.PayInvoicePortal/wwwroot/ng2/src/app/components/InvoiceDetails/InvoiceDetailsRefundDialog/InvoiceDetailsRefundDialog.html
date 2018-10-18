@@ -1,0 +1,115 @@
+<div [hidden]="!show">
+  <aside class="menu_overlay menu_overlay--open"
+         (click)="overlayClick($event)"></aside>
+
+  <div class="modal_dialog modal_dialog--open modal_dialog_refund">
+    <div class="modal_dialog__title">
+      Refund
+    </div>
+    <div class="modal_dialog__text">
+      <div *ngIf="view.isFirstLoading"
+           style="margin-top: 7px">
+        <div class="spinner">
+          <div class="spinner__inside"></div>
+        </div>
+      </div>
+
+      <div *ngIf="loadingValidation.notAllowedInStatus">
+        <div class="icon_circle_wrapper icon_circle_wrapper--error">!</div>
+        <span class="hint--error">
+          Refund is not available, please refresh invoice data.
+        </span>
+      </div>
+
+      <div *ngIf="loadingValidation.unexpectedError">
+        <div class="icon_circle_wrapper icon_circle_wrapper--error">!</div>
+        <span class="hint--error">
+          Error occured, please contact support.
+        </span>
+      </div>
+
+      <form #refundForm="ngForm"
+            [hidden]="view.isFirstLoading || loadingValidation.hasError || view.isSuccess"
+            class="form_settings">
+
+        <div class="form-group">
+          <label class="control-label">Payment asset</label>
+          <lp-selectpicker name="paymentAsset"
+                           [(ngModel)]="model.selectedPaymentAssetId"
+                           [selectpickerOptions]="model.paymentAssets"></lp-selectpicker>
+        </div>
+
+        <div class="form-group">
+          <label class="control-label">Select address</label>
+          <lp-selectpicker name="sourceAddress"
+                           [(ngModel)]="model.selectedWalletAddress"
+                           [selectpickerOptions]="model.sourceWalletAddresses"></lp-selectpicker>
+        </div>
+
+        <div class="form-group">
+          <label class="control-label">Or enter another address</label>
+
+          <div class="input-group">
+            <input type="text"
+                   class="form-control"
+                   name="manualAddress"
+                   [(ngModel)]="model.manualAddress">
+          </div>
+
+          <div *ngIf="validation.invalidDestinationAddress"
+               class="hint--error">
+            Provided address is not valid, please correct and try again.
+          </div>
+        </div>
+
+        <hr>
+        <div class="amount_total clearfix">
+          <div class="amount_total__title pull-left">Amount</div>
+          <div class="amount_total__value pull-right">{{model.amount}} {{model.paymentAsset?.displayId}}</div>
+        </div>
+
+        <div *ngIf="view.isLoading">
+          <div class="spinner"
+               style="width: 34px; height: 34px;">
+            <div class="spinner__inside"></div>
+          </div>
+        </div>
+
+        <div *ngIf="validation.unexpectedError">
+          <div class="icon_circle_wrapper icon_circle_wrapper--error">!</div>
+          <span class="hint--error">
+            Error occured, please contact support.
+          </span>
+        </div>
+      </form>
+
+      <div *ngIf="view.isSuccess">
+        <div class="icon_circle_wrapper">
+          <i class="icon icon--check_thin"></i>
+        </div>
+        <span>Refund successfully requested.</span>
+      </div>
+    </div>
+    <div class="modal_dialog__controls">
+      <div class="pull-right">
+        <button class="btn btn--flat _modal_dialog__cancel"
+                [hidden]="view.isSuccess"
+                (click)="close()">
+          Cancel and close
+        </button>
+        <button class="btn btn--primary"
+                [hidden]="view.isFirstLoading || loadingValidation.hasError || view.isSuccess"
+                [disabled]="view.isLoading || refundForm.invalid"
+                (click)="refund()">
+          Confirm
+        </button>
+        <button class="btn btn--primary"
+                *ngIf="view.isSuccess"
+                style="width: 128px;"
+                (click)="close()">
+          OK
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

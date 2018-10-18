@@ -1,7 +1,7 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule, ApplicationRef } from '@angular/core';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 // common
 import { AuthInterceptor } from './interceptors/AuthInterceptor';
@@ -35,8 +35,21 @@ import { PaymentsStatisticComponent } from './components/Payments/PaymentsStatis
 import { PaymentsTableComponent } from './components/Payments/PaymentsTable/PaymentsTable';
 import { PaymentStatusCssService } from './services/Payment/PaymentStatusCssService';
 
+import { InvoiceDetailsComponent } from './components/InvoiceDetails/InvoiceDetails';
+import { InvoicesApi } from './services/api/InvoicesApi';
+import { FileService } from './services/FileService';
+import { HistoryItemComponent } from './components/InvoiceDetails/History/HistoryItem';
+import { InvoiceDetailsShareDialogComponent } from './components/InvoiceDetails/InvoiceDetailsShareDialog/InvoiceDetailsShareDialog';
+import { EmailApi } from './services/api/EmailApi';
+import { InvoiceDetailsRefundDialogComponent } from './components/InvoiceDetails/InvoiceDetailsRefundDialog/InvoiceDetailsRefundDialog';
+import { RefundApi } from './services/api/RefundApi';
+
 @NgModule({
   declarations: [
+    InvoiceDetailsRefundDialogComponent,
+    InvoiceDetailsShareDialogComponent,
+    HistoryItemComponent,
+    InvoiceDetailsComponent,
     PaymentsComponent,
     PaymentsBalanceComponent,
     PaymentsFilterComponent,
@@ -57,19 +70,25 @@ import { PaymentStatusCssService } from './services/Payment/PaymentStatusCssServ
   imports: [
     BrowserModule,
     FormsModule,
+    ReactiveFormsModule,
     HttpClientModule
   ],
   providers: [
+    FileService,
     PaymentStatusCssService,
     ConfirmModalService,
+    RefundApi,
+    EmailApi,
+    InvoicesApi,
     PaymentsApi,
     ChangePasswordApi,
     SettingsApi,
     SignupApi,
     ResetPasswordApi,
-    { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },
+    { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true }
   ],
   entryComponents: [
+    InvoiceDetailsComponent,
     PaymentsComponent,
     ChangePasswordComponent,
     ConfirmModalComponent,
@@ -78,7 +97,6 @@ import { PaymentStatusCssService } from './services/Payment/PaymentStatusCssServ
     ResetPasswordComponent
   ]
 })
-
 export class AppModule {
   // app - reference to the running application (ApplicationRef)
   ngDoBootstrap(app: ApplicationRef) {
@@ -86,9 +104,12 @@ export class AppModule {
     // with their selectors (html host elements)
     const options = {};
 
+    // modal component should be first as it is global component
+    options[ConfirmModalComponent.Selector] = ConfirmModalComponent;
+    // other components
+    options[InvoiceDetailsComponent.Selector] = InvoiceDetailsComponent;
     options[PaymentsComponent.Selector] = PaymentsComponent;
     options[ChangePasswordComponent.Selector] = ChangePasswordComponent;
-    options[ConfirmModalComponent.Selector] = ConfirmModalComponent;
     options[SettingsComponent.Selector] = SettingsComponent;
     options[SignupComponent.Selector] = SignupComponent;
     options[ResetPasswordComponent.Selector] = ResetPasswordComponent;

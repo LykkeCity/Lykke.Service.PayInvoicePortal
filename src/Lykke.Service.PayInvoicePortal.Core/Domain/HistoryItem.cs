@@ -8,7 +8,7 @@ namespace Lykke.Service.PayInvoicePortal.Core.Domain
 {
     public class HistoryItem
     {
-        public EmployeeModel Author { get; set; }
+        public string AuthorFullName { get; set; }
 
         public InvoiceStatus Status { get; set; }
 

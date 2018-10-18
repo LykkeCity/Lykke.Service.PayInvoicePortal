@@ -42,10 +42,6 @@
             deleteFile: deleteFile
         };
 
-        vm.events = {
-            invoiceDraftEdit: undefined
-        };
-
         activate();
 
         function activate() {
@@ -54,10 +50,7 @@
                     destroy();
                 });
 
-            vm.events.invoiceDraftEdit = $scope.$on('invoiceDraftEdit',
-                function(evt, data) {
-                    open(data);
-                });
+            pubsubEvents.on('invoiceDraftEdit', invoiceDraftEditEventHandler);
 
             apiSvc.getAssets()
                 .then(
@@ -73,8 +66,13 @@
         }
 
         function destroy() {
-            if (vm.events.invoiceDraftEdit)
-                vm.events.invoiceDraftEdit();
+            pubsubEvents.off('invoiceDraftEdit', invoiceDraftEditEventHandler);
+        }
+
+        function invoiceDraftEditEventHandler(data) {
+            $scope.$apply(function() {
+                open(data);
+            })
         }
 
         function open(data) {
@@ -266,6 +264,8 @@
 
         function onChanged() {
             $rootScope.$broadcast('invoiceDraftUpdated', {});
+
+            pubsubEvents.emit('invoiceUpdated', {});
         }
     }
 })();

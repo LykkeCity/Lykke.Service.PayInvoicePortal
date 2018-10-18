@@ -1,4 +1,4 @@
-import { nameof, getParameterByName, isValidEmail } from './utils';
+import { nameof, getParameterByName, isValidEmail, getGuidFromPath } from './utils';
 
 describe('nameof', () => {
 
@@ -64,6 +64,32 @@ describe('isValidEmail', () => {
 
   it('should check invalid emails - not only letters in last domain', (() => {
     expect(isValidEmail('test@test.111aaa')).toBeFalsy();
+  }));
+
+});
+
+describe('getGuidFromPath', () => {
+
+  it('should check invalid path', (() => {
+    expect(getGuidFromPath('', '')).toBeNull();
+    expect(getGuidFromPath('/', '')).toBeNull();
+    expect(getGuidFromPath('/', '/')).toBeNull();
+    expect(getGuidFromPath('/', 'anypath')).toBeNull();
+    expect(getGuidFromPath('/anypath', '/anypath')).toBeNull();
+    expect(getGuidFromPath('/anypath', '/anypath/')).toBeNull();
+  }));
+
+  it('should check invalid guid', (() => {
+    expect(getGuidFromPath('/anypath/any', '/anypath')).toBeNull();
+    expect(getGuidFromPath('/anypath/f7fecca7', '/anypath')).toBeNull();
+    expect(getGuidFromPath('/anypath/f7fecca7-e51a-447c-a8b4-b4b5b2a4be6z', '/anypath')).toBeNull();
+  }));
+
+  it('should check valid guid', (() => {
+    const guid = 'f7fecca7-e51a-447c-a8b4-b4b5b2a4be68';
+    expect(getGuidFromPath(`/anypath/${guid}`, '/anypath')).toEqual(guid);
+    expect(getGuidFromPath(`/anypath/${guid}`, '/anypath/')).toEqual(guid);
+    expect(getGuidFromPath(`/anypath/${guid}/`, '/anypath/')).toEqual(guid);
   }));
 
 });

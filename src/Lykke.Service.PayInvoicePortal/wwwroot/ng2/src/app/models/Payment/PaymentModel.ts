@@ -10,6 +10,8 @@ export class PaymentModel {
     public clientEmail: string,
     public amount: number,
     public settlementAsset: AssetModel,
+    public paidAmount: number,
+    public paymentAssetId: string,
     public status: string,
     public dueDate: Date
   ) {}

@@ -24,7 +24,7 @@ namespace Lykke.Service.PayInvoicePortal.Controllers.Api
         }
 
         [HttpGet]
-        [Route("{fileId}")]
+        [Route("{fileId}/{invoiceId}")]
         public async Task<IActionResult> GetFileSync(string fileId, string invoiceId)
         {
             IEnumerable<FileInfoModel> files = await _payInvoiceClient.GetFilesAsync(invoiceId);

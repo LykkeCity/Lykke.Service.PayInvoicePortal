@@ -1,0 +1,197 @@
+<ng-container [ngSwitch]="model.status">
+  <div *ngSwitchCase="PaymentStatus[PaymentStatus.Draft]"
+       class="history_item">
+    <ng-container *ngTemplateOutlet="templateWithAuthor;
+      context:{historyItemText: 'Draft created'}"></ng-container>
+  </div>
+  <div *ngSwitchCase="PaymentStatus[PaymentStatus.Removed]"
+       class="history_item">
+    <ng-container *ngTemplateOutlet="templateWithAuthor;
+      context:{historyItemText: 'Removed'}"></ng-container>
+  </div>
+  <div *ngSwitchCase="PaymentStatus[PaymentStatus.Unpaid]"
+       class="history_item">
+    <ng-container *ngTemplateOutlet="templateWithAuthor"></ng-container>
+  </div>
+  <div *ngSwitchCase="PaymentStatus[PaymentStatus.Paid]"
+       class="history_item">
+    <ng-container *ngTemplateOutlet="templatePaidInProgressRefunded;
+      context:{
+        historyItemImgClass: 'history_item__img--success',
+        historyItemIconClass: 'icon--check_thin',
+        historyItemTitle: 'Payment'
+      }"></ng-container>
+  </div>
+  <!-- uncomment when will be needed -->
+  <!-- <div *ngSwitchCase="PaymentStatus[PaymentStatus.SettlementInProgress]"
+       class="history_item">
+    <ng-container *ngTemplateOutlet="templatePaidInProgressRefunded;
+      context:{
+        historyItemImgClass: 'history_item__img--success',
+        historyItemIconClass: 'icon--check_thin',
+        historyItemTitle: 'Settlement In Progress'
+      }"></ng-container>
+  </div> -->
+  <div *ngSwitchCase="PaymentStatus[PaymentStatus.RefundInProgress]"
+       class="history_item">
+    <ng-container *ngTemplateOutlet="templatePaidInProgressRefunded;
+      context:{
+        historyItemImgClass: 'history_item__img--refund-in-progress',
+        historyItemIconClass: 'icon--move_to_thin',
+        historyItemTitle: 'Refund'
+      }"></ng-container>
+  </div>
+  <div *ngSwitchCase="PaymentStatus[PaymentStatus.Refunded]"
+       class="history_item">
+    <ng-container *ngTemplateOutlet="templatePaidInProgressRefunded;
+      context:{
+        historyItemImgClass: 'history_item__img--refund',
+        historyItemIconClass: 'icon--move_to_thin',
+        historyItemTitle: 'Refund'
+      }"></ng-container>
+  </div>
+  <div *ngSwitchCase="PaymentStatus[PaymentStatus.Underpaid]"
+       class="history_item">
+    <ng-container *ngTemplateOutlet="templateError"></ng-container>
+  </div>
+  <div *ngSwitchCase="PaymentStatus[PaymentStatus.Overpaid]"
+       class="history_item">
+    <ng-container *ngTemplateOutlet="templateError"></ng-container>
+  </div>
+  <div *ngSwitchCase="PaymentStatus[PaymentStatus.LatePaid]"
+       class="history_item">
+    <ng-container *ngTemplateOutlet="templateError"></ng-container>
+  </div>
+  <div *ngSwitchCase="PaymentStatus[PaymentStatus.NotConfirmed]"
+       class="history_item">
+    <ng-container *ngTemplateOutlet="templateError;
+      context:{historyItemText: 'Transfer hasn\'t been confirmed'}"></ng-container>
+  </div>
+  <div *ngSwitchCase="PaymentStatus[PaymentStatus.InternalError]"
+       class="history_item">
+    <ng-container *ngTemplateOutlet="templateError;
+      context:{historyItemText: 'Internal error occurred'}"></ng-container>
+  </div>
+  <div *ngSwitchCase="PaymentStatus[PaymentStatus.PastDue]"
+       class="history_item">
+    <ng-container *ngTemplateOutlet="templateError;
+      context:{
+        historyItemTitle: 'PastDue',
+        historyItemText: 'Payment due date expired'
+      }"></ng-container>
+  </div>
+  <div *ngSwitchDefault></div>
+</ng-container>
+
+<ng-template #templateWithAuthor
+             let-historyItemText="historyItemText">
+  <div class="history_item__img">
+    <div class="_circle">{{getInitials(model.author)}}</div>
+  </div>
+  <div class="history_item__content">
+    <div class="pull-right label"
+         [ngClass]="view.getStatusCss(model.status)">
+      {{model.status}}
+    </div>
+    <div class="history_item__title">
+      <span>{{model.author}}</span>
+      <span class="middot">&nbsp;&middot;&nbsp;</span>
+      <div class="history_item__date">
+        {{model.date.format('hh:mm A MMMM D, YYYY')}}
+      </div>
+    </div>
+    <div class="history_item__text">
+      {{historyItemText}}
+      <ng-container *ngIf="model.status === PaymentStatus[PaymentStatus.Unpaid]">
+        Invoice generated: {{model.settlementAmount | number : '1.0-' + model.settlementAssetAccuracy}}
+        {{model.settlementAsset}} to be paid
+      </ng-container>
+    </div>
+  </div>
+</ng-template>
+
+<ng-template #templatePaidInProgressRefunded
+             let-historyItemImgClass="historyItemImgClass"
+             let-historyItemIconClass="historyItemIconClass"
+             let-historyItemTitle="historyItemTitle">
+  <div class="history_item__img"
+       [ngStyle]=""
+       [ngClass]="historyItemImgClass">
+    <div class="_circle">
+      <i class="icon"
+         [ngClass]="historyItemIconClass"></i>
+    </div>
+  </div>
+  <div class="history_item__content">
+    <div class="pull-right label"
+         [ngClass]="view.getStatusCss(model.status)">
+      {{model.status}}
+    </div>
+    <div class="history_item__title">
+      <span>{{historyItemTitle}}</span>
+      <span class="middot">&nbsp;&middot;&nbsp;</span>
+      <div class="history_item__date">
+        {{model.date.format('hh:mm A MMMM D, YYYY')}}
+      </div>
+    </div>
+    <div class="history_item__text">
+      <ng-container [ngSwitch]="model.status">
+        <ng-container *ngSwitchCase="PaymentStatus[PaymentStatus.Paid]">
+          <ng-container *ngTemplateOutlet="paidText"></ng-container>
+        </ng-container>
+        <!-- uncomment when will be needed -->
+        <!-- <ng-container *ngSwitchCase="PaymentStatus[PaymentStatus.SettlementInProgress]">
+          Transferred {{model.settlementAmount | number : '1.0-' + model.settlementAssetAccuracy}}
+          {{model.settlementAsset}} to LykkePay's account for settlement.
+        </ng-container> -->
+        <ng-container *ngSwitchCase="PaymentStatus[PaymentStatus.RefundInProgress]">
+            Refund requested.
+          </ng-container>
+        <ng-container *ngSwitchCase="PaymentStatus[PaymentStatus.Refunded]">
+          Refunded {{model.refundAmount | number : '1.0-' + model.paymentAssetAccuracy}}
+          {{model.paymentAsset}} to {{model.refundWalletAddress}}.
+        </ng-container>
+      </ng-container>
+    </div>
+  </div>
+</ng-template>
+
+<ng-template #templateError
+             let-historyItemTitle="historyItemTitle"
+             let-historyItemText="historyItemText">
+  <div class="history_item__img history_item__img--error">
+    <div class="_circle">
+      !
+    </div>
+  </div>
+  <div class="history_item__content">
+    <div class="pull-right label"
+         [ngClass]="view.getStatusCss(model.status)">
+      {{model.status}}
+    </div>
+    <div class="history_item__title">
+      <span>{{historyItemTitle || 'Error'}}</span>
+      <span class="middot">&nbsp;&middot;&nbsp;</span>
+      <div class="history_item__date">
+        {{model.date.format('hh:mm A MMMM D, YYYY')}}
+      </div>
+    </div>
+    <div class="history_item__text">
+      {{historyItemText}}
+      <ng-container *ngIf="model.status === PaymentStatus[PaymentStatus.Underpaid] ||
+        model.status === PaymentStatus[PaymentStatus.Overpaid] ||
+        model.status === PaymentStatus[PaymentStatus.LatePaid]">
+        <ng-container *ngTemplateOutlet="paidText"></ng-container>
+      </ng-container>
+    </div>
+  </div>
+</ng-template>
+
+<ng-template #paidText>
+  Transferred {{model.paidAmount | number : '1.0-' + model.paymentAssetAccuracy}}
+  {{model.paymentAsset}} from {{model.sourceWalletAddresses.join(', ')}},
+  expected {{model.paymentAmount | number : '1.0-' + model.paymentAssetAccuracy}} {{model.paymentAsset}}.
+  Exchange rate rate 1 {{model.paymentAsset}} = {{model.exchangeRate | number : '1.0-' +
+  model.settlementAssetAccuracy}}
+  {{model.settlementAsset}}.
+</ng-template>

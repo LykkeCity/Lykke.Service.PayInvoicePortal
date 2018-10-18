@@ -1,0 +1,229 @@
+<div *ngIf="view.isLoading"
+     class="main-page-loader">
+  <div class="spinner">
+    <div class="spinner__inside"></div>
+  </div>
+</div>
+
+<div class="invoice_page"
+     *ngIf="!view.isLoading && !view.hasError">
+  <div class="row">
+    <div class="col-md-8 automargin">
+      <div class="invoice_header">
+        <div class="row">
+          <div class="col-md-12">
+            <h1 class="page__title">Invoice&nbsp;#{{model.number}}</h1>
+            <div class="invoice_header__link"
+                 *ngIf="view.canPay">
+              <a href="{{view.invoiceCheckoutUrl}}">{{view.invoiceCheckoutUrl}}</a>
+              <button class="btn btn--icon"
+                      type="button"
+                      [lpCopyText]="view.invoiceCheckoutUrl">
+                <i class="btn__svg_icon svg_icon svg_icon--copy"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div class="invoice_header__desc">
+          <div class="invoice_header__data">{{model.createdDate && model.createdDate.format('LLLL')}}</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="invoice_actions">
+    <div class="invoice_actions__qr"
+         *ngIf="view.canPay">
+      <img src="https://chart.googleapis.com/chart?chs=138x138&chld=L|0&cht=qr&chl={{view.encodedInvoiceCheckoutUrl}}"
+           alt="qr"
+           width="138"
+           height="138">
+    </div>
+    <div class="invoice_actions__menu">
+      <div class="invoice_controls">
+        <button class="btn btn--flat btn--default invoice_controls__btn"
+                *ngIf="view.canRefund"
+                (click)="openRefundDialog()">
+          <i class="icon icon--send"></i>
+          Refund
+        </button>
+        <button class="btn btn--flat btn--default invoice_controls__btn"
+                *ngIf="view.canRefresh"
+                (click)="refresh()">
+          <i class="icon icon--exchange"></i>
+          Refresh
+        </button>
+        <button class="btn btn--flat btn--default invoice_controls__btn"
+                *ngIf="view.canShare"
+                (click)="share()">
+          <i class="icon icon--share"></i>
+          Share
+        </button>
+        <button class="btn btn--flat btn--default invoice_controls__btn"
+                *ngIf="view.canEdit"
+                (click)="edit()">
+          <i class="icon icon--edit_alt"
+             style="font-size: 22px;"></i>
+          Edit
+        </button>
+        <button class="btn btn--flat btn--default invoice_controls__btn _delete_draft_invoice"
+                *ngIf="view.canDelete"
+                (click)="delete()">
+          <i class="icon icon--delete"></i>
+          Delete
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-md-8 automargin">
+      <div class="asset_link_list asset_link_list--thin">
+        <div class="row">
+          <div class="col-md-6">
+            <div class="asset_link">
+              <div class="asset_link__info">
+                <div class="asset_link__title">Client</div>
+                <div class="asset_link__desc">{{model.clientName}}</div>
+              </div>
+            </div>
+            <div class="asset_link">
+              <div class="asset_link__info">
+                <div class="asset_link__title">Email</div>
+                <div class="asset_link__desc">{{model.clientEmail}}</div>
+              </div>
+            </div>
+            <div class="asset_link">
+              <div class="asset_link__info">
+                <div class="asset_link__title">Status</div>
+                <div class="asset_link__desc">
+                  <div class="pull-right label"
+                       [ngClass]="view.getStatusCss(model.status)">{{model.status}}</div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="asset_link">
+              <div class="asset_link__info">
+                <div class="asset_link__title">Amount</div>
+                <div class="asset_link__desc">{{model.amount | number : '1.0-' + model.settlementAssetAccuracy}}</div>
+              </div>
+            </div>
+            <div class="asset_link">
+              <div class="asset_link__info">
+                <div class="asset_link__title">Currency</div>
+                <div class="asset_link__desc">{{model.settlementAssetDisplay}}</div>
+              </div>
+            </div>
+            <div class="asset_link">
+              <div class="asset_link__info">
+                <div class="asset_link__title">Pay due date</div>
+                <div class="asset_link__desc">{{model.dueDate.format('LLLL')}}</div>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-12"
+               *ngIf="model.note">
+            <div class="asset_link">
+              <div class="asset_link__info">
+                <div class="asset_link__title">Note</div>
+                <div class="asset_link__desc">{{model.note}}</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div *ngIf="model.files.length">
+        <div class="form_header">
+          <h3>Attachment</h3>
+        </div>
+
+        <div class="attachment_list attachment_list--download">
+          <div class="asset_link_list">
+            <div class="asset_link asset_link--alt"
+                 *ngFor="let file of model.files">
+              <div class="asset_link__icon">
+                <div class="asset_icon asset_icon--red"
+                     (click)="getFile(file)">
+                  {{view.getFileExtension(file.name)}}
+                </div>
+              </div>
+              <div class="asset_link__action">
+                <button class="btn btn--icon"
+                        (click)="getFile(file)">
+                  <i class="btn__svg_icon svg_icon svg_icon--upload"></i>
+                </button>
+              </div>
+              <div class="asset_link__info">
+                <div class="asset_link__title"
+                     (click)="getFile(file)">{{file.name}}</div>
+                <div class="asset_link__desc">{{view.getFileSize(file.size)}}</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="blockchain_settlement_btn"
+           *ngIf="view.showBcnLink && view.isEthereumPaymentAsset">
+        <a href="{{view.ethereumBlockchainExplorerUrl}}/address/{{model.walletAddress}}#tokentxns"
+           class="btn btn--flat"
+           target="_blank">
+          <img src="/img/bl_explorer_logo.svg"
+               width="40"
+               alt="bl_explorer_logo">
+          <span>Blockchain Settlement</span>
+        </a>
+      </div>
+      <div class="blockchain_settlement_btn"
+           *ngIf="view.showBcnLink && !view.isEthereumPaymentAsset">
+        <a href="{{view.blockchainExplorerUrl}}/address/{{model.walletAddress}}"
+           class="btn btn--flat"
+           target="_blank">
+          <img src="/img/bl_explorer_logo.svg"
+               width="40"
+               alt="bl_explorer_logo">
+          <span>Blockchain Settlement</span>
+        </a>
+      </div>
+
+      <div class="form_header">
+        <h3>History</h3>
+      </div>
+
+      <div class="history_list">
+        <lp-history-item *ngFor="let historyItem of model.history"
+                         [historyItem]="historyItem"></lp-history-item>
+        <!-- <div class="history_item">
+          <div class="history_item__img">
+            <div class="_circle">DJ</div>
+          </div>
+          <div class="history_item__content">
+            <div class="pull-right label label--gray">Draft</div>
+            <div class="history_item__title">
+              Dustin James
+              <span class="middot">&middot;</span>
+              <div class="history_item__date">08:22 AM January 10, 2018</div>
+            </div>
+            <div class="history_item__text">Draft created</div>
+          </div>
+        </div> -->
+      </div>
+    </div>
+  </div>
+</div>
+
+<lp-invoice-details-refund-dialog #refundDialog
+                                  [show]="showRefundDialog"
+                                  (closeDialog)="closeRefundDialog()"
+                                  [paymentRequestId]="model.paymentRequestId"
+                                  (refreshInvoice)="refresh()"></lp-invoice-details-refund-dialog>
+
+<lp-invoice-details-share-dialog [show]="showShareDialog"
+                                 (closeDialog)="closeShareDialog()"
+                                 [invoiceId]="model.id"
+                                 [invoiceNumber]="model.number"
+                                 [invoiceCheckoutUrl]="view.invoiceCheckoutUrl"></lp-invoice-details-share-dialog>
