@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { SignupApi } from '../../services/api/SignupApi';
 import { SignupModel } from './SignupModel';
-import { ROUTE_SIGNIN_PAGE } from '../../constants/routes';
+import { ROUTE_GET_STARTED_PAGE } from '../../constants/routes';
 import { isValidEmail } from '../../utils/utils';
 import { ErrorResponse } from '../../models/ErrorResponse';
 import { HttpErrorResponse } from '@angular/common/http';
@@ -21,7 +21,9 @@ export class SignupComponent implements OnInit {
     return !isValidEmail(this.model.employeeEmail);
   }
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    this.model.hostUrl = location.origin;
+  }
 
   onToggleVisibilityPassword(): void {
     this.view.isVisiblePassword = !this.view.isVisiblePassword;
@@ -33,8 +35,7 @@ export class SignupComponent implements OnInit {
 
     this.api.signup(this.model).subscribe(
       res => {
-        console.log(res);
-        window.location.href = ROUTE_SIGNIN_PAGE;
+        window.location.href = `${ROUTE_GET_STARTED_PAGE}?email=${this.model.employeeEmail}`;
       },
       (httpResponseError: HttpErrorResponse) => {
         this.view.isLoading = false;
@@ -50,6 +51,9 @@ export class SignupComponent implements OnInit {
               case 'MerchantEmailExist':
               case 'EmployeeEmailExist':
                 this.validation.emailExistError = true;
+                return;
+              case 'EmailNotSent':
+                this.validation.emailNotSent = true;
                 return;
             }
           } else if (
@@ -81,12 +85,14 @@ class View {
 class Validation {
   merchantExistError: boolean;
   emailExistError: boolean;
+  emailNotSent: boolean;
   hasModelErrors: boolean;
   modelErrors: {};
   unexpectedError: boolean;
   reset(): void {
     this.merchantExistError = false;
     this.emailExistError = false;
+    this.emailNotSent = false;
     this.hasModelErrors = false;
     this.modelErrors = {};
     this.unexpectedError = false;

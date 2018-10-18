@@ -1,0 +1,26 @@
+﻿@using Lykke.Service.PayInvoicePortal.Controllers
+@{
+    ViewData["Title"] = "Confirm your email";
+}
+
+@await Html.PartialAsync("Partials/GetStartedNav")
+
+<article class="content">
+    <section class="section section--lead">
+        <div class="container">
+            <div class="block_status">
+                <div class="message_icon message_icon--green">
+                    <img src="/img/successful_icn.svg" alt="wait" width="60">
+                </div>
+
+                <div class="block_status__title">Welcome to Lykke Pay!</div>
+                <div class="block_status__text text-center">
+                    Please confirm your Email by clicking the link we sent to <br>
+                    <a href="javascript:void(0)">
+                        <b>@ViewBag.Email</b>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+</article>

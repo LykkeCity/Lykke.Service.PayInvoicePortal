@@ -4,4 +4,5 @@ export class SignupModel {
   employeeLastName = '';
   employeeEmail = '';
   employeePassword = '';
+  hostUrl = '';
 }

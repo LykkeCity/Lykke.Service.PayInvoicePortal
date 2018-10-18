@@ -9,7 +9,11 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Mvc;
 using Lykke.Service.PayInternal.Client;
 using System.Linq;
+using Common;
+using Lykke.Common.Log;
 using Lykke.Service.PayInternal.Client.Models.SupervisorMembership;
+using Common.Log;
+using Lykke.Service.PayInvoicePortal.Controllers.User;
 
 namespace Lykke.Service.PayInvoicePortal.Controllers
 {
@@ -18,13 +22,16 @@ namespace Lykke.Service.PayInvoicePortal.Controllers
     {
         private readonly IAuthService _authService;
         private readonly IPayInternalClient _payInternalClient;
+        private readonly ILog _log;
 
         public AuthController(
             IAuthService authService,
-            IPayInternalClient payInternalClient)
+            IPayInternalClient payInternalClient,
+            ILogFactory logFactory)
         {
             _authService = authService;
             _payInternalClient = payInternalClient;
+            _log = logFactory.CreateLog(this);
         }
 
         [HttpGet]
@@ -52,12 +59,24 @@ namespace Lykke.Service.PayInvoicePortal.Controllers
             if (!ModelState.IsValid)
                 return View(vm);
 
-            EmployeeModel employee = await _authService.ValidateAsync(model.Login, model.Password);
+            var result = await _authService.ValidateAsync(model.Login, model.Password);
+
+            var employee = result.Employee;
 
             if (employee == null || employee.IsDeleted)
             {
                 ModelState.AddModelError(string.Empty, "The e-mail or password you entered incorrect.");
                 return View(vm);
+            }
+
+            if (result.ValidateResult.ForceEmailConfirmation)
+            {
+                _log.Info($"Login with unconfirmed email, details: {result.ValidateResult.ToJson()}");
+
+                return RedirectToAction(nameof(SignupController.GetStarted), "Signup", new
+                {
+                    email = employee.Email
+                });
             }
 
             SupervisorMembershipResponse supervisorMembership =
