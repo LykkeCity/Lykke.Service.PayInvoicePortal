@@ -59,7 +59,9 @@ namespace Lykke.Service.PayInvoicePortal.Controllers.Api.User
         {
             var email = User.GetEmail();
 
-            var employee = await _authService.ValidateAsync(email, model.CurrentPassword);
+            var result = await _authService.ValidateAsync(email, model.CurrentPassword);
+
+            var employee = result.Employee;
 
             if (employee == null)
             {
