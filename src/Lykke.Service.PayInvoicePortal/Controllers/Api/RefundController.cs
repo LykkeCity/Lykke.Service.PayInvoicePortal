@@ -123,9 +123,9 @@ namespace Lykke.Service.PayInvoicePortal.Controllers.Api
             }
             catch (RefundErrorResponseException ex)
             {
-                _log.ErrorWithDetails(ex, details: new { errorCode = ex.Error.Code.ToString(), model });
+                _log.ErrorWithDetails(ex, details: new { errorCode = ex.Error?.Code.ToString(), model });
 
-                return BadRequest(ErrorResponse.Create(ex.Error.Code.ToString()));
+                return BadRequest(ErrorResponse.Create(ex.Error?.Code.ToString()));
             }
         }
     }

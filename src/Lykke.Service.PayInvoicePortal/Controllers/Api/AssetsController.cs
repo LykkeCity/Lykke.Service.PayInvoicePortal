@@ -51,14 +51,18 @@ namespace Lykke.Service.PayInvoicePortal.Controllers.Api
         {
             IReadOnlyDictionary<string, string> assets = await _assetService.GetPaymentAssetsAsync(merchantId, settlementAssetId);
 
-            var model = assets.Select(async o => new AssetItemViewModel
+            var assetItemViewModels = assets.Select(o => new AssetItemViewModel
             {
                 Id = o.Key,
-                Title = o.Value,
-                Network = await _assetService.GetAssetNetworkAsync(o.Key)
+                Title = o.Value
             });
 
-            return Json(model);
+            foreach (var assetItemViewModel in assetItemViewModels)
+            {
+                assetItemViewModel.Network = await _assetService.GetAssetNetworkAsync(assetItemViewModel.Id);
+            }
+
+            return Json(assetItemViewModels);
         }
 
         [Authorize]
