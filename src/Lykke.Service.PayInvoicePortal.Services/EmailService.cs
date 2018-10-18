@@ -93,5 +93,31 @@ namespace Lykke.Service.PayInvoicePortal.Services
 
             return true;
         }
+
+        public async Task<bool> SendEmailConfirmationAsync(string fullName, string emailConfirmationLink, IReadOnlyList<string> addresses)
+        {
+            try
+            {
+                await _emailPartnerRouterClient.Send(new SendEmailCommand
+                {
+                    ApplicationId = Constants.EmailApplicationId,
+                    EmailAddresses = addresses.ToArray(),
+                    Template = "lykkepay_confirm_email",
+                    Payload = new Dictionary<string, string>
+                    {
+                        {"FullName", fullName},
+                        {"EmailConfirmationLink", emailConfirmationLink},
+                        {"Year", DateTime.Today.Year.ToString()}
+                    }
+                });
+            }
+            catch (Exception ex)
+            {
+                _log.ErrorWithDetails(ex, new { emailConfirmationLink , addresses });
+                return false;
+            }
+
+            return true;
+        }
     }
 }

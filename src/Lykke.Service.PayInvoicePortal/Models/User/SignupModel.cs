@@ -30,5 +30,8 @@ namespace Lykke.Service.PayInvoicePortal.Models.User
         [MinLength(6)]
         [MaxLength(128)]
         public string EmployeePassword { get; set; }
+
+        [Required]
+        public string HostUrl { get; set; }
     }
 }
