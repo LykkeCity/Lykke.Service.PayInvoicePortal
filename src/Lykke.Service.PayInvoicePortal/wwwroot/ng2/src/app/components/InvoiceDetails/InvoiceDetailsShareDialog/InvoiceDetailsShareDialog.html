@@ -1,0 +1,83 @@
+<div [hidden]="!show">
+  <aside class="menu_overlay menu_overlay--open"
+         (click)="overlayClick($event)"></aside>
+  <div class="modal_dialog modal_dialog--open modal_dialog_share">
+    <div class="modal_dialog__title">
+      Share Invoice #{{invoiceNumber}}
+    </div>
+    <div class="modal_dialog__text">
+      <form [formGroup]="shareForm"
+            class="form_settings">
+        <div class="form-group">
+          <div class="input-group">
+            <input type="text"
+                   id="link"
+                   class="form-control form-control--readonly"
+                   value="{{invoiceCheckoutUrl}}"
+                   readonly>
+            <i class="icon icon--copy input-group-addon"
+               [lpCopyText]="invoiceCheckoutUrl"></i>
+          </div>
+        </div>
+
+        <hr>
+        <p>Please enter e-mail(s) of recipient(s):</p>
+        <div class="form-group">
+          <div class="input-group input-group--suggest"
+               [ngClass]="{'input-group--error': emails.touched && emails.invalid}">
+            <label class="control-label">To:</label>
+            <input type="text"
+                   class="form-control _suggest"
+                   #emailsElement
+                   [formControl]="emails"
+                   placeholder="" />
+          </div>
+          <div class="hint"
+               *ngIf="emails.untouched">
+            Type e-mail and press &lt;Enter&gt;
+          </div>
+          <div class="hint hint--error"
+               *ngIf="emails.touched">
+            <div *ngIf="emails.hasError('required')">Required</div>
+            <div *ngIf="emails.hasError('anyInvalid')">
+              Email has not a valid format (text@text.domain)
+            </div>
+          </div>
+        </div>
+
+        <div *ngIf="isLoading">
+          <div class="spinner"
+               style="width: 34px; height: 34px;">
+            <div class="spinner__inside"></div>
+          </div>
+        </div>
+
+        <div *ngIf="isError"
+             class="hint--error">
+          Error occured, please contact support.
+        </div>
+
+        <div *ngIf="isSuccess"
+             style="text-align: center">
+          <div class="icon_circle_wrapper">
+            <i class="icon icon--check_thin"></i>
+          </div>
+          <span>Successfully sent.</span>
+        </div>
+      </form>
+    </div>
+    <div class="modal_dialog__controls">
+      <div class="pull-right">
+        <button class="btn btn--flat _modal_dialog__cancel"
+                (click)="close()">
+          Cancel and close
+        </button>
+        <button class="btn btn--primary"
+                [disabled]="isLoading || shareForm.untouched || shareForm.invalid"
+                (click)="send()">
+          Send invoice
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

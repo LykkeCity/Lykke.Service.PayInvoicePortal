@@ -1,7 +1,7 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule, ApplicationRef } from '@angular/core';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 // common
 import { AuthInterceptor } from './interceptors/AuthInterceptor';
@@ -39,9 +39,12 @@ import { InvoiceDetailsComponent } from './components/InvoiceDetails/InvoiceDeta
 import { InvoicesApi } from './services/api/InvoicesApi';
 import { FileService } from './services/FileService';
 import { HistoryItemComponent } from './components/InvoiceDetails/History/HistoryItem';
+import { InvoiceDetailsShareDialogComponent } from './components/InvoiceDetails/InvoiceDetailsShareDialog/InvoiceDetailsShareDialog';
+import { EmailApi } from './services/api/EmailApi';
 
 @NgModule({
   declarations: [
+    InvoiceDetailsShareDialogComponent,
     HistoryItemComponent,
     InvoiceDetailsComponent,
     PaymentsComponent,
@@ -64,19 +67,21 @@ import { HistoryItemComponent } from './components/InvoiceDetails/History/Histor
   imports: [
     BrowserModule,
     FormsModule,
+    ReactiveFormsModule,
     HttpClientModule
   ],
   providers: [
     FileService,
     PaymentStatusCssService,
     ConfirmModalService,
+    EmailApi,
     InvoicesApi,
     PaymentsApi,
     ChangePasswordApi,
     SettingsApi,
     SignupApi,
     ResetPasswordApi,
-    { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },
+    { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true }
   ],
   entryComponents: [
     InvoiceDetailsComponent,
@@ -88,7 +93,6 @@ import { HistoryItemComponent } from './components/InvoiceDetails/History/Histor
     ResetPasswordComponent
   ]
 })
-
 export class AppModule {
   // app - reference to the running application (ApplicationRef)
   ngDoBootstrap(app: ApplicationRef) {

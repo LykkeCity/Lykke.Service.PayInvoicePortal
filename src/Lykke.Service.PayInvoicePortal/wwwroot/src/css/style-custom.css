@@ -104,3 +104,18 @@ input[type=number]::-webkit-outer-spin-button {
 
 .table_invoices .payment_paid_info {
   display: none; }
+
+.icon_circle_wrapper {
+  background-color: #13B72A;
+  border-radius: 100px;
+  color: #fff;
+  display: inline-block;
+  font-size: 20px;
+  line-height: 30px;
+  margin-right: 5px;
+  text-align: center;
+  width: 30px; }
+  .icon_circle_wrapper > i {
+    margin-right: 0; }
+  .icon_circle_wrapper--error {
+    background-color: #FF3E2E; }
