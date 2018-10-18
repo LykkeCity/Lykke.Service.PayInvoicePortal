@@ -1,4 +1,4 @@
-import { Component, OnInit, NgZone } from '@angular/core';
+import { Component, OnInit, NgZone, ViewChild } from '@angular/core';
 import { ConfirmModalService } from '../../services/ConfirmModalService';
 import { InvoicesApi } from '../../services/api/InvoicesApi';
 import { InvoiceDetailsResponse } from './InvoiceDetailsResponse';
@@ -13,6 +13,7 @@ import { getGuidFromPath } from '../../utils/utils';
 import { PaymentStatusCssService } from '../../services/Payment/PaymentStatusCssService';
 import { FileModel } from '../../models/FileModel';
 import { FileService } from '../../services/FileService';
+import { InvoiceDetailsRefundDialogComponent } from './InvoiceDetailsRefundDialog/InvoiceDetailsRefundDialog';
 
 declare const pubsubEvents: any;
 declare const moment: any;
@@ -22,13 +23,16 @@ declare const moment: any;
   templateUrl: './InvoiceDetails.html'
 })
 export class InvoiceDetailsComponent
-  implements OnInit, IInvoiceDetailsHandlers, IShareDialog {
+  implements OnInit, IInvoiceDetailsHandlers, IShareDialog, IRefundDialog {
   static readonly Selector = 'lp-invoice-details';
   model = new InvoiceModel();
 
   view = new View(this.paymentStatusCssService, this.fileService);
-
+  showRefundDialog: boolean;
   showShareDialog: boolean;
+
+  @ViewChild(InvoiceDetailsRefundDialogComponent)
+  refundDialog: InvoiceDetailsRefundDialogComponent;
 
   onInvoiceUpdated(): void {
     this.zone.run(() => {
@@ -85,6 +89,15 @@ export class InvoiceDetailsComponent
 
   getFile(file: FileModel): void {
     window.open(`/api/files/${file.id}/${this.model.id}`);
+  }
+
+  openRefundDialog(): void {
+    this.refundDialog.loadRefundData();
+    this.showRefundDialog = true;
+  }
+
+  closeRefundDialog(): void {
+    this.showRefundDialog = false;
   }
 
   refresh(): void {
@@ -182,6 +195,7 @@ export class InvoiceDetailsComponent
       invoice.settlementAssetAccuracy,
       invoice.paymentAsset,
       invoice.paymentAssetNetwork,
+      invoice.paymentRequestId,
       invoice.walletAddress,
       moment(invoice.createdDate),
       invoice.note
@@ -208,6 +222,13 @@ export class InvoiceDetailsComponent
 
     this.view.canPay =
       this.model.status === PaymentStatus[PaymentStatus.Unpaid];
+    this.view.canRefund =
+      this.model.walletAddress &&
+      [
+        PaymentStatus[PaymentStatus.Underpaid],
+        PaymentStatus[PaymentStatus.Overpaid],
+        PaymentStatus[PaymentStatus.LatePaid]
+      ].indexOf(this.model.status) > -1;
     this.view.canRefresh =
       this.model.status !== PaymentStatus[PaymentStatus.Draft] &&
       this.model.status !== PaymentStatus[PaymentStatus.Removed];
@@ -251,6 +272,12 @@ interface IViewHandlers {
   getStatusCss: (_: string) => string;
   getFileExtension: (_: string) => string;
   getFileSize: (_: number) => string;
+}
+
+interface IRefundDialog {
+  showRefundDialog: boolean;
+  openRefundDialog: () => void;
+  closeRefundDialog: () => void;
 }
 
 interface IShareDialog {

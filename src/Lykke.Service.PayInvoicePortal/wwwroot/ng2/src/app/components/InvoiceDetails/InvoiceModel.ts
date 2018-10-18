@@ -15,6 +15,7 @@ export class InvoiceModel {
     public settlementAssetAccuracy: string= '',
     public paymentAsset: string = '',
     public paymentAssetNetwork: string = '',
+    public paymentRequestId: string = '',
     public walletAddress: string = '',
     public createdDate: string = '',
     public note: string = ''

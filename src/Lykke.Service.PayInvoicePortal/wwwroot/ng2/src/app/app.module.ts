@@ -41,9 +41,12 @@ import { FileService } from './services/FileService';
 import { HistoryItemComponent } from './components/InvoiceDetails/History/HistoryItem';
 import { InvoiceDetailsShareDialogComponent } from './components/InvoiceDetails/InvoiceDetailsShareDialog/InvoiceDetailsShareDialog';
 import { EmailApi } from './services/api/EmailApi';
+import { InvoiceDetailsRefundDialogComponent } from './components/InvoiceDetails/InvoiceDetailsRefundDialog/InvoiceDetailsRefundDialog';
+import { RefundApi } from './services/api/RefundApi';
 
 @NgModule({
   declarations: [
+    InvoiceDetailsRefundDialogComponent,
     InvoiceDetailsShareDialogComponent,
     HistoryItemComponent,
     InvoiceDetailsComponent,
@@ -74,6 +77,7 @@ import { EmailApi } from './services/api/EmailApi';
     FileService,
     PaymentStatusCssService,
     ConfirmModalService,
+    RefundApi,
     EmailApi,
     InvoicesApi,
     PaymentsApi,

@@ -35,8 +35,7 @@ namespace Lykke.Service.PayInvoicePortal.Services
     {
         private readonly HashSet<InvoiceStatus> _excludeStatusesFromHistory = new HashSet<InvoiceStatus>
         {
-            InvoiceStatus.InProgress,
-            InvoiceStatus.RefundInProgress
+            InvoiceStatus.InProgress
         };
         private readonly HashSet<InvoiceStatus> _getOnlyFirstStatusesFromHistory = new HashSet<InvoiceStatus>
         {

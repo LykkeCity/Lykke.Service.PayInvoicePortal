@@ -32,6 +32,15 @@
         historyItemTitle: 'Settlement In Progress'
       }"></ng-container>
   </div> -->
+  <div *ngSwitchCase="PaymentStatus[PaymentStatus.RefundInProgress]"
+       class="history_item">
+    <ng-container *ngTemplateOutlet="templatePaidInProgressRefunded;
+      context:{
+        historyItemImgClass: 'history_item__img--refund-in-progress',
+        historyItemIconClass: 'icon--move_to_thin',
+        historyItemTitle: 'Refund'
+      }"></ng-container>
+  </div>
   <div *ngSwitchCase="PaymentStatus[PaymentStatus.Refunded]"
        class="history_item">
     <ng-container *ngTemplateOutlet="templatePaidInProgressRefunded;
@@ -106,6 +115,7 @@
              let-historyItemIconClass="historyItemIconClass"
              let-historyItemTitle="historyItemTitle">
   <div class="history_item__img"
+       [ngStyle]=""
        [ngClass]="historyItemImgClass">
     <div class="_circle">
       <i class="icon"
@@ -134,6 +144,9 @@
           Transferred {{model.settlementAmount | number : '1.0-' + model.settlementAssetAccuracy}}
           {{model.settlementAsset}} to LykkePay's account for settlement.
         </ng-container> -->
+        <ng-container *ngSwitchCase="PaymentStatus[PaymentStatus.RefundInProgress]">
+            Refund requested.
+          </ng-container>
         <ng-container *ngSwitchCase="PaymentStatus[PaymentStatus.Refunded]">
           Refunded {{model.refundAmount | number : '1.0-' + model.paymentAssetAccuracy}}
           {{model.paymentAsset}} to {{model.refundWalletAddress}}.

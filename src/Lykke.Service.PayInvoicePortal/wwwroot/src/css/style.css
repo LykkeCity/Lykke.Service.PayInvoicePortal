@@ -3437,11 +3437,18 @@ input[type="number"]::-webkit-outer-spin-button, input[type="number"]::-webkit-i
 
 .sidebar_menu { z-index: 999999; }
 
-.modal_dialog_share { width: 570px; }
+.modal_dialog_share, .modal_dialog_refund { width: 570px; }
 
-.modal_dialog_share hr { margin: 30px 0; margin: 1.875rem 0; }
+.modal_dialog_share hr, .modal_dialog_refund hr { margin: 30px 0; margin: 1.875rem 0; }
 
-.modal_dialog_share p { margin-bottom: 15px; margin-bottom: 0.9375rem; }
+.modal_dialog_share p, .modal_dialog_refund p { margin-bottom: 15px; margin-bottom: 0.9375rem; }
+
+.amount_total { color: #333333; line-height: 1.67; margin-top: -12px; margin-top: -0.75rem; font-size: 18px; font-size: 1.125rem; }
+
+.amount_total__title { opacity: .6; }
+
+.amount_total__value { text-align: right; max-width: 60%; }
+
 
 .invoice_header { margin-bottom: 75px; margin-bottom: 4.6875rem; }
 

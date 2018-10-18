@@ -168,3 +168,11 @@ input[type=number]::-webkit-outer-spin-button {
         background-color: #FF3E2E;
     }
 }
+
+.history_item__img {
+    &--refund-in-progress {
+        ._circle {
+            background-color: #0388ef;
+        }
+    }
+}
