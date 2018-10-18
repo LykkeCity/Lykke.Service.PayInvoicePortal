@@ -153,6 +153,10 @@
     Email is already in use.
   </div>
   <div class="hint--error"
+       *ngIf="validation.emailNotSent">
+    Confirmation email has not been sent, please contact support.
+  </div>
+  <div class="hint--error"
        *ngIf="validation.hasModelErrors">
     <div class="form-group">Please correct input data and try again.</div>
     <div class="form-group"

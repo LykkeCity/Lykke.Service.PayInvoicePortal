@@ -3450,6 +3450,36 @@ input[type="number"]::-webkit-outer-spin-button, input[type="number"]::-webkit-i
 .amount_total__value { text-align: right; max-width: 60%; }
 
 
+.block_status { width: 590px; max-width: 100%; margin-left: auto; margin-right: auto; padding: 10vH 0; }
+
+.block_status__title { font-family: "Akrobat", "Segoe UI", Roboto, "Droid Sans", "Helvetica Neue", Arial, sans-serif; font-weight: bold; line-height: 1.33; text-align: center; color: #111111; font-size: 30px; font-size: 1.875rem; margin-bottom: 28px; margin-bottom: 1.75rem; }
+
+.block_status__text { line-height: 1.59; color: #333333; font-size: 22px; font-size: 1.375rem; margin-bottom: 60px; margin-bottom: 3.75rem; }
+
+.block_status__button { text-align: center; }
+
+.block_status__button .btn { min-width: 207px; max-width: 100%; }
+
+.block_status__decline_list { line-height: 1.67; color: #333333; margin-top: 25px; margin-top: 1.5625rem; font-size: 18px; font-size: 1.125rem; }
+
+.block_status__decline_list li { margin-bottom: 15px; margin-bottom: 0.9375rem; }
+
+.block_status__decline_list .icon { position: relative; top: -2px; font-size: 30px; font-size: 1.875rem; }
+
+@media all and (max-width: 767px) { .block_status { padding: 20px 0; } }
+
+.contact_hint { text-align: center; padding: 20px 0; padding: 1.25rem 0; }
+
+.contact_hint a { font-weight: 600; }
+
+.message_icon { border-radius: 100px; text-align: center; color: #fff; background-color: #0388ef; margin-left: auto; margin-right: auto; margin-bottom: 30px; margin-bottom: 1.875rem; width: 90px; width: 5.625rem; height: 90px; height: 5.625rem; line-height: 86px; line-height: 5.375rem; }
+
+.message_icon img { width: 60px; width: 3.75rem; }
+
+.message_icon--green { background-color: #13B72A; }
+
+.message_icon--red { background-color: #FF3E2E; }
+
 .invoice_header { margin-bottom: 75px; margin-bottom: 4.6875rem; }
 
 .invoice_header:after, .invoice_header:before { content: ""; display: table; clear: both; }

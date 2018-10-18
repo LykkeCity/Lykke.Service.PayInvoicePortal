@@ -26,6 +26,16 @@ namespace Lykke.Service.PayInvoicePortal.Constants
             /// Employee with such email exist
             /// </summary>
             public const string EmployeeEmailExist = nameof(EmployeeEmailExist);
+
+            /// <summary>
+            /// Email sending problem occured
+            /// </summary>
+            public const string EmailNotSent = nameof(EmailNotSent);
+
+            public static class EmailConfirmation
+            {
+                public const string InvalidToken = nameof(InvalidToken);
+            }
         }
 
         public static class ChangePassword

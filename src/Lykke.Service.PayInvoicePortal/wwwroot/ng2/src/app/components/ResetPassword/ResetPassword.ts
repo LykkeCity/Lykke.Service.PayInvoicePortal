@@ -42,7 +42,6 @@ export class ResetPasswordComponent implements OnInit {
 
     this.api.resetPassword(model).subscribe(
       res => {
-        console.log(res);
         window.location.href = ROUTE_SIGNIN_PAGE;
       },
       error => {
