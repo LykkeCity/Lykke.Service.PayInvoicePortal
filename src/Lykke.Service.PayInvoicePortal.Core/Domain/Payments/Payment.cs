@@ -17,5 +17,7 @@ namespace Lykke.Service.PayInvoicePortal.Core.Domain.Payments
         public string SettlementAssetId { get; set; }
         public Asset SettlementAsset { get; set; }
         public DateTime CreatedDate { get; set; }
+        public decimal PaidAmount { get; set; }
+        public string PaymentAssetId { get; set; }
     }
 }

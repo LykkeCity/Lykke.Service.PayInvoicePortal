@@ -28,39 +28,35 @@ namespace Lykke.Service.PayInvoicePortal.Services
             _log = logFactory.CreateLog(this);
         }
 
-        public async Task<EmployeeModel> ValidateAsync(string email, string password)
+        public async Task<(EmployeeModel Employee, ValidateResultModel ValidateResult)> ValidateAsync(string email, string password)
         {
-            ValidateResultModel response;
+            ValidateResultModel validateResult;
 
             try
             {
-                response = await _payAuthClient.ValidatePasswordAsync(email, password);
+                validateResult = await _payAuthClient.ValidatePasswordAsync(email, password);
             }
             catch (Exception ex)
             {
                 _log.Error(ex);
-                return null;
+                return (null, null);
             }
 
-            if (!response.Success)
+            if (!validateResult.Success)
             {
                 _log.Warning("The e-mail or password you entered incorrect.");
-                return null;
+                return (null, null);
             }
 
             try
             {
-                return await _payInvoiceClient.GetEmployeeAsync(response.EmployeeId);
+                return (await _payInvoiceClient.GetEmployeeAsync(validateResult.EmployeeId), validateResult);
             }
             catch (Exception ex)
             {
-                _log.ErrorWithDetails(ex, new
-                    {
-                        response.MerchantId,
-                        response.EmployeeId
-                    });
+                _log.ErrorWithDetails(ex, details: validateResult.ToJson());
 
-                return null;
+                return (null, null);
             }
         }
     }

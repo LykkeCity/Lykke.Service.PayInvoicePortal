@@ -1,0 +1,48 @@
+﻿@using Lykke.Service.PayInvoicePortal.Constants
+@{
+    ViewData["Title"] = "Email confirmation error";
+
+    bool isInvalidToken =
+        ViewData.ModelState.Values.FirstOrDefault()?.Errors.FirstOrDefault()?.ErrorMessage
+        == PayInvoicePortalApiErrorCodes.Signup.EmailConfirmation.InvalidToken;
+}
+
+<article class="content">
+    <section class="section section--lead">
+        <div class="container">
+            <div class="row">
+                <div class="col-sm-8 col-md-6 automargin">
+                    @if (!ViewData.ModelState.IsValid)
+                    {
+                        <div class="form_status">
+                            <div class="error_page">
+                                <span class="status_icon status_icon--warning"></span>
+                            </div>
+
+                            @if (isInvalidToken)
+                            {
+                                <h2>
+                                    Email confirmation token is invalid or expired.
+                                </h2>
+                            }
+                            else
+                            {
+                                <h2>
+                                    Unexpected error occured during email confirmation.
+                                </h2>
+                            }
+
+                            <p>
+                                You can contact our support for assistance:
+                                <a href="mailto:support@lykke.com">support@lykke.com</a>
+                            </p>
+                            <div class="form_status__button text-center">
+                                <a href="@Url.Action("Welcome", "Welcome")" class="btn">Go Home</a>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </section>
+</article>

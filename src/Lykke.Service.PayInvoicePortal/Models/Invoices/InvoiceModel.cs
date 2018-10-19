@@ -17,6 +17,7 @@ namespace Lykke.Service.PayInvoicePortal.Models.Invoices
         public int SettlementAssetAccuracy { get; set; }
         public string PaymentAsset { get; set; }
         public string PaymentAssetNetwork { get; set; }
+        public string PaymentRequestId { get; set; }
         public string WalletAddress { get; set; }
         public DateTime CreatedDate { get; set; }
         public string Note { get; set; }

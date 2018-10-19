@@ -4,6 +4,7 @@ using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using Common.Log;
+using Lykke.Common.Cache;
 using Lykke.Common.Log;
 using Lykke.Service.Assets.Client.Models;
 using Lykke.Service.PayInternal.Client;
@@ -13,6 +14,7 @@ using Lykke.Service.PayInternal.Client.Models.Asset;
 using Lykke.Service.PayInvoice.Client;
 using Lykke.Service.PayInvoicePortal.Core.Extensions;
 using Lykke.Service.PayInvoicePortal.Core.Services;
+using Microsoft.Extensions.Caching.Memory;
 
 namespace Lykke.Service.PayInvoicePortal.Services
 {
@@ -22,17 +24,22 @@ namespace Lykke.Service.PayInvoicePortal.Services
         private readonly IPayInternalClient _payInternalClient;
         private readonly IPayInvoiceClient _payInvoiceClient;
         private readonly ILykkeAssetsResolver _lykkeAssetsResolver;
+        private readonly OnDemandDataCache<Dictionary<string, BlockchainType>> _assetsNetworkCache;
+        private readonly OnDemandDataCache<Tuple<BlockchainType>> _assetBlockchainTypeCache;
         private readonly ILog _log;
 
         public AssetService(
             IPayInternalClient payInternalClient,
             IPayInvoiceClient payInvoiceClient,
             ILykkeAssetsResolver lykkeAssetsResolver,
+            IMemoryCache memoryCache,
             ILogFactory logFactory)
         {
             _payInternalClient = payInternalClient;
             _payInvoiceClient = payInvoiceClient;
             _lykkeAssetsResolver = lykkeAssetsResolver;
+            _assetsNetworkCache = new OnDemandDataCache<Dictionary<string, BlockchainType>>(memoryCache);
+            _assetBlockchainTypeCache = new OnDemandDataCache<Tuple<BlockchainType>>(memoryCache);
             _log = logFactory.CreateLog(this);
         }
 
@@ -160,23 +167,54 @@ namespace Lykke.Service.PayInvoicePortal.Services
 
         }
 
-            public async Task<IReadOnlyDictionary<string, BlockchainType>> GetAssetsNetworkAsync()
+        public async Task<BlockchainType> GetAssetNetworkAsync(string assetId)
         {
-            var result = new Dictionary<string, BlockchainType>();
+            var result = await _assetBlockchainTypeCache.GetOrAddAsync
+            (
+                $"AssetBlockchainTypeCache-{assetId}",
+                async _ =>
+                {
+                    try
+                    {
+                        var assetsNetwork = await GetAssetsNetworkAsync();
 
-            try
-            {
-                IEnumerable<AssetGeneralSettingsResponse> response =
-                    await _payInternalClient.GetAssetGeneralSettingsAsync();
+                        return assetsNetwork.TryGetValue(assetId, out var network) ? new Tuple<BlockchainType>(network) : new Tuple<BlockchainType>(BlockchainType.None);
+                    }
+                    catch (Exception ex)
+                    {
+                        _log.Error(ex);
+                        return null;
+                    }
+                }
+            );
 
-                result = response.ToDictionary(x => x.AssetDisplayId, x => x.Network);
-            }
-            catch (Exception ex)
-            {
-                _log.Error(ex);
-            }
+            return result?.Item1 ?? BlockchainType.None;
+        }
 
-            return result;
+        private async Task<IReadOnlyDictionary<string, BlockchainType>> GetAssetsNetworkAsync()
+        {
+            var result = await _assetsNetworkCache.GetOrAddAsync
+            (
+                "AssetsNetworkCache",
+                async _ => {
+                    try
+                    {
+                        IEnumerable<AssetGeneralSettingsResponse> response =
+                            await _payInternalClient.GetAssetGeneralSettingsAsync();
+
+                        return response.ToDictionary(x => x.AssetDisplayId, x => x.Network);
+                    }
+                    catch (Exception ex)
+                    {
+                        _log.Error(ex);
+                        return null;
+                    }
+                },
+                // cache for a small period in order to foreach in memory on assets if any asset has not yet cached
+                TimeSpan.FromSeconds(1)
+            );
+
+            return result ?? new Dictionary<string, BlockchainType>();
         }
     }
 }

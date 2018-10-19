@@ -9,6 +9,7 @@ using AutoMapper;
 using Common.Log;
 using Lykke.Common.Api.Contract.Responses;
 using Lykke.Common.Log;
+using Lykke.Service.PayInternal.Client.Models;
 using Lykke.Service.PayInvoice.Client;
 using Lykke.Service.PayInvoice.Client.Models.File;
 using Lykke.Service.PayInvoicePortal.Core.Domain;
@@ -19,6 +20,7 @@ using Lykke.Service.PayInvoicePortal.Models;
 using Lykke.Service.PayInvoicePortal.Models.Invoices;
 using Lykke.Service.PayInvoicePortal.Models.Invoices.Statistic;
 using Lykke.Service.PayInvoicePortal.Services.Extensions;
+using LykkePay.Common.Validation;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -30,37 +32,81 @@ namespace Lykke.Service.PayInvoicePortal.Controllers.Api
     public class InvoicesController : Controller
     {
         private readonly IInvoiceService _invoiceService;
+        private readonly IAssetService _assetService;
         private readonly ILog _log;
 
         public InvoicesController(
             IInvoiceService invoiceService,
+            IAssetService assetService,
             ILogFactory logFactory)
         {
             _invoiceService = invoiceService;
+            _assetService = assetService;
             _log = logFactory.CreateLog(this);
         }
 
         [HttpGet]
         [Route("{invoiceId}")]
-        public async Task<IActionResult> GetByIdAsync(string invoiceId)
+        [ValidateModel]
+        public async Task<IActionResult> GetByIdAsync([Guid] string invoiceId)
         {
-            var model = await GetInvoiceModelById(invoiceId);
-            return Json(model);
+            try
+            {
+                var model = await GetInvoiceModelById(invoiceId);
+            
+                return Ok(model);
+            }
+            catch (ErrorResponseException ex) when (ex.StatusCode == HttpStatusCode.NotFound)
+            {
+                return NotFound();
+            }
         }
 
+        [HttpGet]
+        [Route("details/{invoiceId}")]
+        [ValidateModel]
+        public async Task<IActionResult> GetInvoiceDetails([Guid] string invoiceId)
+        {
+            try
+            {
+                var invoice = await GetInvoiceModelById(invoiceId);
+
+                var response = new InvoiceDetailsResponse
+                {
+                    Invoice = invoice,
+                    BlockchainExplorerUrl = Startup.BlockchainExplorerUrl.TrimEnd('/'),
+                    EthereumBlockchainExplorerUrl = Startup.EthereumBlockchainExplorerUrl.TrimEnd('/')
+                };
+
+                return Ok(response);
+            }
+            catch (ErrorResponseException ex) when (ex.StatusCode == HttpStatusCode.NotFound)
+            {
+                return NotFound();
+            }
+        }
+        
         private async Task<InvoiceModel> GetInvoiceModelById(string invoiceId)
         {
+            var merchantId = User.GetMerchantId();
+
             var invoiceTask = _invoiceService.GetByIdAsync(invoiceId);
             var filesTask = _invoiceService.GetFilesAsync(invoiceId);
-            var historyTask = _invoiceService.GetHistoryAsync(User.GetMerchantId(), invoiceId);
+            var historyTask = _invoiceService.GetHistoryAsync(merchantId, invoiceId);
 
-            await Task.WhenAll(invoiceTask, filesTask, historyTask);
+            await Task.WhenAll(
+                invoiceTask,
+                filesTask,
+                historyTask
+            );
 
-            var model = Mapper.Map<InvoiceModel>(invoiceTask.Result);
-            model.Files = Mapper.Map<List<FileModel>>(filesTask.Result);
-            model.History = Mapper.Map<List<HistoryItemModel>>(historyTask.Result);
+            var invoice = Mapper.Map<InvoiceModel>(invoiceTask.Result);
+            invoice.Files = Mapper.Map<List<FileModel>>(filesTask.Result);
+            invoice.History = Mapper.Map<List<HistoryItemModel>>(historyTask.Result);
 
-            return model;
+            invoice.PaymentAssetNetwork = (await _assetService.GetAssetNetworkAsync(invoice.PaymentAsset)).ToString();
+
+            return invoice;
         }
         
         [HttpGet]

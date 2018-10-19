@@ -13,6 +13,6 @@ namespace Lykke.Service.PayInvoicePortal.Core.Services
         Task<IReadOnlyDictionary<string, string>> GetSettlementAssetsAsync(string merchantId);
         Task<IReadOnlyDictionary<string, string>> GetPaymentAssetsAsync(string merchantId, string settlementAssetId);
         Task<IReadOnlyDictionary<string, string>> GetPaymentAssetsAsync(string merchantId);
-        Task<IReadOnlyDictionary<string, BlockchainType>> GetAssetsNetworkAsync();
+        Task<BlockchainType> GetAssetNetworkAsync(string assetId);
     }
 }

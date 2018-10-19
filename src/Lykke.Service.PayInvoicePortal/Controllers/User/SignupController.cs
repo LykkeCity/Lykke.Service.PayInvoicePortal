@@ -26,10 +26,13 @@ namespace Lykke.Service.PayInvoicePortal.Controllers.User
 {
     public class SignupController : Controller
     {
+        private const int TokenLength = 48;
+
         private readonly IPayMerchantClient _payMerchantClient;
         private readonly IPayAuthClient _payAuthClient;
         private readonly IPayInvoiceClient _payInvoiceClient;
         private readonly ISignupService _signupService;
+        private readonly IEmailService _emailService;
         private readonly ILog _log;
 
         public SignupController(
@@ -37,12 +40,14 @@ namespace Lykke.Service.PayInvoicePortal.Controllers.User
             IPayAuthClient payAuthClient,
             IPayInvoiceClient payInvoiceClient,
             ISignupService signupService,
+            IEmailService emailService,
             ILogFactory logFactory)
         {
             _payMerchantClient = payMerchantClient;
             _payAuthClient = payAuthClient;
             _payInvoiceClient = payInvoiceClient;
             _signupService = signupService;
+            _emailService = emailService;
             _log = logFactory.CreateLog(this);
         }
 
@@ -68,6 +73,8 @@ namespace Lykke.Service.PayInvoicePortal.Controllers.User
             if (!_signupService.EnableSignup)
                 return Forbid();
 
+            _log.Info($"Signup started for merchant {model.MerchantName} by {HttpContext?.Connection?.RemoteIpAddress?.ToString().SanitizeIp()}");
+
             var merchantId = _signupService.GetIdFromName(model.MerchantName);
 
             #region Validate
@@ -75,7 +82,7 @@ namespace Lykke.Service.PayInvoicePortal.Controllers.User
             try
             {
                 var merchant = await _payMerchantClient.Api.GetByIdAsync(merchantId);
-                
+
                 if (merchant != null)
                     return BadRequest(ErrorResponse.Create(PayInvoicePortalApiErrorCodes.Signup.MerchantExist));
             }
@@ -127,8 +134,25 @@ namespace Lykke.Service.PayInvoicePortal.Controllers.User
                     EmployeeId = employee.Id,
                     MerchantId = merchant.Id,
                     Email = model.EmployeeEmail,
-                    Password = model.EmployeePassword
+                    Password = model.EmployeePassword,
+                    ForceEmailConfirmation = true
                 });
+
+                var token = employee.Id.ToBase64();
+
+                var sent = await _emailService.SendEmailConfirmationAsync(
+                    $"{employee.FirstName} {employee.LastName}",
+                    $"{model.HostUrl.TrimEnd('/')}/signup/confirmEmail/{token}",
+                    new[]
+                    {
+                        employee.Email
+                    }
+                );
+
+                if (!sent)
+                {
+                    return BadRequest(ErrorResponse.Create(PayInvoicePortalApiErrorCodes.Signup.EmailNotSent));
+                }
             }
             catch (ClientApiException e) when (e.HttpStatusCode == HttpStatusCode.BadRequest &&
                                                e.ErrorResponse.ErrorMessage ==
@@ -146,6 +170,86 @@ namespace Lykke.Service.PayInvoicePortal.Controllers.User
             _log.Info($"Signup success for merchant {model.MerchantName} by {HttpContext?.Connection?.RemoteIpAddress?.ToString().SanitizeIp()}");
 
             return Ok();
+        }
+
+        [HttpGet]
+        [Route("signup/getStarted")]
+        public async Task<IActionResult> GetStarted([FromQuery] string email)
+        {
+            ViewBag.Email = email;
+            return View("../User/GetStarted");
+        }
+
+        [HttpGet]
+        [Route("signup/getStartedConfirmed")]
+        public async Task<IActionResult> GetStartedConfirmed()
+        {
+            return View("../User/GetStartedConfirmed");
+        }
+
+        [HttpGet]
+        [Route("signup/confirmEmail/{token}")]
+        public async Task<IActionResult> ConfirmEmail(string token)
+        {
+            _log.Info($"Email confirmation opened with token '{token}' by {HttpContext?.Connection?.RemoteIpAddress?.ToString().SanitizeIp()}");
+
+            try
+            {
+                var validateTokenResult = ValidateToken(token);
+
+                EmployeeModel employee = null;
+
+                if (validateTokenResult != null)
+                {
+                    try
+                    {
+                        employee = await _payInvoiceClient.GetEmployeeAsync(validateTokenResult);
+                    }
+                    catch (ErrorResponseException e) when (e.StatusCode == HttpStatusCode.NotFound)
+                    {
+                        _log.Warning($"Invalid token provided: {token}. Employee with {validateTokenResult} is not found.");
+                    }
+                }
+
+                if (employee == null)
+                {
+                    _log.Warning($"Invalid token provided: {token}");
+
+                    ModelState.AddModelError(string.Empty, PayInvoicePortalApiErrorCodes.Signup.EmailConfirmation.InvalidToken);
+
+                    return View("../User/ConfirmEmailError");
+                }
+
+                await _payAuthClient.SetEmailConfirmedAsync(new EmailConfirmedRequest
+                {
+                    Email = employee.Email
+                });
+
+                _log.Info($"Email confirmation successfully finished with token '{token}'");
+
+                return RedirectToAction(nameof(GetStartedConfirmed), "Signup");
+            }
+            catch (Exception e)
+            {
+                _log.Error(e, $"Token {token}");
+
+                ModelState.AddModelError(string.Empty, PayInvoicePortalApiErrorCodes.UnexpectedError);
+
+                return View("../User/ConfirmEmailError");
+            }
+        }
+
+        private string ValidateToken(string token)
+        {
+            if (string.IsNullOrEmpty(token) || token.Length != TokenLength)
+                return null;
+
+            var value = token.Base64ToString();
+
+            if (!value.IsGuid())
+                return null;
+
+            return value;
         }
     }
 }
