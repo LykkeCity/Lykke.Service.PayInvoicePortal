@@ -3449,7 +3449,6 @@ input[type="number"]::-webkit-outer-spin-button, input[type="number"]::-webkit-i
 
 .amount_total__value { text-align: right; max-width: 60%; }
 
-
 .block_status { width: 590px; max-width: 100%; margin-left: auto; margin-right: auto; padding: 10vH 0; }
 
 .block_status__title { font-family: "Akrobat", "Segoe UI", Roboto, "Droid Sans", "Helvetica Neue", Arial, sans-serif; font-weight: bold; line-height: 1.33; text-align: center; color: #111111; font-size: 30px; font-size: 1.875rem; margin-bottom: 28px; margin-bottom: 1.75rem; }
