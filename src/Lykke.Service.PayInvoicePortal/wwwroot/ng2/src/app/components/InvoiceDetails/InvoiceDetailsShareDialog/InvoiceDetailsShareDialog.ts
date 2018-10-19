@@ -125,6 +125,9 @@ export class InvoiceDetailsShareDialogComponent implements AfterViewInit {
       res => {
         this.isLoading = false;
         this.isSuccess = true;
+
+        // clear emails
+        this.emailsValue = [];
         this.emails.reset();
         this.initTags({ isRefresh: true });
       },
