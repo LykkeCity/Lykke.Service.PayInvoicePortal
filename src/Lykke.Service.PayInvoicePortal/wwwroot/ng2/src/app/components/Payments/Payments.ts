@@ -1,12 +1,16 @@
 import { Component, OnInit, OnDestroy, NgZone } from '@angular/core';
 import { PagerModel } from '../../models/PagerModel';
 import { ConfirmModalService } from '../../services/ConfirmModalService';
-import { PaymentsFilterModel, PaymentsFilterLocalStorageKeys } from './PaymentsFilter/PaymentsFilterModel';
+import { PaymentsFilterModel } from './PaymentsFilter/PaymentsFilterModel';
 import { PaymentModel } from '../../models/Payment/PaymentModel';
 import { PaymentsApi } from '../../services/api/PaymentsApi';
 import { interval, Subscription } from 'rxjs';
 import { AssetModel } from '../../models/AssetModel';
 import { PaymentsResponse } from './PaymentsResponse';
+import { UserService } from 'src/app/services/UserService';
+import { UserApi } from 'src/app/services/api/UserApi';
+import { UserInfoModel } from 'src/app/models/UserInfoModel';
+import { PaymentsFilterLocalStorageKeys } from './PaymentsFilter/PaymentsFilterLocalStorageKeys';
 
 declare const pubsubEvents: any;
 declare const moment: any;
@@ -65,6 +69,8 @@ export class PaymentsComponent implements OnInit, OnDestroy, IPaymentsHandlers {
   constructor(
     private zone: NgZone,
     private api: PaymentsApi,
+    private userApi: UserApi,
+    private userService: UserService,
     private confirmModalService: ConfirmModalService
   ) {}
 
@@ -82,31 +88,21 @@ export class PaymentsComponent implements OnInit, OnDestroy, IPaymentsHandlers {
       }
     );
 
-    // init filter values
-    const period = localStorage.getItem(PaymentsFilterLocalStorageKeys.Period);
-    const type = localStorage.getItem(PaymentsFilterLocalStorageKeys.Type);
-    const status = localStorage.getItem(PaymentsFilterLocalStorageKeys.Status);
-    const searchText = localStorage.getItem(PaymentsFilterLocalStorageKeys.SearchText);
+    this.view.isLoading = true;
 
-    if (period) {
-      this.filter.period = Number(period);
-    }
+    this.userApi.getUserInfo().subscribe(
+      (res: UserInfoModel) => {
+        this.userService.user = res;
+        this.initFilterAndLoadData();
+      },
+      error => {
+        console.error(error);
+        this.confirmModalService.showErrorModal();
+        this.view.isLoading = false;
+      }
+    );
 
-    if (type) {
-      this.filter.type = Number(type);
-    }
-
-    if (status) {
-      this.filter.status = status;
-    }
-
-    if (searchText) {
-      this.filter.searchText = searchText;
-    }
-
-    // load data and make subsriptions
-    this.loadPayments();
-
+    // make subsriptions
     this.reloadSubscriber = this.reloadInterval.subscribe(_ =>
       this.loadPayments()
     );
@@ -128,6 +124,50 @@ export class PaymentsComponent implements OnInit, OnDestroy, IPaymentsHandlers {
     }
   }
 
+  private initFilterAndLoadData() {
+    // init filter values
+    const period = localStorage.getItem(
+      PaymentsFilterLocalStorageKeys.Period(this.userService.user)
+    );
+    const type = localStorage.getItem(
+      PaymentsFilterLocalStorageKeys.Type(this.userService.user)
+    );
+    const status = localStorage.getItem(
+      PaymentsFilterLocalStorageKeys.Status(this.userService.user)
+    );
+    const searchText = localStorage.getItem(
+      PaymentsFilterLocalStorageKeys.SearchText(this.userService.user)
+    );
+
+    if (period) {
+      this.filter.period = Number(period);
+    } else {
+      this.filter.initPeriod();
+    }
+
+    if (type) {
+      this.filter.type = Number(type);
+    } else {
+      this.filter.initType();
+    }
+
+    if (status) {
+      this.filter.status = status;
+    } else {
+      this.filter.initStatus();
+    }
+
+    if (searchText) {
+      this.filter.searchText = searchText;
+    } else {
+      this.filter.initSearchText();
+    }
+
+    this.filter.isFilterInitialized = true;
+
+    this.loadPayments();
+  }
+
   private loadPayments(caller = LoadPaymentsCaller.Filter): void {
     switch (caller) {
       case LoadPaymentsCaller.ShowMore:
@@ -139,6 +179,7 @@ export class PaymentsComponent implements OnInit, OnDestroy, IPaymentsHandlers {
     }
 
     this.view.showNoResults = false;
+    this.view.showNoResultsForPeriod = false;
 
     const params = {
       period: this.filter.period,
@@ -188,7 +229,15 @@ export class PaymentsComponent implements OnInit, OnDestroy, IPaymentsHandlers {
         }
 
         if (res.payments.length === 0) {
-          this.view.showNoResults = true;
+          if (
+            this.filter.type !== this.filter.typeDefaultValue ||
+            this.filter.status !== this.filter.statusDefaultValue ||
+            this.filter.searchText
+          ) {
+            this.view.showNoResults = true;
+          } else {
+            this.view.showNoResultsForPeriod = true;
+          }
         }
 
         this.view.isShowMoreLoading = false;
@@ -233,6 +282,7 @@ class View {
   hasPayments: boolean;
   showNoResults: boolean;
   hasMorePayments: boolean;
+  showNoResultsForPeriod: boolean;
   get showNoInvoices(): boolean {
     return !this.isFirstLoading && !this.hasPayments;
   }

@@ -43,6 +43,8 @@ import { InvoiceDetailsShareDialogComponent } from './components/InvoiceDetails/
 import { EmailApi } from './services/api/EmailApi';
 import { InvoiceDetailsRefundDialogComponent } from './components/InvoiceDetails/InvoiceDetailsRefundDialog/InvoiceDetailsRefundDialog';
 import { RefundApi } from './services/api/RefundApi';
+import { UserApi } from './services/api/UserApi';
+import { UserService } from './services/UserService';
 
 @NgModule({
   declarations: [
@@ -74,9 +76,11 @@ import { RefundApi } from './services/api/RefundApi';
     HttpClientModule
   ],
   providers: [
+    UserService,
     FileService,
     PaymentStatusCssService,
     ConfirmModalService,
+    UserApi,
     RefundApi,
     EmailApi,
     InvoicesApi,

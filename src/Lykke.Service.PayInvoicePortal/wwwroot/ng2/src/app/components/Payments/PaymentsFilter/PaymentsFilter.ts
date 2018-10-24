@@ -1,14 +1,13 @@
-import { Component, Input, OnInit, Output, EventEmitter } from '@angular/core';
-import {
-  PaymentsFilterModel,
-  PaymentsFilterLocalStorageKeys
-} from './PaymentsFilterModel';
+import { Component, Input, Output, EventEmitter } from '@angular/core';
+import { PaymentsFilterModel } from './PaymentsFilterModel';
+import { UserService } from 'src/app/services/UserService';
+import { PaymentsFilterLocalStorageKeys } from './PaymentsFilterLocalStorageKeys';
 
 @Component({
   selector: PaymentsFilterComponent.Selector,
   templateUrl: './PaymentsFilter.html'
 })
-export class PaymentsFilterComponent implements OnInit, IPaymentFilterHandlers {
+export class PaymentsFilterComponent implements IPaymentFilterHandlers {
   static readonly Selector = 'lp-payments-filter';
 
   @Input('filter')
@@ -17,57 +16,87 @@ export class PaymentsFilterComponent implements OnInit, IPaymentFilterHandlers {
   @Output()
   filterChanged = new EventEmitter<PaymentsFilterModel>();
 
+  constructor(private userService: UserService) {}
+
   private firstChange = {
     period: true,
     type: true,
     status: true
   };
 
-  ngOnInit(): void {}
-
   onChangedPeriod(period): void {
+    if (!this.model.isFilterInitialized) {
+      return;
+    }
+
     if (this.firstChange.period) {
       this.firstChange.period = false;
       return;
     }
 
-    localStorage.setItem(PaymentsFilterLocalStorageKeys.Period, period);
+    localStorage.setItem(
+      PaymentsFilterLocalStorageKeys.Period(this.userService.user),
+      period
+    );
 
     this.emitFilterChanged();
   }
 
   onChangedType(type): void {
+    if (!this.model.isFilterInitialized) {
+      return;
+    }
+
     if (this.firstChange.type) {
       this.firstChange.type = false;
       return;
     }
 
-    localStorage.setItem(PaymentsFilterLocalStorageKeys.Type, type);
+    localStorage.setItem(
+      PaymentsFilterLocalStorageKeys.Type(this.userService.user),
+      type
+    );
 
     this.emitFilterChanged();
   }
 
   onChangedStatus(status): void {
+    if (!this.model.isFilterInitialized) {
+      return;
+    }
+
     if (this.firstChange.status) {
       this.firstChange.status = false;
       return;
     }
 
-    localStorage.setItem(PaymentsFilterLocalStorageKeys.Status, status);
+    localStorage.setItem(
+      PaymentsFilterLocalStorageKeys.Status(this.userService.user),
+      status
+    );
 
     this.emitFilterChanged();
   }
 
   onChangedSearch(searchText): void {
-    localStorage.setItem(PaymentsFilterLocalStorageKeys.SearchText, searchText);
+    if (!this.model.isFilterInitialized) {
+      return;
+    }
 
+    localStorage.setItem(
+      PaymentsFilterLocalStorageKeys.SearchText(this.userService.user),
+      searchText
+    );
     this.emitFilterChanged();
   }
 
   clearSearchText(): void {
     if (this.model.searchText) {
       this.model.searchText = '';
-      localStorage.setItem(PaymentsFilterLocalStorageKeys.SearchText, '');
+      localStorage.setItem(
+        PaymentsFilterLocalStorageKeys.SearchText(this.userService.user),
+        ''
+      );
       this.emitFilterChanged();
     }
   }
