@@ -58,7 +58,7 @@ namespace Lykke.Service.PayInvoicePortal.Services
                     take);
             }
 
-            var isOnlyInvoices= statuses.Count == 1 && statuses.First() == InvoiceStatus.Draft;
+            var isOnlyInvoices = statuses.Count == 1 && statuses.First() == InvoiceStatus.Draft;
 
             if ((type == PaymentType.All || type == PaymentType.Api) &&
                 !isOnlyInvoices)

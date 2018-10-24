@@ -34,7 +34,6 @@ export class PaymentsFilterComponent implements IPaymentFilterHandlers {
       return;
     }
 
-    console.log('onChangedPeriod', period);
     localStorage.setItem(
       PaymentsFilterLocalStorageKeys.Period(this.userService.user),
       period
@@ -53,7 +52,6 @@ export class PaymentsFilterComponent implements IPaymentFilterHandlers {
       return;
     }
 
-    console.log('onChangedType', type);
     localStorage.setItem(
       PaymentsFilterLocalStorageKeys.Type(this.userService.user),
       type
@@ -72,7 +70,6 @@ export class PaymentsFilterComponent implements IPaymentFilterHandlers {
       return;
     }
 
-    console.log('onChangedStatus', status);
     localStorage.setItem(
       PaymentsFilterLocalStorageKeys.Status(this.userService.user),
       status
@@ -90,7 +87,6 @@ export class PaymentsFilterComponent implements IPaymentFilterHandlers {
       PaymentsFilterLocalStorageKeys.SearchText(this.userService.user),
       searchText
     );
-    console.log('onChangedSearch');
     this.emitFilterChanged();
   }
 
