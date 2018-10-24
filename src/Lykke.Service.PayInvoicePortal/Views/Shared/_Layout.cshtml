@@ -91,7 +91,7 @@
                                 {
                                     <span style="color:red">Test</span>
                                 }
-                                else if (string.IsNullOrEmpty(Startup.PortalTestnetUrl))
+                                else if (Startup.DeploymentEnvironment == DeploymentEnvironment.Sandbox)
                                 {
                                     <span style="color:red">Sandbox</span>
                                 }
