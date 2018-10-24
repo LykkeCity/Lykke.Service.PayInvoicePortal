@@ -179,6 +179,7 @@ export class PaymentsComponent implements OnInit, OnDestroy, IPaymentsHandlers {
     }
 
     this.view.showNoResults = false;
+    this.view.showNoResultsForPeriod = false;
 
     const params = {
       period: this.filter.period,
