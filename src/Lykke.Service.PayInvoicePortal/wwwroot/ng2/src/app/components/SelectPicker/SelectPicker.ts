@@ -48,12 +48,14 @@ export class SelectPickerComponent
   selectpickerElement: ElementRef;
   private previousItem: string;
   private needRefresh: boolean;
+  private isInitialized: boolean;
 
   ngAfterViewInit() {
     setTimeout(() => {
       $(this.selectpickerElement.nativeElement).selectpicker({
         mobile: window['isMobile']
       });
+      this.isInitialized = true;
     });
   }
 
@@ -65,8 +67,13 @@ export class SelectPickerComponent
   }
 
   // #region NgModel
+  // the ngModel value has been set in code
   writeValue(value: any): void {
     this.onChangedSelectedItem(value);
+
+    if (this.isInitialized && (value !== undefined || value !== null)) {
+      this.refresh();
+    }
   }
   registerOnChange(fn: any): void {
     this.onChange = fn;
@@ -101,9 +108,13 @@ export class SelectPickerComponent
   ngAfterViewChecked(): void {
     if (this.needRefresh) {
       this.needRefresh = false;
-      setTimeout(() => {
-        $(this.selectpickerElement.nativeElement).selectpicker('refresh');
-      });
+      this.refresh();
     }
+  }
+
+  private refresh(): void {
+    setTimeout(() => {
+      $(this.selectpickerElement.nativeElement).selectpicker('refresh');
+    });
   }
 }
