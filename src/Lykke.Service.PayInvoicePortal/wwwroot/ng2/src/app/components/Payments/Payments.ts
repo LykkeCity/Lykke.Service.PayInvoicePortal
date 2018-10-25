@@ -230,7 +230,7 @@ export class PaymentsComponent implements OnInit, OnDestroy, IPaymentsHandlers {
 
         if (res.payments.length === 0) {
           if (
-            this.filter.type !== this.filter.typeDefaultValue ||
+            this.filter.type.toString() !== this.filter.typeDefaultValue.toString() ||
             this.filter.status !== this.filter.statusDefaultValue ||
             this.filter.searchText
           ) {
