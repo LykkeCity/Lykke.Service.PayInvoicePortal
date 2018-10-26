@@ -21,8 +21,11 @@
         </div>
 
         <hr>
-        <p>Please enter e-mail(s) of recipient(s):</p>
-        <div class="form-group">
+        <p [hidden]="isSuccess">
+          Please enter e-mail(s) of recipient(s):
+        </p>
+        <div class="form-group"
+             [hidden]="isSuccess">
           <div class="input-group input-group--suggest"
                [ngClass]="{'input-group--error': emails.touched && emails.invalid}">
             <label class="control-label">To:</label>
@@ -57,8 +60,7 @@
           Error occured, please contact support.
         </div>
 
-        <div *ngIf="isSuccess"
-             style="text-align: center">
+        <div *ngIf="isSuccess">
           <div class="icon_circle_wrapper">
             <i class="icon icon--check_thin"></i>
           </div>
@@ -69,13 +71,20 @@
     <div class="modal_dialog__controls">
       <div class="pull-right">
         <button class="btn btn--flat _modal_dialog__cancel"
+                [hidden]="isSuccess"
                 (click)="close()">
           Cancel and close
         </button>
         <button class="btn btn--primary"
+                [hidden]="isSuccess"
                 [disabled]="isLoading || shareForm.untouched || shareForm.invalid"
                 (click)="send()">
           Send invoice
+        </button>
+        <button class="btn btn--flat _modal_dialog__cancel"
+                *ngIf="isSuccess"
+                (click)="close()">
+          Close
         </button>
       </div>
     </div>
