@@ -191,7 +191,7 @@
   Transferred {{model.paidAmount | number : '1.0-' + model.paymentAssetAccuracy}}
   {{model.paymentAsset}} from {{model.sourceWalletAddresses.join(', ')}},
   expected {{model.paymentAmount | number : '1.0-' + model.paymentAssetAccuracy}} {{model.paymentAsset}}.
-  Exchange rate rate 1 {{model.paymentAsset}} = {{model.exchangeRate | number : '1.0-' +
+  Exchange rate 1 {{model.paymentAsset}} = {{model.exchangeRate | number : '1.0-' +
   model.settlementAssetAccuracy}}
   {{model.settlementAsset}}.
 </ng-template>

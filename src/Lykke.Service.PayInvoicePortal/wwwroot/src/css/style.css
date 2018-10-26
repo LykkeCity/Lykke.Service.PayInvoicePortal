@@ -3413,7 +3413,7 @@ input[type="number"]::-webkit-outer-spin-button, input[type="number"]::-webkit-i
 
 .custom_dropdown .dropdown-menu.inner > li > a:hover { background-color: #f5f6f7; }
 
-.custom_dropdown .bootstrap-select.btn-group .no-results { white-space: normal; word-break: break-word; }
+.bootstrap-select .dropdown-menu .no-results { margin: 0 15px 12px 15px; white-space: normal; word-break: break-word; }
 
 .modal_dialog { visibility: hidden; background: #fff; position: fixed; top: 7%; width: 470px; max-width: 100%; z-index: 9999999; left: 0; right: 0; margin: auto; box-shadow: 0 8px 40px 0 rgba(140, 147, 160, 0.6); border-radius: 8px; opacity: 0; padding: 40px 40px 40px; padding: 2.5rem 2.5rem 2.5rem; -webkit-transition: all 0.3s ease; -moz-transition: all 0.3s ease; -ms-transition: all 0.3s ease; -o-transition: all 0.3s ease; transition: all 0.3s ease; }
 
