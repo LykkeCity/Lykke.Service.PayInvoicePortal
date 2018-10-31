@@ -81,6 +81,13 @@ PayInvoicePortal:
         LogsConnectionString: 
             settings-key: LykkePayLogsConnString
             types: [AzureTableStorage, Tag]
+    Rabbit:
+        ConnectionString:
+            settings-key: RabbitPay
+            types: [ RabbitMq, Tag ]
+        InvoiceUpdateExchangeName:
+            settings-key: LykkePay-InvoiceUpdateExchangeName
+            types: [ Tag ]
 
 PayInvoiceServiceClient: 
     ServiceUrl: 

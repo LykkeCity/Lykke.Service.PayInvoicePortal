@@ -130,7 +130,7 @@ class PaymentsFilterStatus implements IItemViewModel {
   values: string[];
 }
 
-enum PaymentsFilterPeriod {
+export enum PaymentsFilterPeriod {
   All = 0,
   ThisWeek,
   LastWeek,

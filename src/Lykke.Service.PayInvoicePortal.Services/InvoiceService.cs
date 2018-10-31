@@ -317,6 +317,13 @@ namespace Lykke.Service.PayInvoicePortal.Services
             return model;
         }
 
+        public async Task<InvoiceStatus> GetStatusOnlyAsync(string invoiceId)
+        {
+            InvoiceModel invoice = await _payInvoiceClient.GetInvoiceAsync(invoiceId);
+
+            return invoice.Status;
+        }
+
         public async Task<InvoiceModel> ChangePaymentAssetAsync(string invoiceId, string paymentRequestId)
         {
             try
