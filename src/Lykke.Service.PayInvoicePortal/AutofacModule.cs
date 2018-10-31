@@ -1,10 +1,13 @@
 ﻿using System;
 using Autofac;
+using Common;
 using Lykke.Service.Assets.Client;
 using Lykke.Service.EmailPartnerRouter.Client;
 using Lykke.Service.PayAuth.Client;
 using Lykke.Service.PayInternal.Client;
 using Lykke.Service.PayInvoice.Client;
+using Lykke.Service.PayInvoicePortal.RabbitSubscribers;
+using Lykke.Service.PayInvoicePortal.Services;
 using Lykke.Service.PayInvoicePortal.Settings;
 using Lykke.Service.PayMerchant.Client;
 using Lykke.Service.RateCalculator.Client;
@@ -47,6 +50,23 @@ namespace Lykke.Service.PayInvoicePortal
             builder.RegisterRateCalculatorClient(_settings.CurrentValue.RateCalculatorServiceClient.ServiceUrl);
 
             builder.RegisterPayMerchantClient(_settings.CurrentValue.PayMerchantServiceClient, null);
+
+            builder.RegisterType<RealtimeNotificationsService>()
+                .As<IRealtimeNotificationsService>()
+                .SingleInstance();
+
+            RegisterRabbitSubscribers(builder);
+        }
+
+        private void RegisterRabbitSubscribers(ContainerBuilder builder)
+        {
+            builder.RegisterType<InvoiceUpdateSubscriber>()
+                .AsSelf()
+                .As<IStartable>()
+                .As<IStopable>()
+                .AutoActivate()
+                .SingleInstance()
+                .WithParameter(TypedParameter.From(_settings.CurrentValue.PayInvoicePortal.Rabbit));
         }
     }
 }

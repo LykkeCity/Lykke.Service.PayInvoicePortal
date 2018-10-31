@@ -57,6 +57,7 @@
     <lp-payments-table [payments]="model.payments"
                        [hasMorePayments]="view.hasMorePayments"
                        (paymentRemovedEvent)="paymentRemoved($event)"
+                       (paymentUpdatedEvent)="paymentUpdated($event)"
                        (showMoreEvent)="showMore()"
                        [showMoreLoading]="view.isShowMoreLoading"
                        [hidden]="view.showNoResults || view.isLoading"></lp-payments-table>

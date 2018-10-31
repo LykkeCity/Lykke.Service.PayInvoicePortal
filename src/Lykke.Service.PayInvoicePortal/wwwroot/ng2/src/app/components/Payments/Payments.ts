@@ -1,7 +1,10 @@
 import { Component, OnInit, OnDestroy, NgZone } from '@angular/core';
 import { PagerModel } from '../../models/PagerModel';
 import { ConfirmModalService } from '../../services/ConfirmModalService';
-import { PaymentsFilterModel } from './PaymentsFilter/PaymentsFilterModel';
+import {
+  PaymentsFilterModel,
+  PaymentsFilterPeriod
+} from './PaymentsFilter/PaymentsFilterModel';
 import { PaymentModel } from '../../models/Payment/PaymentModel';
 import { PaymentsApi } from '../../services/api/PaymentsApi';
 import { interval, Subscription } from 'rxjs';
@@ -11,6 +14,10 @@ import { UserService } from 'src/app/services/UserService';
 import { UserApi } from 'src/app/services/api/UserApi';
 import { UserInfoModel } from 'src/app/models/UserInfoModel';
 import { PaymentsFilterLocalStorageKeys } from './PaymentsFilter/PaymentsFilterLocalStorageKeys';
+import { InvoiceUpdateHubService } from 'src/app/services/realtime/InvoiceUpdateHub';
+import { InvoiceUpdateModel } from 'src/app/models/realtime/InvoiceUpdateModel';
+import { PaymentStatus } from 'src/app/models/Payment/PaymentStatus';
+import { PaymentType } from 'src/app/models/Payment/PaymentType';
 
 declare const pubsubEvents: any;
 declare const moment: any;
@@ -31,6 +38,7 @@ export class PaymentsComponent implements OnInit, OnDestroy, IPaymentsHandlers {
   private readonly reloadInterval = interval(5 * 60 * 1000);
   private reloadSubscriber: Subscription;
   private getPaymentsSubscriber: Subscription;
+  private invoiceUpdateHubSubscription: Subscription;
 
   showMore(): void {
     this.pager.page++;
@@ -42,9 +50,23 @@ export class PaymentsComponent implements OnInit, OnDestroy, IPaymentsHandlers {
     this.loadPayments();
   }
 
-  paymentRemoved(index: number): void {
-    if (this.model.payments[index]) {
+  paymentRemoved(invoiceId: string): void {
+    const index = this.model.payments.findIndex(
+      payment => payment.id === invoiceId
+    );
+
+    if (index > -1) {
       this.model.payments.splice(index, 1);
+    }
+  }
+
+  paymentUpdated(data: any): void {
+    const { id, status }: { id: string; status: string } = data;
+
+    const found = this.model.payments.find(payment => payment.id === id);
+
+    if (found) {
+      found.status = status;
     }
   }
 
@@ -71,6 +93,7 @@ export class PaymentsComponent implements OnInit, OnDestroy, IPaymentsHandlers {
     private api: PaymentsApi,
     private userApi: UserApi,
     private userService: UserService,
+    private invoiceUpdateHubService: InvoiceUpdateHubService,
     private confirmModalService: ConfirmModalService
   ) {}
 
@@ -107,6 +130,12 @@ export class PaymentsComponent implements OnInit, OnDestroy, IPaymentsHandlers {
       this.loadPayments()
     );
 
+    this.invoiceUpdateHubService.initConnection();
+
+    this.invoiceUpdateHubSubscription = this.invoiceUpdateHubService
+      .getObservable()
+      .subscribe(data => this.invoiceUpdated(data));
+
     if ((window as any).pubsubEvents) {
       pubsubEvents.on('invoiceCreated', () => this.onInvoiceCreated());
     }
@@ -119,8 +148,111 @@ export class PaymentsComponent implements OnInit, OnDestroy, IPaymentsHandlers {
     if (this.getPaymentsSubscriber) {
       this.getPaymentsSubscriber.unsubscribe();
     }
+    if (this.invoiceUpdateHubSubscription) {
+      this.invoiceUpdateHubSubscription.unsubscribe();
+    }
     if ((window as any).pubsubEvents) {
       pubsubEvents.off('invoiceCreated');
+    }
+  }
+
+  private invoiceUpdated(data: InvoiceUpdateModel) {
+    if (data.status === 'DraftRemoved') {
+      this.paymentRemoved(data.invoiceId);
+      return;
+    }
+
+    // if existing invoice was updated
+    const found = this.model.payments.find(
+      payment => payment.id === data.invoiceId
+    );
+
+    if (
+      data.status !== PaymentStatus[PaymentStatus.Draft] &&
+      data.status !== PaymentStatus[PaymentStatus.Unpaid]
+    ) {
+      if (found) {
+        found.status = data.status;
+        found.animate();
+        return;
+      }
+    } else {
+      // if new invoice was created
+
+      // check whether satisfy some of the filter conditions
+      if (
+        !found &&
+        this.filter.status.toString() !== this.filter.statusDefaultValue &&
+        !(
+          (data.status === PaymentStatus[PaymentStatus.Draft] &&
+            this.filter.status.toString() === PaymentStatus.Draft.toString()) ||
+          (data.status === PaymentStatus[PaymentStatus.Unpaid] &&
+            this.filter.status.toString() === PaymentStatus.Unpaid.toString())
+        )
+      ) {
+        return;
+      }
+
+      if (
+        !found &&
+        !(
+          this.filter.type.toString() ===
+            this.filter.typeDefaultValue.toString() ||
+          this.filter.type.toString() === PaymentType.Invoice.toString()
+        )
+      ) {
+        return;
+      }
+
+      if (
+        !found &&
+        !(
+          this.filter.period.toString() ===
+            PaymentsFilterPeriod.ThisWeek.toString() ||
+          this.filter.period.toString() ===
+            PaymentsFilterPeriod.ThisMonth.toString() ||
+          this.filter.period.toString() ===
+            PaymentsFilterPeriod.ThisYear.toString()
+        )
+      ) {
+        return;
+      }
+
+      const params = {
+        period: this.filter.period,
+        searchText: this.filter.searchText || ''
+      };
+
+      this.api.getByInvoiceId(data.invoiceId, params).subscribe(
+        (res: PaymentModel) => {
+          if (!res) {
+            return;
+          }
+
+          const payment = PaymentModel.create(res);
+
+          if (found) {
+            PaymentModel.copyProps(found, payment);
+            found.animate();
+          } else {
+            this.model.payments.splice(0, 0, payment);
+            payment.animate();
+          }
+
+          this.view.hasPayments = true;
+
+          if (this.view.showNoResults) {
+            this.view.showNoResults = false;
+          }
+
+          if (this.view.showNoResultsForPeriod) {
+            this.view.showNoResultsForPeriod = false;
+          }
+        },
+        error => {
+          console.error(error);
+        }
+      );
     }
   }
 
@@ -198,22 +330,7 @@ export class PaymentsComponent implements OnInit, OnDestroy, IPaymentsHandlers {
         this.model.payments = new Array<PaymentModel>();
 
         for (let i = 0, l = res.payments.length; i < l; i++) {
-          const item = res.payments[i];
-
-          // need to initialize via constructor in order only getter properties exist
-          const payment = new PaymentModel(
-            item.id,
-            item.number,
-            moment(item.createdDate),
-            item.clientName,
-            item.clientEmail,
-            item.amount,
-            item.settlementAsset,
-            item.paidAmount,
-            item.paymentAssetId,
-            item.status,
-            moment(item.dueDate)
-          );
+          const payment = PaymentModel.create(res.payments[i]);
 
           this.model.payments.push(payment);
         }
@@ -230,7 +347,8 @@ export class PaymentsComponent implements OnInit, OnDestroy, IPaymentsHandlers {
 
         if (res.payments.length === 0) {
           if (
-            this.filter.type.toString() !== this.filter.typeDefaultValue.toString() ||
+            this.filter.type.toString() !==
+              this.filter.typeDefaultValue.toString() ||
             this.filter.status !== this.filter.statusDefaultValue ||
             this.filter.searchText
           ) {
@@ -265,7 +383,8 @@ class PaymentsModel {
 interface IPaymentsHandlers {
   showMore: () => void;
   onFilterChanged: (_: any) => void;
-  paymentRemoved: (_: number) => void;
+  paymentRemoved: (_: string) => void;
+  paymentUpdated: (_: any) => void;
   exportToCsv: () => void;
 }
 

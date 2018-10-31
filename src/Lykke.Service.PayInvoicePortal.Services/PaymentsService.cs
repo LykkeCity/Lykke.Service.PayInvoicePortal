@@ -29,6 +29,17 @@ namespace Lykke.Service.PayInvoicePortal.Services
             _lykkeAssetsResolver = lykkeAssetsResolver;
         }
 
+        public async Task<Payment> GetByInvoiceId(string invoiceId)
+        {
+            InvoiceModel invoice = await _payInvoiceClient.GetInvoiceAsync(invoiceId);
+
+            var payment = Mapper.Map<Payment>(invoice);
+
+            payment.SettlementAsset = await _lykkeAssetsResolver.TryGetAssetAsync(payment.SettlementAssetId);
+
+            return payment;
+        }
+
         /// <summary>
         /// Gets payments - the combined result of invoices and payment requests
         /// </summary>
