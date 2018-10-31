@@ -62,7 +62,7 @@ namespace Lykke.Service.PayInvoicePortal.Controllers.Api
         {
             try
             {
-                var model = await _paymentsService.GetByInvoiceId(invoiceId);
+                var model = await _paymentsService.GetByInvoiceIdAsync(invoiceId);
 
                 // check whether satisfy filter conditions
                 var dates = period.GetDates();
