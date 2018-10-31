@@ -6,6 +6,8 @@ using Lykke.Service.EmailPartnerRouter.Client;
 using Lykke.Service.PayAuth.Client;
 using Lykke.Service.PayInternal.Client;
 using Lykke.Service.PayInvoice.Client;
+using Lykke.Service.PayInvoicePortal.Core.Services;
+using Lykke.Service.PayInvoicePortal.Managers;
 using Lykke.Service.PayInvoicePortal.RabbitSubscribers;
 using Lykke.Service.PayInvoicePortal.Services;
 using Lykke.Service.PayInvoicePortal.Settings;
@@ -27,6 +29,9 @@ namespace Lykke.Service.PayInvoicePortal
 
         protected override void Load(ContainerBuilder builder)
         {
+            builder.RegisterType<StartupManager>()
+                .As<IStartupManager>();
+
             builder.RegisterAssetsClient(AssetServiceSettings.Create(
                 new Uri(_settings.CurrentValue.AssetsServiceClient.ServiceUrl),
                 _settings.CurrentValue.PayInvoicePortal.AssetsCacheExpirationPeriod));
@@ -62,9 +67,7 @@ namespace Lykke.Service.PayInvoicePortal
         {
             builder.RegisterType<InvoiceUpdateSubscriber>()
                 .AsSelf()
-                .As<IStartable>()
                 .As<IStopable>()
-                .AutoActivate()
                 .SingleInstance()
                 .WithParameter(TypedParameter.From(_settings.CurrentValue.PayInvoicePortal.Rabbit));
         }

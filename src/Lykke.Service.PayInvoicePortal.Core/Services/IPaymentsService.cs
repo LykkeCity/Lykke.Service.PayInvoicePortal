@@ -17,6 +17,6 @@ namespace Lykke.Service.PayInvoicePortal.Core.Services
             int? take
         );
 
-        Task<Payment> GetByInvoiceId(string invoiceId);
+        Task<Payment> GetByInvoiceIdAsync(string invoiceId);
     }
 }
