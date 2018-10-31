@@ -212,7 +212,7 @@ namespace Lykke.Service.PayInvoicePortal
                 app.UseAuthentication();
                 app.UseSignalR(routes =>
                 {
-                    routes.MapHub<InvoiceUpdateHub>("/invoiceUpdateHub");
+                    routes.MapHub<InvoiceUpdateHub>("/ws/invoiceUpdateHub");
                 });
                 app.UseMvc(routes =>
                 {

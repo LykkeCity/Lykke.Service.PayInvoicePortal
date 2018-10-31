@@ -16,7 +16,7 @@ export class InvoiceUpdateHubService {
     const baseUrl = this.baseApi.getBaseUrl();
 
     this.connection = new signalR.HubConnectionBuilder()
-      .withUrl(`${baseUrl}invoiceUpdateHub`)
+      .withUrl(`${baseUrl}ws/invoiceUpdateHub`)
       .configureLogging(signalR.LogLevel.Information)
       .build();
 
