@@ -27,9 +27,6 @@ namespace Lykke.Service.PayInvoicePortal.Services
                 .As<IHealthService>()
                 .SingleInstance();
 
-            builder.RegisterType<StartupManager>()
-                .As<IStartupManager>();
-
             builder.RegisterType<ShutdownManager>()
                 .As<IShutdownManager>();
 

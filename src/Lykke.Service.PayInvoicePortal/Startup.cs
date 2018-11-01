@@ -23,6 +23,7 @@ using Common;
 using Lykke.MonitoringServiceApiCaller;
 using Lykke.Common.Log;
 using Lykke.Service.PayInvoicePortal.Settings.ServiceSettings;
+using Lykke.Service.PayInvoicePortal.SignalRHubs;
 
 namespace Lykke.Service.PayInvoicePortal
 {
@@ -64,6 +65,8 @@ namespace Lykke.Service.PayInvoicePortal
                     {
                         options.SerializerSettings.Converters.Add(new Newtonsoft.Json.Converters.StringEnumConverter());
                     });
+
+                services.AddSignalR();
 
                 services.AddAuthentication(opts =>
                     {
@@ -207,6 +210,10 @@ namespace Lykke.Service.PayInvoicePortal
                 app.UseStatusCodePagesWithReExecute("/Error/{0}");
                 app.UseStaticFiles();
                 app.UseAuthentication();
+                app.UseSignalR(routes =>
+                {
+                    routes.MapHub<InvoiceUpdateHub>("/ws/invoiceUpdateHub");
+                });
                 app.UseMvc(routes =>
                 {
                     routes.MapRoute("default", "{controller=Welcome}/{action=Welcome}/{id?}");
