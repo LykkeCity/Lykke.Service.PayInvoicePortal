@@ -23,6 +23,7 @@ using Common;
 using Lykke.MonitoringServiceApiCaller;
 using Lykke.Common.Log;
 using Lykke.Service.PayInvoicePortal.Settings.ServiceSettings;
+using Lykke.Service.PayInvoicePortal.SignalRHubs;
 
 namespace Lykke.Service.PayInvoicePortal
 {
@@ -65,6 +66,8 @@ namespace Lykke.Service.PayInvoicePortal
                         options.SerializerSettings.Converters.Add(new Newtonsoft.Json.Converters.StringEnumConverter());
                     });
 
+                services.AddSignalR();
+
                 services.AddAuthentication(opts =>
                     {
                         opts.DefaultAuthenticateScheme = CookieAuthenticationDefaults.AuthenticationScheme;
@@ -78,16 +81,50 @@ namespace Lykke.Service.PayInvoicePortal
                         o.ExpireTimeSpan = appSettings.CurrentValue.PayInvoicePortal.UserLoginTime;
                         o.Events.OnRedirectToLogin = (context) =>
                         {
-                            if (context.Request.Path.HasValue && 
+                            if (context.Request.Path.HasValue &&
                                 context.Request.Path.Value.StartsWith("/api/") &&
-                                context.Response.StatusCode == (int)HttpStatusCode.OK)
+                                context.Response.StatusCode == (int) HttpStatusCode.OK)
                             {
-                                context.Response.StatusCode = (int)HttpStatusCode.Unauthorized;
+                                context.Response.StatusCode = (int) HttpStatusCode.Unauthorized;
                             }
                             else
                             {
+                                /*
+                                because sandbox external url configured on prod nginx to redirect
+                                to another nginx url (as sandbox located in another kube)
+                                the context.RedirectUri is not right in this case  
+                                and has to be changed to external prod url
+                                */
+                                if (DeploymentEnvironment == DeploymentEnvironment.Sandbox &&
+                                    !string.IsNullOrEmpty(PortalTestnetUrl))
+                                {
+                                    var oldRedirectUri = context.RedirectUri;
+
+                                    var hostUrl = context.RedirectUri.Substring(0,
+                                        context.RedirectUri.IndexOf(o.LoginPath.ToString(), StringComparison.Ordinal));
+
+                                    if (hostUrl != PortalTestnetUrl.TrimEnd('/'))
+                                    {
+                                        context.RedirectUri =
+                                            context.RedirectUri.Replace(hostUrl, PortalTestnetUrl.TrimEnd('/'));
+
+                                        Log?.Info(
+                                            $"OnRedirectToLogin, old RedirectUri: {oldRedirectUri}, " +
+                                            $"new RedirectUri: {context.RedirectUri}, " +
+                                            $@"context: {
+                                                new
+                                                {
+                                                    context.Request.Host,
+                                                    context.Request.Path,
+                                                    context.Request.QueryString,
+                                                    context.Request.Scheme
+                                                }}");
+                                    }
+                                }
+
                                 context.Response.Redirect(context.RedirectUri);
                             }
+
                             return Task.FromResult(0);
                         };
                     });
@@ -173,6 +210,10 @@ namespace Lykke.Service.PayInvoicePortal
                 app.UseStatusCodePagesWithReExecute("/Error/{0}");
                 app.UseStaticFiles();
                 app.UseAuthentication();
+                app.UseSignalR(routes =>
+                {
+                    routes.MapHub<InvoiceUpdateHub>("/ws/invoiceUpdateHub");
+                });
                 app.UseMvc(routes =>
                 {
                     routes.MapRoute("default", "{controller=Welcome}/{action=Welcome}/{id?}");

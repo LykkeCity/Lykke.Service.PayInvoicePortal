@@ -12,6 +12,8 @@ using Lykke.Common.Log;
 using Lykke.Service.PayInternal.Client.Models;
 using Lykke.Service.PayInvoice.Client;
 using Lykke.Service.PayInvoice.Client.Models.File;
+using Lykke.Service.PayInvoice.Client.Models.Invoice;
+using Lykke.Service.PayInvoice.Contract.Invoice;
 using Lykke.Service.PayInvoicePortal.Core.Domain;
 using Lykke.Service.PayInvoicePortal.Core.Extensions;
 using Lykke.Service.PayInvoicePortal.Core.Services;
@@ -19,11 +21,16 @@ using Lykke.Service.PayInvoicePortal.Extensions;
 using Lykke.Service.PayInvoicePortal.Models;
 using Lykke.Service.PayInvoicePortal.Models.Invoices;
 using Lykke.Service.PayInvoicePortal.Models.Invoices.Statistic;
+using Lykke.Service.PayInvoicePortal.Services;
 using Lykke.Service.PayInvoicePortal.Services.Extensions;
 using LykkePay.Common.Validation;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using CreateInvoiceModel = Lykke.Service.PayInvoicePortal.Models.Invoices.CreateInvoiceModel;
+using HistoryItemModel = Lykke.Service.PayInvoicePortal.Models.Invoices.HistoryItemModel;
+using InvoiceModel = Lykke.Service.PayInvoicePortal.Models.Invoices.InvoiceModel;
+using UpdateInvoiceModel = Lykke.Service.PayInvoicePortal.Models.Invoices.UpdateInvoiceModel;
 
 namespace Lykke.Service.PayInvoicePortal.Controllers.Api
 {
@@ -31,15 +38,18 @@ namespace Lykke.Service.PayInvoicePortal.Controllers.Api
     [Route("/api/invoices")]
     public class InvoicesController : Controller
     {
+        private readonly IRealtimeNotificationsService _realtimeNotificationsService;
         private readonly IInvoiceService _invoiceService;
         private readonly IAssetService _assetService;
         private readonly ILog _log;
 
         public InvoicesController(
+            IRealtimeNotificationsService realtimeNotificationsService,
             IInvoiceService invoiceService,
             IAssetService assetService,
             ILogFactory logFactory)
         {
+            _realtimeNotificationsService = realtimeNotificationsService;
             _invoiceService = invoiceService;
             _assetService = assetService;
             _log = logFactory.CreateLog(this);
@@ -243,7 +253,20 @@ namespace Lykke.Service.PayInvoicePortal.Controllers.Api
         [Route("{invoiceId}")]
         public async Task<IActionResult> DeleteInvoice(string invoiceId)
         {
+            var status = await _invoiceService.GetStatusOnlyAsync(invoiceId);
+
             await _invoiceService.DeleteAsync(invoiceId);
+
+            if (status == InvoiceStatus.Draft)
+            {
+                await _realtimeNotificationsService.SendInvoiceUpdateAsync(new InvoiceUpdateMessage()
+                {
+                    MerchantId = User.GetMerchantId(),
+                    InvoiceId = invoiceId,
+                    Status = "DraftRemoved"
+                });
+            }
+
             return NoContent();
         }
     }

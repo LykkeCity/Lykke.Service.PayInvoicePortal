@@ -57,6 +57,7 @@
     <lp-payments-table [payments]="model.payments"
                        [hasMorePayments]="view.hasMorePayments"
                        (paymentRemovedEvent)="paymentRemoved($event)"
+                       (paymentUpdatedEvent)="paymentUpdated($event)"
                        (showMoreEvent)="showMore()"
                        [showMoreLoading]="view.isShowMoreLoading"
                        [hidden]="view.showNoResults || view.isLoading"></lp-payments-table>
@@ -76,6 +77,17 @@
       <div class="empty_result__description"
            *ngIf="filter.searchText">
         Sorry, we couldn't find any matches “{{filter.searchText}}”. Try using another keyword.
+      </div>
+    </div>
+
+    <div *ngIf="view.showNoResultsForPeriod"
+         class="invoices__empty_result empty_result">
+      <div class="empty_result__img-container">
+        <img src="img/invoices-empty.svg" />
+      </div>
+      <div class="empty_result__title">You don't have payments for the selected period</div>
+      <div class="empty_result__description">
+        Click “New invoice” to create an invoice.
       </div>
     </div>
   </div>

@@ -8,6 +8,10 @@ export class PaymentsApi extends BaseApi {
     return this.get('api/payments', params);
   }
 
+  getByInvoiceId(invoiceId: string, params): Observable<any> {
+    return this.get(`api/payments/byInvoiceId/${invoiceId}`, params);
+  }
+
   getBaseAsset(): Observable<any> {
     return this.get('api/assets/baseAsset');
   }
