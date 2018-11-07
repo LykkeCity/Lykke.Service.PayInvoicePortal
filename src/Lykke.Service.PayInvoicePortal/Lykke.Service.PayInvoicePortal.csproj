@@ -376,8 +376,6 @@
 	  <Exec Command="(npm -v &amp;&amp; yarn -v &amp;&amp; ng -v)" />
 	  <Exec Command="(npm update -g yarn)" />
 	  <Exec Command="(cd wwwroot/ng2 &amp;&amp; yarn)" />
-	  <Exec Command="google-chrome --product-version" />
-	  <Exec Command="(cd wwwroot/ng2 &amp;&amp; ng test --browsers ChromeHeadlessNoSandbox --watch false)" />
 	  <Exec Command="(cd wwwroot/ng2 &amp;&amp; ng build --prod)" />
 	</Target>
 	<ItemGroup>
