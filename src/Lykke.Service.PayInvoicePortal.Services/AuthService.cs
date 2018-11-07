@@ -55,6 +55,7 @@ namespace Lykke.Service.PayInvoicePortal.Services
 
             try
             {
+                sw.Restart();
                 _log.Info("Start GetEmployeeAsync");
                 var res = (await _payInvoiceClient.GetEmployeeAsync(validateResult.EmployeeId), validateResult);
                 _log.Info($"Finished GetEmployeeAsync for {sw.ElapsedMilliseconds} ms");
