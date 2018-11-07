@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Diagnostics;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using Lykke.Service.PayInvoicePortal.Models.Auth;
@@ -59,6 +60,8 @@ namespace Lykke.Service.PayInvoicePortal.Controllers
             if (!ModelState.IsValid)
                 return View(vm);
 
+            _log.Info($"Starting SignIn for {model.Login.Substring(0, 3)}...");
+
             var result = await _authService.ValidateAsync(model.Login, model.Password);
 
             var employee = result.Employee;
@@ -79,8 +82,14 @@ namespace Lykke.Service.PayInvoicePortal.Controllers
                 });
             }
 
+            _log.Info("Start GetSupervisorMembershipAsync");
+
+            var sw = Stopwatch.StartNew();
+
             SupervisorMembershipResponse supervisorMembership =
                 await _payInternalClient.GetSupervisorMembershipAsync(employee.Id);
+
+            _log.Info($"Finished GetSupervisorMembershipAsync for {sw.ElapsedMilliseconds} ms");
 
             bool isSupervisor = supervisorMembership?.MerchantGroups.Any() ?? false;
 
@@ -96,7 +105,13 @@ namespace Lykke.Service.PayInvoicePortal.Controllers
             var claimsIdentity = new ClaimsIdentity(claims, "password");
             var claimsPrinciple = new ClaimsPrincipal(claimsIdentity);
 
+            sw.Restart();
+
             await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, claimsPrinciple);
+
+            _log.Info($"Made HttpContext.SignInAsync for {sw.ElapsedMilliseconds} ms");
+
+            _log.Info($"Finished SignIn for {model.Login.Substring(0, 3)}...");
 
             if (!string.IsNullOrEmpty(model.ReturnUrl) && Url.IsLocalUrl(model.ReturnUrl))
                 return Redirect(model.ReturnUrl);

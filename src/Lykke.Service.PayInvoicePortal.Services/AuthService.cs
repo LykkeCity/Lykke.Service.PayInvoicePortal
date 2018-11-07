@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Threading.Tasks;
 using Common;
 using Common.Log;
@@ -32,9 +33,13 @@ namespace Lykke.Service.PayInvoicePortal.Services
         {
             ValidateResultModel validateResult;
 
+            var sw = Stopwatch.StartNew();
+
             try
             {
+                _log.Info("Start ValidatePasswordAsync");
                 validateResult = await _payAuthClient.ValidatePasswordAsync(email, password);
+                _log.Info($"Finished ValidatePasswordAsync for {sw.ElapsedMilliseconds} ms");
             }
             catch (Exception ex)
             {
@@ -50,7 +55,10 @@ namespace Lykke.Service.PayInvoicePortal.Services
 
             try
             {
-                return (await _payInvoiceClient.GetEmployeeAsync(validateResult.EmployeeId), validateResult);
+                _log.Info("Start GetEmployeeAsync");
+                var res = (await _payInvoiceClient.GetEmployeeAsync(validateResult.EmployeeId), validateResult);
+                _log.Info($"Finished GetEmployeeAsync for {sw.ElapsedMilliseconds} ms");
+                return res;
             }
             catch (Exception ex)
             {
