@@ -4,6 +4,14 @@
     ViewData["Title"] = "Incoming invoices";
 }
 
+@section StyleLibs {
+    @await Html.PartialAsync("Partials/StyleLibs/OwlCarousel")
+}
+
+@section ScriptLibs {
+    @await Html.PartialAsync("Partials/ScriptLibs/OwlCarousel")
+}
+
 @if (User.Identity.IsAuthenticated)
 {
     @await Html.PartialAsync("Partials/InvoicesNav")

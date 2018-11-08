@@ -6,8 +6,6 @@ var wH = $(window).height(),
     deviceAgent = navigator.userAgent.toLowerCase(),
     isMobile = deviceAgent.match(/(iphone|ipod|ipad)/);
 
-FastClick.attach(document.body);
-
 if (isMobile || wW <= 767) {
     $('body').addClass('is_mobile');
 } else {
