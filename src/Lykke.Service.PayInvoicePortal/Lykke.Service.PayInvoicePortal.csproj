@@ -63,6 +63,12 @@
     <Content Update="Views\Shared\Partials\GetStartedNav.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>
+    <Content Update="Views\Shared\Partials\ScriptLibs\OwlCarousel.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
+    <Content Update="Views\Shared\Partials\StyleLibs\OwlCarousel.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
     <Content Update="Views\Shared\Partials\ng2scripts.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>
