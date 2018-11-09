@@ -94,12 +94,14 @@
 
 </article>
 
-<script>
-    $(document).ready(function() {
-        $('.form_register').submit(function() {
-            $(this).find('.lp-signin-btn').prop('disabled', true);
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            $('.form_register').submit(function() {
+                $(this).find('.lp-signin-btn').prop('disabled', true);
 
-            $('.lp-signin-loader').show();
+                $('.lp-signin-loader').show();
+            });
         });
-    });
-</script>
+    </script>
+}
