@@ -10,26 +10,10 @@
     function invoicesCtrl($scope, $window, $rootScope, $interval, $log, apiSvc, statusSvc, confirmModalSvc) {
         var vm = this;
 
-        vm.events = {
-            invoiceGenerated: undefined,
-            invoiceDraftCreated: undefined
-        };
-
         vm.model = {
             isFirstLoading: true,
             isSupervising: ($window.location.pathname.indexOf("Supervising") != -1),
-            balance: 0,
-            baseAsset: null,
-            baseAssetAccuracy: 0,
             invoices: []
-        };
-
-        vm.statistic = {
-            main: null,
-            summary: [],
-            handlers: {
-                openSummaryStatistic: openSummaryStatistic
-            }
         };
 
         vm.filter = {
@@ -81,8 +65,7 @@
             exportToCsv: exportToCsv,
             getStatusCss: statusSvc.getStatusCss,
             showMore: showMore,
-            canShowMore: canShowMore,
-            create: create
+            canShowMore: canShowMore
         };
 
         vm.view = {
@@ -134,21 +117,8 @@
                 }
             );
 
-            $scope.$on('$destroy',
-                function () {
-                    destroy();
-                });
-
             if (vm.model.isSupervising)
                 $interval(loadSupervisingInvocies, 5 * 60 * 1000);
-        }
-
-        function destroy() {
-            if (vm.events.invoiceGenerated)
-                vm.events.invoiceGenerated();
-
-            if (vm.events.invoiceDraftCreated)
-                vm.events.invoiceDraftCreated();
         }
 
         function loadSupervisingInvocies() {
@@ -175,11 +145,6 @@
 
         function updateData(data) {
             updateList(data.list);
-            vm.model.balance = data.balance;
-            vm.model.baseAsset = data.baseAsset;
-            vm.model.baseAssetAccuracy = data.baseAssetAccuracy;
-            vm.statistic.main = data.statistic.mainStatistic;
-            vm.statistic.summary = data.statistic.summaryStatistic;
 
             if (vm.model.isFirstLoading){
                 vm.view.hasInvoices = data.list.items.length ? true : false;
@@ -275,10 +240,6 @@
             return statuses;
         }
 
-        function create() {
-            $rootScope.$broadcast('createInvoice', {});
-        }
-
         function resetPage() {
             vm.pager.page = 1;
         }
@@ -305,10 +266,6 @@
 
         function showNoResults() {
             return vm.filter.search && !vm.model.invoices.length;
-        }
-
-        function openSummaryStatistic() {
-            $rootScope.$broadcast('openSummaryStatistic', vm.statistic.summary);
         }
     }
 })();

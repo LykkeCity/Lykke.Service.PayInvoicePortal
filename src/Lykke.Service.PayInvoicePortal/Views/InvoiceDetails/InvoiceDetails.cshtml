@@ -9,12 +9,6 @@
     @await Html.PartialAsync("Partials/InvoicesNav")
 }
 
-<div data-ng-controller="invoiceEditCtrl as vm" ng-cloak>
-    @await Html.PartialAsync("Partials/InvoiceEditTemplate", new InvoiceEditTemplateModel { IsNewInvoice = false })
-</div>
-
-@await Html.PartialAsync("/Views/Partials/InvoiceInfo.cshtml")
-
 <article class="content">
     <section class="section section--padding">
         <div class="container">

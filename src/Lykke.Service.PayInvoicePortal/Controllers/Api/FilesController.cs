@@ -1,12 +1,16 @@
 ﻿using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
+using AutoMapper;
 using Lykke.Service.Assets.Client.Models;
 using Lykke.Service.PayInvoice.Client;
 using Lykke.Service.PayInvoice.Client.Models.File;
 using Lykke.Service.PayInvoicePortal.Models;
+using LykkePay.Common.Validation;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -23,9 +27,25 @@ namespace Lykke.Service.PayInvoicePortal.Controllers.Api
             _payInvoiceClient = payInvoiceClient;
         }
 
+        [Authorize]
+        [HttpGet]
+        [Route("{invoiceId}")]
+        [ProducesResponseType(typeof(IEnumerable<FileModel>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(ErrorResponse), (int)HttpStatusCode.BadRequest)]
+        [ValidateModel]
+        public async Task<IActionResult> GetFiles([Guid] string invoiceId)
+        {
+            IEnumerable<FileInfoModel> invoiceFiles = await _payInvoiceClient.GetFilesAsync(invoiceId);
+
+            return Ok(Mapper.Map<List<FileModel>>(invoiceFiles.ToList().OrderBy(x => x.Name)));
+        }
+
         [HttpGet]
         [Route("{fileId}/{invoiceId}")]
-        public async Task<IActionResult> GetFileSync(string fileId, string invoiceId)
+        [ProducesResponseType(typeof(FileContentResult), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(ErrorResponse), (int)HttpStatusCode.BadRequest)]
+        [ValidateModel]
+        public async Task<IActionResult> GetFileSync([Guid] string fileId, [Guid] string invoiceId)
         {
             IEnumerable<FileInfoModel> files = await _payInvoiceClient.GetFilesAsync(invoiceId);
             byte[] content = await _payInvoiceClient.GetFileAsync(invoiceId, fileId);
@@ -35,8 +55,12 @@ namespace Lykke.Service.PayInvoicePortal.Controllers.Api
             return File(content, file.Type, file.Name);
         }
 
+        [Authorize]
         [HttpPost]
-        public async Task<IActionResult> AddAsync(string invoiceId, IFormFileCollection files)
+        [ProducesResponseType((int)HttpStatusCode.NoContent)]
+        [ProducesResponseType(typeof(ErrorResponse), (int)HttpStatusCode.BadRequest)]
+        [ValidateModel]
+        public async Task<IActionResult> AddAsync([Required][Guid] string invoiceId, IFormFileCollection files)
         {
             if (files != null)
             {

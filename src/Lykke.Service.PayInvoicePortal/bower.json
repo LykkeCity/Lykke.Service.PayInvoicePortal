@@ -1,7 +1,0 @@
-{
-  "name": "lykke-pay-portal",
-  "private": true,
-  "dependencies": {
-    "ng-file-upload": "4.1.4"
-  }
-}
