@@ -30,7 +30,6 @@
   {
     "outputFileName": "wwwroot/js/vendors.js",
     "inputFiles": [
-      "wwwroot/lib/ng-file-upload/ng-file-upload.js",
       "wwwroot/src/js/vendor/**/*.js",
       "wwwroot/src/js/vendors-custom/**/*.js"
     ],

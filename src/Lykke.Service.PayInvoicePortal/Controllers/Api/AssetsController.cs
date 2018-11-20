@@ -35,8 +35,8 @@ namespace Lykke.Service.PayInvoicePortal.Controllers.Api
 
         [Authorize]
         [HttpGet]
-        [Route("/api/assets")]
-        public async Task<IActionResult> GetAssetsAsync()
+        [Route("/api/settlementAssets")]
+        public async Task<IActionResult> GetSettlementAssetsAsync()
         {
             IReadOnlyDictionary<string, string> assets = await _assetService.GetSettlementAssetsAsync(User.GetMerchantId());
 

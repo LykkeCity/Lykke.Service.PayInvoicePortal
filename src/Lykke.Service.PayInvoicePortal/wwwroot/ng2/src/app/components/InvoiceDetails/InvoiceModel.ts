@@ -12,7 +12,7 @@ export class InvoiceModel {
     public status: string = '',
     public settlementAsset: string = '',
     public settlementAssetDisplay: string = '',
-    public settlementAssetAccuracy: string= '',
+    public settlementAssetAccuracy: number = 0,
     public paymentAsset: string = '',
     public paymentAssetNetwork: string = '',
     public paymentRequestId: string = '',

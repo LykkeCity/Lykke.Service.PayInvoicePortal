@@ -227,3 +227,7 @@
                                  [invoiceId]="model.id"
                                  [invoiceNumber]="model.number"
                                  [invoiceCheckoutUrl]="view.invoiceCheckoutUrl"></lp-invoice-details-share-dialog>
+
+<lp-invoice-edit #invoiceEditSidebar
+                 (filesUpdated)="model.files = $event"
+                 (invoiceUpdated)="refresh()"></lp-invoice-edit>

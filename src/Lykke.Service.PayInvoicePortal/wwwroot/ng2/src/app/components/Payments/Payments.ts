@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, NgZone } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewChild } from '@angular/core';
 import { PagerModel } from '../../models/PagerModel';
 import { ConfirmModalService } from '../../services/ConfirmModalService';
 import {
@@ -18,9 +18,7 @@ import { InvoiceUpdateHubService } from 'src/app/services/realtime/InvoiceUpdate
 import { InvoiceUpdateModel } from 'src/app/models/realtime/InvoiceUpdateModel';
 import { PaymentStatus } from 'src/app/models/Payment/PaymentStatus';
 import { PaymentType } from 'src/app/models/Payment/PaymentType';
-
-declare const pubsubEvents: any;
-declare const moment: any;
+import { InvoiceEditComponent } from '../InvoiceEdit/InvoiceEdit';
 
 @Component({
   selector: PaymentsComponent.Selector,
@@ -28,6 +26,9 @@ declare const moment: any;
 })
 export class PaymentsComponent implements OnInit, OnDestroy, IPaymentsHandlers {
   static readonly Selector = 'lp-payments';
+
+  @ViewChild(InvoiceEditComponent)
+  invoiceEditSidebar: InvoiceEditComponent;
 
   model = new PaymentsModel();
   filter = new PaymentsFilterModel();
@@ -70,12 +71,6 @@ export class PaymentsComponent implements OnInit, OnDestroy, IPaymentsHandlers {
     }
   }
 
-  onInvoiceCreated(): void {
-    this.zone.run(() => {
-      this.loadPayments();
-    });
-  }
-
   exportToCsv(): void {
     const url = '/api/export/payments';
 
@@ -89,7 +84,6 @@ export class PaymentsComponent implements OnInit, OnDestroy, IPaymentsHandlers {
   }
 
   constructor(
-    private zone: NgZone,
     private api: PaymentsApi,
     private userApi: UserApi,
     private userService: UserService,
@@ -135,10 +129,6 @@ export class PaymentsComponent implements OnInit, OnDestroy, IPaymentsHandlers {
     this.invoiceUpdateHubSubscription = this.invoiceUpdateHubService
       .getObservable()
       .subscribe(data => this.invoiceUpdated(data));
-
-    if ((window as any).pubsubEvents) {
-      pubsubEvents.on('invoiceCreated', () => this.onInvoiceCreated());
-    }
   }
 
   ngOnDestroy(): void {
@@ -151,9 +141,10 @@ export class PaymentsComponent implements OnInit, OnDestroy, IPaymentsHandlers {
     if (this.invoiceUpdateHubSubscription) {
       this.invoiceUpdateHubSubscription.unsubscribe();
     }
-    if ((window as any).pubsubEvents) {
-      pubsubEvents.off('invoiceCreated');
-    }
+  }
+
+  createInvoice(): void {
+    this.invoiceEditSidebar.open();
   }
 
   private invoiceUpdated(data: InvoiceUpdateModel) {
@@ -386,6 +377,7 @@ interface IPaymentsHandlers {
   paymentRemoved: (_: string) => void;
   paymentUpdated: (_: any) => void;
   exportToCsv: () => void;
+  createInvoice: () => void;
 }
 
 enum LoadPaymentsCaller {

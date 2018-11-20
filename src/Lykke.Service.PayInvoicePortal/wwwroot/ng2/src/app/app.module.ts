@@ -6,6 +6,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 // common
 import { AuthInterceptor } from './interceptors/AuthInterceptor';
 import { CopyTextDirective } from './directives/CopyText.directive';
+import { DateTimePickerDirective } from './directives/DateTimePicker.directive';
 import { DebounceDirective } from './directives/Debounce.directive';
 
 import { ChangePasswordComponent } from './components/ChangePassword/ChangePassword';
@@ -18,7 +19,9 @@ import { ValidatorPasswordEqualledDirective } from './components/ResetPassword/V
 
 import { SignupComponent } from './components/Signup/Signup';
 import { SignupApi } from './services/api/SignupApi';
+
 import { EmailValidatorDirective } from './directives/validators/EmailValidator.directive';
+import { MinNumberValidatorDirective } from './directives/validators/MinNumberValidator.directive';
 
 import { SettingsComponent } from './components/Settings/Settings';
 import { SettingsApi } from './services/api/SettingsApi';
@@ -48,9 +51,15 @@ import { UserService } from './services/UserService';
 
 import { BaseApi } from './services/api/BaseApi';
 import { InvoiceUpdateHubService } from './services/realtime/InvoiceUpdateHub';
+import { InvoiceEditComponent } from './components/InvoiceEdit/InvoiceEdit';
+import { InvoiceInfoComponent } from './components/InvoiceInfo/InvoiceInfo';
+import { AssetsApi } from './services/api/AssetsApi';
+import { FilesApi } from './services/api/FilesApi';
 
 @NgModule({
   declarations: [
+    InvoiceInfoComponent,
+    InvoiceEditComponent,
     InvoiceDetailsRefundDialogComponent,
     InvoiceDetailsShareDialogComponent,
     HistoryItemComponent,
@@ -68,7 +77,9 @@ import { InvoiceUpdateHubService } from './services/realtime/InvoiceUpdateHub';
     EmailValidatorDirective,
     ResetPasswordComponent,
     CopyTextDirective,
+    DateTimePickerDirective,
     DebounceDirective,
+    MinNumberValidatorDirective,
     ValidatorOldPasswordNotEqualledDirective,
     ValidatorPasswordEqualledDirective
   ],
@@ -85,6 +96,8 @@ import { InvoiceUpdateHubService } from './services/realtime/InvoiceUpdateHub';
     PaymentStatusCssService,
     ConfirmModalService,
     BaseApi,
+    AssetsApi,
+    FilesApi,
     UserApi,
     RefundApi,
     EmailApi,

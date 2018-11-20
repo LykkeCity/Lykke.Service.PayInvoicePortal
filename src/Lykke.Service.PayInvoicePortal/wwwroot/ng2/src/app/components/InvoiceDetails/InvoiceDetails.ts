@@ -1,4 +1,4 @@
-import { Component, OnInit, NgZone, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { ConfirmModalService } from '../../services/ConfirmModalService';
 import { InvoicesApi } from '../../services/api/InvoicesApi';
 import { InvoiceDetailsResponse } from './InvoiceDetailsResponse';
@@ -14,8 +14,9 @@ import { PaymentStatusCssService } from '../../services/Payment/PaymentStatusCss
 import { FileModel } from '../../models/FileModel';
 import { FileService } from '../../services/FileService';
 import { InvoiceDetailsRefundDialogComponent } from './InvoiceDetailsRefundDialog/InvoiceDetailsRefundDialog';
+import { InvoiceEditComponent } from '../InvoiceEdit/InvoiceEdit';
+import { InvoiceEditModel } from '../InvoiceEdit/InvoiceEditModel';
 
-declare const pubsubEvents: any;
 declare const moment: any;
 
 @Component({
@@ -31,27 +32,20 @@ export class InvoiceDetailsComponent
   showRefundDialog: boolean;
   showShareDialog: boolean;
 
+  @ViewChild(InvoiceEditComponent)
+  invoiceEditSidebar: InvoiceEditComponent;
+
   @ViewChild(InvoiceDetailsRefundDialogComponent)
   refundDialog: InvoiceDetailsRefundDialogComponent;
-
-  onInvoiceUpdated(): void {
-    this.zone.run(() => {
-      this.loadInvoice();
-    });
-  }
 
   constructor(
     private api: InvoicesApi,
     private confirmModalService: ConfirmModalService,
     private paymentStatusCssService: PaymentStatusCssService,
-    private fileService: FileService,
-    private zone: NgZone
+    private fileService: FileService
   ) {}
 
   ngOnInit(): void {
-    if ((window as any).pubsubEvents) {
-      pubsubEvents.on('invoiceUpdated', () => this.onInvoiceUpdated());
-    }
 
     const invoiceId = getGuidFromPath(
       location.pathname,
@@ -117,18 +111,19 @@ export class InvoiceDetailsComponent
       return;
     }
 
-    pubsubEvents.emit('invoiceDraftEdit', {
-      id: this.model.id,
-      status: this.model.status,
-      number: this.model.number,
-      client: this.model.clientName,
-      email: this.model.clientEmail,
-      settlementAsset: this.model.settlementAsset,
-      amount: this.model.amount,
-      dueDate: this.model.dueDate,
-      note: this.model.note,
-      files: this.model.files
-    });
+    const model = new InvoiceEditModel();
+    model.id = this.model.id;
+    model.status = this.model.status;
+    model.number = this.model.number;
+    model.client = this.model.clientName;
+    model.email = this.model.clientEmail;
+    model.selectedSettlementAssetId = this.model.settlementAsset;
+    model.amount = this.model.amount;
+    model.dueDate = this.model.dueDate;
+    model.note = this.model.note;
+    model.files = [...this.model.files];
+
+    this.invoiceEditSidebar.open(model);
   }
 
   delete(): void {
