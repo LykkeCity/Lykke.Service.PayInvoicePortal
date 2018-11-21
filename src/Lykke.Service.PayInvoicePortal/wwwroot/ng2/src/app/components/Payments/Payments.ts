@@ -151,6 +151,8 @@ export class PaymentsComponent implements OnInit, OnDestroy, IPaymentsHandlers {
     if (data.status === 'DraftRemoved') {
       this.paymentRemoved(data.invoiceId);
       return;
+    } else if (data.status === 'DraftUpdated') {
+      data.status = PaymentStatus[PaymentStatus.Draft];
     }
 
     // if existing invoice was updated
@@ -222,9 +224,14 @@ export class PaymentsComponent implements OnInit, OnDestroy, IPaymentsHandlers {
 
           const payment = PaymentModel.create(res);
 
-          if (found) {
-            PaymentModel.copyProps(found, payment);
-            found.animate();
+          // recheck as payments could be changed during getting the invoice
+          const currentFound = this.model.payments.find(
+            _ => _.id === data.invoiceId
+          );
+
+          if (currentFound) {
+            PaymentModel.copyProps(currentFound, payment);
+            currentFound.animate();
           } else {
             this.model.payments.splice(0, 0, payment);
             payment.animate();

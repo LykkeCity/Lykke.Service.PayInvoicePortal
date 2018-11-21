@@ -239,6 +239,16 @@ namespace Lykke.Service.PayInvoicePortal.Controllers.Api
             try
             {
                 await _invoiceService.UpdateAsync(invoice, model.IsDraft);
+
+                if (model.IsDraft)
+                {
+                    await _realtimeNotificationsService.SendInvoiceUpdateAsync(new InvoiceUpdateMessage()
+                    {
+                        MerchantId = User.GetMerchantId(),
+                        InvoiceId = invoice.Id,
+                        Status = "DraftUpdated"
+                    });
+                }
             }
             catch (InvalidOperationException ex)
             {
