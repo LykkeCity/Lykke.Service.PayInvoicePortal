@@ -82,7 +82,7 @@ export class InvoiceInfoComponent implements IInvoiceInfoComponentHandlers {
   }
 
   private reset(): void {
-    this.model = null;
+    this.model = new InvoiceInfoModel();
     this.view.reset();
     this.validation.reset();
   }
