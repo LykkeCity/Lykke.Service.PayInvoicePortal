@@ -55,6 +55,8 @@ export class InvoiceInfoComponent implements IInvoiceInfoComponentHandlers {
       return;
     }
 
+    this.view.isSending = true;
+
     const model = new SendInvoiceEmailRequest(
       this.model.id,
       this.getCheckoutUrl(this.model.id),
