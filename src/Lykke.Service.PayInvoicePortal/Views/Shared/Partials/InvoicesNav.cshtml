@@ -1,26 +1,22 @@
 ﻿@using Lykke.Service.PayInvoicePortal.Controllers
 @using Lykke.Service.PayInvoicePortal.Controllers.User
 
-<div class="header_nav_container" 
-     data-ng-controller="invoicesNavCtrl as vm">
+<div class="header_nav_container" data-path="@Context.Request.Path">
     <nav class="header_nav">
         <div class="header_nav__inner">
             <div class="container header_menu_container">
                 <ul class="header_nav__list nav_list">
-                    <li class="nav_list__item" 
-                        data-ng-class="::{'nav_list__item--active': vm.model.isHome}">
+                    <li class="nav_list__item @GetCurrentPathClass(Url.Action(nameof(PaymentsController.Payments), "Payments"))">
                         <a href="@Url.Action(nameof(PaymentsController.Payments), "Payments")">
                             Payments
                         </a>
                     </li>
-                    <li class="nav_list__item" 
-                        data-ng-class="::{'nav_list__item--active': vm.handlers.isPath('@Url.Action(nameof(SettingsController.Settings), "Settings")')}">
+                    <li class="nav_list__item @GetCurrentPathClass(Url.Action(nameof(SettingsController.Settings), "Settings"))">
                         <a href="@Url.Action(nameof(SettingsController.Settings), "Settings")">
                             Settings
                         </a>
                     </li>
-                    <li class="nav_list__item" 
-                        data-ng-class="::{'nav_list__item--active': vm.handlers.isPath('@Url.Action(nameof(PublicApiDocsController.PublicApiDocsAsync), "PublicApiDocs")')}">
+                    <li class="nav_list__item @GetCurrentPathClass(Url.Action(nameof(PublicApiDocsController.PublicApiDocsAsync), "PublicApiDocs"))">
                         <a href="@Url.Action(nameof(PublicApiDocsController.PublicApiDocsAsync), "PublicApiDocs")">
                             Documentation
                         </a>
@@ -30,3 +26,13 @@
         </div>
     </nav>
 </div>
+
+@functions
+{
+    private string GetCurrentPathClass(string path)
+    {
+        var isCurrentPath = Context.Request.Path.ToString() == path;
+
+        return isCurrentPath ? "nav_list__item--active" : string.Empty;
+    }
+}

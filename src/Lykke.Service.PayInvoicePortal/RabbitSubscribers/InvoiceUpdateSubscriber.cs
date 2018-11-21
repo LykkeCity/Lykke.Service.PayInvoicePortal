@@ -34,10 +34,16 @@ namespace Lykke.Service.PayInvoicePortal.RabbitSubscribers
 
         public void Start()
         {
+            var nameOfEndpoint = nameof(PayInvoicePortal);
+
+#if DEBUG
+            nameOfEndpoint += "_DEBUG";
+#endif  
+
             var rabbitMqSubscriptionSettings = RabbitMqSubscriptionSettings
                 .ForSubscriber(_rabbitSettings.ConnectionString, 
                     _rabbitSettings.InvoiceUpdateExchangeName,
-                    nameof(PayInvoicePortal))
+                    nameOfEndpoint)
                 .MakeDurable();
 
             rabbitMqSubscriptionSettings.DeadLetterExchangeName = null;

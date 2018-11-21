@@ -3,7 +3,7 @@
          (click)="overlayClick($event)"></aside>
   <div class="modal_dialog modal_dialog--open">
     <div class="modal_dialog__title">{{model.title}}</div>
-    <div class="modal_dialog__text">{{model.content}}</div>
+    <div class="modal_dialog__text" [innerHTML]="model.content"></div>
     <div class="modal_dialog__controls">
       <div class="pull-right">
         <button class="btn modal_dialog__btn"

@@ -63,6 +63,12 @@
     <Content Update="Views\Shared\Partials\GetStartedNav.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>
+    <Content Update="Views\Shared\Partials\ScriptLibs\OwlCarousel.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
+    <Content Update="Views\Shared\Partials\StyleLibs\OwlCarousel.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
     <Content Update="Views\Shared\Partials\ng2scripts.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>
@@ -371,7 +377,6 @@
     <ProjectReference Include="..\Lykke.Service.PayInvoicePortal.Services\Lykke.Service.PayInvoicePortal.Services.csproj" />
   </ItemGroup>
 	<Target Name="PrepublishScript" BeforeTargets="PrepareForPublish">
-		<Exec Command="bower install --allow-root" />
 		<Exec Command="dotnet bundle" />
 	  <Exec Command="(npm -v &amp;&amp; yarn -v &amp;&amp; ng -v)" />
 	  <Exec Command="(npm update -g yarn)" />

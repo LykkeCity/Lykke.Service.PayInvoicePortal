@@ -6,8 +6,6 @@ var wH = $(window).height(),
     deviceAgent = navigator.userAgent.toLowerCase(),
     isMobile = deviceAgent.match(/(iphone|ipod|ipad)/);
 
-FastClick.attach(document.body);
-
 if (isMobile || wW <= 767) {
     $('body').addClass('is_mobile');
 } else {
@@ -269,33 +267,6 @@ function pie() {
         setInterval(incrementPie, 600);
     }
 }
-
-// pubsubEvents - publish subscribe pattern to communicate between AngularJS and Angular during migration
-
-var pubsubEvents = {
-    events: {},
-    on: function (eventName, fn) {
-        this.events[eventName] = this.events[eventName] || [];
-        this.events[eventName].push(fn);
-    },
-    off: function (eventName, fn) {
-        if (this.events[eventName]) {
-            for (var i = 0; i < this.events[eventName].length; i++) {
-                if (this.events[eventName][i] === fn) {
-                    this.events[eventName].splice(i, 1);
-                    break;
-                }
-            };
-        }
-    },
-    emit: function (eventName, data) {
-        if (this.events[eventName]) {
-            this.events[eventName].forEach(function (fn) {
-                fn(data);
-            });
-        }
-    }
-};
 
 // Init
 

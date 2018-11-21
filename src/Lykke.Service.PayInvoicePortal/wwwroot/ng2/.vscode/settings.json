@@ -1,2 +1,12 @@
 {
+  "javascript.preferences.quoteStyle": "single",
+  "typescript.preferences.quoteStyle": "single",
+  "prettier.singleQuote": true,
+  "typescript.implementationsCodeLens.enabled": true,
+  "typescript.referencesCodeLens.enabled": true,
+  "javascript.referencesCodeLens.enabled": true,
+  "breadcrumbs.enabled": true,
+  "extensions.ignoreRecommendations": false,
+  "html.format.endWithNewline": true,
+  "html.format.wrapAttributes": "force-aligned"
 }

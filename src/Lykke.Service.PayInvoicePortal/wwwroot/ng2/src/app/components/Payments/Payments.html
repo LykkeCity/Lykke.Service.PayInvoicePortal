@@ -15,7 +15,7 @@
     <div class="col-sm-6">
       <h3 class="payments_header__title">Payments</h3>
       <button class="btn payments_header__btn"
-              data-ng-click="vm.handlers.create()">
+              (click)="createInvoice()">
         <i class="icon icon--add"></i>
         New invoice
       </button>
@@ -102,4 +102,6 @@
       Create the first one by clicking “New invoice” button.
     </div>
   </div>
+
+  <lp-invoice-edit #invoiceEditSidebar></lp-invoice-edit>
 </div>

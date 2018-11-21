@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -27,10 +28,8 @@ using LykkePay.Common.Validation;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using CreateInvoiceModel = Lykke.Service.PayInvoicePortal.Models.Invoices.CreateInvoiceModel;
 using HistoryItemModel = Lykke.Service.PayInvoicePortal.Models.Invoices.HistoryItemModel;
 using InvoiceModel = Lykke.Service.PayInvoicePortal.Models.Invoices.InvoiceModel;
-using UpdateInvoiceModel = Lykke.Service.PayInvoicePortal.Models.Invoices.UpdateInvoiceModel;
 
 namespace Lykke.Service.PayInvoicePortal.Controllers.Api
 {
@@ -111,7 +110,7 @@ namespace Lykke.Service.PayInvoicePortal.Controllers.Api
             );
 
             var invoice = Mapper.Map<InvoiceModel>(invoiceTask.Result);
-            invoice.Files = Mapper.Map<List<FileModel>>(filesTask.Result);
+            invoice.Files = Mapper.Map<List<FileModel>>(filesTask.Result.ToList().OrderBy(x => x.Name));
             invoice.History = Mapper.Map<List<HistoryItemModel>>(historyTask.Result);
 
             invoice.PaymentAssetNetwork = (await _assetService.GetAssetNetworkAsync(invoice.PaymentAsset)).ToString();
@@ -166,8 +165,10 @@ namespace Lykke.Service.PayInvoicePortal.Controllers.Api
         }
 
         [HttpPost]
+        [ProducesResponseType(typeof(InvoiceModel), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(ErrorResponse), (int)HttpStatusCode.BadRequest)]
-        public async Task<IActionResult> AddAsync(CreateInvoiceModel model, IFormFileCollection files)
+        [ValidateModel]
+        public async Task<IActionResult> AddAsync([Required] CreateInvoiceRequest model, IFormFileCollection files)
         {
             Invoice invoice = null;
 
@@ -178,8 +179,8 @@ namespace Lykke.Service.PayInvoicePortal.Controllers.Api
                 Number = model.Number,
                 ClientName = model.Client,
                 ClientEmail = model.Email,
-                Amount = decimal.Parse(model.Amount, CultureInfo.InvariantCulture),
-                SettlementAssetId = model.SettlementAsset,
+                Amount = model.Amount,
+                SettlementAssetId = model.SettlementAssetId,
                 DueDate = model.DueDate,
                 Note = model.Note
             };
@@ -214,12 +215,12 @@ namespace Lykke.Service.PayInvoicePortal.Controllers.Api
             var result = Mapper.Map<InvoiceModel>(invoice);
             result.Files = Mapper.Map<List<FileModel>>(invoiceFiles);
 
-            return Json(result);
+            return Ok(result);
         }
 
         [HttpPut]
         [ProducesResponseType(typeof(ErrorResponse), (int)HttpStatusCode.BadRequest)]
-        public async Task<IActionResult> UpdateAsync([FromBody]UpdateInvoiceModel model)
+        public async Task<IActionResult> UpdateAsync([FromBody]UpdateInvoiceRequest model)
         {
             var invoice = new PayInvoice.Client.Models.Invoice.UpdateInvoiceModel
             {
@@ -229,8 +230,8 @@ namespace Lykke.Service.PayInvoicePortal.Controllers.Api
                 Number = model.Number,
                 ClientName = model.Client,
                 ClientEmail = model.Email,
-                Amount = decimal.Parse(model.Amount, CultureInfo.InvariantCulture),
-                SettlementAssetId = model.SettlementAsset,
+                Amount = model.Amount,
+                SettlementAssetId = model.SettlementAssetId,
                 DueDate = model.DueDate,
                 Note = model.Note
             };
@@ -238,6 +239,16 @@ namespace Lykke.Service.PayInvoicePortal.Controllers.Api
             try
             {
                 await _invoiceService.UpdateAsync(invoice, model.IsDraft);
+
+                if (model.IsDraft)
+                {
+                    await _realtimeNotificationsService.SendInvoiceUpdateAsync(new InvoiceUpdateMessage()
+                    {
+                        MerchantId = User.GetMerchantId(),
+                        InvoiceId = invoice.Id,
+                        Status = "DraftUpdated"
+                    });
+                }
             }
             catch (InvalidOperationException ex)
             {
