@@ -72,7 +72,10 @@ export class InvoiceEditComponent implements IInvoiceEditComponentHandlers {
       this.assetsApi.getSettlementAssets().subscribe(
         (res: Array<AssetItemViewModel>) => {
           if (res && res.length) {
-            this.model.selectedSettlementAssetId = res[0].id;
+            if (this.model.isNewInvoice) {
+              this.model.selectedSettlementAssetId = res[0].id;
+            }
+
             this.model.settlementAssets = res;
           }
 
