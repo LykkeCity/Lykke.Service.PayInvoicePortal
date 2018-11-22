@@ -208,7 +208,17 @@ namespace Lykke.Service.PayInvoicePortal
                 app.UseLykkeMiddleware( ex => new { Message = "Technical problem" });
                 
                 app.UseStatusCodePagesWithReExecute("/Error/{0}");
-                app.UseStaticFiles();
+
+                app.UseStaticFiles(new StaticFileOptions
+                {
+                    OnPrepareResponse = ctx =>
+                    {
+                        // one year duration
+                        const int durationInSeconds = 60 * 60 * 24 * 365;
+                        ctx.Context.Response.Headers.Append("Cache-Control", $"public, max-age={durationInSeconds}");
+                    }
+                });
+
                 app.UseAuthentication();
                 app.UseSignalR(routes =>
                 {
