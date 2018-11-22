@@ -124,12 +124,11 @@ export class InvoiceDetailsShareDialogComponent implements AfterViewInit {
     this.api.sendInvoiceEmail(model).subscribe(
       res => {
         this.isLoading = false;
-        this.isSuccess = true;
+        if (this.show) {
+          this.isSuccess = true;
+        }
 
-        // clear emails
-        this.emailsValue = [];
-        this.emails.reset();
-        this.initTags({ isRefresh: true });
+        this.reset();
       },
       error => {
         console.error(error);
@@ -142,6 +141,7 @@ export class InvoiceDetailsShareDialogComponent implements AfterViewInit {
   close(): void {
     this.isSuccess = false;
     this.closeDialog.emit(null);
+    this.reset();
   }
 
   overlayClick(e: MouseEvent): void {
@@ -151,6 +151,13 @@ export class InvoiceDetailsShareDialogComponent implements AfterViewInit {
 
       this.close();
     }
+  }
+
+  private reset() {
+    // clear emails
+    this.emailsValue = [];
+    this.emails.reset();
+    this.initTags({ isRefresh: true });
   }
 
   private hasInvalidEmail(emails: string[]): boolean {
