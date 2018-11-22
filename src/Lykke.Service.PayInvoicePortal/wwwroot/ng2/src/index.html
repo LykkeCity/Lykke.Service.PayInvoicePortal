@@ -9,7 +9,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="icon" type="image/x-icon" href="favicon.ico">
 
-  <link rel="stylesheet" type="text/css" href="http://localhost:54081/css/style.css">
+  <link rel="stylesheet" type="text/css" href="https://localhost:54081/src/css/vendors-custom/bootstrap-custom.min.css">
+  <link rel="stylesheet" type="text/css" href="https://localhost:54081/css/style.css">
   <style>
     /* fix fonts for localhost:4200 */
     @font-face { font-family: 'Proxima Nova'; src: url("../fonts/ProximaNovaThin.eot"); /* IE9 Compat Modes */ src: url("../fonts/ProximaNovaThin.eot?#iefix") format("embedded-opentype"), url("../fonts/ProximaNovaThin.woff") format("woff"), url("../fonts/ProximaNovaThin.ttf") format("truetype"), url("../fonts/ProximaNovaThin.svg#0b7ebb1c86cf54829ef0c13b500be9e7") format("svg"); /* Legacy iOS */ font-style: normal; font-weight: 200; }
@@ -29,15 +30,9 @@
       box-shadow: 0 1px 6px 0 rgba(0, 0, 0, 0.12), 0 1px 6px 0 rgba(0, 0, 0, 0.12);
     }
   </style>
-
-  <script type="text/javascript" src="http://localhost:54081/js/vendors.js"></script>
-  <script type="text/javascript" src="http://localhost:54081/js/functions.js"></script>
-  <!-- ng1 app for stage of migration -->
-  <!-- <script type="text/javascript" src="http://localhost:54081/js/app.js"></script> -->
-
 </head>
 
-<body>
+<body style="background: white">
   <lp-confirm-modal></lp-confirm-modal>
 
   <article class="content">
@@ -45,7 +40,7 @@
       <!-- <lp-payments></lp-payments> -->
 
       <div class="container">
-        <lp-invoice-details></lp-invoice-details>
+        <!-- <lp-invoice-details></lp-invoice-details> -->
 
         <div class="row">
           <!-- put here currently developing component -->
@@ -58,9 +53,9 @@
             <lp-settings></lp-settings>
           </div> -->
 
-          <div class="col-sm-8 col-md-6 automargin">
+          <!-- <div class="col-sm-8 col-md-6 automargin">
             <lp-signup></lp-signup>
-          </div>
+          </div> -->
 
           <!-- <div class="col-sm-8 col-md-6 automargin">
             <lp-reset-password></lp-reset-password>
@@ -69,6 +64,15 @@
       </div>
     </section>
   </article>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.22.2/moment.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/eonasdan-bootstrap-datetimepicker/4.17.47/js/bootstrap-datetimepicker.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.13.3/js/bootstrap-select.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.9.1/underscore.js"></script>
+  <script type="text/javascript" src="https://localhost:54081/js/vendors.js"></script>
+  <script type="text/javascript" src="https://localhost:54081/js/functions.js"></script>
 
 </body>
 

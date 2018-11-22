@@ -4,6 +4,9 @@
     ViewData["Title"] = Startup.DeploymentEnvironment == DeploymentEnvironment.Prod
         ? "Accept Bitcoin, Ether and other crypto payments"
         : string.Empty;
+
+    ViewData["MetaDescription"] = "Accept payment from your customers over the world in Crypto and FIAT currencies, " +
+                                  "receive settlement in asset of choice to your wallet or Bank account";
 }
 
 @if (User.Identity.IsAuthenticated)
@@ -40,7 +43,8 @@
                                 </div>
                             </a>
                         </div>
-                        @if (!string.IsNullOrEmpty(Startup.PortalTestnetUrl))
+                        @if (Startup.DeploymentEnvironment != DeploymentEnvironment.Sandbox &&
+                             !string.IsNullOrEmpty(Startup.PortalTestnetUrl))
                         {
                             <div class="asset_link asset_link--simple">
                                 <a href="@Startup.PortalTestnetUrl" target="_blank">

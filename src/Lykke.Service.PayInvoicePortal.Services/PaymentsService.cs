@@ -29,6 +29,17 @@ namespace Lykke.Service.PayInvoicePortal.Services
             _lykkeAssetsResolver = lykkeAssetsResolver;
         }
 
+        public async Task<Payment> GetByInvoiceIdAsync(string invoiceId)
+        {
+            InvoiceModel invoice = await _payInvoiceClient.GetInvoiceAsync(invoiceId);
+
+            var payment = Mapper.Map<Payment>(invoice);
+
+            payment.SettlementAsset = await _lykkeAssetsResolver.TryGetAssetAsync(payment.SettlementAssetId);
+
+            return payment;
+        }
+
         /// <summary>
         /// Gets payments - the combined result of invoices and payment requests
         /// </summary>
@@ -58,7 +69,10 @@ namespace Lykke.Service.PayInvoicePortal.Services
                     take);
             }
 
-            if (type == PaymentType.All || type == PaymentType.Api)
+            var isOnlyInvoices = statuses.Count == 1 && statuses.First() == InvoiceStatus.Draft;
+
+            if ((type == PaymentType.All || type == PaymentType.Api) &&
+                !isOnlyInvoices)
             {
                 var paymentRequestStatuses = new List<PaymentRequestStatus>();
                 var processingErrors = new List<PaymentRequestProcessingError>();
@@ -104,16 +118,19 @@ namespace Lykke.Service.PayInvoicePortal.Services
             switch (type)
             {
                 case PaymentType.All:
-                    if (invoicesTask != null && paymentRequestsTask != null)
+                    if (invoicesTask != null || paymentRequestsTask != null)
                     {
-                        await Task.WhenAll(invoicesTask, paymentRequestsTask);
+                        await Task.WhenAll(invoicesTask ?? Task.CompletedTask, paymentRequestsTask ?? Task.CompletedTask);
 
-                        var payments = Mapper.Map<List<Payment>>(invoicesTask.Result.Invoices);
-                        payments.AddRange(Mapper.Map<List<Payment>>(paymentRequestsTask.Result.PaymeentRequests));
+                        var payments = Mapper.Map<List<Payment>>(invoicesTask?.Result.Invoices);
+                        if (paymentRequestsTask != null)
+                        {
+                            payments.AddRange(Mapper.Map<List<Payment>>(paymentRequestsTask?.Result.PaymeentRequests));
+                        }
 
                         result.Payments = payments.OrderByDescending(x => x.CreatedDate).ToList();
-                        result.HasMorePayments = invoicesTask.Result.HasMoreInvoices ||
-                                                 paymentRequestsTask.Result.HasMorePaymentRequests;
+                        result.HasMorePayments = (invoicesTask?.Result.HasMoreInvoices ?? false) ||
+                                                 (paymentRequestsTask?.Result.HasMorePaymentRequests ?? false);
                     }
 
                     break;

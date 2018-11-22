@@ -1,5 +1,7 @@
 ﻿@{
     ViewData["Title"] = "PayAPI documentation";
+    ViewData["MetaDescription"] = "Lykke Pay API is a set of API methods allowing to build a custom payment solution for accepting payments in BTC, " +
+                                  "ETH and other crypto assets with the full control of the checkout process";
 }
 
 @if (User.Identity.IsAuthenticated)
@@ -29,7 +31,9 @@
     </div>
 
     <div class="lykkepay-api-docs__embed"></div>
+</article>
 
+@section Scripts {
     <script src="https://api.apiary.io/seeds/embed.js"></script>
     <script>
         // disable calculations for footer
@@ -126,4 +130,4 @@
             });
         });
     </script>
-</article>
+}

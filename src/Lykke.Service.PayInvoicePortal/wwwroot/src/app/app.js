@@ -1,29 +1,16 @@
 ﻿(function () {
     'use strict';
 
-    angular.module('app', ['ngFileUpload'])
+    angular.module('app', [])
         .factory('authHttpResponseInterceptor',['$q','$location', '$window', authHttpResponseInterceptor])
-        .config(['$compileProvider', '$httpProvider', 'datetimepickerProvider', appConfig])
+        .config(['$compileProvider', '$httpProvider', appConfig])
         .run(['$rootScope', startup]);
 
-    function appConfig($compileProvider, $httpProvider, datetimepickerProvider) {
+    function appConfig($compileProvider, $httpProvider) {
         $httpProvider.interceptors.push('authHttpResponseInterceptor');
 
         var debugEnabled = window.location.host.indexOf('localhost') > -1 || window.location.host.indexOf('dev') > -1;
         $compileProvider.debugInfoEnabled(debugEnabled);
-
-        datetimepickerProvider.setOptions({
-            format: 'l',
-            minDate: moment().startOf("day"),
-            icons: {
-                time: 'icon--clock',
-                date: "icon--cal",
-                up: "icon--chevron-thin-up",
-                down: "icon--chevron-thin-down",
-                previous: "icon--chevron-thin-left",
-                next: "icon--chevron-thin-right"
-            }
-        });
     }
 
     function startup($rootScope) {

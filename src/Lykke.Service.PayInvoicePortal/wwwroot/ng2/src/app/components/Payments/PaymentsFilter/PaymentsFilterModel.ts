@@ -4,14 +4,23 @@ import { PaymentStatus } from '../../../models/Payment/PaymentStatus';
 
 export class PaymentsFilterModel {
   period: number;
+  periodDefaultValue: number;
   periods: IItemViewModel[];
   type: number;
+  typeDefaultValue: number;
   types: IItemViewModel[];
   status: string;
+  statusDefaultValue: string;
   statuses: PaymentsFilterStatus[];
   searchText: string;
+  searchTextDefaultValue: string;
+  isFilterInitialized: boolean;
   constructor() {
-    this.period = PaymentsFilterPeriod.ThisMonth;
+    this.periodDefaultValue = PaymentsFilterPeriod.ThisMonth;
+    this.typeDefaultValue = PaymentType.All;
+    this.statusDefaultValue = '';
+    this.searchTextDefaultValue = '';
+
     this.periods = [
       { id: PaymentsFilterPeriod.ThisWeek, title: 'This week' },
       { id: PaymentsFilterPeriod.LastWeek, title: 'Last week' },
@@ -21,13 +30,13 @@ export class PaymentsFilterModel {
       { id: PaymentsFilterPeriod.ThisYear, title: 'This year' },
       { id: PaymentsFilterPeriod.LastYear, title: 'Last year' }
     ];
-    this.type = PaymentType.All;
+
     this.types = [
       { id: PaymentType.All, title: 'All' },
       { id: PaymentType.Invoice, title: 'Invoice' },
       { id: PaymentType.Api, title: 'API' }
     ];
-    this.status = '';
+
     this.statuses = [
       {
         id: '',
@@ -97,13 +106,22 @@ export class PaymentsFilterModel {
       }
     ];
   }
-}
 
-export class PaymentsFilterLocalStorageKeys {
-  static readonly Period: string = 'PaymentsFilter_Period';
-  static readonly Type: string = 'PaymentsFilter_Type';
-  static readonly Status: string = 'PaymentsFilter_Status';
-  static readonly SearchText: string = 'PaymentsFilter_SearchText';
+  initPeriod() {
+    this.period = this.periodDefaultValue;
+  }
+
+  initType() {
+    this.type = this.typeDefaultValue;
+  }
+
+  initStatus() {
+    this.status = this.statusDefaultValue;
+  }
+
+  initSearchText() {
+    this.searchText = this.searchTextDefaultValue;
+  }
 }
 
 class PaymentsFilterStatus implements IItemViewModel {
@@ -112,7 +130,7 @@ class PaymentsFilterStatus implements IItemViewModel {
   values: string[];
 }
 
-enum PaymentsFilterPeriod {
+export enum PaymentsFilterPeriod {
   All = 0,
   ThisWeek,
   LastWeek,

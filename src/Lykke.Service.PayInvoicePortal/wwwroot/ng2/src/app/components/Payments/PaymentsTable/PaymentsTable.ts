@@ -28,6 +28,9 @@ export class PaymentsTableComponent implements IPaymentsTableHandlers {
   @Output()
   paymentRemovedEvent = new EventEmitter();
 
+  @Output()
+  paymentUpdatedEvent = new EventEmitter();
+
   view = new View();
 
   constructor(
@@ -62,7 +65,15 @@ export class PaymentsTableComponent implements IPaymentsTableHandlers {
               content: `Invoice #${payment.number} successfully removed.`
             });
 
-            this.paymentRemovedEvent.emit(index);
+            if (payment.status === PaymentStatus[PaymentStatus.Unpaid]) {
+              this.paymentUpdatedEvent.emit({
+                id: payment.id,
+                status: payment.status
+              });
+              payment.isLoadingDeletePayment = false;
+            } else {
+              this.paymentRemovedEvent.emit(payment.id);
+            }
           },
           error => {
             console.error(error);

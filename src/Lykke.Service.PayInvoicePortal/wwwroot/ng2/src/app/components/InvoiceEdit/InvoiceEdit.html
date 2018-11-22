@@ -1,0 +1,244 @@
+<ng-container>
+  <aside class="menu_overlay menu_overlay--open"
+         style="z-index: 99998"
+         [hidden]="!view.show"
+         (click)="overlayClick($event)"></aside>
+  <div class="sidebar_menu sidebar_menu--right"
+       [ngClass]="{ 'sidebar_menu--open': view.show }">
+    <form #invoiceForm="ngForm"
+          class="invoice_form sidebar_menu__inner"
+          novalidate
+          onsubmit="event.preventDefault()">
+      <div class="sidebar_breadcrumbs">
+        <button class="btn btn--icon btn_close_menu visible-xs"
+                (click)="close()">
+          <i class="icon icon--close"></i>
+        </button>
+        <div class="breadcrumbs_item">
+          Invoice
+        </div>
+        <i class="icon icon--chevron-thin-right"></i>
+        <div class="breadcrumbs_item breadcrumbs_item--current">
+          {{ model.isNewInvoice ? 'Create new invoice' : model.number }}
+        </div>
+      </div>
+      <div class="sidebar_menu__body">
+        <div class="sidebar_menu__header">
+          <div class="invoice_form__title">Invoice</div>
+          <div class="invoice_form__status">
+            {{ model.isNewInvoice ? 'Not created' : model.status }}</div>
+        </div>
+        <h3>Details</h3>
+        <div class="form-group">
+          <label class="control-label">Invoice number</label>
+          <input type="text"
+                 class="form-control"
+                 name="number"
+                 #number="ngModel"
+                 [(ngModel)]="model.number"
+                 required
+                 [class.error]="number.invalid && (number.touched || number.dirty || validation.isSubmitPressed)">
+          <div class="hint hint--error"
+               *ngIf="number.invalid && (number.touched || number.dirty || validation.isSubmitPressed)">Required</div>
+        </div>
+        <div class="form-group">
+          <label class="control-label">Client</label>
+          <input type="text"
+                 class="form-control"
+                 name="client"
+                 #client="ngModel"
+                 [(ngModel)]="model.client"
+                 required
+                 [class.error]="client.invalid && (client.touched || client.dirty || validation.isSubmitPressed)">
+          <div class="hint hint--error"
+               *ngIf="client.invalid && (client.touched || client.dirty || validation.isSubmitPressed)">Required</div>
+        </div>
+        <div class="form-group">
+          <label class="control-label">Client's Email</label>
+          <input type="email"
+                 class="form-control"
+                 name="email"
+                 #email="ngModel"
+                 [(ngModel)]="model.email"
+                 required
+                 lpEmailValidator
+                 [class.error]="email.invalid && (email.touched || email.dirty || validation.isSubmitPressed)">
+          <div *ngIf="(email.touched || email.dirty || validation.isSubmitPressed)">
+            <div class="hint hint--error"
+                 *ngIf="email.errors?.required">Required</div>
+            <div class="hint hint--error"
+                 *ngIf="!email.errors?.required && email.errors?.email">Email has not a valid format (text@text.domain)</div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-sm-4">
+            <div class="form-group">
+              <label class="control-label">Currency</label>
+              <div *ngIf="view.isLoadingAssets">
+                <div class="spinner"
+                     style="width: 34px; height: 34px;">
+                  <div class="spinner__inside"></div>
+                </div>
+              </div>
+              <input *ngIf="model.settlementAssets.length === 1"
+                     class="form-control"
+                     style="font-weight: 600"
+                     disabled
+                     value="{{model.settlementAssets[0].title}}" />
+              <lp-selectpicker name="settlementAsset"
+                               *ngIf="model.settlementAssets.length > 1"
+                               placeholder="Asset name"
+                               [(ngModel)]="model.selectedSettlementAssetId"
+                               [selectpickerOptions]="model.settlementAssets"></lp-selectpicker>
+            </div>
+          </div>
+          <div class="col-sm-4 _amount">
+            <div class="form-group">
+              <label class="control-label">Amount</label>
+              <input type="number"
+                     class="form-control"
+                     name="amount"
+                     #amount="ngModel"
+                     [(ngModel)]="model.amount"
+                     onchange="this.value = parseFloat(parseFloat(this.value).toFixed(2));"
+                     placeholder="0.00"
+                     min="0.01"
+                     step="0.01"
+                     required
+                     lpMinNumberValidator
+                     [class.error]="amount.invalid && (amount.touched || amount.dirty || validation.isSubmitPressed)">
+              <div *ngIf="(amount.touched || amount.dirty || validation.isSubmitPressed)">
+                <div class="hint hint--error"
+                     *ngIf="amount.errors?.required">Required</div>
+                <div class="hint hint--error"
+                     *ngIf="!amount.errors?.required && amount.errors?.min">Must be > 0.01</div>
+              </div>
+            </div>
+          </div>
+          <div class="col-sm-4 _date">
+            <div class="form-group">
+              <label class="control-label">Pay due date</label>
+              <div class="input-group date">
+                <input type="text"
+                       class="form-control datetimepicker"
+                       style="cursor: pointer"
+                       lpDateTimePicker
+                       name="dueDate"
+                       #dueDate="ngModel"
+                       [(ngModel)]="model.dueDate"
+                       onkeydown="return false;"
+                       required
+                       [class.error]="dueDate.invalid && (dueDate.touched || dueDate.dirty)">
+                <span class="input-group-addon">
+                  <span class="icon icon--cal"></span>
+                </span>
+              </div>
+              <div *ngIf="(dueDate.touched || dueDate.dirty)">
+                <div class="hint hint--error"
+                     *ngIf="dueDate.errors?.required">Required</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="control-label">Note</label>
+          <textarea name="note"
+                    class="form-control"
+                    [(ngModel)]="model.note"></textarea>
+        </div>
+        <div class="form_header">
+          <button class="btn btn-sm btn-primary pull-right"
+                  onclick="this.blur()"
+                  [disabled]="view.isUploadingFiles"
+                  (click)="fileInput.click()">Add File</button>
+          <input type="file"
+                 #fileInput
+                 style="display: none"
+                 (change)="addFiles($event.target.files)"
+                 [attr.accept]="getAcceptFilesExtensions()"
+                 multiple />
+          <h3>Attachment</h3>
+        </div>
+        <div *ngIf="view.isUploadingFiles"
+             style="margin-bottom: 10px">
+          <div class="spinner">
+            <div class="spinner__inside"></div>
+          </div>
+        </div>
+        <div class="attachment_list"
+             [ngClass]="{'attachment_list--download': !model.isNewInvoice}">
+          <div class="asset_link_list"
+               *ngIf="model.files && model.files.length">
+            <div class="asset_link asset_link--alt"
+                 *ngFor="let file of model.files; let i = index">
+              <ng-container *ngIf="model.isNewInvoice">
+                <div class="asset_link__icon">
+                  <div class="asset_icon asset_icon--red">{{getFileExtension(file.name)}}</div>
+                </div>
+                <div class="asset_link__info">
+                  <div class="asset_link__title">{{file.name}}</div>
+                  <div class="asset_link__desc">{{getFileSize(file.size)}}</div>
+                </div>
+                <div class="asset_link__action"
+                     style="z-index: 0">
+                  <button class="btn btn--icon"
+                          (click)="deleteFile(i)">
+                    <i class="btn__svg_icon svg_icon svg_icon--delete"></i>
+                  </button>
+                </div>
+              </ng-container>
+              <ng-container *ngIf="!model.isNewInvoice">
+                <div class="asset_link__icon">
+                  <div class="asset_icon asset_icon--red"
+                       (click)="getFile(file)">
+                    {{getFileExtension(file.name)}}
+                  </div>
+                </div>
+                <div class="asset_link__info">
+                  <div class="asset_link__title"
+                       (click)="getFile(file)">{{file.name}}</div>
+                  <div class="asset_link__desc">{{getFileSize(file.size)}}</div>
+                </div>
+                <div class="asset_link__action"
+                     style="z-index: 0">
+                  <button class="btn btn--icon"
+                          (click)="getFile(file)">
+                    <i class="btn__svg_icon svg_icon svg_icon--upload"></i>
+                  </button>
+                  <button class="btn btn--icon"
+                          (click)="deleteFile(i)">
+                    <i class="btn__svg_icon svg_icon svg_icon--delete"></i>
+                  </button>
+                </div>
+              </ng-container>
+            </div>
+          </div>
+          <div class="hint"
+               *ngIf="!model.files || model.files.length === 0">No file selected</div>
+        </div>
+        <div class="sidebar_menu__footer">
+          <div *ngIf="view.isLoading"
+               style="margin-bottom: 10px">
+            <div class="spinner">
+              <div class="spinner__inside"></div>
+            </div>
+          </div>
+          <div class="form-group">
+            <button class="btn btn-block"
+                    type="submit"
+                    (click)="generate()"
+                    [disabled]="view.isLoading">Generate</button>
+          </div>
+          <button class="btn btn--flat btn-block"
+                  type="submit"
+                  (click)="saveDraft()"
+                  [disabled]="view.isLoading">Safe draft</button>
+          <button class="btn btn--flat btn-block btn_close_menu"
+                  (click)="close()">Cancel and close</button>
+        </div>
+      </div>
+    </form>
+  </div>
+
+  <lp-invoice-info #invoiceInfoSidebar></lp-invoice-info>
+</ng-container>

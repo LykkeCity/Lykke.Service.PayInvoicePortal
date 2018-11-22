@@ -5,39 +5,23 @@
         .module('app')
         .service('apiSvc', apiSvc);
 
-    apiSvc.$inject = ['$http', '$q', '$window', 'Upload'];
+    apiSvc.$inject = ['$http', '$q', '$window'];
 
-    function apiSvc($http, $q, $window, Upload) {
+    function apiSvc($http, $q, $window) {
         var minDate = '0001-01-01T00:00:00';
 
         var service = {
             subscribe: subscribe,
 
-            sendEmail: sendEmail,
-
-            resetPassword: resetPassword,
-
-            getAssets: getAssets,
             getPaymentAssets: getPaymentAssets,
             getPaymentAssetsOfMerchant: getPaymentAssetsOfMerchant,
 
-            getBalance: getBalance,
-
             exportToCsv: exportToCsv,
 
-            uploadFile: uploadFile,
-            getFile: getFile,
-            deleteFile: deleteFile,
-
-            getInvoice: getInvoice,
-            getInvoices: getInvoices,
             getIncomingInvoices: getIncomingInvoices,
             getSumToPay: getSumToPay,
             payInvoices: payInvoices,
             getSupervisingInvoices: getSupervisingInvoices,
-            saveInvoice: saveInvoice,
-            updateInvoice: updateInvoice,
-            deleteInvoice: deleteInvoice,
 
             signRequest: signRequest,
 
@@ -55,23 +39,7 @@
             return post('subscriber', model);
         }
 
-        // Email
-
-        function sendEmail(model) {
-            return post('email', model);
-        }
-
-        // User
-
-        function resetPassword(model) {
-            return post('resetPassword', model);
-        }
-
         // Assets
-
-        function getAssets() {
-            return get('assets', {});
-        }
 
         function getPaymentAssets(merchantId, settlementAssetId) {
             return get("paymentAssets", {
@@ -82,12 +50,6 @@
 
         function getPaymentAssetsOfMerchant() {
             return get("paymentAssetsOfMerchant");
-        }
-
-        // Balances
-
-        function getBalance() {
-            return get('balances', {});
         }
 
         // Export
@@ -108,38 +70,7 @@
             $window.open(url);
         }
 
-        // Files
-
-        function uploadFile(invoiceId, files) {
-            return upload('files', { invoiceId: invoiceId }, files);
-        }
-
-        function getFile(invoiceId, fileId) {
-            $window.open(getUrl('files') + '/' + fileId + '/' + invoiceId);
-        }
-
-        function deleteFile(invoiceId, fileId) {
-            return remove('files/' + fileId, { invoiceId: invoiceId });
-        }
-
         // Invoices
-
-        function getInvoice(invoiceId) {
-            return get('invoices/' + invoiceId);
-        }
-
-        function getInvoices(searchValue, period, status, sortField, sortAscending, skip, take) {
-            return get('invoices',
-                {
-                    searchValue: searchValue,
-                    period: period,
-                    status: status,
-                    sortField: sortField,
-                    sortAscending: sortAscending,
-                    skip: skip,
-                    take: take
-                });
-        }
 
         function getIncomingInvoices(searchValue, period, statuses, skip, take) {
             return get('incomingInvoices',
@@ -174,18 +105,6 @@
                     skip: skip,
                     take: take
                 });
-        }
-
-        function saveInvoice(model, files) {
-            return upload('invoices', model, files);
-        }
-
-        function updateInvoice(model) {
-            return put('invoices', model);
-        }
-
-        function deleteInvoice(invoiceId) {
-            return remove('invoices/' + invoiceId, {});
         }
 
         // Sign request
@@ -270,27 +189,6 @@
                 })
                 .error(function (data, status, headers, config) {
                     deferred.reject(data, status);
-                });
-
-            return deferred.promise;
-        }
-
-        function upload(action, model, files, fileFormDataName) {
-            var deferred = $q.defer();
-
-            Upload.upload({
-                url: getUrl(action),
-                file: files,
-                fileFormDataName: fileFormDataName || 'files',
-                fields: model
-            }).then(
-                function(response) {
-                    deferred.resolve(response.data);
-                },
-                function (response) {
-                    deferred.reject(response.data);
-                },
-                function (evt) {
                 });
 
             return deferred.promise;

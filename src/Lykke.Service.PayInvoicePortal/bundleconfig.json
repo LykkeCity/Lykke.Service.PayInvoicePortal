@@ -4,8 +4,8 @@
     "inputFiles": [
       // must not include as we have own custom styles 
       // "wwwroot/lib/bootstrap-select/dist/css/bootstrap-select.css",
-      "wwwroot/src/css/vendor/**/*.css",
       "wwwroot/src/css/style.css",
+      "wwwroot/src/css/site.css",
       "wwwroot/src/css/style-custom.css"
     ],
     "minify": {
@@ -27,19 +27,11 @@
     },
     "sourceMap": false
   },
-
   {
     "outputFileName": "wwwroot/js/vendors.js",
     "inputFiles": [
-      "wwwroot/lib/jquery/dist/jquery.js",
-      "wwwroot/lib/fastclick/lib/fastclick.js",
-      "wwwroot/lib/moment/moment.js",
-      "wwwroot/lib/bootstrap/dist/js/bootstrap.js",
-      "wwwroot/lib/bootstrap-select/dist/js/bootstrap-select.js",
-      "wwwroot/lib/angular/angular.js",
-      "wwwroot/lib/ng-file-upload/ng-file-upload.js",
-      "wwwroot/lib/eonasdan-bootstrap-datetimepicker/src/js/bootstrap-datetimepicker.js",
-      "wwwroot/src/js/vendor/**/*.js"
+      "wwwroot/src/js/vendor/**/*.js",
+      "wwwroot/src/js/vendors-custom/**/*.js"
     ],
     "minify": {
       "enabled": false,
@@ -54,7 +46,7 @@
       "wwwroot/js/vendors.js"
     ],
     "minify": {
-      "enabled": false,
+      "enabled": true,
       "renameLocals": false,
       "adjustRelativePaths": false
     },
@@ -92,6 +84,18 @@
     ],
     "minify": {
       "enabled": false,
+      "renameLocals": false,
+      "adjustRelativePaths": false
+    },
+    "sourceMap": false
+  },
+  {
+    "outputFileName": "wwwroot/js/functions.min.js",
+    "inputFiles": [
+      "wwwroot/js/functions.js"
+    ],
+    "minify": {
+      "enabled": true,
       "renameLocals": false,
       "adjustRelativePaths": false
     },

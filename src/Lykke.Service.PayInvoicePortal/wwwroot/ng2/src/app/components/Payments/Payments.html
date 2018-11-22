@@ -15,7 +15,7 @@
     <div class="col-sm-6">
       <h3 class="payments_header__title">Payments</h3>
       <button class="btn payments_header__btn"
-              data-ng-click="vm.handlers.create()">
+              (click)="createInvoice()">
         <i class="icon icon--add"></i>
         New invoice
       </button>
@@ -57,6 +57,7 @@
     <lp-payments-table [payments]="model.payments"
                        [hasMorePayments]="view.hasMorePayments"
                        (paymentRemovedEvent)="paymentRemoved($event)"
+                       (paymentUpdatedEvent)="paymentUpdated($event)"
                        (showMoreEvent)="showMore()"
                        [showMoreLoading]="view.isShowMoreLoading"
                        [hidden]="view.showNoResults || view.isLoading"></lp-payments-table>
@@ -78,6 +79,17 @@
         Sorry, we couldn't find any matches “{{filter.searchText}}”. Try using another keyword.
       </div>
     </div>
+
+    <div *ngIf="view.showNoResultsForPeriod"
+         class="invoices__empty_result empty_result">
+      <div class="empty_result__img-container">
+        <img src="img/invoices-empty.svg" />
+      </div>
+      <div class="empty_result__title">You don't have payments for the selected period</div>
+      <div class="empty_result__description">
+        Click “New invoice” to create an invoice.
+      </div>
+    </div>
   </div>
 
   <div *ngIf="view.showNoInvoices"
@@ -90,4 +102,6 @@
       Create the first one by clicking “New invoice” button.
     </div>
   </div>
+
+  <lp-invoice-edit #invoiceEditSidebar></lp-invoice-edit>
 </div>

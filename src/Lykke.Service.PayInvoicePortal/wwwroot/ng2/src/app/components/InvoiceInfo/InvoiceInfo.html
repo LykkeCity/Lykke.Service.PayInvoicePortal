@@ -1,0 +1,161 @@
+<ng-container>
+  <aside class="menu_overlay menu_overlay--open"
+         style="z-index: 99998"
+         [hidden]="!view.show"
+         (click)="overlayClick($event)"></aside>
+  <div class="invoice_sidebar sidebar_menu sidebar_menu--right"
+       [ngClass]="{ 'sidebar_menu--open': view.show }">
+    <div class="sidebar_breadcrumbs">
+      <button class="btn btn--icon btn_close_menu visible-xs"
+              (click)="close()">
+        <i class="icon icon--close"></i>
+      </button>
+      <div class="breadcrumbs_item">
+        Invoice
+      </div>
+      <i class="icon icon--chevron-thin-right"></i>
+      <div class="breadcrumbs_item breadcrumbs_item--current">{{model?.number}}</div>
+    </div>
+    <div class="sidebar_menu__body">
+      <div class="sidebar_menu__header">
+        <div class="invoice_form__title">Invoice</div>
+        <div class="invoice_form__status">{{model?.status}}</div>
+      </div>
+      <div class="asset_link_list asset_link_list--thin">
+        <div class="asset_link">
+          <div class="asset_link__info">
+            <div class="asset_link__title">Invoice number</div>
+            <div class="asset_link__desc">{{model?.number}}</div>
+          </div>
+        </div>
+        <div class="asset_link">
+          <div class="asset_link__info">
+            <div class="asset_link__title">Client</div>
+            <div class="asset_link__desc">{{model?.clientName}}</div>
+          </div>
+        </div>
+        <div class="asset_link">
+          <div class="asset_link__info">
+            <div class="asset_link__title">Client's Email</div>
+            <div class="asset_link__desc">{{model?.clientEmail}}</div>
+          </div>
+        </div>
+        <div class="asset_link">
+          <div class="asset_link__info">
+            <div class="asset_link__title">Amount</div>
+            <div class="asset_link__desc">{{model?.amount | number : '1.0-' + model?.settlementAssetAccuracy}}
+              {{model?.settlementAssetDisplay}}</div>
+          </div>
+        </div>
+        <div class="asset_link">
+          <div class="asset_link__info">
+            <div class="asset_link__title">Pay due date</div>
+            <div class="asset_link__desc">{{ model && model.dueDate && model.dueDate.format('l')}}</div>
+          </div>
+        </div>
+        <div class="asset_link"
+             *ngIf="model?.note">
+          <div class="asset_link__info">
+            <div class="asset_link__title">Note</div>
+            <div class="asset_link__desc">{{model?.note}}</div>
+          </div>
+        </div>
+        <div class="asset_link"
+             *ngIf="model?.files && model?.files.length">
+          <div class="asset_link__info">
+            <div class="asset_link__title">Files</div>
+            <div *ngFor="let file of model?.files">
+              <div class="asset_link__desc">{{file.name}}</div>
+            </div>
+          </div>
+        </div>
+        <div class="asset_link">
+          <div class="asset_link__action">
+            <button class="btn btn--icon _copy create__item-copy"
+                    type="button"
+                    [lpCopyText]="model?.url">
+              <i class="btn__svg_icon svg_icon svg_icon--copy"></i>
+            </button>
+          </div>
+          <div class="asset_link__info">
+            <div class="asset_link__title">Hyperlink</div>
+            <div class="asset_link__desc">{{model?.url}}</div>
+          </div>
+        </div>
+        <div class="asset_link">
+          <div class="asset_link__info">
+            <div class="asset_link__title">Share</div>
+            <div class="asset_link__desc">Send invoice to</div>
+            <div class="block_subscribe">
+              <form #shareForm="ngForm"
+                    class="form"
+                    (ngSubmit)="share()">
+                <div class="form-group">
+                  <div class="input-group">
+                    <i class="icon icon--email"></i>
+                    <input type="text"
+                           placeholder="E-mail address"
+                           class="form-control"
+                           name="shareEmail"
+                           #shareEmail="ngModel"
+                           [(ngModel)]="model.shareEmail"
+                           required
+                           lpEmailValidator
+                           lpEmailValidatorMultiple="true"
+                           [class.error]="shareEmail.invalid && shareEmail.dirty">
+                    <div *ngIf="view.isSending"
+                         class="input-group-addon"
+                         style="right: -5px">
+                      <div class="spinner"
+                           style="width: 34px; height: 34px;">
+                        <div class="spinner__inside"></div>
+                      </div>
+                    </div>
+                  </div>
+                  <button class="btn btn-sm btn--circle btn--primary"
+                          type="submit"
+                          [disabled]="view.isSending || shareForm.invalid">
+                    <i class="icon icon--arrow-right-alt icon--arrow-right-alt"
+                       style="font-size: 20px; margin-right: 0"></i>
+                  </button>
+                  <div *ngIf="shareEmail.dirty">
+                    <div class="hint hint--error"
+                         *ngIf="shareEmail.errors?.required">Required</div>
+                    <div class="hint hint--error"
+                         *ngIf="!shareEmail.errors?.required && shareEmail.errors?.email">
+                      Email has not a valid format (text@text.domain)
+                    </div>
+                  </div>
+                </div>
+                <div *ngIf="shareEmail.touched || shareEmail.dirty"
+                     class="hint">
+                  You can enter multiple emails separated by semicolon
+                </div>
+
+                <div *ngIf="validation.hasError">
+                  <div class="icon_circle_wrapper icon_circle_wrapper--error">!</div>
+                  <span class="hint--error">
+                    Error occured, please contact support.
+                  </span>
+                </div>
+
+                <div *ngIf="view.sent">
+                  <div class="icon_circle_wrapper">
+                    <i class="icon icon--check_thin"></i>
+                  </div>
+                  <span>Successfully sent.</span>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="sidebar_menu__footer">
+        <div class="form-group">
+          <button class="btn btn-block btn_close_menu"
+                  (click)="close()">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</ng-container>

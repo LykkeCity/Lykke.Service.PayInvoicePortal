@@ -30,36 +30,35 @@
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=Edge">
-    
     <title>@ViewData["Title"]</title>
-    
     @if (Startup.DeploymentEnvironment != DeploymentEnvironment.Prod)
     {
-        <meta name="robots" content="noindex"/>
+        <meta name="robots" content="noindex" />
     }
-    
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-
+    @if (ViewData["MetaDescription"] != null)
+    {
+        @*
+            https://developers.google.com/web/tools/lighthouse/audits/description
+            https://moz.com/learn/seo/meta-description
+        *@
+        <meta name="description" content="@ViewData["MetaDescription"]">
+    }
     <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
     <link rel="icon" type="image/png" href="/favicon-32x32.png" sizes="32x32">
     <link rel="icon" type="image/png" href="/favicon-16x16.png" sizes="16x16">
     <link rel="manifest" href="/manifest.json">
     <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
     <meta name="theme-color" content="#ffffff">
+    <link rel="stylesheet" type="text/css" href="~/src/css/vendors-custom/bootstrap-custom.min.css" asp-append-version="true">
+
+    @RenderSection("StyleLibs", required: false)
     @* https://github.com/madskristensen/BundlerMinifier/blob/master/README.md#bundleconfigjson *@
     <environment include="Development">
         <link rel="stylesheet" type="text/css" href="~/css/style.css" asp-append-version="true">
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.9.1/underscore.js"></script>
-        <script type="text/javascript" src="~/js/vendors.js" asp-append-version="true"></script>
-        <script type="text/javascript" src="/js/functions.js" asp-append-version="true"></script>
-        <script type="text/javascript" src="~/js/app.js" asp-append-version="true"></script>
     </environment>
     <environment include="Staging,Production">
         <link rel="stylesheet" type="text/css" href="~/css/style.min.css" asp-append-version="true">
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.9.1/underscore-min.js"></script>
-        <script type="text/javascript" src="~/js/vendors.min.js" asp-append-version="true"></script>
-        <script type="text/javascript" src="/js/functions.js" asp-append-version="true"></script>
-        <script type="text/javascript" src="~/js/app.min.js" asp-append-version="true"></script>
     </environment>
     @Html.Raw(JavaScriptSnippet.FullScript)
     <script>
@@ -91,7 +90,7 @@
                                 {
                                     <span style="color:red">Test</span>
                                 }
-                                else if (string.IsNullOrEmpty(Startup.PortalTestnetUrl))
+                                else if (Startup.DeploymentEnvironment == DeploymentEnvironment.Sandbox)
                                 {
                                     <span style="color:red">Sandbox</span>
                                 }
@@ -188,7 +187,7 @@
                                    class="app_link app_link--appstore"
                                    title="App Store"
                                    target="_blank"
-                                   rel="noopener noreferrer">
+                                   rel="noreferrer">
                                     <img src="/img/appstore-badge.svg" width="170" alt="apps_apple">
                                 </a>
                             </div>
@@ -197,7 +196,7 @@
                                    class="app_link app_link--googleplay"
                                    title="Google Play"
                                    target="_blank"
-                                   rel="noopener noreferrer">
+                                   rel="noreferrer">
                                     <img src="/img/google-play.svg" width="170" alt="apps_google">
                                 </a>
                             </div>
@@ -276,31 +275,56 @@
                 <div class="row">
                     <div class="col-xs-12 col-sm-7 pull-right">
                         <ul class="social social--footer_alt">
-                            <li><a href="https://www.facebook.com/LykkeCity" target="_blank" class="social__item"><i class="icon icon--fb_simple"></i></a></li>
-                            <li><a href="https://twitter.com/lykke" target="_blank" class="social__item"><i class="icon icon--tw"></i></a></li>
-                            <li><a href="http://instagram.com/lykkecity" target="_blank" class="social__item"><i class="icon icon--instagram"></i></a></li>
-                            <li><a href="https://www.youtube.com/c/LykkeX" target="_blank" class="social__item"><i class="icon icon--youtube"></i></a></li>
-                            <li><a href="https://www.linkedin.com/company/lykke" target="_blank" class="social__item"><i class="icon icon--linkedin-icn"></i></a></li>
-                            <li><a href="https://www.reddit.com/r/lykke/" target="_blank" class="social__item"><i class="icon icon--reddit"></i></a></li>
-                            <li><a href="https://t.co/TmjMYnQD7T" target="_blank" class="social__item"><i class="icon icon--telegram"></i></a></li>
-                            <li><a href="https://t.me/LykkeDev" target="_blank" class="social__item" rel="noopener noreferrer"><i class="icon icon--telegram_dev"></i></a></li>
-                            <li><a href="https://lykke.com/cp/rss" target="_blank" class="social__item" rel="noopener noreferrer"><i class="icon icon--rss_feed"></i></a></li>
+                            <li><a href="https://www.facebook.com/LykkeCity" target="_blank" rel="noreferrer" class="social__item"><i class="icon icon--fb_simple"></i></a></li>
+                            <li><a href="https://twitter.com/lykke" target="_blank" rel="noreferrer" class="social__item"><i class="icon icon--tw"></i></a></li>
+                            <li><a href="http://instagram.com/lykkecity" target="_blank" rel="noreferrer" class="social__item"><i class="icon icon--instagram"></i></a></li>
+                            <li><a href="https://www.youtube.com/c/LykkeX" target="_blank" rel="noreferrer" class="social__item"><i class="icon icon--youtube"></i></a></li>
+                            <li><a href="https://www.linkedin.com/company/lykke" target="_blank" rel="noreferrer" class="social__item"><i class="icon icon--linkedin-icn"></i></a></li>
+                            <li><a href="https://www.reddit.com/r/lykke/" target="_blank" rel="noreferrer" class="social__item"><i class="icon icon--reddit"></i></a></li>
+                            <li><a href="https://t.co/TmjMYnQD7T" target="_blank" rel="noreferrer" class="social__item"><i class="icon icon--telegram"></i></a></li>
+                            <li><a href="https://t.me/LykkeDev" target="_blank" rel="noreferrer" class="social__item" rel="noopener noreferrer"><i class="icon icon--telegram_dev"></i></a></li>
+                            <li><a href="https://lykke.com/cp/rss" target="_blank" rel="noreferrer" class="social__item" rel="noopener noreferrer"><i class="icon icon--rss_feed"></i></a></li>
                         </ul>
                     </div>
                     <div class="col-xs-12 col-sm-5">
                         <ul class="footer_links">
                             <li><span class="copy">© @DateTime.Now.Year Lykke, Inc.</span></li>
                             <li class="middot">·</li>
-                            <li><a href="https://lykke.com/privacy_policy" target="_blank">Privacy Policy</a></li>
+                            <li><a href="https://lykke.com/privacy_policy" target="_blank" rel="noreferrer">Privacy Policy</a></li>
                             <li class="middot">·</li>
-                            <li><a href="https://lykke.com/terms_of_use" target="_blank">Terms of Use</a></li>
+                            <li><a href="https://lykke.com/terms_of_use" target="_blank" rel="noreferrer">Terms of Use</a></li>
                         </ul>
                     </div>
                 </div>
             </div>
         </div>
     </footer>
-    
+    <environment include="Development">
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.js"></script>
+        @RenderSection("ScriptLibs", required: false)
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.22.2/moment.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/eonasdan-bootstrap-datetimepicker/4.17.47/js/bootstrap-datetimepicker.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.13.3/js/bootstrap-select.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.9.1/underscore.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.5.11/angular.js"></script>
+        <script type="text/javascript" src="~/js/vendors.js" asp-append-version="true"></script>
+        <script type="text/javascript" src="/js/functions.js" asp-append-version="true"></script>
+        <script type="text/javascript" src="~/js/app.js" asp-append-version="true"></script>
+    </environment>
+    <environment include="Staging,Production">
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+        @RenderSection("ScriptLibs", required: false)
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.22.2/moment.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/eonasdan-bootstrap-datetimepicker/4.17.47/js/bootstrap-datetimepicker.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.13.3/js/bootstrap-select.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.9.1/underscore-min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.5.11/angular.min.js"></script>
+        <script type="text/javascript" src="~/js/vendors.min.js" asp-append-version="true"></script>
+        <script type="text/javascript" src="/js/functions.min.js" asp-append-version="true"></script>
+        <script type="text/javascript" src="~/js/app.min.js" asp-append-version="true"></script>
+    </environment>
     @RenderSection("Scripts", required: false)
 </body>
 </html>

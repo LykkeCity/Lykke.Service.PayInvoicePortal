@@ -20,7 +20,7 @@ namespace Lykke.Service.PayInvoicePortal.Settings.ServiceSettings
         public TimeSpan UserLoginTime { get; set; }
        
         public DbSettings Db { get; set; }
-
+        public RabbitSettings Rabbit { get; set; }
         public TimeSpan AssetsCacheExpirationPeriod { get; set; }
         public CacheExpirationPeriodsSettings CacheExpirationPeriods { get; set; }
         [Optional]

@@ -9,3 +9,5 @@ export const ROUTE_CHANGE_PASSWORD_PAGE = '/settings/changePassword';
 export const ROUTE_PAYMENTS_PAGE = '/payments';
 
 export const ROUTE_INVOICE_DETAILS_PAGE = '/invoices';
+
+export const ROUTE_INVOICE_CHECKOUT_PAGE = '/invoice';

@@ -9,13 +9,17 @@ export class BaseApi {
 
   protected readonly baseApiUrl: string = environment.production
     ? '/'
-    : 'http://localhost:54081/';
+    : 'https://localhost:54081/';
 
   private readonly httpOptions = {
     headers: new HttpHeaders(),
     withCredentials: environment.production ? false : true,
     params: new HttpParams()
   };
+
+  public getBaseUrl() {
+    return this.baseApiUrl;
+  }
 
   protected get(url, params?): Observable<any> {
     this.httpOptions.params = null;
