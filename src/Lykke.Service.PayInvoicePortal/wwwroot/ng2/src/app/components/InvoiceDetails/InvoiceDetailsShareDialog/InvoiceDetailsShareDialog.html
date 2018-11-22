@@ -73,7 +73,7 @@
         <button class="btn btn--flat _modal_dialog__cancel"
                 [hidden]="isSuccess"
                 (click)="close()">
-          Cancel and close
+          {{ isLoading ? 'Close' : 'Cancel and close' }}
         </button>
         <button class="btn btn--primary"
                 [hidden]="isSuccess"
