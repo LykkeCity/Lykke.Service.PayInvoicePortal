@@ -5,6 +5,11 @@ import { IConfirmModalDataModel } from '../models/IConfirmModalDataModel';
 @Injectable()
 export class ConfirmModalService {
   private subject = new Subject<IConfirmModalDataModel>();
+
+  constants = {
+    errorTitle: 'Error occured'
+  };
+
   constructor() {}
 
   openModal(data: IConfirmModalDataModel): void {
@@ -13,7 +18,7 @@ export class ConfirmModalService {
 
   showErrorModal(): void {
     this.subject.next({
-      title: 'Error occured',
+      title: this.constants.errorTitle,
       content: 'Error occured during executing the action, please contact support.'
     });
   }

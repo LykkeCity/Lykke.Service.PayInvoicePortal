@@ -56,6 +56,9 @@ import { InvoiceInfoComponent } from './components/InvoiceInfo/InvoiceInfo';
 import { AssetsApi } from './services/api/AssetsApi';
 import { FilesApi } from './services/api/FilesApi';
 
+import { SignRequestComponent } from './components/SignRequest/SignRequest';
+import { SignRequestApi } from './services/api/SignRequestApi';
+
 @NgModule({
   declarations: [
     InvoiceInfoComponent,
@@ -74,6 +77,7 @@ import { FilesApi } from './services/api/FilesApi';
     SelectPickerComponent,
     SettingsComponent,
     SignupComponent,
+    SignRequestComponent,
     EmailValidatorDirective,
     ResetPasswordComponent,
     CopyTextDirective,
@@ -107,6 +111,7 @@ import { FilesApi } from './services/api/FilesApi';
     SettingsApi,
     SignupApi,
     ResetPasswordApi,
+    SignRequestApi,
     { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true }
   ],
   entryComponents: [
@@ -115,6 +120,7 @@ import { FilesApi } from './services/api/FilesApi';
     ChangePasswordComponent,
     ConfirmModalComponent,
     SettingsComponent,
+    SignRequestComponent,
     SignupComponent,
     ResetPasswordComponent
   ]
@@ -135,6 +141,7 @@ export class AppModule {
     options[SettingsComponent.Selector] = SettingsComponent;
     options[SignupComponent.Selector] = SignupComponent;
     options[ResetPasswordComponent.Selector] = ResetPasswordComponent;
+    options[SignRequestComponent.Selector] = SignRequestComponent;
 
     // tslint:disable-next-line:no-shadowed-variable
     for (const key in options) {
