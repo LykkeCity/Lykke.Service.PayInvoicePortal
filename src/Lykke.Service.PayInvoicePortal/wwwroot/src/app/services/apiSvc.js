@@ -23,8 +23,6 @@
             payInvoices: payInvoices,
             getSupervisingInvoices: getSupervisingInvoices,
 
-            signRequest: signRequest,
-
             getPaymentDetails: getPaymentDetails,
             refreshPaymentDetails: refreshPaymentDetails,
             getPaymentStatus: getPaymentStatus,
@@ -105,11 +103,6 @@
                     skip: skip,
                     take: take
                 });
-        }
-
-        // Sign request
-        function signRequest(model) {
-            return post('signRequest', model);
         }
 
         // Paymnets
