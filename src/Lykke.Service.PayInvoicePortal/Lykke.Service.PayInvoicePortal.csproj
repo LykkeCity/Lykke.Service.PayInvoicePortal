@@ -55,9 +55,6 @@
     <Content Update="Views\IncomingInvoices\Index.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>
-    <Content Update="Views\PublicApiDocs\Partials\SignRequest.cshtml">
-      <Pack>$(IncludeRazorContentInPack)</Pack>
-    </Content>
     <Content Update="Views\PublicApiDocs\PublicApiDocsAsync.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>
