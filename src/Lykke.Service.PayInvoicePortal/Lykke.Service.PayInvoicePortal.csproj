@@ -13,7 +13,7 @@
   <ItemGroup>
 		<PackageReference Include="AutoMapper" Version="7.0.1" />
 		<PackageReference Include="Lykke.MonitoringServiceApiCaller" Version="1.8.0" />
-		<PackageReference Include="Lykke.RabbitMqBroker" Version="7.5.0" />
+		<PackageReference Include="Lykke.RabbitMqBroker" Version="7.5.1" />
 		<PackageReference Include="Lykke.Service.EmailPartnerRouter.Client" Version="2.0.4" />
 	  <PackageReference Include="BuildBundlerMinifier" Version="2.8.391" />
 	  <PackageReference Include="BundlerMinifier.Core" Version="2.8.391" />
