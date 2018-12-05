@@ -59,8 +59,12 @@ import { FilesApi } from './services/api/FilesApi';
 import { SignRequestComponent } from './components/SignRequest/SignRequest';
 import { SignRequestApi } from './services/api/SignRequestApi';
 
+import { CheckoutComponent } from './components/Checkout/Checkout';
+import { CheckoutApi } from './services/api/CheckoutApi';
+
 @NgModule({
   declarations: [
+    CheckoutComponent,
     InvoiceInfoComponent,
     InvoiceEditComponent,
     InvoiceDetailsRefundDialogComponent,
@@ -101,6 +105,7 @@ import { SignRequestApi } from './services/api/SignRequestApi';
     ConfirmModalService,
     BaseApi,
     AssetsApi,
+    CheckoutApi,
     FilesApi,
     UserApi,
     RefundApi,
@@ -115,6 +120,7 @@ import { SignRequestApi } from './services/api/SignRequestApi';
     { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true }
   ],
   entryComponents: [
+    CheckoutComponent,
     InvoiceDetailsComponent,
     PaymentsComponent,
     ChangePasswordComponent,
@@ -142,6 +148,7 @@ export class AppModule {
     options[SignupComponent.Selector] = SignupComponent;
     options[ResetPasswordComponent.Selector] = ResetPasswordComponent;
     options[SignRequestComponent.Selector] = SignRequestComponent;
+    options[CheckoutComponent.Selector] = CheckoutComponent;
 
     // tslint:disable-next-line:no-shadowed-variable
     for (const key in options) {

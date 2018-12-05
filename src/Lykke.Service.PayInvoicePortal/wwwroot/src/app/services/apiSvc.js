@@ -13,7 +13,6 @@
         var service = {
             subscribe: subscribe,
 
-            getPaymentAssets: getPaymentAssets,
             getPaymentAssetsOfMerchant: getPaymentAssetsOfMerchant,
 
             exportToCsv: exportToCsv,
@@ -22,11 +21,6 @@
             getSumToPay: getSumToPay,
             payInvoices: payInvoices,
             getSupervisingInvoices: getSupervisingInvoices,
-
-            getPaymentDetails: getPaymentDetails,
-            refreshPaymentDetails: refreshPaymentDetails,
-            getPaymentStatus: getPaymentStatus,
-            changePaymentAsset: changePaymentAsset
         };
 
         return service;
@@ -38,13 +32,6 @@
         }
 
         // Assets
-
-        function getPaymentAssets(merchantId, settlementAssetId) {
-            return get("paymentAssets", {
-                merchantId: merchantId,
-                settlementAssetId: settlementAssetId
-            });
-        }
 
         function getPaymentAssetsOfMerchant() {
             return get("paymentAssetsOfMerchant");
@@ -103,24 +90,6 @@
                     skip: skip,
                     take: take
                 });
-        }
-
-        // Paymnets
-
-        function getPaymentDetails(invoiceId) {
-            return get('paymentDetails/' + invoiceId, {});
-        }
-
-        function refreshPaymentDetails(invoiceId) {
-            return get('paymentDetails/refresh/' + invoiceId, {});
-        }
-
-        function getPaymentStatus(invoiceId) {
-            return get('paymentDetails/' + invoiceId + '/status', {});
-        }
-
-        function changePaymentAsset(invoiceId, paymentAssetId) {
-            return post('paymentDetails/changeasset/' + invoiceId + '/' + paymentAssetId)
         }
 
         // Private

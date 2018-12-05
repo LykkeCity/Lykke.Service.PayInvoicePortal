@@ -34,6 +34,8 @@ export class SelectPickerComponent
   @Input()
   cssClasses?: string;
   @Input()
+  hasCustomClasses?: boolean;
+  @Input()
   label?: string;
   @Input()
   placeholder?: string;
