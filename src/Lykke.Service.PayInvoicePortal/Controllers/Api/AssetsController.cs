@@ -55,7 +55,7 @@ namespace Lykke.Service.PayInvoicePortal.Controllers.Api
             {
                 Id = o.Key,
                 Title = o.Value
-            });
+            }).ToList();
 
             foreach (var assetItemViewModel in assetItemViewModels)
             {

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;
 using AutoMapper;
 using Common.Log;
@@ -10,36 +11,42 @@ using Lykke.Service.PayInvoicePortal.Core.Extensions;
 using Lykke.Service.PayInvoicePortal.Core.Services;
 using Lykke.Service.PayInvoicePortal.Models;
 using Lykke.Service.PayInvoicePortal.Models.Invoice;
+using LykkePay.Common.Validation;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Lykke.Service.PayInvoicePortal.Controllers.Api
 {
-    [Route("/api/paymentDetails")]
+    [Route("/api/checkout")]
     public class PaymentDetailsController : Controller
     {
+        private readonly IAssetService _assetService;
         private readonly IInvoiceService _invoiceService;
         private readonly ILog _log;
 
         public PaymentDetailsController(
+            IAssetService assetService,
             IInvoiceService invoiceService,
             ILogFactory logFactory)
         {
+            _assetService = assetService;
             _invoiceService = invoiceService;
             _log = logFactory.CreateLog(this);
         }
 
         [HttpGet]
         [Route("{InvoiceId}")]
-        public async Task<IActionResult> Details(string invoiceId)
+        [ValidateModel]
+        public async Task<IActionResult> Details([Guid] string invoiceId)
         {
             var result = await GetPaymentDetailsAsync(invoiceId, force: false);
             
             return Json(result);
         }
 
-        [HttpGet]
+        [HttpPost]
         [Route("refresh/{InvoiceId}")]
-        public async Task<IActionResult> RefreshDetails(string invoiceId)
+        [ValidateModel]
+        public async Task<IActionResult> RefreshDetails([Guid] string invoiceId)
         {
             var result = await GetPaymentDetailsAsync(invoiceId, force: true);
 
@@ -48,7 +55,8 @@ namespace Lykke.Service.PayInvoicePortal.Controllers.Api
 
         [HttpGet]
         [Route("{InvoiceId}/status")]
-        public async Task<IActionResult> Status(string invoiceId)
+        [ValidateModel]
+        public async Task<IActionResult> Status([Guid] string invoiceId)
         {
             InvoiceStatusModel model = await _invoiceService.GetStatusAsync(invoiceId);
             
@@ -57,7 +65,8 @@ namespace Lykke.Service.PayInvoicePortal.Controllers.Api
 
         [HttpPost]
         [Route("changeasset/{invoiceId}/{paymentAssetId}")]
-        public async Task<IActionResult> ChangePaymentAssetAsync(string invoiceId, string paymentAssetId)
+        [ValidateModel]
+        public async Task<IActionResult> ChangePaymentAssetAsync([Guid] string invoiceId, [Required] string paymentAssetId)
         {
             try
             {
@@ -91,6 +100,9 @@ namespace Lykke.Service.PayInvoicePortal.Controllers.Api
             }
 
             var model = Mapper.Map<PaymentDetailsModel>(paymentDetails);
+
+            model.PaymentAssetNetwork = await _assetService.GetAssetNetworkAsync(model.PaymentAssetId);
+
             await UpdateFiles(model);
 
             return model;
