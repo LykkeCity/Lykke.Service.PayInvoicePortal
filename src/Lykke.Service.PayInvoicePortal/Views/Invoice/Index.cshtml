@@ -1,10 +1,5 @@
-﻿@using Lykke.Service.PayInvoicePortal.Models.Invoice
-@using Newtonsoft.Json
-@using Newtonsoft.Json.Serialization
-
-@model InvoiceViewModel
-@{
-    ViewData["Title"] = "Invoices";
+﻿@{
+    ViewData["Title"] = "Invoice";
 }
 
 @if (User.Identity.IsAuthenticated)
@@ -12,213 +7,18 @@
     @await Html.PartialAsync("Partials/InvoicesNav")
 }
 
-<article class="content"
-         data-ng-controller="checkoutCtrl as vm"
-         data-ng-init="vm.handlers.init(@JsonConvert.SerializeObject(Model.PaymentDetails, new JsonSerializerSettings { ContractResolver = new DefaultContractResolver{NamingStrategy = new CamelCaseNamingStrategy()} }))"
-         ng-cloak>
+<article class="content">
     <section class="section section--padding">
         <div class="container">
             <div class="row">
                 <div class="col-sm-9 col-md-6 automargin">
-                    <div class="invoice_header text-center">
-                        <h1 class="page__title">Invoice #{{vm.model.number}}</h1>
-                        <div class="invoice_header__subtitle">by {{vm.model.merchant}}</div>
-                    </div>
-                    <div data-ng-if="vm.model.waiting">
-                        <div class="invoice_info clearfix">
-                            <div class="invoice_info__left">
-                                <div class="invoice_info__qr" data-ng-class="{'invoice_info__qr--detecting': vm.timer.isExtended}">
-                                    <img class="invoice_info__qr_img_220" data-ng-if="vm.model.qrCodeData" data-ng-src="{{vm.const.qrUrlSize220 + vm.model.qrCodeData}}" alt="qr" width="220" height="220">
-                                    <img class="invoice_info__qr_img_152" data-ng-if="vm.model.qrCodeData" data-ng-src="{{vm.const.qrUrlSize152 + vm.model.qrCodeData}}" alt="qr" width="152" height="152">
-                                </div>
-                                <div class="invoice_info__loader">
-                                    <div class="pie" data-ng-class="{'pie--orange': vm.timer.isExtended}">
-                                        <div class="pie_inner">
-                                            <div class="pie_half">
-                                                <div class="pie_circle-right">
-                                                    <div class="pie_blocker-1" style="background-color: #f3f4f5;" ng-style="{'transform': vm.pie.transform1, '-webkit-transform': vm.pie.transform1, '-ms-transform': vm.pie.transform1 }"></div>
-                                                </div>
-                                            </div>
-                                            <div class="pie_half pie_half-left">
-                                                <div class="pie_circle-left">
-                                                    <div class="pie_blocker-2" style="background-color: #f3f4f5;" ng-style="{'transform': vm.pie.transform2, '-webkit-transform': vm.pie.transform2, '-ms-transform': vm.pie.transform2 }"></div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <span data-ng-if="vm.timer.seconds > 60">{{vm.timer.mins}} min remaining…</span>
-                                    <span data-ng-if="vm.timer.seconds > 0 && vm.timer.seconds <= 60">{{vm.timer.seconds}} sec remaining…</span>
-                                    <span data-ng-if="vm.timer.seconds === 0">Updating…</span>
-                                </div>
-                                <div class="invoice_info__hint--mobile">
-                                    @await Html.PartialAsync("Partials/InvoiceCheckoutMessage")
-                                </div>
-                            </div>
-                            <div class="invoice_info__right">
-                                <div data-ng-show="vm.view.paymentAssetUpdating"
-                                     class="payment-asset-changing-loader">
-                                    <div class="spinner">
-                                        <div class="spinner__inside"></div>
-                                    </div>
-                                </div>
-                                <div class="invoice_info__row"
-                                     data-ng-class="{'invoice_info__row--detecting': vm.timer.isExtended || vm.view.paymentAssetUpdating}">
-                                    <div class="invoice_info__value">
-                                        <span>{{vm.model.paymentAmount | nzcurrency : vm.model.paymentAssetAccuracy}} </span>
-                                        <span data-ng-hide="vm.model.paymentAssets.length > 1">{{vm.model.paymentAssetDisplay}}</span>
-                                        <div data-ng-show="vm.model.paymentAssets.length > 1"
-                                             class="invoice_info__select custom_dropdown" data-ng-if="vm.model.paymentAssets.length">
-                                            <select class="selectpicker inline_select"
-                                                    data-selectpicker
-                                                    data-size="10"
-                                                    data-live-search="{{vm.model.paymentAssets.length > 10}}"
-                                                    data-live-search-placeholder="Asset name"
-                                                    data-ng-model="vm.model.paymentAssetSelect"
-                                                    ng-options="asset.id as asset.title for asset in vm.model.paymentAssets">
-                                            </select>
-                                        </div>
-                                    </div>
-                                    <span class="invoice_info__title">FOR PAYMENT</span>
-                                </div>
-                                <div class="invoice_info__row"
-                                     data-ng-class="{'invoice_info__row--detecting': vm.timer.isExtended}"
-                                     data-ng-if="vm.model.message || !vm.model.exchangeRate.hidden">
-                                    <div class="invoice_info__value invoice_info__value--thin" data-ng-if="!vm.model.exchangeRate.hidden">
-                                        <span>1 {{vm.model.paymentAssetDisplay}} = {{vm.model.exchangeRate.value | nzcurrency : vm.model.settlementAssetAccuracy}} </span>
-                                        {{vm.model.settlementAssetDisplay}}
-                                    </div>
-                                    <span class="invoice_info__title" data-ng-if="!vm.model.exchangeRate.hidden">Exchange rate</span>
-                                </div>
-                                <div class="invoice_info__row">
-                                    <div class="invoice_info__hint" data-ng-if="vm.model.message" data-ng-bind="vm.model.message"></div>
-                                </div>
-                                <div class="invoice_info__row">
-                                    <div class="invoice_info__value">
-                                        <span>{{vm.model.settlementAmount | nzcurrency : vm.model.settlementAssetAccuracy}} </span>
-                                        {{vm.model.settlementAssetDisplay}}
-                                    </div>
-                                    <span class="invoice_info__title">Original</span>
-                                </div>
-                                <div class="invoice_info__hint--mobile-old">
-                                    <hr>
-                                    @await Html.PartialAsync("Partials/InvoiceCheckoutMessage")
-                                </div>
-                            </div>
-                        </div>
-                        <div class="invoice_refresh" data-ng-if="vm.timer.isExtended">
-                            <button class="btn invoice_refresh__btn" data-ng-click="vm.handlers.refreshDetails()">Refresh the price, I haven't paid yet</button>
-                            <div class="invoice_refresh__text">
-                                If you have any other problem contact our support:
-                                <a class="invoice_refresh__a" href="mailto:support@lykke.com">support@lykke.com</a>
-                            </div>
-                        </div>
-                        <div class="asset_link_list">
-                            <div class="asset_link">
-                                <div class="asset_link__action">
-                                    <button class="btn btn--icon _copy" type="button" data-copy="vm.model.walletAddress" data-title="Copied!">
-                                        <i class="btn__svg_icon svg_icon svg_icon--copy"></i>
-                                    </button>
-                                </div>
-                                <div class="asset_link__info">
-                                    <div class="asset_link__title">Payment address</div>
-                                    <div class="asset_link__desc" data-ng-bind="vm.model.walletAddress"></div>
-                                </div>
-                            </div>
-                            <div class="asset_link">
-                                <div class="asset_link__info">
-                                    <div class="asset_link__title">Pay Due Date</div>
-                                    <div class="asset_link__desc" data-ng-bind="vm.model.dueDate.format('LL')"></div>
-                                </div>
-                            </div>
-                            <div class="asset_link" data-ng-if="vm.model.note">
-                                <div class="asset_link__info">
-                                    <div class="asset_link__title">Note</div>
-                                    <div class="asset_link__desc" data-ng-bind="vm.model.note"></div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div data-ng-if="!vm.model.waiting">
-                        <div class="alert" data-ng-class="vm.header.color" role="alert">
-                            <table>
-                                <tr>
-                                    <td>
-                                        <span class="label label--text label--white" data-ng-bind="vm.header.title"></span>
-                                    </td>
-                                    <td class="text-right">
-                                        <i data-ng-if="vm.header.icon !== 'icon--warning_icn'" class="icon hidden-xs" data-ng-show="vm.header.icon" data-ng-class="vm.header.icon"></i>
-                                        <i data-ng-if="vm.header.icon === 'icon--warning_icn'" class="icon--warning_icn hidden-xs"><span class="path1"></span><span class="path2"></span><span class="path3"></span></i>
-                                        {{vm.header.message}}
-                                    </td>
-                                </tr>
-                            </table>
-                        </div>
-
-                        <div class="asset_link_list">
-                            <div class="asset_link">
-                                <div class="asset_link__info">
-                                    <div class="asset_link__title">For payment</div>
-                                    <div class="asset_link__desc">
-                                        <span>{{vm.model.paymentAmount | nzcurrency : vm.model.paymentAssetAccuracy}} </span>
-                                        {{vm.model.paymentAssetDisplay}}
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="asset_link">
-                                <div class="asset_link__info">
-                                    <div class="asset_link__title">Exchange rate</div>
-                                    <div class="asset_link__desc">
-                                        <span>1 {{vm.model.paymentAssetDisplay}} = {{vm.model.exchangeRate.value | nzcurrency : vm.model.settlementAssetAccuracy}} </span>
-                                        {{vm.model.settlementAssetDisplay}}
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="asset_link">
-                                <div class="asset_link__info">
-                                    <div class="asset_link__title">Original</div>
-                                    <div class="asset_link__desc">
-                                        {{vm.model.settlementAmount | nzcurrency : vm.model.settlementAssetAccuracy}} 
-                                        {{vm.model.settlementAssetDisplay}}
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="asset_link">
-                                <div class="asset_link__info">
-                                    <div class="asset_link__title">Pay Due Date</div>
-                                    <div class="asset_link__desc" data-ng-bind="vm.model.dueDate.format('LL')"></div>
-                                </div>
-                            </div>
-                            <div class="asset_link" data-ng-if="vm.model.note">
-                                <div class="asset_link__info">
-                                    <div class="asset_link__title">Note</div>
-                                    <div class="asset_link__desc" data-ng-bind="vm.model.note"></div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div data-ng-if="vm.model.files && vm.model.files.length > 0" class="attachment_list--download">
-                        <h4>Attachment</h4>
-                        <div class="asset_link_list">
-                            <div class="asset_link asset_link--alt" data-ng-repeat="file in vm.model.files">
-                                <div class="asset_link__icon">
-                                    <div class="asset_icon asset_icon--red" data-ng-bind="vm.handlers.getFileExtension(file.name)" data-ng-click="vm.handlers.getFile(file)"></div>
-                                </div>
-                                <div class="asset_link__action">
-                                    <button class="btn btn--icon" data-ng-click="vm.handlers.getFile(file)">
-                                        <i class="btn__svg_icon svg_icon svg_icon--upload"></i>
-                                    </button>
-                                </div>
-                                <div class="asset_link__info">
-                                    <div class="asset_link__title" data-ng-bind="file.name" data-ng-click="vm.handlers.getFile(file)"></div>
-                                    <div class="asset_link__desc" data-ng-bind="vm.handlers.getFileSize(file.size)"></div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                    <lp-checkout></lp-checkout>
                 </div>
             </div>
         </div>
     </section>
 </article>
+
+@section Scripts {
+    @await Html.PartialAsync("Partials/ng2scripts")
+}

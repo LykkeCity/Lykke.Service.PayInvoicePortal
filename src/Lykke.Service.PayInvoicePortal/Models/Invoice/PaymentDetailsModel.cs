@@ -1,5 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using Lykke.Service.PayInternal.Client.Models;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 
 namespace Lykke.Service.PayInvoicePortal.Models.Invoice
 {
@@ -19,11 +22,14 @@ namespace Lykke.Service.PayInvoicePortal.Models.Invoice
 
         public double SettlementAmount { get; set; }
 
-        public string PaymentAsset { get; set; }
+        public string PaymentAssetId { get; set; }
+
+        [JsonConverter(typeof(StringEnumConverter))]
+        public BlockchainType PaymentAssetNetwork { get; set; }
 
         public string PaymentAssetDisplay { get; set; }
 
-        public string SettlementAsset { get; set; }
+        public string SettlementAssetId { get; set; }
 
         public string SettlementAssetDisplay { get; set; }
 
