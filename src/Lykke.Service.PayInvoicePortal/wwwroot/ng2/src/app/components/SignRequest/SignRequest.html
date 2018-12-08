@@ -1,0 +1,115 @@
+<button class="btn btn--primary sign-request__open-button"
+        (click)="open()"
+        [hidden]="view.show">
+  SIGN REQUEST
+</button>
+<aside class="menu_overlay menu_overlay--open"
+       style="z-index: 99998"
+       [hidden]="!view.show"
+       (click)="overlayClick($event)"></aside>
+<div class="sign-request sidebar_menu sidebar_menu--right"
+     [ngClass]="{'sidebar_menu--open': view.show}">
+  <div class="sidebar_breadcrumbs">
+    <button class="btn btn--icon btn_close_menu"
+            (click)="close()">
+      <i class="icon icon--close"></i>
+    </button>
+    <div class="breadcrumbs_item">Documentation</div>
+    <i class="icon icon--chevron-thin-right"></i>
+    <div class="breadcrumbs_item breadcrumbs_item--current">Sign request</div>
+  </div>
+  <div class="sidebar_menu__body">
+    <div class="sidebar_menu__header">
+      <div class="invoice_form__title">Sign request</div>
+    </div>
+    <form #signRequestForm="ngForm"
+          onsubmit="event.preventDefault();"
+          novalidate>
+      <div class="form-group">
+        <label class="control-label">Lykke Merchant</label>
+        <input type="text"
+               class="form-control"
+               name="lykkeMerchantId"
+               #lykkeMerchantId="ngModel"
+               [(ngModel)]="model.lykkeMerchantId"
+               required
+               [class.error]="lykkeMerchantId.invalid && (lykkeMerchantId.touched || lykkeMerchantId.dirty)">
+      </div>
+      <div class="form-group">
+        <label class="control-label">API Key</label>
+        <input type="text"
+               class="form-control"
+               name="apiKey"
+               #apiKey="ngModel"
+               [(ngModel)]="model.apiKey"
+               required
+               [class.error]="apiKey.invalid && (apiKey.touched || apiKey.dirty)">
+      </div>
+      <div class="form-group">
+        <label class="control-label">Merchant Secret</label>
+        <textarea class="form-control"
+                  name="rsaPrivateKey"
+                  #rsaPrivateKey="ngModel"
+                  [(ngModel)]="model.rsaPrivateKey"
+                  required
+                  [class.error]="rsaPrivateKey.invalid && (rsaPrivateKey.touched || rsaPrivateKey.dirty)"></textarea>
+      </div>
+      <div class="form-group">
+        <label class="control-label">Body</label>
+        <div style="position: relative">
+          <textarea class="form-control"
+                    name="body"
+                    #body="ngModel"
+                    [(ngModel)]="model.body"
+                    required
+                    [class.error]="body.invalid && (body.touched || body.dirty)"></textarea>
+          <div class="btn--icon"
+               style="position: absolute; top: 0; right: 0">
+            <i class="svg_icon svg_icon--approve"
+               [ngClass]="{'svg_icon--disabled': body.invalid}"></i>
+          </div>
+        </div>
+        <div class="sign-request__hint">Paste here the path for GET or the body for POST/PUT</div>
+      </div>
+      <div class="form-group clearfix">
+        <button class="btn btn--default pull-right sign-request__submit"
+                type="submit"
+                (click)="submit()"
+                [disabled]="view.isLoading || signRequestForm.invalid">
+          Submit
+        </button>
+      </div>
+    </form>
+    <div *ngIf="model.error"
+         class="form-group hint--error">
+      {{model.error}}
+    </div>
+    <div *ngIf="view.isLoading">
+      <div class="spinner">
+        <div class="spinner__inside"></div>
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="control-label">Result to put in request header Lykke-Merchant-Sign</label>
+      <div style="position: relative">
+        <textarea name="result"
+                  class="form-control sign-request__result"
+                  [ngModel]="model.result"
+                  disabled="disabled"></textarea>
+        <button class="btn btn--icon"
+                style="position: absolute; top: 0; right: 0"
+                [lpCopyText]="model.result"
+                [disabled]="!model.result">
+          <i class="svg_icon svg_icon--copy"
+             [ngClass]="{'svg_icon--disabled': !model.result}"></i>
+        </button>
+      </div>
+    </div>
+    <div class="sidebar_menu__footer">
+      <div class="form-group">
+        <button class="btn btn-block btn--default btn_close_menu"
+                (click)="close()">Close</button>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,4 +1,5 @@
-﻿@{
+﻿@using Common
+@{
     ViewData["Title"] = "PayAPI documentation";
     ViewData["MetaDescription"] = "Lykke Pay API is a set of API methods allowing to build a custom payment solution for accepting payments in BTC, " +
                                   "ETH and other crypto assets with the full control of the checkout process";
@@ -8,15 +9,6 @@
 {
     @await Html.PartialAsync("Partials/InvoicesNav")
 }
-
-<div data-ng-controller="signRequestCtrl as vm" ng-cloak>
-    @await Html.PartialAsync("Partials/SignRequest")
-    <button class="btn btn--primary sign-request__open-button"
-            ng-click="vm.handlers.open()"
-            ng-hide="isSidebarVisible">
-        SIGN REQUEST
-    </button>
-</div>
 
 <article class="content">
 
@@ -31,9 +23,19 @@
     </div>
 
     <div class="lykkepay-api-docs__embed"></div>
+    
+    <lp-sign-request></lp-sign-request>
 </article>
 
 @section Scripts {
+    <script>
+        var signRequestInitialInfo = {
+            merchantId: '@ViewBag.MerchantId',
+            apiKey: '@ViewBag.ApiKey'
+        };
+    </script>
+
+    @await Html.PartialAsync("Partials/ng2scripts")
     <script src="https://api.apiary.io/seeds/embed.js"></script>
     <script>
         // disable calculations for footer

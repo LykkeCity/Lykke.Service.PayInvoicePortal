@@ -1,4 +1,4 @@
-<div class="form_selectpicker"
+<div [class.form_selectpicker]="!hasCustomClasses"
      [ngClass]="cssClasses"
      [attr.disabled]="disabled ? 'disabled' : null">
   <label *ngIf="label" class="control-label">{{label}}</label>

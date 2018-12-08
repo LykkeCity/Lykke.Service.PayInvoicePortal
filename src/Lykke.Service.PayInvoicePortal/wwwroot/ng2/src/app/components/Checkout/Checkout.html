@@ -1,0 +1,274 @@
+<div *ngIf="view.isLoading"
+     class="main-page-loader">
+  <div class="spinner">
+    <div class="spinner__inside"></div>
+  </div>
+</div>
+
+<ng-container *ngIf="!view.isLoading && !view.hasError">
+  <div class="invoice_header text-center">
+    <h1 class="page__title">Invoice #{{model.number}}</h1>
+    <div class="invoice_header__subtitle">by {{model.merchant}}</div>
+  </div>
+  <div *ngIf="view.isWaiting">
+    <div class="invoice_info clearfix">
+      <div class="invoice_info__left">
+        <div class="invoice_info__qr"
+             [ngClass]="{'invoice_info__qr--detecting': model.timer.isExtended}">
+          <img class="invoice_info__qr_img_220"
+               *ngIf="model.qrCodeData"
+               [src]="model.const.qrUrlSize220 + model.qrCodeData"
+               alt="qr"
+               width="220"
+               height="220">
+          <img class="invoice_info__qr_img_152"
+               *ngIf="model.qrCodeData"
+               [src]="model.const.qrUrlSize152 + model.qrCodeData"
+               alt="qr"
+               width="152"
+               height="152">
+        </div>
+        <div class="invoice_info__loader">
+          <div class="pie"
+               [ngClass]="{'pie--orange': model.timer.isExtended}">
+            <div class="pie_inner">
+              <div class="pie_half">
+                <div class="pie_circle-right">
+                  <div class="pie_blocker-1"
+                       style="background-color: #f3f4f5;"
+                       [ngStyle]="{'transform': model.pie.transform1, '-webkit-transform': model.pie.transform1, '-ms-transform': model.pie.transform1 }"></div>
+                </div>
+              </div>
+              <div class="pie_half pie_half-left">
+                <div class="pie_circle-left">
+                  <div class="pie_blocker-2"
+                       style="background-color: #f3f4f5;"
+                       [ngStyle]="{'transform': model.pie.transform2, '-webkit-transform': model.pie.transform2, '-ms-transform': model.pie.transform2 }"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <span *ngIf="model.timer.seconds > 60">{{model.timer.mins}} min remaining…</span>
+          <span *ngIf="model.timer.seconds > 0 && model.timer.seconds <= 60">{{model.timer.seconds}} sec remaining…</span>
+          <span *ngIf="model.timer.seconds === 0">Updating…</span>
+        </div>
+        <div class="invoice_info__hint--mobile">
+          <ng-container *ngTemplateOutlet="message"></ng-container>
+        </div>
+      </div>
+      <div class="invoice_info__right">
+        <div *ngIf="view.isPaymentAssetUpdating"
+             class="payment-asset-changing-loader">
+          <div class="spinner">
+            <div class="spinner__inside"></div>
+          </div>
+        </div>
+        <div class="invoice_info__row"
+             [ngClass]="{'invoice_info__row--detecting': model.timer.isExtended || view.isPaymentAssetUpdating}">
+          <div class="invoice_info__value">
+            <span>{{model.paymentAmount | number : '1.0-' + model.paymentAssetAccuracy}} </span>
+            <span [hidden]="model.paymentAssets.length > 1">{{model.paymentAssetDisplay}}</span>
+            <div *ngIf="model.paymentAssets.length && model.paymentAssets.length > 1"
+                 class="invoice_info__select custom_dropdown">
+              <lp-selectpicker cssClasses="inline_select"
+                               hasCustomClasses="true"
+                               (ngModelChange)="onChangedPaymentAssetId($event)"
+                               [(ngModel)]="model.paymentAssetSelect"
+                               [selectpickerOptions]="model.paymentAssets"
+                               [revertPreviousItemTrigger]="model.revertPaymentAssetTrigger"
+                               [disabled]="view.isPaymentAssetUpdating">
+              </lp-selectpicker>
+            </div>
+          </div>
+          <span class="invoice_info__title">FOR PAYMENT</span>
+        </div>
+        <div class="invoice_info__row"
+             [ngClass]="{'invoice_info__row--detecting': model.timer.isExtended}"
+             *ngIf="!view.hiddenExchangeRate">
+          <div class="invoice_info__value invoice_info__value--thin">
+            <span>1 {{model.paymentAssetDisplay}} = {{model.exchangeRate | number : '1.0-' +
+              model.settlementAssetAccuracy}} </span>
+            <span>{{model.settlementAssetDisplay}}</span>
+          </div>
+          <span class="invoice_info__title">Exchange rate</span>
+        </div>
+        <div class="invoice_info__row">
+          <div class="invoice_info__hint"
+               *ngIf="model.message">
+            {{model.message}}
+          </div>
+        </div>
+        <div class="invoice_info__row">
+          <div class="invoice_info__value">
+            <span>{{model.settlementAmount | number : '1.0-' + model.settlementAssetAccuracy}} </span>
+            <span>{{model.settlementAssetDisplay}}</span>
+          </div>
+          <span class="invoice_info__title">Original</span>
+        </div>
+        <div class="invoice_info__hint--mobile-old">
+          <hr>
+          <ng-container *ngTemplateOutlet="message"></ng-container>
+        </div>
+      </div>
+    </div>
+    <div class="invoice_refresh"
+         *ngIf="model.timer.isExtended">
+      <button class="btn invoice_refresh__btn"
+              [disabled]="model.timer.seconds === 0"
+              (click)="refreshDetails()">Refresh the price, I haven't paid yet</button>
+      <div class="invoice_refresh__text">
+        If you have any other problem contact our support:
+        <a class="invoice_refresh__a"
+           href="mailto:support@lykke.com">support@lykke.com</a>
+      </div>
+    </div>
+    <div class="asset_link_list">
+      <div class="asset_link">
+        <div class="asset_link__action">
+          <button class="btn btn--icon _copy"
+                  type="button"
+                  [lpCopyText]="model.walletAddress">
+            <i class="btn__svg_icon svg_icon svg_icon--copy"></i>
+          </button>
+        </div>
+        <div class="asset_link__info">
+          <div class="asset_link__title">Payment address</div>
+          <div class="asset_link__desc">{{model.walletAddress}}</div>
+        </div>
+      </div>
+      <div class="asset_link">
+        <div class="asset_link__info">
+          <div class="asset_link__title">Pay Due Date</div>
+          <div class="asset_link__desc">{{model.dueDate.format('LL')}}</div>
+        </div>
+      </div>
+      <div class="asset_link"
+           *ngIf="model.note">
+        <div class="asset_link__info">
+          <div class="asset_link__title">Note</div>
+          <div class="asset_link__desc">{{model.note}}</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div *ngIf="!view.isWaiting">
+    <div class="alert"
+         [ngClass]="model.header.color"
+         role="alert">
+      <table>
+        <tr>
+          <td>
+            <span class="label label--text label--white">
+              {{model.header.title}}
+            </span>
+          </td>
+          <td class="text-right">
+            <i *ngIf="model.header.icon && model.header.icon !== 'icon--warning_icn'"
+               class="icon hidden-xs"
+               [ngClass]="model.header.icon"></i>
+            <i *ngIf="model.header.icon === 'icon--warning_icn'"
+               class="icon--warning_icn hidden-xs"><span class="path1"></span><span class="path2"></span><span class="path3"></span></i>
+            {{model.header.message}}
+          </td>
+        </tr>
+      </table>
+    </div>
+
+    <div class="asset_link_list">
+      <div class="asset_link">
+        <div class="asset_link__info">
+          <div class="asset_link__title">For payment</div>
+          <div class="asset_link__desc">
+            <span>{{model.paymentAmount | number : '1.0-' + model.paymentAssetAccuracy}} </span>
+            <span>{{model.paymentAssetDisplay}}</span>
+          </div>
+        </div>
+      </div>
+      <div class="asset_link">
+        <div class="asset_link__info">
+          <div class="asset_link__title">Exchange rate</div>
+          <div class="asset_link__desc">
+            <span>1 {{model.paymentAssetDisplay}} = {{model.exchangeRate | number : '1.0-' +
+              model.settlementAssetAccuracy}} </span>
+            <span>{{model.settlementAssetDisplay}}</span>
+          </div>
+        </div>
+      </div>
+      <div class="asset_link">
+        <div class="asset_link__info">
+          <div class="asset_link__title">Original</div>
+          <div class="asset_link__desc">
+            {{model.settlementAmount | number : '1.0-' + model.settlementAssetAccuracy}}
+            {{model.settlementAssetDisplay}}
+          </div>
+        </div>
+      </div>
+      <div class="asset_link">
+        <div class="asset_link__info">
+          <div class="asset_link__title">Pay Due Date</div>
+          <div class="asset_link__desc">{{model.dueDate.format('LL')}}</div>
+        </div>
+      </div>
+      <div class="asset_link"
+           *ngIf="model.note">
+        <div class="asset_link__info">
+          <div class="asset_link__title">Note</div>
+          <div class="asset_link__desc">{{model.note}}</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div *ngIf="model.files && model.files.length"
+       class="attachment_list--download">
+    <h4>Attachment</h4>
+    <div class="asset_link_list">
+      <div class="asset_link asset_link--alt"
+           *ngFor="let file of model.files">
+        <div class="asset_link__icon">
+          <div class="asset_icon asset_icon--red"
+               (click)="getFile(file)">
+            {{view.getFileExtension(file.name)}}
+          </div>
+        </div>
+        <div class="asset_link__action">
+          <button class="btn btn--icon"
+                  (click)="getFile(file)">
+            <i class="btn__svg_icon svg_icon svg_icon--upload"></i>
+          </button>
+        </div>
+        <div class="asset_link__info">
+          <div class="asset_link__title"
+               (click)="getFile(file)">{{file.name}}</div>
+          <div class="asset_link__desc">{{view.getFileSize(file.size)}}</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</ng-container>
+
+<ng-template #message>
+  <div class="hint"
+       *ngIf="!model.timer.isExtended">
+    <span>The exchange rate is locked for </span>
+    <ng-container *ngTemplateOutlet="messageMinsSecs"></ng-container>
+  </div>
+  <div class="hint"
+       *ngIf="model.timer.isExtended">
+    <span>We are detecting your transfer, please do not do any transfers the following </span>
+    <ng-container *ngTemplateOutlet="messageMinsSecs"></ng-container>
+  </div>
+  <div class="hint"
+       *ngIf="model.timer.seconds === 0">
+    <div class="spinner spinner--inline spinner--small">
+      <div class="spinner__inside"></div>
+    </div>
+    <span>Updating...</span>
+  </div>
+</ng-template>
+
+<ng-template #messageMinsSecs>
+  <span *ngIf="model.timer.seconds > 60">{{model.timer.mins}} {{model.timer.mins === 1 ? 'minute' : 'minutes'}}</span>
+  <span *ngIf="model.timer.seconds > 0 && model.timer.seconds <= 60">{{model.timer.seconds}} seconds</span>
+</ng-template>
